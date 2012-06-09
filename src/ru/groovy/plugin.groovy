@@ -14,6 +14,7 @@ import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.unscramble.UnscrambleDialog
 import javax.swing.KeyStroke
 import com.intellij.openapi.actionSystem.*
+import javax.swing.SwingUtilities
 
 static registerInMetaClasses(AnActionEvent anActionEvent) {
 	[Object.metaClass, Class.metaClass].each {
@@ -76,8 +77,11 @@ class MyHandlerFactory extends CheckinHandlerFactory {
 		new CheckinHandler() {
 			@Override void checkinSuccessful() {
 				ChangeListManager.getInstance(panel.project).with {
-					def message = defaultChangeList.name + ": " + defaultChangeList.changes.size() - panel.selectedChanges.size()
-					ToolWindowManager.getInstance(panel.project).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message)
+					def message = defaultChangeList.name + ": " + defaultChangeList.changes.size() +
+							"selected changes: " + panel.selectedChanges.size()
+					SwingUtilities.invokeLater {
+						ToolWindowManager.getInstance(panel.project).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message)
+					}
 				}
 			}
 		}
@@ -91,7 +95,7 @@ registerAction("myAction2", "alt shift B") { event ->
 		}
 		CheckinHandlersManager.instance.registerCheckinHandlerFactory(new MyHandlerFactory())
 
-		showPopup("aaa + " + factories)
+		showPopup("factories: " + factories)
 	}
 }
 
