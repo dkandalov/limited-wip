@@ -1,0 +1,20 @@
+<idea-plugin version="2">
+  <name>Plugin name here</name>
+  <description>short description of the plugin</description>
+  <version>1.0</version>
+  <vendor>YourCompany</vendor>
+  <idea-version since-build="8000"/>
+
+  <application-components>
+  </application-components>
+
+  <project-components>
+  </project-components>
+
+  <actions>
+      <action id="myAction" class="ru.autorevert.MyAction"/>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+  </extensions>
+</idea-plugin>
