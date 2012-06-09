@@ -82,7 +82,7 @@ class MyHandlerFactory extends CheckinHandlerFactory {
 	@Override CheckinHandler createHandler(CheckinProjectPanel panel, CommitContext commitContext) {
 		new CheckinHandler() {
 			@Override void checkinSuccessful() {
-				ChangeListManager.getInstance(panel.project).with {
+				ChangeListManager.getInstance(panel.project).with {//
 					def uncommittedSize = defaultChangeList.changes.size() - panel.selectedChanges.size()
 
 					SwingUtilities.invokeLater {
