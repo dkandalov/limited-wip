@@ -16,9 +16,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.unscramble.UnscrambleDialog
 import javax.swing.KeyStroke
-import javax.swing.SwingUtilities
 import com.intellij.openapi.actionSystem.*
-
 
 static registerInMetaClasses(AnActionEvent anActionEvent) {
 	[Object.metaClass, Class.metaClass].each {
@@ -73,37 +71,111 @@ def registerAction(actionId, String keyStroke = "", Closure closure) {
 	actionManager.registerAction(actionId, action)
 }
 
-registerAction("myAction3", "alt shift H") { AnActionEvent event ->
-//		showPopup(event.project, "myAction3")
-	ToolWindowManager.getInstance(event.project).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, "myAction3")
-}
+// TODO
+//((ComponentManagerEx)project()).registerComponent((ComponentConfig) new ComponentConfig().with {
+//	implementationClass = RevertComponent.class
+//	it
+//})
 
-registerAction("myAction", "alt shift V") { AnActionEvent event ->
-	catchingAll {
-		def changeList = ChangeListManager.getInstance(event.project).defaultChangeList
-		new RollbackWorker(event.project, true).doRollback(changeList.changes.toList(), true, null, null)
-		changeList.changes.each { FileDocumentManager.instance.reloadFiles(it.virtualFile) }
+class RevertComp {
+	boolean started = false
+	int counter
+	Project project
 
-		showPopup(event.project, "!" + changeList.name + " " + changeList.changes)
+	RevertComp(Project project) {
+		this.project = project
 	}
+
+	def synchronized start() {
+		started = true
+		counter = 0
+	}
+
+	def synchronized stop() {
+		started = false
+	}
+
+	def synchronized onTimer() {
+		if (!started) return
+
+		counter++
+		showPopup(project, counter)
+
+		if (counter % 5 == 0) {
+			revertChanges()
+			counter = 0
+		}
+	}
+
+	def synchronized onCommit() {
+		counter = 0
+	}
+
+	private def revertChanges() {
+		catchingAll {
+			def changeList = ChangeListManager.getInstance(project).defaultChangeList
+			new RollbackWorker(project, true).doRollback(changeList.changes.toList(), true, null, null)
+			changeList.changes.each { FileDocumentManager.instance.reloadFiles(it.virtualFile) }
+
+			showPopup(project, "!" + changeList.name + " " + changeList.changes)
+		}
+	}
+}
+def comp = new RevertComp(project())
+
+registerAction("myAction3", "alt shift H") { AnActionEvent event ->
+	// start timer
+	new Timer(true).schedule(new TimerTask() {
+		@Override void run() {
+			comp.onTimer()
+		}
+	}, 0, 1000)
+
+	// register commit callback
+	def factories = CheckinHandlersManager.instance.getRegisteredCheckinHandlerFactories()
+	factories.findAll {it.class.name == MyHandlerFactory.class.name}.each {
+		CheckinHandlersManager.instance.unregisterCheckinHandlerFactory(it)
+	}
+	CheckinHandlersManager.instance.registerCheckinHandlerFactory(new MyHandlerFactory({
+		comp.onCommit()
+	}))
+
+	showPopup(event.project, "initialized RevertComp")
 }
 
 class MyHandlerFactory extends CheckinHandlerFactory {
+	Closure callback
+
+	MyHandlerFactory(Closure callback) {
+		this.callback = callback
+	}
+
 	@Override CheckinHandler createHandler(CheckinProjectPanel panel, CommitContext commitContext) {
 		new CheckinHandler() {
 			@Override void checkinSuccessful() {
 				ChangeListManager.getInstance(panel.project).with {
 					def uncommittedSize = defaultChangeList.changes.size() - panel.selectedChanges.size()
-
-					SwingUtilities.invokeLater {
-						ToolWindowManager.getInstance(panel.project).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO,
-								"uncommittedSize: " + uncommittedSize)
+					if (uncommittedSize == 0) {
+						callback.call()
 					}
 				}
 			}
 		}
 	}
 }
+
+def revertActiveChangeList = { Project project ->
+	catchingAll {
+		def changeList = ChangeListManager.getInstance(project).defaultChangeList
+		new RollbackWorker(project, true).doRollback(changeList.changes.toList(), true, null, null)
+		changeList.changes.each { FileDocumentManager.instance.reloadFiles(it.virtualFile) }
+
+		showPopup(project, "!" + changeList.name + " " + changeList.changes)
+	}
+}
+
+registerAction("myAction", "alt shift V") { event -> revertActiveChangeList(event.project) }
+
 registerAction("myAction2", "alt shift B") { event ->
 	catchingAll {
 		def factories = CheckinHandlersManager.instance.getRegisteredCheckinHandlerFactories()
