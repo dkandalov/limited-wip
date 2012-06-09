@@ -1,6 +1,7 @@
 package ru.groovy
 
 import com.intellij.openapi.keymap.KeymapManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.changes.ChangeListManager
@@ -26,6 +27,9 @@ static registerInMetaClasses(AnActionEvent anActionEvent) {
 
 static showPopup(String htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
 	ToolWindowManager.getInstance(project()).notifyByBalloon(toolWindowId, messageType, htmlBody)
+}
+static showPopup(Project project, String htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
+	ToolWindowManager.getInstance(project).notifyByBalloon(toolWindowId, messageType, htmlBody)
 }
 
 static showInUnscrambleDialog(Exception e) {
@@ -76,7 +80,7 @@ class MyHandlerFactory extends CheckinHandlerFactory {
 		new CheckinHandler() {
 			@Override void checkinSuccessful() {
 				ChangeListManager.getInstance(panel.project).with {
-					showPopup(defaultChangeList.name + ": " + defaultChangeList.changes.size())
+					showPopup(panel.project, defaultChangeList.name + ": " + defaultChangeList.changes.size() - panel.selectedChanges.size())
 				}
 			}
 		}
