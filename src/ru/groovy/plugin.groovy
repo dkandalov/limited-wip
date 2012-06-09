@@ -15,7 +15,9 @@ import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.unscramble.UnscrambleDialog
+import java.util.concurrent.TimeUnit
 import javax.swing.KeyStroke
+import javax.swing.SwingUtilities
 import com.intellij.openapi.actionSystem.*
 
 static registerInMetaClasses(AnActionEvent anActionEvent) {
@@ -31,7 +33,7 @@ static showPopup(String htmlBody, String toolWindowId = ToolWindowId.RUN, Messag
 	ToolWindowManager.getInstance(project()).notifyByBalloon(toolWindowId, messageType, htmlBody)
 }
 
-static showPopup(Project project, htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
+static showPopup(Project project, String htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
 	ToolWindowManager.getInstance(project).notifyByBalloon(toolWindowId, messageType, htmlBody)
 }
 
@@ -95,13 +97,17 @@ class RevertComp {
 		started = false
 	}
 
+	def synchronized isStarted() {
+		started
+	}
+
 	def synchronized onTimer() {
 		if (!started) return
 
 		counter++
-		showPopup(project, counter)
+		showPopup(project, "" + counter)
 
-		if (counter % 5 == 0) {
+		if (counter % TimeUnit.MINUTES.toSeconds(2) == 0) {
 			revertChanges()
 			counter = 0
 		}
@@ -112,7 +118,7 @@ class RevertComp {
 	}
 
 	private def revertChanges() {
-		catchingAll {
+		SwingUtilities.invokeAndWait() {
 			def changeList = ChangeListManager.getInstance(project).defaultChangeList
 			new RollbackWorker(project, true).doRollback(changeList.changes.toList(), true, null, null)
 			changeList.changes.each { FileDocumentManager.instance.reloadFiles(it.virtualFile) }
@@ -120,8 +126,22 @@ class RevertComp {
 			showPopup(project, "!" + changeList.name + " " + changeList.changes)
 		}
 	}
+
+	private static showPopup(Project project, String htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
+		SwingUtilities.invokeLater() {
+			ToolWindowManager.getInstance(project).notifyByBalloon(toolWindowId, messageType, htmlBody)
+		}
+	}
 }
 def comp = new RevertComp(project())
+
+registerAction("revertStart", "alt shift G") { AnActionEvent event ->
+	if (comp.started) {
+		comp.stop()
+	} else {
+		comp.start()
+	}
+}
 
 registerAction("myAction3", "alt shift H") { AnActionEvent event ->
 	// start timer
