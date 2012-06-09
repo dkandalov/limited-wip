@@ -189,6 +189,10 @@ static showPopup(String htmlBody, String toolWindowId = ToolWindowId.RUN, Messag
 	ToolWindowManager.getInstance(project()).notifyByBalloon(toolWindowId, messageType, htmlBody)
 }
 
+static showPopup(Project project, htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
+	ToolWindowManager.getInstance(project).notifyByBalloon(toolWindowId, messageType, htmlBody)
+}
+
 static showInUnscrambleDialog(Exception e) {
 	def writer = new StringWriter()
 	e.printStackTrace(new PrintWriter(writer))
@@ -225,12 +229,17 @@ def registerAction(actionId, String keyStroke = "", Closure closure) {
 	actionManager.registerAction(actionId, action)
 }
 
-registerAction("myAction", "alt shift V") { event ->
+registerAction("myAction3", "alt shift H") { AnActionEvent event ->
+//		showPopup(event.project, "myAction3")
+	ToolWindowManager.getInstance(event.project).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, "myAction3")
+}
+
+registerAction("myAction", "alt shift V") { AnActionEvent event ->
 	catchingAll {
 		def changeList = ChangeListManager.getInstance(event.project).defaultChangeList
 
 		new RollbackWorker(event.project, true).doRollback(changeList.changes.toList(), true, null, null)
-		showPopup(changeList.name + " " + changeList.changes)
+		showPopup(event.project, changeList.name + " " + changeList.changes)
 	}
 }
 
