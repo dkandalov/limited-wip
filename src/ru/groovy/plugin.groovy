@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.CommitContext
+import com.intellij.openapi.vcs.changes.actions.RollbackAction
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
@@ -13,8 +14,8 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.unscramble.UnscrambleDialog
 import javax.swing.KeyStroke
-import com.intellij.openapi.actionSystem.*
 import javax.swing.SwingUtilities
+import com.intellij.openapi.actionSystem.*
 
 static registerInMetaClasses(AnActionEvent anActionEvent) {
 	[Object.metaClass, Class.metaClass].each {
@@ -67,6 +68,11 @@ def registerAction(actionId, String keyStroke = "", Closure closure) {
 
 registerAction("myAction", "alt shift V") { event ->
 	catchingAll {
+		new RollbackAction().with {
+			update(event)
+			actionPerformed(event)
+		}
+
 		def changeList = ChangeListManager.getInstance(event.project).defaultChangeList
 		showPopup(changeList.name + " " + changeList.changes)
 	}
@@ -77,10 +83,11 @@ class MyHandlerFactory extends CheckinHandlerFactory {
 		new CheckinHandler() {
 			@Override void checkinSuccessful() {
 				ChangeListManager.getInstance(panel.project).with {
-					def message = defaultChangeList.name + ": " + defaultChangeList.changes.size() +
-							"selected changes: " + panel.selectedChanges.size()
+					def uncommittedSize = defaultChangeList.changes.size() - panel.selectedChanges.size()
+
 					SwingUtilities.invokeLater {
-						ToolWindowManager.getInstance(panel.project).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message)
+						ToolWindowManager.getInstance(panel.project).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO,
+								"uncommittedSize: " + uncommittedSize)
 					}
 				}
 			}
