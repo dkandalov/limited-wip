@@ -227,9 +227,9 @@ def registerAction(actionId, String keyStroke = "", Closure closure) {
 
 registerAction("myAction", "alt shift V") { event ->
 	catchingAll {
-		new Rollback().actionPerformed(event)
-
 		def changeList = ChangeListManager.getInstance(event.project).defaultChangeList
+
+		new RollbackWorker(event.project, true).doRollback(changeList.changes.toList(), true, null, null)
 		showPopup(changeList.name + " " + changeList.changes)
 	}
 }
