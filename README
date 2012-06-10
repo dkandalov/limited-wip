@@ -1,1 +1,15 @@
-TODO
+This is a plugin for IntelliJ IDEA.
+It automatically reverts all changes in active change list every 2 minutes.
+
+TODO write why it might be useful
+
+
+To be done:
+ - progress bar
+ - better popups
+ - configuration
+    - UI
+    - timeout
+    - notification
+ - quick commit action (probably using current task description as a commit comment)
+ - disable commit if project doesn't compile
