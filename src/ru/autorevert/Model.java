@@ -58,11 +58,12 @@ public class Model {
 	}
 
 	private void revertChanges() {
-		// TODO do not invoke revert if there is nothing to revert
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override public void run() {
 					LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
+					if (changeList.getChanges().isEmpty()) return;
+
 					new RollbackWorker(project, true).doRollback(changeList.getChanges(), true, null, null);
 					for (Change change : changeList.getChanges()) {
 						FileDocumentManager.getInstance().reloadFiles(change.getVirtualFile());
