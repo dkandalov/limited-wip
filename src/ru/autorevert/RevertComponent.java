@@ -50,6 +50,10 @@ public class RevertComponent extends AbstractProjectComponent {
 		timerEventsSource.removeListener(listener);
 	}
 
+	public Model getModel() {
+		return model;
+	}
+
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
 		private final Runnable callback;
 

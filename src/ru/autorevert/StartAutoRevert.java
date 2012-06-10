@@ -3,7 +3,6 @@ package ru.autorevert;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import ru.groovy.RevertComponent;
 
 /**
  * User: dima
