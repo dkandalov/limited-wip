@@ -21,6 +21,7 @@ public class StartOrStopAutoRevert extends AnAction {
 			text = "Start auto-revert";
 		}
 		event.getPresentation().setText(text);
+		event.getPresentation().setDescription(text);
 	}
 
 	@Override public void actionPerformed(AnActionEvent event) {
