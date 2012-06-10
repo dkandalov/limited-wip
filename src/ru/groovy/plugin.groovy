@@ -15,9 +15,8 @@ import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.unscramble.UnscrambleDialog
-
 import javax.swing.KeyStroke
-
+import ru.autorevert.Model
 import com.intellij.openapi.actionSystem.*
 
 static registerInMetaClasses(AnActionEvent anActionEvent) {

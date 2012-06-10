@@ -1,9 +1,16 @@
 package ru.groovy
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.application.ApplicationManager
+import ru.autorevert.Model
 import ru.autorevert.TimerEventsSource
+import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
+import com.intellij.openapi.vcs.checkin.CheckinHandler
+import com.intellij.openapi.vcs.CheckinProjectPanel
+import com.intellij.openapi.vcs.changes.CommitContext
+import com.intellij.openapi.vcs.changes.ChangeListManager
+import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 
 /**
  * User: dima
@@ -30,7 +37,14 @@ public class RevertComponent extends AbstractProjectComponent {
 		}
 		timerEventsSource.addListener(listener)
 
-		// TODO register commit callback
+		// register commit callback
+		def factories = CheckinHandlersManager.instance.getRegisteredCheckinHandlerFactories()
+		factories.findAll {it.class.name == MyHandlerFactory.class.name}.each {
+			CheckinHandlersManager.instance.unregisterCheckinHandlerFactory(it)
+		}
+		CheckinHandlersManager.instance.registerCheckinHandlerFactory(new MyHandlerFactory({
+			model.onCommit()
+		}))
 	}
 
 	@Override void disposeComponent() {
@@ -39,5 +53,26 @@ public class RevertComponent extends AbstractProjectComponent {
 		def timerEventsSource = ApplicationManager.application.getComponent(TimerEventsSource.class)
 		timerEventsSource.removeListener(listener)
 
+	}
+
+	static class MyHandlerFactory extends CheckinHandlerFactory {
+		Closure callback
+
+		MyHandlerFactory(Closure callback) {
+			this.callback = callback
+		}
+
+		@Override CheckinHandler createHandler(CheckinProjectPanel panel, CommitContext commitContext) {
+			new CheckinHandler() {
+				@Override void checkinSuccessful() {
+					ChangeListManager.getInstance(panel.project).with {
+						def uncommittedSize = defaultChangeList.changes.size() - panel.selectedChanges.size()
+						if (uncommittedSize == 0) {
+							callback.call();
+						}
+					}
+				}
+			}
+		}
 	}
 }
