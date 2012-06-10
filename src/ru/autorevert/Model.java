@@ -44,9 +44,10 @@ public class Model {
 		if (!started) return;
 
 		counter++;
-		showPopup(project, "" + counter);
 
-		if (counter % TimeUnit.MINUTES.toSeconds(2) == 0) {
+		if (counter % TimeUnit.MINUTES.toSeconds(2) == 15) {
+			showPopup(project, "15 seconds left to auto-revert");
+		} else if (counter % TimeUnit.MINUTES.toSeconds(2) == 0) {
 			revertChanges();
 			counter = 0;
 		}
@@ -57,6 +58,7 @@ public class Model {
 	}
 
 	private void revertChanges() {
+		// TODO do not invoke revert if there is nothing to revert
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override public void run() {
