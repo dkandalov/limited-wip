@@ -10,8 +10,14 @@ import com.intellij.openapi.project.Project;
  */
 public class StartOrStopAutoRevert extends AnAction {
 	@Override public void update(AnActionEvent event) {
-		Project project = event.getProject();
-		if (project == null) return;
+		String text = textFor(event.getProject());
+		event.getPresentation().setText(text);
+		event.getPresentation().setDescription(text);
+		event.getPresentation().setEnabled(event.getProject() != null);
+	}
+
+	private String textFor(Project project) {
+		if (project == null) return "Start auto-revert";
 
 		Model model = project.getComponent(RevertComponent.class).getModel();
 		String text;
@@ -20,8 +26,7 @@ public class StartOrStopAutoRevert extends AnAction {
 		} else {
 			text = "Start auto-revert";
 		}
-		event.getPresentation().setText(text);
-		event.getPresentation().setDescription(text);
+		return text;
 	}
 
 	@Override public void actionPerformed(AnActionEvent event) {
