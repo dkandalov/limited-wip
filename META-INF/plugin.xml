@@ -18,10 +18,7 @@
     </project-components>
 
     <actions>
-        <action id="StartAutoRevert" class="ru.autorevert.StartAutoRevert" text="Start auto-revert">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
-        </action>
-        <action id="StopAutoRevert" class="ru.autorevert.StopAutoRevert" text="Stop auto-revert">
+        <action id="StartAutoRevert" class="ru.autorevert.StartOrStopAutoRevert" text="Start auto-revert">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>

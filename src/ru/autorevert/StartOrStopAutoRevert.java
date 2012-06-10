@@ -8,12 +8,20 @@ import com.intellij.openapi.project.Project;
  * User: dima
  * Date: 10/06/2012
  */
-public class StopAutoRevert extends AnAction {
+public class StartOrStopAutoRevert extends AnAction {
+	@Override public void update(AnActionEvent e) {
+		super.update(e); // TODO
+	}
+
 	@Override public void actionPerformed(AnActionEvent event) {
 		Project project = event.getProject();
 		if (project == null) return;
 
-		RevertComponent revertComponent = project.getComponent(RevertComponent.class);
-		revertComponent.getModel().stop();
+		Model model = project.getComponent(RevertComponent.class).getModel();
+		if (model.isStarted()) {
+			model.stop();
+		} else {
+			model.start();
+		}
 	}
 }
