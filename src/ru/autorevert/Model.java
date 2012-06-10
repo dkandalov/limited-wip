@@ -1,7 +1,12 @@
 package ru.autorevert;
 
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.LocalChangeList;
+import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 
@@ -31,6 +36,10 @@ public class Model {
 		started = false;
 	}
 
+	public synchronized boolean isStarted() {
+		return started;
+	}
+
 	public synchronized void onTimer() {
 		if (!started) return;
 
@@ -51,7 +60,13 @@ public class Model {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override public void run() {
-					// TODO
+					LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
+					new RollbackWorker(project, true).doRollback(changeList.getChanges(), true, null, null);
+					for (Change change : changeList.getChanges()) {
+						FileDocumentManager.getInstance().reloadFiles(change.getVirtualFile());
+					}
+
+					showPopup(project, "!" + changeList.getName() + " " + changeList.getChanges());
 				}
 			});
 		} catch (InterruptedException e) {
