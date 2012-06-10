@@ -6,13 +6,24 @@
   <idea-version since-build="8000"/>
 
   <application-components>
+      <component>
+          <implementation-class>ru.autorevert.TimerEventsSource</implementation-class>
+      </component>
   </application-components>
 
   <project-components>
+      <component>
+          <implementation-class>ru.groovy.RevertComponent</implementation-class>
+      </component>
   </project-components>
 
   <actions>
-      <action id="myAction" class="ru.autorevert.MyAction"/>
+      <action id="StartAutoRevert" class="ru.autorevert.StartAutoRevert" text="StartAutoRevert">
+          <add-to-group group-id="ToolsMenu" anchor="last"/>
+      </action>
+      <action id="StopAutoRevert" class="ru.autorevert.StopAutoRevert" text="StopAutoRevert">
+          <add-to-group group-id="ToolsMenu" anchor="last"/>
+      </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
