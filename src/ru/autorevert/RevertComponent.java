@@ -4,8 +4,15 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.AbstractVcs;
+import com.intellij.openapi.vcs.CheckinProjectPanel;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.BaseCheckinHandlerFactory;
+import com.intellij.openapi.vcs.checkin.CheckinHandler;
+import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
+import groovy.lang.Closure;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -40,5 +47,27 @@ public class RevertComponent extends AbstractProjectComponent {
 
 	@Override public void disposeComponent() {
 		super.disposeComponent();
+	}
+
+	private static class MyHandlerFactory extends CheckinHandlerFactory {
+		private final Closure callback;
+
+		MyHandlerFactory(Closure callback) {
+			this.callback = callback;
+		}
+
+		@NotNull @Override
+		public CheckinHandler createHandler(final CheckinProjectPanel panel, CommitContext commitContext) {
+			return new CheckinHandler() {
+				@Override public void checkinSuccessful() {
+					ChangeListManager changeListManager = ChangeListManager.getInstance(panel.getProject());
+
+					int uncommittedSize = changeListManager.getDefaultChangeList().getChanges().size() - panel.getSelectedChanges().size();
+					if (uncommittedSize == 0) {
+						callback.call();
+					}
+				}
+			};
+		}
 	}
 }
