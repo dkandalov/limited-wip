@@ -1,7 +1,12 @@
 package ru.autorevert;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ToolWindowManager;
 
+import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,12 +48,24 @@ public class Model {
 	}
 
 	private void revertChanges() {
-		// TODO implement
-
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override public void run() {
+					// TODO
+				}
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private void showPopup(Project project, String message) {
-		// TODO implement
-
+	private void showPopup(final Project project, final String message) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override public void run() {
+				ToolWindowManager.getInstance(project).notifyByBalloon(ToolWindowId.TODO_VIEW, MessageType.INFO, message);
+			}
+		});
 	}
 }
