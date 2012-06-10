@@ -3,18 +3,13 @@ package ru.autorevert;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.CommitContext;
-import com.intellij.openapi.vcs.checkin.BaseCheckinHandlerFactory;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
-import groovy.lang.Closure;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * User: dima
@@ -41,18 +36,24 @@ public class RevertComponent extends AbstractProjectComponent {
 		timerEventsSource.addListener(listener);
 
 		// register commit callback
-		List<BaseCheckinHandlerFactory> factories = CheckinHandlersManager.getInstance().getRegisteredCheckinHandlerFactories(new AbstractVcs[]{});
-
+		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(new Runnable() {
+			@Override public void run() {
+				model.onCommit();
+			}
+		}));
 	}
 
 	@Override public void disposeComponent() {
 		super.disposeComponent();
+
+		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
+		timerEventsSource.removeListener(listener);
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
-		private final Closure callback;
+		private final Runnable callback;
 
-		MyHandlerFactory(Closure callback) {
+		MyHandlerFactory(Runnable callback) {
 			this.callback = callback;
 		}
 
@@ -64,7 +65,7 @@ public class RevertComponent extends AbstractProjectComponent {
 
 					int uncommittedSize = changeListManager.getDefaultChangeList().getChanges().size() - panel.getSelectedChanges().size();
 					if (uncommittedSize == 0) {
-						callback.call();
+						callback.run();
 					}
 				}
 			};
