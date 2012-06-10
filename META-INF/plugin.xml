@@ -13,7 +13,7 @@
 
   <project-components>
       <component>
-          <implementation-class>ru.groovy.RevertComponent</implementation-class>
+          <implementation-class>ru.autorevert.RevertComponent</implementation-class>
       </component>
   </project-components>
 
