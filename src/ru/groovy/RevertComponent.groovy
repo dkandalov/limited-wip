@@ -29,6 +29,8 @@ public class RevertComponent extends AbstractProjectComponent {
 			}
 		}
 		timerEventsSource.addListener(listener)
+
+		// TODO register commit callback
 	}
 
 	@Override void disposeComponent() {
