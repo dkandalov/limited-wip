@@ -18,6 +18,7 @@ public class AutoRevertTest {
 
 		verify(ideNotification).autoRevertStarted();
 		verifyNoMoreInteractions(ideNotification);
+		verifyZeroInteractions(ideService);
 	}
 
 	@Test public void whenStarted_OnEachTimeEvent_ShouldSentNotificationToUI() {
@@ -26,7 +27,7 @@ public class AutoRevertTest {
 		model.onTimer();
 
 		verify(ideNotification, times(1)).onTimer();
-		verifyNoMoreInteractions(ideNotification);
+		verifyZeroInteractions(ideService);
 	}
 
 	@Test public void whenStarted_AndReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
@@ -49,7 +50,7 @@ public class AutoRevertTest {
 
 		verify(ideNotification).autoRevertStarted();
 		verify(ideNotification).autoRevertStopped();
-		verifyNoMoreInteractions(ideNotification);
+		verifyZeroInteractions(ideService);
 	}
 
 	@Test public void whenDetectsCommit_should_NOT_RevertOnNextTimeout() {
@@ -60,7 +61,7 @@ public class AutoRevertTest {
 
 		verify(ideNotification).autoRevertStarted();
 		verify(ideNotification).timerWasReset();
-		verifyNoMoreInteractions(ideNotification);
+		verifyZeroInteractions(ideService);
 	}
 
 	private static class Model {
@@ -91,6 +92,8 @@ public class AutoRevertTest {
 			if (!started) return;
 
 			timeEventCounter++;
+			ideNotification.onTimer();
+
 			if (timeEventCounter >= timeEventsTillRevert) {
 				timeEventCounter = 0;
 				ideService.doRevertCurrentChangeList();
