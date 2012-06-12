@@ -82,4 +82,17 @@ public class AutoRevertTest {
 		verify(ideNotifications).onAutoRevertStarted();
 		verifyZeroInteractions(ideActions);
 	}
+
+	@Test public void whenDetectsCommit_should_ResetTimeLeftTillRevert() {
+		InOrder inOrder = inOrder(ideNotifications);
+
+		model.start();
+		model.onTimer();
+		model.onCommit();
+		model.onTimer();
+
+		inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		inOrder.verify(ideNotifications).onTimeTillRevert(1);
+	}
 }
