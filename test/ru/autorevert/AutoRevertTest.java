@@ -31,8 +31,8 @@ public class AutoRevertTest {
 		model.onTimer();
 		model.onTimer();
 
-		inOrder.verify(ideNotifications).onTimeTillRevert(1);
 		inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		inOrder.verify(ideNotifications).onTimeTillRevert(1);
 	}
 
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
@@ -59,7 +59,7 @@ public class AutoRevertTest {
 		verifyZeroInteractions(ideActions);
 	}
 
-	@Test public void whenStopped_should_NOT_ResetTimeLeftTillRevert() {
+	@Test public void whenStopped_should_ResetTimeLeftTillRevert() {
 		InOrder inOrder = inOrder(ideNotifications);
 
 		model.start();
@@ -69,9 +69,9 @@ public class AutoRevertTest {
 		model.onTimer();
 		model.onTimer();
 
-		inOrder.verify(ideNotifications).onTimeTillRevert(1);
-		inOrder.verify(ideNotifications).onTimeTillRevert(1);
 		inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		inOrder.verify(ideNotifications).onTimeTillRevert(1);
 	}
 
 	@Test public void whenDetectsCommit_should_NOT_RevertOnNextTimeout() {
