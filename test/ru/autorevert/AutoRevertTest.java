@@ -30,9 +30,11 @@ public class AutoRevertTest {
 		model.start();
 		model.onTimer();
 		model.onTimer();
+		model.onTimer();
 
 		inOrder.verify(ideNotifications).onTimeTillRevert(2);
 		inOrder.verify(ideNotifications).onTimeTillRevert(1);
+		inOrder.verify(ideNotifications).onTimeTillRevert(2);
 	}
 
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
