@@ -42,7 +42,6 @@ public class AutoRevertTest {
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideNotifications).onAutoRevertStarted();
 		verify(ideActions, times(2)).revertCurrentChangeList();
 		verifyNoMoreInteractions(ideActions);
 	}
