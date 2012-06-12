@@ -55,7 +55,6 @@ public class AutoRevertTest {
 
 		verify(ideNotifications).onAutoRevertStarted();
 		verify(ideNotifications).onAutoRevertStopped();
-		verify(ideNotifications).onTimerReset();
 		verifyZeroInteractions(ideActions);
 	}
 
@@ -81,7 +80,6 @@ public class AutoRevertTest {
 		model.onTimer();
 
 		verify(ideNotifications).onAutoRevertStarted();
-		verify(ideNotifications).onTimerReset();
 		verifyZeroInteractions(ideActions);
 	}
 }
