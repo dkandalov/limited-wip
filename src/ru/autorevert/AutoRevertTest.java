@@ -18,7 +18,7 @@ public class AutoRevertTest {
 
 		verify(ideService).autoRevertStarted();
 		verifyNoMoreInteractions(ideService);
-}
+	}
 
 	@Test public void whenStarted_AndReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
 		IDEService ideService = mock(IDEService.class);
@@ -49,7 +49,7 @@ public class AutoRevertTest {
 		verifyNoMoreInteractions(ideService);
 	}
 
-	@Test public void whenNotifiesCommit_should_WaitForAnotherTimeoutToRevert() {
+	@Test public void whenDetectsCommit_should_NOT_RevertOnNextTimeout() {
 		IDEService ideService = mock(IDEService.class);
 		Model model = new Model(ideService, 2);
 
