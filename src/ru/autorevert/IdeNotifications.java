@@ -40,8 +40,7 @@ public class IdeNotifications {
 		statusBar.removeWidget(widget.ID());
 	}
 
-	public void onTimer() {
-		int secondsPassed = 0;
+	public void onTimer(int secondsPassed) {
 		widget.showTime(secondsPassed);
 	}
 

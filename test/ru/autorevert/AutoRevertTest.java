@@ -26,7 +26,7 @@ public class AutoRevertTest {
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideNotifications, times(2)).onTimer();
+		verify(ideNotifications, times(2)).onTimer(anyInt());
 	}
 
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
