@@ -35,9 +35,12 @@ public class AutoRevertTest {
 	private static class Model {
 
 		private final IDEService ideService;
+		private final int timeEventsTillRevert;
+		private int timeEventCounter;
 
-		public Model(IDEService ideService, int timeUpdatesTillRevert) {
+		public Model(IDEService ideService, int timeEventsTillRevert) {
 			this.ideService = ideService;
+			this.timeEventsTillRevert = timeEventsTillRevert;
 		}
 
 		public void start() {
@@ -45,8 +48,11 @@ public class AutoRevertTest {
 		}
 
 		public void onTimer() {
-			// TODO implement
-
+			timeEventCounter++;
+			if (timeEventCounter >= timeEventsTillRevert) {
+				timeEventCounter = 0;
+				ideService.revertCurrentChangeList();
+			}
 		}
 	}
 
