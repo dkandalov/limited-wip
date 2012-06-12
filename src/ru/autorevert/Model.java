@@ -61,6 +61,7 @@ public class Model {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override public void run() {
+					// TODO if commit is in progress during auto-revert, it's possible to get stale code in editor which is out of sync with file system but cannot be "reverted" till next auto-revert
 					LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
 					if (changeList.getChanges().isEmpty()) return;
 
