@@ -39,12 +39,16 @@ public class IdeNotifications {
 		statusBar.removeWidget(widget.ID());
 	}
 
-	public void onTimer(int secondsPassed) {
-		widget.showTime(secondsPassed);
+	public void onTimerReset() {
+		onTimer(0);
 	}
 
-	public void onTimerReset() {
-		widget.showTime(0);
+	public void onTimer(int secondsPassed) {
+		widget.showTime(secondsPassed);
+
+		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+		if (statusBar == null) return;
+		statusBar.updateWidget(widget.ID());
 	}
 
 	private static class MyStatusBarWidget implements StatusBarWidget {
@@ -61,7 +65,6 @@ public class IdeNotifications {
 
 		public void showTime(int secondsPassed) {
 			// TODO implement
-
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
