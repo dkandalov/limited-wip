@@ -52,8 +52,17 @@ public class IdeNotifications {
 	private static class MyStatusBarWidget implements StatusBarWidget {
 		public StatusBar statusBar;
 
-		@NotNull @Override public String ID() {
-			return "AutoRevert_StatusBarWidget";
+		@Override public void install(@NotNull StatusBar statusBar) {
+			this.statusBar = statusBar;
+		}
+
+		@Override public void dispose() {
+			statusBar = null;
+		}
+
+		public void showTime(int secondsPassed) {
+			// TODO implement
+
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
@@ -84,17 +93,8 @@ public class IdeNotifications {
 			};
 		}
 
-		@Override public void install(@NotNull StatusBar statusBar) {
-			this.statusBar = statusBar;
-		}
-
-		@Override public void dispose() {
-			statusBar = null;
-		}
-
-		public void showTime(int secondsPassed) {
-			// TODO implement
-
+		@NotNull @Override public String ID() {
+			return "AutoRevert_StatusBarWidget";
 		}
 	}
 }
