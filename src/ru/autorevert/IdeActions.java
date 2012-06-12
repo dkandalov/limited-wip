@@ -51,5 +51,6 @@ public class IdeActions {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 }
