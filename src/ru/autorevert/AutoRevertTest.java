@@ -32,6 +32,21 @@ public class AutoRevertTest {
 		verify(ideService).revertCurrentChangeList();
 	}
 
+	@Test public void whenStartedAndStopped_should_NOT_RevertCurrentChangeList() {
+		IDEService ideService = mock(IDEService.class);
+		Model model = new Model(ideService, 3);
+
+		model.start();
+		model.onTimer();
+		model.onTimer();
+		model.stop();
+		model.onTimer();
+
+		verify(ideService).autoRevertStarted();
+		verify(ideService).autoRevertStopped();
+		verifyNoMoreInteractions(ideService);
+	}
+
 	private static class Model {
 
 		private final IDEService ideService;
