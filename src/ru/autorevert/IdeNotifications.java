@@ -44,10 +44,10 @@ public class IdeNotifications {
 	}
 
 	public void onTimerReset() {
-		onTimer(0);
+		onTimeTillRevert(0);
 	}
 
-	public void onTimer(int secondsLeft) {
+	public void onTimeTillRevert(int secondsLeft) {
 		widget.showTime(formatTime(secondsLeft));
 
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);

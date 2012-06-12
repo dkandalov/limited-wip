@@ -39,7 +39,7 @@ public class Model {
 		if (!started) return;
 
 		timeEventCounter++;
-		ideNotifications.onTimer(timeEventCounter);
+		ideNotifications.onTimeTillRevert(timeEventCounter);
 
 		if (timeEventCounter >= timeEventsTillRevert) {
 			timeEventCounter = 0;
