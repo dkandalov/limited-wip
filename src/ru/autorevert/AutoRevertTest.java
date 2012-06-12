@@ -17,7 +17,8 @@ public class AutoRevertTest {
 		model.start();
 
 		verify(ideService).autoRevertStarted();
-	}
+		verifyNoMoreInteractions(ideService);
+}
 
 	@Test public void whenStarted_AndReceivedEnoughTimeUpdates_shouldRevertCurrentChangeList() {
 		IDEService ideService = mock(IDEService.class);
@@ -30,6 +31,7 @@ public class AutoRevertTest {
 
 		verify(ideService).autoRevertStarted();
 		verify(ideService).revertCurrentChangeList();
+		verifyNoMoreInteractions(ideService);
 	}
 
 	@Test public void whenStartedAndStopped_should_NOT_RevertCurrentChangeList() {
@@ -51,6 +53,8 @@ public class AutoRevertTest {
 
 		private final IDEService ideService;
 		private final int timeEventsTillRevert;
+
+		private boolean started = false;
 		private int timeEventCounter;
 
 		public Model(IDEService ideService, int timeEventsTillRevert) {
@@ -59,10 +63,18 @@ public class AutoRevertTest {
 		}
 
 		public void start() {
+			started = true;
 			ideService.autoRevertStarted();
 		}
 
+		public void stop() {
+			started = false;
+			ideService.autoRevertStopped();
+		}
+
 		public void onTimer() {
+			if (!started) return;
+
 			timeEventCounter++;
 			if (timeEventCounter >= timeEventsTillRevert) {
 				timeEventCounter = 0;
@@ -78,6 +90,11 @@ public class AutoRevertTest {
 		}
 
 		public void revertCurrentChangeList() {
+			// TODO implement
+
+		}
+
+		public void autoRevertStopped() {
 			// TODO implement
 
 		}
