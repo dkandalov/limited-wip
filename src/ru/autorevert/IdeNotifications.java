@@ -59,9 +59,11 @@ public class IdeNotifications {
 	}
 
 	private static class MyStatusBarWidget implements StatusBarWidget {
-		private static final String PREFIX_TEXT = "Auto-revert in ";
+		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
+		private static final String STOPPED_TEXT = "Auto-revert in ";
+
 		public StatusBar statusBar;
-		private String timeLeft;
+		private String text = "";
 
 		@Override public void install(@NotNull StatusBar statusBar) {
 			this.statusBar = statusBar;
@@ -72,22 +74,21 @@ public class IdeNotifications {
 		}
 
 		public void showTime(String timeLeft) {
-			this.timeLeft = timeLeft;
+			text = TIME_LEFT_PREFIX_TEXT + timeLeft;
 		}
 
 		public void showThatStopped() {
-			// TODO implement
-
+			text = STOPPED_TEXT;
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
 			return new StatusBarWidget.TextPresentation() {
 				@NotNull @Override public String getText() {
-					return PREFIX_TEXT + timeLeft;
+					return text;
 				}
 
 				@NotNull @Override public String getMaxPossibleText() {
-					return PREFIX_TEXT + "99:99";
+					return TIME_LEFT_PREFIX_TEXT + "99:99";
 				}
 
 				@Override public Consumer<MouseEvent> getClickConsumer() {
