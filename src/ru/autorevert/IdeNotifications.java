@@ -25,14 +25,18 @@ public class IdeNotifications {
 
 	public void onAutoRevertStarted() {
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+		if (statusBar == null) return;
+
 		statusBar.removeWidget(widget.ID());
 		statusBar.addWidget(widget);
 		statusBar.updateWidget(widget.ID());
 	}
 
 	public void onAutoRevertStopped() {
-		// TODO implement
+		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+		if (statusBar == null) return;
 
+		statusBar.removeWidget(widget.ID());
 	}
 
 	public void onTimerReset() {
