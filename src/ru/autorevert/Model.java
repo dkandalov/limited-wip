@@ -50,6 +50,6 @@ public class Model {
 
 	public synchronized void onCommit() {
 		timeEventCounter = 0;
-		ideNotifications.onTimerReset();
+		ideNotifications.onTimeTillRevert(timeEventsTillRevert);
 	}
 }
