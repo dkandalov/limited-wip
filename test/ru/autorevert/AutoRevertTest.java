@@ -60,14 +60,17 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenStopped_should_NOT_ResetTimeLeftTillRevert() {
-		// TODO
+		InOrder inOrder = inOrder(ideNotifications);
+
 		model.start();
 		model.onTimer();
 		model.stop();
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideNotifications).onTimerReset();
+		inOrder.verify(ideNotifications).onTimeTillRevert(1);
+		inOrder.verify(ideNotifications).onTimeTillRevert(1);
+		inOrder.verify(ideNotifications).onTimeTillRevert(2);
 		verifyZeroInteractions(ideActions);
 	}
 
