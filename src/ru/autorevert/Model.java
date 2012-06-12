@@ -28,6 +28,7 @@ public class Model {
 	public synchronized void stop() {
 		started = false;
 		ideNotifications.onAutoRevertStopped();
+		ideNotifications.onTimerReset();
 	}
 
 	public synchronized boolean isStarted() {
