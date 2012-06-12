@@ -5,6 +5,7 @@ import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /**
@@ -42,7 +43,19 @@ public class IdeNotifications {
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
-			return new WidgetPresentation() {
+			return new StatusBarWidget.TextPresentation() {
+				@NotNull @Override public String getText() {
+					return "";
+				}
+
+				@NotNull @Override public String getMaxPossibleText() {
+					return "00000";
+				}
+
+				@Override public float getAlignment() {
+					return Component.CENTER_ALIGNMENT;
+				}
+
 				@Override public String getTooltipText() {
 					return null;
 				}
