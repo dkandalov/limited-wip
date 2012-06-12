@@ -43,8 +43,8 @@ public class IdeNotifications {
 		onTimer(0);
 	}
 
-	public void onTimer(int secondsPassed) {
-		widget.showTime(secondsPassed);
+	public void onTimer(int secondsLeft) {
+		widget.showTime(formatTime(secondsLeft));
 
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
@@ -60,6 +60,7 @@ public class IdeNotifications {
 	private static class MyStatusBarWidget implements StatusBarWidget {
 		private static final String PREFIX_TEXT = "Auto-revert in ";
 		public StatusBar statusBar;
+		private String timeLeft;
 
 		@Override public void install(@NotNull StatusBar statusBar) {
 			this.statusBar = statusBar;
@@ -69,14 +70,14 @@ public class IdeNotifications {
 			statusBar = null;
 		}
 
-		public void showTime(int secondsPassed) {
-			// TODO implement
+		public void showTime(String timeLeft) {
+			this.timeLeft = timeLeft;
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
 			return new StatusBarWidget.TextPresentation() {
 				@NotNull @Override public String getText() {
-					return PREFIX_TEXT;
+					return PREFIX_TEXT + timeLeft;
 				}
 
 				@NotNull @Override public String getMaxPossibleText() {
