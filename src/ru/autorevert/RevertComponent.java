@@ -16,12 +16,14 @@ import org.jetbrains.annotations.NotNull;
  * Date: 10/06/2012
  */
 public class RevertComponent extends AbstractProjectComponent {
+	private static final int TIMEOUT = 120;
+
 	private final Model model;
 	private TimerEventsSource.Listener listener;
 
 	protected RevertComponent(Project project) {
 		super(project);
-		model = new Model(project);
+		model = new Model(new IdeNotification(), new IdeActions(project), TIMEOUT);
 	}
 
 	@Override public void initComponent() {
