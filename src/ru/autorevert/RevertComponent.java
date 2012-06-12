@@ -23,7 +23,7 @@ public class RevertComponent extends AbstractProjectComponent {
 
 	protected RevertComponent(Project project) {
 		super(project);
-		model = new Model(new IdeNotifications(), new IdeActions(project), TIME_EVENT_TILL_REVERT);
+		model = new Model(new IdeNotifications(project), new IdeActions(project), TIME_EVENT_TILL_REVERT);
 	}
 
 	@Override public void initComponent() {

@@ -1,5 +1,6 @@
 package ru.autorevert;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
@@ -15,6 +16,11 @@ import java.awt.event.MouseEvent;
 public class IdeNotifications {
 
 	private final StatusBarWidget statusBarWidget = new MyStatusBarWidget();
+	private final Project project;
+
+	public IdeNotifications(Project project) {
+		this.project = project;
+	}
 
 	public void onAutoRevertStarted() {
 		// TODO implement
