@@ -105,32 +105,4 @@ public class AutoRevertTest {
 		}
 	}
 
-	private static class IdeNotification {
-		public void onAutoRevertStarted() {
-			// TODO implement
-
-		}
-
-		public void onAutoRevertStopped() {
-			// TODO implement
-
-		}
-
-		public void onTimerReset() {
-			// TODO implement
-
-		}
-
-		public void onTimer() {
-			// TODO implement
-
-		}
-	}
-
-	private static class IdeActions {
-		public void revertCurrentChangeList() {
-			// TODO implement
-
-		}
-	}
 }
