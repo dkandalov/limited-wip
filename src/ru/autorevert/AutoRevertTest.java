@@ -9,11 +9,10 @@ import static org.mockito.Mockito.*;
  * Date: 08/06/2012
  */
 public class AutoRevertTest {
+	private final IDEService ideService = mock(IDEService.class);
+	private final Model model = new Model(ideService, 2);
 
 	@Test public void whenStarted_ShouldSendNotificationToUI() {
-		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 2);
-
 		model.start();
 
 		verify(ideService).autoRevertStarted();
@@ -21,9 +20,6 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenStarted_OnEachTimeEvent_ShouldSentNotificationToUI() {
-		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 2);
-
 		model.onTimer();
 		model.start();
 		model.onTimer();
