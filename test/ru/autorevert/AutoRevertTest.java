@@ -47,7 +47,7 @@ public class AutoRevertTest {
 		verifyNoMoreInteractions(ideActions);
 	}
 
-	@Test public void whenStartedAndStopped_should_NOT_RevertOnNextTimeout() {
+	@Test public void whenStopped_should_NOT_RevertOnNextTimeout() {
 		model.start();
 		model.onTimer();
 		model.stop();
@@ -55,6 +55,18 @@ public class AutoRevertTest {
 
 		verify(ideNotifications).onAutoRevertStarted();
 		verify(ideNotifications).onAutoRevertStopped();
+		verify(ideNotifications).onTimerReset();
+		verifyZeroInteractions(ideActions);
+	}
+
+	@Test public void whenStopped_should_NOT_ResetTimeLeftTillRevert() {
+		// TODO
+		model.start();
+		model.onTimer();
+		model.stop();
+		model.onTimer();
+		model.onTimer();
+
 		verify(ideNotifications).onTimerReset();
 		verifyZeroInteractions(ideActions);
 	}
