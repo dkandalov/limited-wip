@@ -12,20 +12,39 @@ public class AutoRevertTest {
 
 	@Test public void whenStartedModelShouldSendNotificationToUI() {
 		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService);
+		Model model = new Model(ideService, 3);
+
 		model.start();
 
 		verify(ideService).autoRevertStarted();
 	}
 
+	@Test public void whenStarted_AndReceivedEnoughTimeUpdates_shouldRevertCurrentChangeList() {
+		IDEService ideService = mock(IDEService.class);
+		Model model = new Model(ideService, 3);
+
+		model.start();
+		model.onTimer();
+		model.onTimer();
+		model.onTimer();
+
+		verify(ideService).autoRevertStarted();
+		verify(ideService).revertCurrentChangeList();
+	}
+
 	private static class Model {
 
-		public Model(IDEService ideService) {
-			// TODO implement
+		private final IDEService ideService;
 
+		public Model(IDEService ideService, int timeUpdatesTillRevert) {
+			this.ideService = ideService;
 		}
 
 		public void start() {
+			ideService.autoRevertStarted();
+		}
+
+		public void onTimer() {
 			// TODO implement
 
 		}
@@ -33,6 +52,11 @@ public class AutoRevertTest {
 
 	private static class IDEService {
 		public void autoRevertStarted() {
+			// TODO implement
+
+		}
+
+		public void revertCurrentChangeList() {
 			// TODO implement
 
 		}
