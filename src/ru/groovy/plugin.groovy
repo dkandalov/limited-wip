@@ -1,23 +1,21 @@
 package ru.groovy
 
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.ide.DataManager
+import com.intellij.notification.Notifications
+import com.intellij.notification.NotificationsManager
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
-import com.intellij.openapi.vcs.CheckinProjectPanel
-import com.intellij.openapi.vcs.changes.ChangeListManager
-import com.intellij.openapi.vcs.changes.CommitContext
-import com.intellij.openapi.vcs.changes.ui.RollbackWorker
-import com.intellij.openapi.vcs.checkin.CheckinHandler
-import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
-import com.intellij.openapi.vcs.impl.CheckinHandlersManager
-import com.intellij.openapi.wm.ToolWindowId
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.unscramble.UnscrambleDialog
+import com.intellij.util.Consumer
+import java.awt.Component
+import java.awt.event.MouseEvent
 import javax.swing.KeyStroke
-import ru.autorevert.Model
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.wm.*
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 
 static registerInMetaClasses(AnActionEvent anActionEvent) {
 	[Object.metaClass, Class.metaClass].each {
@@ -29,7 +27,8 @@ static registerInMetaClasses(AnActionEvent anActionEvent) {
 }
 
 static showPopup(String htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
-	ToolWindowManager.getInstance(project()).notifyByBalloon(toolWindowId, messageType, htmlBody)
+	((Notifications) NotificationsManager.notificationsManager).notify(new Notification("aaa", "bbb", "ccc", NotificationType.INFORMATION))
+//	ToolWindowManager.getInstance(project()).notifyByBalloon(toolWindowId, messageType, htmlBody)
 }
 
 static showPopup(Project project, String htmlBody, String toolWindowId = ToolWindowId.RUN, MessageType messageType = MessageType.INFO) {
@@ -72,78 +71,52 @@ def registerAction(actionId, String keyStroke = "", Closure closure) {
 	actionManager.registerAction(actionId, action)
 }
 
-def comp = new Model(project())
 
-registerAction("revertStart", "alt shift G") { AnActionEvent event ->
-	if (comp.started) {
-		comp.stop()
-	} else {
-		comp.start()
-	}
-}
+registerAction("myAction3", "alt shift B") { event ->
+	catchingAll {
+		StatusBar statusBar = null
 
-registerAction("myAction3", "alt shift H") { AnActionEvent event ->
-	// start timer
-	new Timer(true).schedule(new TimerTask() {
-		@Override void run() {
-			comp.onTimer()
-		}
-	}, 0, 1000)
+		def widget = new StatusBarWidget() {
+			@Override StatusBarWidget.WidgetPresentation getPresentation(StatusBarWidget.PlatformType type) {
+				new StatusBarWidget.TextPresentation() {
+					@Override String getText() { "Auto-revert in 12:48" }
 
-	// register commit callback
-	def factories = CheckinHandlersManager.instance.getRegisteredCheckinHandlerFactories()
-	factories.findAll {it.class.name == MyHandlerFactory.class.name}.each {
-		CheckinHandlersManager.instance.unregisterCheckinHandlerFactory(it)
-	}
-	CheckinHandlersManager.instance.registerCheckinHandlerFactory(new MyHandlerFactory({
-		comp.onCommit()
-	}))
+					@Override String getMaxPossibleText() { "Auto-revert in 12:48" }
 
-	showPopup(event.project, "initialized RevertComp")
-}
+					@Override float getAlignment() { Component.CENTER_ALIGNMENT; }
 
-class MyHandlerFactory extends CheckinHandlerFactory {
-	Closure callback
+					@Override String getTooltipText() { "Auto-revert in 12:48" }
 
-	MyHandlerFactory(Closure callback) {
-		this.callback = callback
-	}
-
-	@Override CheckinHandler createHandler(CheckinProjectPanel panel, CommitContext commitContext) {
-		new CheckinHandler() {
-			@Override void checkinSuccessful() {
-				ChangeListManager.getInstance(panel.project).with {
-					def uncommittedSize = defaultChangeList.changes.size() - panel.selectedChanges.size()
-					if (uncommittedSize == 0) {
-						callback.call()
+					@Override Consumer<MouseEvent> getClickConsumer() {
+						new Consumer<MouseEvent>() {
+							@Override void consume(MouseEvent mouseEvent) {
+								catchingAll {
+									DataContext dataContext = DataManager.getInstance().getDataContext((Component) statusBar);
+									Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+									showPopup(project, "ooooonnnn")
+								}
+							}
+						}
 					}
 				}
 			}
+
+			@Override void install(StatusBar sb) { this.statusBar = sb }
+
+			@Override void dispose() { statusBar = null }
+
+			@Override String ID() { "myStatusBarWidget" }
 		}
-	}
-}
-
-def revertActiveChangeList = { Project project ->
-	catchingAll {
-		def changeList = ChangeListManager.getInstance(project).defaultChangeList
-		new RollbackWorker(project, true).doRollback(changeList.changes.toList(), true, null, null)
-		changeList.changes.each { FileDocumentManager.instance.reloadFiles(it.virtualFile) }
-
-		showPopup(project, "!" + changeList.name + " " + changeList.changes)
-	}
-}
-
-registerAction("myAction", "alt shift V") { event -> revertActiveChangeList(event.project) }
-
-registerAction("myAction2", "alt shift B") { event ->
-	catchingAll {
-		def factories = CheckinHandlersManager.instance.getRegisteredCheckinHandlerFactories()
-		factories.findAll {it.class.name == MyHandlerFactory.class.name}.each {
-			CheckinHandlersManager.instance.unregisterCheckinHandlerFactory(it)
+		WindowManager.instance.getStatusBar(event.project).with {
+			removeWidget(widget.ID())
+			addWidget(widget)
+			updateWidget(widget.ID())
 		}
-		CheckinHandlersManager.instance.registerCheckinHandlerFactory(new MyHandlerFactory())
 
-		showPopup("factories: " + factories)
+		showPopup(event.project, "aaaaa2")
+//		def indicator = ProgressManager.getInstance().getProgressIndicator()
+//		indicator.start()
+//		indicator.setFraction(0.3)
 	}
 }
 
