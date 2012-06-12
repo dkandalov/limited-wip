@@ -10,13 +10,25 @@ import static org.mockito.Mockito.*;
  */
 public class AutoRevertTest {
 
-	@Test public void whenStartedModelShouldSendNotificationToUI() {
+	@Test public void whenStarted_ShouldSendNotificationToUI() {
 		IDEService ideService = mock(IDEService.class);
 		Model model = new Model(ideService, 2);
 
 		model.start();
 
 		verify(ideService).autoRevertStarted();
+		verifyNoMoreInteractions(ideService);
+	}
+
+	@Test public void whenStarted_OnEachTimeEvent_ShouldSentNotificationToUI() {
+		IDEService ideService = mock(IDEService.class);
+		Model model = new Model(ideService, 2);
+
+		model.onTimer();
+		model.start();
+		model.onTimer();
+
+		verify(ideService, times(1)).onTimer();
 		verifyNoMoreInteractions(ideService);
 	}
 
@@ -119,6 +131,11 @@ public class AutoRevertTest {
 		}
 
 		public void timerWasReset() {
+			// TODO implement
+
+		}
+
+		public void onTimer() {
 			// TODO implement
 
 		}
