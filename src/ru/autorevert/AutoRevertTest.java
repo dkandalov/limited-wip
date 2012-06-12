@@ -12,7 +12,7 @@ public class AutoRevertTest {
 
 	@Test public void whenStartedModelShouldSendNotificationToUI() {
 		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 3);
+		Model model = new Model(ideService, 2);
 
 		model.start();
 
@@ -22,10 +22,9 @@ public class AutoRevertTest {
 
 	@Test public void whenStarted_AndReceivedEnoughTimeUpdates_shouldRevertCurrentChangeList() {
 		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 3);
+		Model model = new Model(ideService, 2);
 
 		model.start();
-		model.onTimer();
 		model.onTimer();
 		model.onTimer();
 
@@ -36,10 +35,9 @@ public class AutoRevertTest {
 
 	@Test public void whenStartedAndStopped_should_NOT_RevertCurrentChangeList() {
 		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 3);
+		Model model = new Model(ideService, 2);
 
 		model.start();
-		model.onTimer();
 		model.onTimer();
 		model.stop();
 		model.onTimer();
