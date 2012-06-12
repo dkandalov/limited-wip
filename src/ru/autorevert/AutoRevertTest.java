@@ -49,6 +49,20 @@ public class AutoRevertTest {
 		verifyNoMoreInteractions(ideService);
 	}
 
+	@Test public void whenNotifiesCommit_should_WaitForAnotherTimeoutToRevert() {
+		IDEService ideService = mock(IDEService.class);
+		Model model = new Model(ideService, 2);
+
+		model.start();
+		model.onTimer();
+		model.onCommit();
+		model.onTimer();
+
+		verify(ideService).autoRevertStarted();
+		verify(ideService).timerReset();
+		verifyNoMoreInteractions(ideService);
+	}
+
 	private static class Model {
 
 		private final IDEService ideService;
