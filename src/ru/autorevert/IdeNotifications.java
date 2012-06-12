@@ -4,7 +4,7 @@ package ru.autorevert;
 * User: dima
 * Date: 12/06/2012
 */
-public class IdeNotification {
+public class IdeNotifications {
 	public void onAutoRevertStarted() {
 		// TODO implement
 

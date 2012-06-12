@@ -5,27 +5,27 @@ package ru.autorevert;
  * Date: 10/06/2012
  */
 public class Model {
-	private final IdeNotification ideNotification;
+	private final IdeNotifications ideNotifications;
 	private final IdeActions ideActions;
 	private final int timeEventsTillRevert;
 
 	private boolean started = false;
 	private int timeEventCounter;
 
-	public Model(IdeNotification ideNotification, IdeActions ideActions, int timeEventsTillRevert) {
-		this.ideNotification = ideNotification;
+	public Model(IdeNotifications ideNotifications, IdeActions ideActions, int timeEventsTillRevert) {
+		this.ideNotifications = ideNotifications;
 		this.ideActions = ideActions;
 		this.timeEventsTillRevert = timeEventsTillRevert;
 	}
 
 	public synchronized void start() {
 		started = true;
-		ideNotification.onAutoRevertStarted();
+		ideNotifications.onAutoRevertStarted();
 	}
 
 	public synchronized void stop() {
 		started = false;
-		ideNotification.onAutoRevertStopped();
+		ideNotifications.onAutoRevertStopped();
 	}
 
 	public synchronized boolean isStarted() {
@@ -36,7 +36,7 @@ public class Model {
 		if (!started) return;
 
 		timeEventCounter++;
-		ideNotification.onTimer();
+		ideNotifications.onTimer();
 
 		if (timeEventCounter >= timeEventsTillRevert) {
 			timeEventCounter = 0;
@@ -46,6 +46,6 @@ public class Model {
 
 	public synchronized void onCommit() {
 		timeEventCounter = 0;
-		ideNotification.onTimerReset();
+		ideNotifications.onTimerReset();
 	}
 }

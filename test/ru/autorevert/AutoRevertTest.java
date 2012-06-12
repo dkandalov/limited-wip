@@ -9,14 +9,14 @@ import static org.mockito.Mockito.*;
  * Date: 08/06/2012
  */
 public class AutoRevertTest {
-	private final IdeNotification ideNotification = mock(IdeNotification.class);
+	private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
 	private final IdeActions ideActions = mock(IdeActions.class);
-	private final Model model = new Model(ideNotification, ideActions, 2);
+	private final Model model = new Model(ideNotifications, ideActions, 2);
 
 	@Test public void whenStarted_ShouldSendNotificationToUI() {
 		model.start();
 
-		verify(ideNotification).onAutoRevertStarted();
+		verify(ideNotifications).onAutoRevertStarted();
 		verifyZeroInteractions(ideActions);
 	}
 
@@ -26,7 +26,7 @@ public class AutoRevertTest {
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideNotification, times(2)).onTimer();
+		verify(ideNotifications, times(2)).onTimer();
 	}
 
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
@@ -36,7 +36,7 @@ public class AutoRevertTest {
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideNotification).onAutoRevertStarted();
+		verify(ideNotifications).onAutoRevertStarted();
 		verify(ideActions, times(2)).revertCurrentChangeList();
 		verifyNoMoreInteractions(ideActions);
 	}
@@ -47,8 +47,8 @@ public class AutoRevertTest {
 		model.stop();
 		model.onTimer();
 
-		verify(ideNotification).onAutoRevertStarted();
-		verify(ideNotification).onAutoRevertStopped();
+		verify(ideNotifications).onAutoRevertStarted();
+		verify(ideNotifications).onAutoRevertStopped();
 		verifyZeroInteractions(ideActions);
 	}
 
@@ -58,8 +58,8 @@ public class AutoRevertTest {
 		model.onCommit();
 		model.onTimer();
 
-		verify(ideNotification).onAutoRevertStarted();
-		verify(ideNotification).onTimerReset();
+		verify(ideNotifications).onAutoRevertStarted();
+		verify(ideNotifications).onTimerReset();
 		verifyZeroInteractions(ideActions);
 	}
 }
