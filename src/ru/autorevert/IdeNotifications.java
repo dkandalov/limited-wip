@@ -4,6 +4,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.ex.StatusBarEx;
+import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,19 +26,21 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted() {
-		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+		StatusBarEx statusBar = (StatusBarEx) WindowManagerEx.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
 
 		statusBar.removeWidget(widget.ID());
 		statusBar.addWidget(widget);
 		statusBar.updateWidget(widget.ID());
+		statusBar.updateWidgets(); // TODO check that it works
 	}
 
 	public void onAutoRevertStopped() {
-		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+		StatusBarEx statusBar = (StatusBarEx) WindowManagerEx.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
 
 		statusBar.removeWidget(widget.ID());
+		statusBar.updateWidgets();
 	}
 
 	public void onTimerReset() {
