@@ -21,9 +21,9 @@ public class IdeNotifications {
 
 	public IdeNotifications(Project project) {
 		this.project = project;
-	}
 
-	public void onAutoRevertStarted() {
+		widget.showThatStopped();
+
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
 
@@ -32,11 +32,12 @@ public class IdeNotifications {
 		statusBar.updateWidget(widget.ID());
 	}
 
-	public void onAutoRevertStopped() {
-		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-		if (statusBar == null) return;
+	public void onAutoRevertStarted() {
+		onTimerReset();
+	}
 
-		statusBar.removeWidget(widget.ID());
+	public void onAutoRevertStopped() {
+		widget.showThatStopped();
 	}
 
 	public void onTimerReset() {
@@ -72,6 +73,11 @@ public class IdeNotifications {
 
 		public void showTime(String timeLeft) {
 			this.timeLeft = timeLeft;
+		}
+
+		public void showThatStopped() {
+			// TODO implement
+
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
