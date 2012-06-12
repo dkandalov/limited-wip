@@ -1,6 +1,7 @@
 package ru.autorevert;
 
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import static org.mockito.Mockito.*;
 
@@ -23,12 +24,15 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenStarted_OnEachTimeEvent_ShouldSentNotificationToUI() {
+		InOrder inOrder = inOrder(ideNotifications);
+
 		model.onTimer();
 		model.start();
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideNotifications, times(2)).onTimeTillRevert(anyInt());
+		inOrder.verify(ideNotifications).onTimeTillRevert(1);
+		inOrder.verify(ideNotifications).onTimeTillRevert(2);
 	}
 
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
