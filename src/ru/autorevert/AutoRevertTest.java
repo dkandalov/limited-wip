@@ -20,16 +20,18 @@ public class AutoRevertTest {
 		verifyNoMoreInteractions(ideService);
 }
 
-	@Test public void whenStarted_AndReceivedEnoughTimeUpdates_shouldRevertCurrentChangeList() {
+	@Test public void whenStarted_AndReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
 		IDEService ideService = mock(IDEService.class);
 		Model model = new Model(ideService, 2);
 
 		model.start();
 		model.onTimer();
 		model.onTimer();
+		model.onTimer();
+		model.onTimer();
 
 		verify(ideService).autoRevertStarted();
-		verify(ideService).revertCurrentChangeList();
+		verify(ideService, times(2)).revertCurrentChangeList();
 		verifyNoMoreInteractions(ideService);
 	}
 
