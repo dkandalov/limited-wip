@@ -95,6 +95,11 @@ public class AutoRevertTest {
 				ideService.revertCurrentChangeList();
 			}
 		}
+
+		public void onCommit() {
+			timeEventCounter = 0;
+			ideService.timerReset();
+		}
 	}
 
 	private static class IDEService {
@@ -109,6 +114,11 @@ public class AutoRevertTest {
 		}
 
 		public void autoRevertStopped() {
+			// TODO implement
+
+		}
+
+		public void timerReset() {
 			// TODO implement
 
 		}
