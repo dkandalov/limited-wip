@@ -18,21 +18,21 @@ public class Model {
 		this.timeEventsTillRevert = timeEventsTillRevert;
 	}
 
-	public void start() {
+	public synchronized void start() {
 		started = true;
 		ideNotification.onAutoRevertStarted();
 	}
 
-	public void stop() {
+	public synchronized void stop() {
 		started = false;
 		ideNotification.onAutoRevertStopped();
 	}
 
-	public boolean isStarted() {
+	public synchronized boolean isStarted() {
 		return started;
 	}
 
-	public void onTimer() {
+	public synchronized void onTimer() {
 		if (!started) return;
 
 		timeEventCounter++;
@@ -44,7 +44,7 @@ public class Model {
 		}
 	}
 
-	public void onCommit() {
+	public synchronized void onCommit() {
 		timeEventCounter = 0;
 		ideNotification.onTimerReset();
 	}
