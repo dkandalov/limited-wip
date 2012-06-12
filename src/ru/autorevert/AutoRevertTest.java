@@ -10,7 +10,8 @@ import static org.mockito.Mockito.*;
  */
 public class AutoRevertTest {
 	private final IdeNotification ideNotification = mock(IdeNotification.class);
-	private final Model model = new Model(ideNotification, 2);
+	private final IdeService ideService = mock(IdeService.class);
+	private final Model model = new Model(ideNotification, ideService, 2);
 
 	@Test public void whenStarted_ShouldSendNotificationToUI() {
 		model.start();
@@ -69,7 +70,7 @@ public class AutoRevertTest {
 		private boolean started = false;
 		private int timeEventCounter;
 
-		public Model(IdeNotification ideNotification, int timeEventsTillRevert) {
+		public Model(IdeNotification ideNotification, IdeService ideService, int timeEventsTillRevert) {
 			this.ideNotification = ideNotification;
 			this.timeEventsTillRevert = timeEventsTillRevert;
 		}
@@ -125,5 +126,8 @@ public class AutoRevertTest {
 			// TODO implement
 
 		}
+	}
+
+	private static class IdeService {
 	}
 }
