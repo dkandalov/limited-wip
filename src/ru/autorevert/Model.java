@@ -22,6 +22,7 @@ public class Model {
 
 	public synchronized void start() {
 		started = true;
+		timeEventCounter = 0;
 		ideNotifications.onAutoRevertStarted();
 	}
 

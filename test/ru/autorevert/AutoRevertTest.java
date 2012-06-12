@@ -65,13 +65,13 @@ public class AutoRevertTest {
 		model.start();
 		model.onTimer();
 		model.stop();
+		model.start();
 		model.onTimer();
 		model.onTimer();
 
 		inOrder.verify(ideNotifications).onTimeTillRevert(1);
 		inOrder.verify(ideNotifications).onTimeTillRevert(1);
 		inOrder.verify(ideNotifications).onTimeTillRevert(2);
-		verifyZeroInteractions(ideActions);
 	}
 
 	@Test public void whenDetectsCommit_should_NOT_RevertOnNextTimeout() {
