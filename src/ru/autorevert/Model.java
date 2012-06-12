@@ -28,6 +28,10 @@ public class Model {
 		ideNotification.onAutoRevertStopped();
 	}
 
+	public boolean isStarted() {
+		return started;
+	}
+
 	public void onTimer() {
 		if (!started) return;
 
@@ -43,9 +47,5 @@ public class Model {
 	public void onCommit() {
 		timeEventCounter = 0;
 		ideNotification.onTimerReset();
-	}
-
-	public boolean isStarted() {
-		return started;
 	}
 }
