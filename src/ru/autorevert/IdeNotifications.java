@@ -45,11 +45,19 @@ public class IdeNotifications {
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
 			return new StatusBarWidget.TextPresentation() {
 				@NotNull @Override public String getText() {
-					return "";
+					return "Auto-revert in 12:48";
 				}
 
 				@NotNull @Override public String getMaxPossibleText() {
-					return "00000";
+					return "Auto-revert in 12:48";
+				}
+
+				@Override public Consumer<MouseEvent> getClickConsumer() {
+					return new Consumer<MouseEvent>() {
+						@Override public void consume(MouseEvent mouseEvent) {
+							// TODO
+						}
+					};
 				}
 
 				@Override public float getAlignment() {
@@ -57,10 +65,6 @@ public class IdeNotifications {
 				}
 
 				@Override public String getTooltipText() {
-					return null;
-				}
-
-				@Override public Consumer<MouseEvent> getClickConsumer() {
 					return null;
 				}
 			};
