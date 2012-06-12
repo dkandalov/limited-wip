@@ -3,6 +3,7 @@ package ru.autorevert;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,7 @@ import java.awt.event.MouseEvent;
 */
 public class IdeNotifications {
 
-	private final StatusBarWidget statusBarWidget = new MyStatusBarWidget();
+	private final StatusBarWidget widget = new MyStatusBarWidget();
 	private final Project project;
 
 	public IdeNotifications(Project project) {
@@ -23,7 +24,10 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted() {
-		// TODO implement
+		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+		statusBar.removeWidget(widget.ID());
+		statusBar.addWidget(widget);
+		statusBar.updateWidget(widget.ID());
 	}
 
 	public void onAutoRevertStopped() {
