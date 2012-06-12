@@ -9,9 +9,11 @@ import static org.mockito.Mockito.*;
  * Date: 08/06/2012
  */
 public class AutoRevertTest {
+	private static final int TIME_EVENTS_TILL_REVERT = 2;
+
 	private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
 	private final IdeActions ideActions = mock(IdeActions.class);
-	private final Model model = new Model(ideNotifications, ideActions, 2);
+	private final Model model = new Model(ideNotifications, ideActions, TIME_EVENTS_TILL_REVERT);
 
 	@Test public void whenStarted_ShouldSendNotificationToUI() {
 		model.start();
