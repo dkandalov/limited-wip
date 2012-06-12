@@ -2,6 +2,8 @@ package ru.autorevert;
 
 import org.junit.Test;
 
+import static org.mockito.Mockito.*;
+
 /**
  * User: dima
  * Date: 08/06/2012
@@ -9,10 +11,11 @@ import org.junit.Test;
 public class AutoRevertTest {
 
 	@Test public void whenStartedModelShouldSendNotificationToUI() {
-
-		IDEService ideService = new IDEService();
+		IDEService ideService = mock(IDEService.class);
 		Model model = new Model(ideService);
 		model.start();
+
+		verify(ideService).autoRevertStarted();
 	}
 
 	private static class Model {
@@ -29,5 +32,9 @@ public class AutoRevertTest {
 	}
 
 	private static class IDEService {
+		public void autoRevertStarted() {
+			// TODO implement
+
+		}
 	}
 }
