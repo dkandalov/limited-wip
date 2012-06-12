@@ -29,9 +29,6 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenStarted_AndReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
-		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 2);
-
 		model.start();
 		model.onTimer();
 		model.onTimer();
@@ -44,9 +41,6 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenStartedAndStopped_should_NOT_RevertOnNextTimeout() {
-		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 2);
-
 		model.start();
 		model.onTimer();
 		model.stop();
@@ -58,9 +52,6 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenDetectsCommit_should_NOT_RevertOnNextTimeout() {
-		IDEService ideService = mock(IDEService.class);
-		Model model = new Model(ideService, 2);
-
 		model.start();
 		model.onTimer();
 		model.onCommit();
@@ -72,7 +63,6 @@ public class AutoRevertTest {
 	}
 
 	private static class Model {
-
 		private final IDEService ideService;
 		private final int timeEventsTillRevert;
 
