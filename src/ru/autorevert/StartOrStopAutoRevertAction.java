@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
  * User: dima
  * Date: 10/06/2012
  */
-public class StartOrStopAutoRevert extends AnAction {
+public class StartOrStopAutoRevertAction extends AnAction {
 	@Override public void actionPerformed(AnActionEvent event) {
 		Project project = event.getProject();
 		if (project == null) return;

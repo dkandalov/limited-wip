@@ -27,7 +27,7 @@
 
     <actions>
         <!-- TODO icon="/fileTypes/text.png"-->
-        <action id="StartAutoRevert" class="ru.autorevert.StartOrStopAutoRevert" text="Start auto-revert">
+        <action id="StartAutoRevert" class="ru.autorevert.StartOrStopAutoRevertAction" text="Start auto-revert">
             <add-to-group group-id="ToolsMenu" anchor="last" />
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift a"/>
         </action>
