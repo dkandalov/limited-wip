@@ -31,11 +31,11 @@ public class AutoRevertTest {
 		model.onTimer();
 
 		verify(ideService).autoRevertStarted();
-		verify(ideService, times(2)).revertCurrentChangeList();
+		verify(ideService, times(2)).doRevertCurrentChangeList();
 		verifyNoMoreInteractions(ideService);
 	}
 
-	@Test public void whenStartedAndStopped_should_NOT_RevertCurrentChangeList() {
+	@Test public void whenStartedAndStopped_should_NOT_RevertOnNextTimeout() {
 		IDEService ideService = mock(IDEService.class);
 		Model model = new Model(ideService, 2);
 
@@ -59,7 +59,7 @@ public class AutoRevertTest {
 		model.onTimer();
 
 		verify(ideService).autoRevertStarted();
-		verify(ideService).timerReset();
+		verify(ideService).timerWasReset();
 		verifyNoMoreInteractions(ideService);
 	}
 
@@ -92,13 +92,13 @@ public class AutoRevertTest {
 			timeEventCounter++;
 			if (timeEventCounter >= timeEventsTillRevert) {
 				timeEventCounter = 0;
-				ideService.revertCurrentChangeList();
+				ideService.doRevertCurrentChangeList();
 			}
 		}
 
 		public void onCommit() {
 			timeEventCounter = 0;
-			ideService.timerReset();
+			ideService.timerWasReset();
 		}
 	}
 
@@ -108,7 +108,7 @@ public class AutoRevertTest {
 
 		}
 
-		public void revertCurrentChangeList() {
+		public void doRevertCurrentChangeList() {
 			// TODO implement
 
 		}
@@ -118,7 +118,7 @@ public class AutoRevertTest {
 
 		}
 
-		public void timerReset() {
+		public void timerWasReset() {
 			// TODO implement
 
 		}
