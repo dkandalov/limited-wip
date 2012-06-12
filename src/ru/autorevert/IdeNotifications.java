@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
 */
 public class IdeNotifications {
 
-	private final StatusBarWidget widget = new MyStatusBarWidget();
+	private final MyStatusBarWidget widget = new MyStatusBarWidget();
 	private final Project project;
 
 	public IdeNotifications(Project project) {
@@ -39,12 +39,12 @@ public class IdeNotifications {
 		statusBar.removeWidget(widget.ID());
 	}
 
-	public void onTimerReset() {
-		// TODO implement
-
+	public void onTimer() {
+		int secondsPassed = 0;
+		widget.showTime(secondsPassed);
 	}
 
-	public void onTimer() {
+	public void onTimerReset() {
 		// TODO implement
 
 	}
@@ -53,7 +53,7 @@ public class IdeNotifications {
 		public StatusBar statusBar;
 
 		@NotNull @Override public String ID() {
-			return "myStatusBarWidget";
+			return "AutoRevert_StatusBarWidget";
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
@@ -90,6 +90,11 @@ public class IdeNotifications {
 
 		@Override public void dispose() {
 			statusBar = null;
+		}
+
+		public void showTime(int secondsPassed) {
+			// TODO implement
+
 		}
 	}
 }
