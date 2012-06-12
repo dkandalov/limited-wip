@@ -27,6 +27,7 @@ public class IdeNotifications {
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
 
+		widget.showTime(0);
 		statusBar.removeWidget(widget.ID());
 		statusBar.addWidget(widget);
 		statusBar.updateWidget(widget.ID());
@@ -45,8 +46,7 @@ public class IdeNotifications {
 	}
 
 	public void onTimerReset() {
-		// TODO implement
-
+		widget.showTime(0);
 	}
 
 	private static class MyStatusBarWidget implements StatusBarWidget {
@@ -69,7 +69,7 @@ public class IdeNotifications {
 				@Override public Consumer<MouseEvent> getClickConsumer() {
 					return new Consumer<MouseEvent>() {
 						@Override public void consume(MouseEvent mouseEvent) {
-							// TODO
+							// TODO ?
 						}
 					};
 				}
