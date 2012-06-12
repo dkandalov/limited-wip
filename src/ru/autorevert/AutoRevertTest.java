@@ -16,7 +16,7 @@ public class AutoRevertTest {
 	@Test public void whenStarted_ShouldSendNotificationToUI() {
 		model.start();
 
-		verify(ideNotification).autoRevertStarted();
+		verify(ideNotification).onAutoRevertStarted();
 		verifyZeroInteractions(ideActions);
 	}
 
@@ -36,8 +36,8 @@ public class AutoRevertTest {
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideNotification).autoRevertStarted();
-		verify(ideActions, times(2)).doRevertCurrentChangeList();
+		verify(ideNotification).onAutoRevertStarted();
+		verify(ideActions, times(2)).revertCurrentChangeList();
 		verifyNoMoreInteractions(ideActions);
 	}
 
@@ -47,8 +47,8 @@ public class AutoRevertTest {
 		model.stop();
 		model.onTimer();
 
-		verify(ideNotification).autoRevertStarted();
-		verify(ideNotification).autoRevertStopped();
+		verify(ideNotification).onAutoRevertStarted();
+		verify(ideNotification).onAutoRevertStopped();
 		verifyZeroInteractions(ideActions);
 	}
 
@@ -58,8 +58,8 @@ public class AutoRevertTest {
 		model.onCommit();
 		model.onTimer();
 
-		verify(ideNotification).autoRevertStarted();
-		verify(ideNotification).timerWasReset();
+		verify(ideNotification).onAutoRevertStarted();
+		verify(ideNotification).onTimerReset();
 		verifyZeroInteractions(ideActions);
 	}
 
@@ -79,12 +79,12 @@ public class AutoRevertTest {
 
 		public void start() {
 			started = true;
-			ideNotification.autoRevertStarted();
+			ideNotification.onAutoRevertStarted();
 		}
 
 		public void stop() {
 			started = false;
-			ideNotification.autoRevertStopped();
+			ideNotification.onAutoRevertStopped();
 		}
 
 		public void onTimer() {
@@ -95,28 +95,28 @@ public class AutoRevertTest {
 
 			if (timeEventCounter >= timeEventsTillRevert) {
 				timeEventCounter = 0;
-				ideActions.doRevertCurrentChangeList();
+				ideActions.revertCurrentChangeList();
 			}
 		}
 
 		public void onCommit() {
 			timeEventCounter = 0;
-			ideNotification.timerWasReset();
+			ideNotification.onTimerReset();
 		}
 	}
 
 	private static class IdeNotification {
-		public void autoRevertStarted() {
+		public void onAutoRevertStarted() {
 			// TODO implement
 
 		}
 
-		public void autoRevertStopped() {
+		public void onAutoRevertStopped() {
 			// TODO implement
 
 		}
 
-		public void timerWasReset() {
+		public void onTimerReset() {
 			// TODO implement
 
 		}
@@ -128,7 +128,7 @@ public class AutoRevertTest {
 	}
 
 	private static class IdeActions {
-		public void doRevertCurrentChangeList() {
+		public void revertCurrentChangeList() {
 			// TODO implement
 
 		}
