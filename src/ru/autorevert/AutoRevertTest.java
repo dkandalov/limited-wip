@@ -10,15 +10,14 @@ import static org.mockito.Mockito.*;
  */
 public class AutoRevertTest {
 	private final IdeNotification ideNotification = mock(IdeNotification.class);
-	private final IdeService ideService = mock(IdeService.class);
-	private final Model model = new Model(ideNotification, ideService, 2);
+	private final IdeActions ideActions = mock(IdeActions.class);
+	private final Model model = new Model(ideNotification, ideActions, 2);
 
 	@Test public void whenStarted_ShouldSendNotificationToUI() {
 		model.start();
 
 		verify(ideNotification).autoRevertStarted();
-		verifyNoMoreInteractions(ideNotification);
-		verifyZeroInteractions(ideService);
+		verifyZeroInteractions(ideActions);
 	}
 
 	@Test public void whenStarted_OnEachTimeEvent_ShouldSentNotificationToUI() {
@@ -27,7 +26,7 @@ public class AutoRevertTest {
 		model.onTimer();
 
 		verify(ideNotification, times(1)).onTimer();
-		verifyZeroInteractions(ideService);
+		verifyZeroInteractions(ideActions);
 	}
 
 	@Test public void whenStarted_AndReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
@@ -38,8 +37,8 @@ public class AutoRevertTest {
 		model.onTimer();
 
 		verify(ideNotification).autoRevertStarted();
-		verify(ideService, times(2)).doRevertCurrentChangeList();
-		verifyNoMoreInteractions(ideService);
+		verify(ideActions, times(2)).doRevertCurrentChangeList();
+		verifyNoMoreInteractions(ideActions);
 	}
 
 	@Test public void whenStartedAndStopped_should_NOT_RevertOnNextTimeout() {
@@ -50,7 +49,7 @@ public class AutoRevertTest {
 
 		verify(ideNotification).autoRevertStarted();
 		verify(ideNotification).autoRevertStopped();
-		verifyZeroInteractions(ideService);
+		verifyZeroInteractions(ideActions);
 	}
 
 	@Test public void whenDetectsCommit_should_NOT_RevertOnNextTimeout() {
@@ -61,20 +60,20 @@ public class AutoRevertTest {
 
 		verify(ideNotification).autoRevertStarted();
 		verify(ideNotification).timerWasReset();
-		verifyZeroInteractions(ideService);
+		verifyZeroInteractions(ideActions);
 	}
 
 	private static class Model {
 		private final IdeNotification ideNotification;
-		private final IdeService ideService;
+		private final IdeActions ideActions;
 		private final int timeEventsTillRevert;
 
 		private boolean started = false;
 		private int timeEventCounter;
 
-		public Model(IdeNotification ideNotification, IdeService ideService, int timeEventsTillRevert) {
+		public Model(IdeNotification ideNotification, IdeActions ideActions, int timeEventsTillRevert) {
 			this.ideNotification = ideNotification;
-			this.ideService = ideService;
+			this.ideActions = ideActions;
 			this.timeEventsTillRevert = timeEventsTillRevert;
 		}
 
@@ -96,7 +95,7 @@ public class AutoRevertTest {
 
 			if (timeEventCounter >= timeEventsTillRevert) {
 				timeEventCounter = 0;
-				ideService.doRevertCurrentChangeList();
+				ideActions.doRevertCurrentChangeList();
 			}
 		}
 
@@ -128,7 +127,7 @@ public class AutoRevertTest {
 		}
 	}
 
-	private static class IdeService {
+	private static class IdeActions {
 		public void doRevertCurrentChangeList() {
 			// TODO implement
 
