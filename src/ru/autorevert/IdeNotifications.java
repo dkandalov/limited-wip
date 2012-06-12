@@ -51,6 +51,12 @@ public class IdeNotifications {
 		statusBar.updateWidget(widget.ID());
 	}
 
+	public static String formatTime(int seconds) {
+		int min = seconds / 60;
+		int sec = seconds % 60;
+		return String.format("%02d", min) + ":" + String.format("%02d", sec);
+	}
+
 	private static class MyStatusBarWidget implements StatusBarWidget {
 		private static final String PREFIX_TEXT = "Auto-revert in ";
 		public StatusBar statusBar;
