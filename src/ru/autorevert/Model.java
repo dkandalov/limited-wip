@@ -62,6 +62,7 @@ public class Model {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override public void run() {
 					// TODO probably should detect commit dialog being open and don't revert in this case
+					// TODO still get "reload from file system" popup questions
 					LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
 					if (changeList.getChanges().isEmpty()) return;
 
