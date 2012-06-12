@@ -48,6 +48,7 @@ public class IdeNotifications {
 	}
 
 	private static class MyStatusBarWidget implements StatusBarWidget {
+		private static final String PREFIX_TEXT = "Auto-revert in ";
 		public StatusBar statusBar;
 
 		@Override public void install(@NotNull StatusBar statusBar) {
@@ -66,11 +67,11 @@ public class IdeNotifications {
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
 			return new StatusBarWidget.TextPresentation() {
 				@NotNull @Override public String getText() {
-					return "Auto-revert in 12:48";
+					return PREFIX_TEXT;
 				}
 
 				@NotNull @Override public String getMaxPossibleText() {
-					return "Auto-revert in 12:48";
+					return PREFIX_TEXT + "99:99";
 				}
 
 				@Override public Consumer<MouseEvent> getClickConsumer() {
