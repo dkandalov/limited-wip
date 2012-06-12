@@ -37,8 +37,8 @@ public class AutoRevertTest {
 		model.onTimer();
 
 		verify(ideNotification).autoRevertStarted();
-		verify(ideNotification, times(2)).doRevertCurrentChangeList();
-		verifyNoMoreInteractions(ideNotification);
+		verify(ideService, times(2)).doRevertCurrentChangeList();
+		verifyNoMoreInteractions(ideService);
 	}
 
 	@Test public void whenStartedAndStopped_should_NOT_RevertOnNextTimeout() {
@@ -65,6 +65,7 @@ public class AutoRevertTest {
 
 	private static class Model {
 		private final IdeNotification ideNotification;
+		private final IdeService ideService;
 		private final int timeEventsTillRevert;
 
 		private boolean started = false;
@@ -72,6 +73,7 @@ public class AutoRevertTest {
 
 		public Model(IdeNotification ideNotification, IdeService ideService, int timeEventsTillRevert) {
 			this.ideNotification = ideNotification;
+			this.ideService = ideService;
 			this.timeEventsTillRevert = timeEventsTillRevert;
 		}
 
@@ -91,7 +93,7 @@ public class AutoRevertTest {
 			timeEventCounter++;
 			if (timeEventCounter >= timeEventsTillRevert) {
 				timeEventCounter = 0;
-				ideNotification.doRevertCurrentChangeList();
+				ideService.doRevertCurrentChangeList();
 			}
 		}
 
@@ -103,11 +105,6 @@ public class AutoRevertTest {
 
 	private static class IdeNotification {
 		public void autoRevertStarted() {
-			// TODO implement
-
-		}
-
-		public void doRevertCurrentChangeList() {
 			// TODO implement
 
 		}
@@ -129,5 +126,9 @@ public class AutoRevertTest {
 	}
 
 	private static class IdeService {
+		public void doRevertCurrentChangeList() {
+			// TODO implement
+
+		}
 	}
 }
