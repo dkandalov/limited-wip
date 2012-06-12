@@ -2,7 +2,10 @@ package ru.autorevert;
 
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.event.MouseEvent;
 
 /**
 * User: dima
@@ -10,28 +13,10 @@ import org.jetbrains.annotations.NotNull;
 */
 public class IdeNotifications {
 
-
-	private final StatusBarWidget statusBarWidget = new StatusBarWidget() {
-		public StatusBar statusBar;
-
-		@NotNull @Override public String ID() {
-			return "myStatusBarWidget";
-		}
-
-		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
-			return null;
-		}
-
-		@Override public void install(@NotNull StatusBar statusBar) {
-			this.statusBar = statusBar;
-		}
-
-		@Override public void dispose() {
-		}
-	};
+	private final StatusBarWidget statusBarWidget = new MyStatusBarWidget();
 
 	public void onAutoRevertStarted() {
-
+		// TODO implement
 	}
 
 	public void onAutoRevertStopped() {
@@ -47,5 +32,33 @@ public class IdeNotifications {
 	public void onTimer() {
 		// TODO implement
 
+	}
+
+	private static class MyStatusBarWidget implements StatusBarWidget {
+		public StatusBar statusBar;
+
+		@NotNull @Override public String ID() {
+			return "myStatusBarWidget";
+		}
+
+		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
+			return new WidgetPresentation() {
+				@Override public String getTooltipText() {
+					return null;
+				}
+
+				@Override public Consumer<MouseEvent> getClickConsumer() {
+					return null;
+				}
+			};
+		}
+
+		@Override public void install(@NotNull StatusBar statusBar) {
+			this.statusBar = statusBar;
+		}
+
+		@Override public void dispose() {
+			statusBar = null;
+		}
 	}
 }
