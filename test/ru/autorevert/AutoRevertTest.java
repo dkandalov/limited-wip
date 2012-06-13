@@ -81,7 +81,7 @@ public class AutoRevertTest {
 
 		model.start();
 		model.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
-		model.onCommit();
+		model.onCommit(); inOrder.verify(ideNotifications).onCommit(TIME_EVENTS_TILL_REVERT);
 		model.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
 		model.onTimer();  inOrder.verify(ideNotifications).onTimer(1);
 	}

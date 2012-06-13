@@ -40,6 +40,10 @@ public class IdeNotifications {
 		widget.showThatStopped();
 	}
 
+	public void onCommit(int timeEventsTillRevert) {
+		showTimeLeft(timeEventsTillRevert);
+	}
+
 	public void onTimer(int secondsLeft) {
 		showTimeLeft(secondsLeft);
 	}
