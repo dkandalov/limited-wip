@@ -1,7 +1,7 @@
 package ru.autorevert;
 
 /**
- * TODO should reset timer on user reset?
+ * TODO should reset timer on user revert?
  *
  * User: dima
  * Date: 10/06/2012
@@ -29,7 +29,7 @@ public class Model {
 	public synchronized void stop() {
 		started = false;
 		ideNotifications.onAutoRevertStopped();
-		ideNotifications.onTimerReset();
+		ideNotifications.onTimeTillRevert(timeEventsTillRevert);
 	}
 
 	public synchronized boolean isStarted() {

@@ -28,13 +28,9 @@ public class AutoRevertTest {
 
 		model.onTimer();
 		model.start();
-		model.onTimer();
-		model.onTimer();
-		model.onTimer();
-
-		inOrder.verify(ideNotifications).onTimeTillRevert(2);
-		inOrder.verify(ideNotifications).onTimeTillRevert(1);
-		inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
+		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(eq(1));
+		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
 	}
 
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_shouldRevertCurrentChangeList() {
@@ -59,19 +55,15 @@ public class AutoRevertTest {
 		verifyZeroInteractions(ideActions);
 	}
 
-	@Test public void whenStopped_should_ResetTimeLeftTillRevert() {
+	@Test public void whenStopped_should_ResetTimeLeftTillRevert_And_NotifyUI() {
 		InOrder inOrder = inOrder(ideNotifications);
 
 		model.start();
-		model.onTimer();
-		model.stop();
+		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		model.stop();    inOrder.verify(ideNotifications).onTimeTillRevert(2);
 		model.start();
-		model.onTimer();
-		model.onTimer();
-
-		inOrder.verify(ideNotifications).onTimeTillRevert(2);
-		inOrder.verify(ideNotifications).onTimeTillRevert(2);
-		inOrder.verify(ideNotifications).onTimeTillRevert(1);
+		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(1);
 	}
 
 	@Test public void whenDetectsCommit_should_NOT_RevertOnNextTimeout() {
@@ -84,14 +76,13 @@ public class AutoRevertTest {
 		verifyZeroInteractions(ideActions);
 	}
 
-	@Test public void whenDetectsCommit_should_ResetTimeLeftTillRevert() {
+	@Test public void whenDetectsCommit_should_ResetTimeLeftTillRevert_And_NotifyUI() {
 		InOrder inOrder = inOrder(ideNotifications);
 
 		model.start();
-		model.onTimer();
-		model.onCommit();
-		model.onTimer();
-
-		inOrder.verify(ideNotifications, times(3)).onTimeTillRevert(2);
+		model.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		model.onCommit(); inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		model.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		model.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(1);
 	}
 }
