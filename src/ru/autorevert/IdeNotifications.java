@@ -40,7 +40,7 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void onCommit(int timeEventsTillRevert) {
+	public void onCommit(int timeEventsTillRevert) { // TODO all projects receive onCommit()
 		widget.showTime(formatTime(timeEventsTillRevert));
 		updateStatusBar();
 	}
