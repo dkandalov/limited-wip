@@ -22,7 +22,7 @@ public class IdeNotifications {
 	public IdeNotifications(Project project) {
 		this.project = project;
 
-		widget.showThatStopped();
+		onAutoRevertStopped();
 
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
@@ -33,24 +33,26 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
-		showTimeLeft(timeEventsTillRevert);
+		widget.showTime(formatTime(timeEventsTillRevert));
+		updateStatusBar();
 	}
 
 	public void onAutoRevertStopped() {
 		widget.showThatStopped();
+		updateStatusBar();
 	}
 
 	public void onCommit(int timeEventsTillRevert) {
-		showTimeLeft(timeEventsTillRevert);
+		widget.showTime(formatTime(timeEventsTillRevert));
+		updateStatusBar();
 	}
 
 	public void onTimer(int secondsLeft) {
-		showTimeLeft(secondsLeft);
+		widget.showTime(formatTime(secondsLeft));
+		updateStatusBar();
 	}
 
-	private void showTimeLeft(int secondsLeft) {
-		widget.showTime(formatTime(secondsLeft));
-
+	private void updateStatusBar() {
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
 		statusBar.updateWidget(widget.ID());
