@@ -8,4 +8,5 @@ import javax.swing.*;
  */
 public class SettingsForm {
 	private JComboBox comboBox1;
+	private JCheckBox checkBox1;
 }
