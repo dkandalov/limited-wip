@@ -18,16 +18,17 @@ import org.jetbrains.annotations.NotNull;
 public class RevertComponent extends AbstractProjectComponent {
 	private static final int TIME_EVENT_TILL_REVERT = 120;
 
-	private final Model model;
+	private Model model;
 	private TimerEventsSource.Listener listener;
 
 	protected RevertComponent(Project project) {
 		super(project);
-		model = new Model(new IdeNotifications(project), new IdeActions(project), TIME_EVENT_TILL_REVERT);
 	}
 
-	@Override public void initComponent() {
-		super.initComponent();
+	@Override public void projectOpened() {
+		super.projectOpened();
+
+		model = new Model(new IdeNotifications(myProject), new IdeActions(myProject), TIME_EVENT_TILL_REVERT);
 
 		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
 		listener = new TimerEventsSource.Listener() {
@@ -52,8 +53,16 @@ public class RevertComponent extends AbstractProjectComponent {
 		timerEventsSource.removeListener(listener);
 	}
 
-	public Model getModel() {
-		return model;
+	public void start() {
+		model.start();
+	}
+
+	public boolean isStarted() {
+		return model.isStarted();
+	}
+
+	public void stop() {
+		model.stop();
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {

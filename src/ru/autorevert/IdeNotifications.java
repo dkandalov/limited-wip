@@ -62,7 +62,7 @@ public class IdeNotifications {
 		return String.format("%02d", min) + ":" + String.format("%02d", sec);
 	}
 
-	private static class MyStatusBarWidget implements StatusBarWidget {
+	public static class MyStatusBarWidget implements StatusBarWidget {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
 		private static final String STOPPED_TEXT = "Auto-revert stopped";
 

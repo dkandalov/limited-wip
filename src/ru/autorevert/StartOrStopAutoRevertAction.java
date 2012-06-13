@@ -13,11 +13,11 @@ public class StartOrStopAutoRevertAction extends AnAction {
 		Project project = event.getProject();
 		if (project == null) return;
 
-		Model model = project.getComponent(RevertComponent.class).getModel();
-		if (model.isStarted()) {
-			model.stop();
+		RevertComponent revertComponent = project.getComponent(RevertComponent.class);
+		if (revertComponent.isStarted()) {
+			revertComponent.stop();
 		} else {
-			model.start();
+			revertComponent.start();
 		}
 	}
 
@@ -31,8 +31,7 @@ public class StartOrStopAutoRevertAction extends AnAction {
 	private static String textFor(Project project) {
 		if (project == null) return "Start auto-revert";
 
-		Model model = project.getComponent(RevertComponent.class).getModel();
-		if (model.isStarted()) {
+		if (project.getComponent(RevertComponent.class).isStarted()) {
 			return "Stop auto-revert";
 		} else {
 			return "Start auto-revert";
