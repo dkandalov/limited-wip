@@ -33,7 +33,7 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
-		onTimer(timeEventsTillRevert);
+		showTimeLeft(timeEventsTillRevert);
 	}
 
 	public void onAutoRevertStopped() {
@@ -41,6 +41,10 @@ public class IdeNotifications {
 	}
 
 	public void onTimer(int secondsLeft) {
+		showTimeLeft(secondsLeft);
+	}
+
+	private void showTimeLeft(int secondsLeft) {
 		widget.showTime(formatTime(secondsLeft));
 
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
@@ -56,7 +60,7 @@ public class IdeNotifications {
 
 	private static class MyStatusBarWidget implements StatusBarWidget {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
-		private static final String STOPPED_TEXT = "Auto-revert in ";
+		private static final String STOPPED_TEXT = "Auto-revert stopped";
 
 		public StatusBar statusBar;
 		private String text = "";
