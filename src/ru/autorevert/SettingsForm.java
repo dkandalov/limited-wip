@@ -9,6 +9,6 @@ import javax.swing.*;
 public class SettingsForm {
 	private JComboBox comboBox1;
 	private JCheckBox TODOCheckBox;
-	private JCheckBox checkBox1;
-	private JCheckBox checkBox2;
+	private JCheckBox TODOCheckBox1;
+	private JCheckBox TODOCheckBox2;
 }

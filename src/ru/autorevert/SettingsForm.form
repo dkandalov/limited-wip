@@ -72,6 +72,7 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <enabled value="false"/>
           <text value="Popup notification before revert"/>
         </properties>
       </component>
@@ -80,23 +81,26 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <enabled value="false"/>
           <text value="Popup notification on revert"/>
         </properties>
       </component>
-      <component id="188c" class="javax.swing.JCheckBox" binding="checkBox1" default-binding="true">
+      <component id="188c" class="javax.swing.JCheckBox" binding="TODOCheckBox1" default-binding="true">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value=""/>
+          <enabled value="false"/>
+          <text value="TODO"/>
         </properties>
       </component>
-      <component id="2351" class="javax.swing.JCheckBox" binding="checkBox2" default-binding="true">
+      <component id="2351" class="javax.swing.JCheckBox" binding="TODOCheckBox2" default-binding="true">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value=""/>
+          <enabled value="false"/>
+          <text value="TODO"/>
         </properties>
       </component>
     </children>
