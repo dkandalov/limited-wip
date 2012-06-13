@@ -1,5 +1,7 @@
 package ru.autorevert;
 
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
@@ -98,7 +100,8 @@ public class IdeNotifications {
 				@Override public Consumer<MouseEvent> getClickConsumer() {
 					return new Consumer<MouseEvent>() {
 						@Override public void consume(MouseEvent mouseEvent) {
-							Project project = null; // TODO
+							Project project = PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(mouseEvent.getComponent()));
+							if (project == null) return;
 
 							RevertComponent revertComponent = project.getComponent(RevertComponent.class);
 							if (revertComponent.isStarted()) {
