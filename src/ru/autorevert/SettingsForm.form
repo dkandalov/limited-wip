@@ -34,6 +34,10 @@
           <model>
             <item value="2"/>
             <item value="5"/>
+            <item value="10"/>
+            <item value="15"/>
+            <item value="25"/>
+            <item value="60"/>
           </model>
         </properties>
       </component>
@@ -50,6 +54,7 @@
           <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <enabled value="false"/>
           <text value="Do not allow commits with code errors"/>
         </properties>
       </component>
