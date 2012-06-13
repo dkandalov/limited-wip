@@ -32,7 +32,7 @@ public class IdeNotifications {
 		statusBar.updateWidget(widget.ID());
 	}
 
-	public void onAutoRevertStarted() {
+	public void onAutoRevertStarted(int timeEventsTillRevert) {
 	}
 
 	public void onAutoRevertStopped() {

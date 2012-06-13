@@ -19,7 +19,7 @@ public class AutoRevertTest {
 	@Test public void whenStarted_ShouldSendNotificationToUI() {
 		model.start();
 
-		verify(ideNotifications).onAutoRevertStarted();
+		verify(ideNotifications).onAutoRevertStarted(TIME_EVENTS_TILL_REVERT);
 		verifyZeroInteractions(ideActions);
 	}
 
@@ -50,7 +50,7 @@ public class AutoRevertTest {
 		model.stop();
 		model.onTimer();
 
-		verify(ideNotifications).onAutoRevertStarted();
+		verify(ideNotifications).onAutoRevertStarted(anyInt());
 		verify(ideNotifications).onAutoRevertStopped();
 		verifyZeroInteractions(ideActions);
 	}
@@ -72,7 +72,7 @@ public class AutoRevertTest {
 		model.onCommit();
 		model.onTimer();
 
-		verify(ideNotifications).onAutoRevertStarted();
+		verify(ideNotifications).onAutoRevertStarted(anyInt());
 		verifyZeroInteractions(ideActions);
 	}
 

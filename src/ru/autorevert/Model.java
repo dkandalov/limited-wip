@@ -23,13 +23,12 @@ public class Model {
 	public synchronized void start() {
 		started = true;
 		timeEventCounter = 0;
-		ideNotifications.onAutoRevertStarted();
+		ideNotifications.onAutoRevertStarted(timeEventsTillRevert);
 	}
 
 	public synchronized void stop() {
 		started = false;
 		ideNotifications.onAutoRevertStopped();
-		ideNotifications.onTimeTillRevert(timeEventsTillRevert);
 	}
 
 	public synchronized boolean isStarted() {
