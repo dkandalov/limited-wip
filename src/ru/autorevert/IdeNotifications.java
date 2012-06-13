@@ -11,9 +11,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /**
-* User: dima
-* Date: 12/06/2012
-*/
+ * User: dima
+ * Date: 12/06/2012
+ */
 public class IdeNotifications {
 
 	private final MyStatusBarWidget widget = new MyStatusBarWidget();
@@ -22,12 +22,10 @@ public class IdeNotifications {
 	public IdeNotifications(Project project) {
 		this.project = project;
 
-		onAutoRevertStopped();
-
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
 
-		statusBar.removeWidget(widget.ID());
+		widget.showThatStopped();
 		statusBar.addWidget(widget);
 		statusBar.updateWidget(widget.ID());
 	}
