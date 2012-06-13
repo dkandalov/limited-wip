@@ -33,15 +33,14 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted() {
-		onTimerReset();
 	}
 
 	public void onAutoRevertStopped() {
 		widget.showThatStopped();
 	}
 
-	public void onTimerReset() {
-		onTimeTillRevert(0);
+	public void onTimerReset(int secondsLeft) {
+		onTimeTillRevert(secondsLeft);
 	}
 
 	public void onTimeTillRevert(int secondsLeft) {

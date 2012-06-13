@@ -60,8 +60,8 @@ public class AutoRevertTest {
 
 		model.start();
 		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(2);
-		model.stop();    inOrder.verify(ideNotifications).onTimeTillRevert(2);
-		model.start();
+		model.stop();
+		model.start();   inOrder.verify(ideNotifications).onTimerReset(2);
 		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(2);
 		model.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(1);
 	}
@@ -81,7 +81,7 @@ public class AutoRevertTest {
 
 		model.start();
 		model.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(2);
-		model.onCommit(); inOrder.verify(ideNotifications).onTimeTillRevert(2);
+		model.onCommit(); inOrder.verify(ideNotifications).onTimerReset(2);
 		model.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(2);
 		model.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(1);
 	}
