@@ -98,7 +98,8 @@ public class IdeNotifications {
 				@Override public Consumer<MouseEvent> getClickConsumer() {
 					return new Consumer<MouseEvent>() {
 						@Override public void consume(MouseEvent mouseEvent) {
-							Project project = null;
+							Project project = null; // TODO
+
 							RevertComponent revertComponent = project.getComponent(RevertComponent.class);
 							if (revertComponent.isStarted()) {
 								revertComponent.stop();
