@@ -33,17 +33,14 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
+		onTimer(timeEventsTillRevert);
 	}
 
 	public void onAutoRevertStopped() {
 		widget.showThatStopped();
 	}
 
-	public void onTimerReset(int secondsLeft) {
-		onTimeTillRevert(secondsLeft);
-	}
-
-	public void onTimeTillRevert(int secondsLeft) {
+	public void onTimer(int secondsLeft) {
 		widget.showTime(formatTime(secondsLeft));
 
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
