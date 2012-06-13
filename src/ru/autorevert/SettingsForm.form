@@ -15,7 +15,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Revert every"/>
+          <text value="Revert active change list every"/>
         </properties>
       </component>
       <vspacer id="a4ae6">
@@ -29,7 +29,13 @@
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <editable value="true"/>
+          <model>
+            <item value="2"/>
+            <item value="5"/>
+          </model>
+        </properties>
       </component>
       <component id="146ad" class="javax.swing.JLabel">
         <constraints>
