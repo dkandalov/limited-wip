@@ -1,6 +1,7 @@
 package ru.autorevert;
 
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nls;
@@ -20,7 +21,8 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Override public JComponent createComponent() {
-		return new SettingsForm().root;
+		Settings settings = ServiceManager.getService(Settings.class);
+		return new SettingsForm(settings).root;
 	}
 
 	@Override public boolean isModified() {

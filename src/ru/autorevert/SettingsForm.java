@@ -12,4 +12,10 @@ public class SettingsForm {
 	private JCheckBox TODOCheckBox1;
 	private JCheckBox TODOCheckBox2;
 	public JPanel root;
+
+	private final Settings settings;
+
+	public SettingsForm(Settings settings) {
+		this.settings = settings;
+	}
 }
