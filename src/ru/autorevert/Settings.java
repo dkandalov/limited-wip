@@ -11,6 +11,9 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
  */
 @State(name = "AutoRevertSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/autorevert.settings.xml")})
 public class Settings implements PersistentStateComponent<Settings>  {
+	private static final int DEFAULT_MINUTES_TILL_REVERT = 2;
+
+	public int minutesTillRevert = DEFAULT_MINUTES_TILL_REVERT;
 
 	@Override public Settings getState() {
 		return this;
