@@ -14,6 +14,7 @@ import java.util.TimerTask;
  */
 public class TimerEventsSource implements ApplicationComponent {
 
+	private static final int ONE_SECONDS = 1000;
 	private final Timer timer = new Timer();
 	private final List<Listener> listeners = new ArrayList<Listener>();
 
@@ -23,9 +24,8 @@ public class TimerEventsSource implements ApplicationComponent {
 				for (Listener listener : listeners) {
 					listener.onTimerEvent();
 				}
-				System.out.println("TimerEventsSource.run");
 			}
-		}, 0, 1000);
+		}, 0, ONE_SECONDS);
 	}
 
 	@Override public void disposeComponent() {
@@ -34,7 +34,7 @@ public class TimerEventsSource implements ApplicationComponent {
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "TimerEventsSource";
+		return "AutoRevert-TimerEventsSource";
 	}
 
 	public void addListener(Listener listener) {
