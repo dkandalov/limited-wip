@@ -19,22 +19,6 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	@Override public void disposeComponent() {
 	}
 
-	@Nls @Override public String getDisplayName() {
-		return null;
-	}
-
-	@Override public Icon getIcon() {
-		return null;
-	}
-
-	@Override public String getHelpTopic() {
-		return null;
-	}
-
-	@NotNull @Override public String getComponentName() {
-		return null;
-	}
-
 	@Override public JComponent createComponent() {
 		return null;
 	}
@@ -50,5 +34,21 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Override public void disposeUIResources() {
+	}
+
+	@Nls @Override public String getDisplayName() {
+		return "Auto-revert settings";
+	}
+
+	@NotNull @Override public String getComponentName() {
+		return "AutoRevertAppComponent";
+	}
+
+	@Override public Icon getIcon() {
+		return null;
+	}
+
+	@Override public String getHelpTopic() {
+		return null;
 	}
 }
