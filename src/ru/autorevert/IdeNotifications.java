@@ -105,11 +105,11 @@ public class IdeNotifications {
 							Project project = PlatformDataKeys.PROJECT.getData(dataContext);
 							if (project == null) return;
 
-							RevertComponent revertComponent = project.getComponent(RevertComponent.class);
-							if (revertComponent.isStarted()) {
-								revertComponent.stop();
+							AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
+							if (autoRevertProjectComponent.isStarted()) {
+								autoRevertProjectComponent.stop();
 							} else {
-								revertComponent.start();
+								autoRevertProjectComponent.start();
 							}
 						}
 					};

@@ -21,7 +21,7 @@
 
     <project-components>
         <component>
-            <implementation-class>ru.autorevert.RevertComponent</implementation-class>
+            <implementation-class>ru.autorevert.AutoRevertProjectComponent</implementation-class>
         </component>
     </project-components>
 
