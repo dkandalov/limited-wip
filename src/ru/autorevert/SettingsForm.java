@@ -18,4 +18,19 @@ public class SettingsForm {
 	public SettingsForm(Settings settings) {
 		this.settings = settings;
 	}
+
+	public boolean isModfied() {
+		// TODO implement
+		return false;
+	}
+
+	public void apply() {
+		// TODO implement
+
+	}
+
+	public void reset() {
+		// TODO implement
+
+	}
 }

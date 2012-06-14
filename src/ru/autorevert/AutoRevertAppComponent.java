@@ -14,6 +14,9 @@ import javax.swing.*;
  * Date: 14/06/2012
  */
 public class AutoRevertAppComponent implements ApplicationComponent, Configurable {
+
+	private SettingsForm settingsForm;
+
 	@Override public void initComponent() {
 	}
 
@@ -22,20 +25,24 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 
 	@Override public JComponent createComponent() {
 		Settings settings = ServiceManager.getService(Settings.class);
-		return new SettingsForm(settings).root;
+		settingsForm = new SettingsForm(settings);
+		return settingsForm.root;
 	}
 
 	@Override public boolean isModified() {
-		return false;
+		return settingsForm.isModfied();
 	}
 
 	@Override public void apply() throws ConfigurationException {
+		settingsForm.apply();
 	}
 
 	@Override public void reset() {
+		settingsForm.reset();
 	}
 
 	@Override public void disposeUIResources() {
+		settingsForm = null;
 	}
 
 	@Nls @Override public String getDisplayName() {
