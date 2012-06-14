@@ -43,7 +43,7 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void onCommit(int timeEventsTillRevert) { // TODO all projects receive onCommit()
+	public void onCommit(int timeEventsTillRevert) { // TODO all projects receive onCommit(); shouldn't send when auto-revert stopped
 		widget.showTime(formatTime(timeEventsTillRevert));
 		updateStatusBar();
 	}
