@@ -22,4 +22,21 @@ public class Settings implements PersistentStateComponent<Settings>  {
 	@Override public void loadState(Settings state) {
 		XmlSerializerUtil.copyBean(state, this);
 	}
+
+	@SuppressWarnings("RedundantIfStatement") @Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Settings settings = (Settings) o;
+
+		if (minutesTillRevert != settings.minutesTillRevert) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return minutesTillRevert;
+	}
 }
