@@ -11,4 +11,5 @@ public class SettingsForm {
 	private JCheckBox TODOCheckBox;
 	private JCheckBox TODOCheckBox1;
 	private JCheckBox TODOCheckBox2;
+	public JPanel root;
 }

@@ -20,7 +20,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Override public JComponent createComponent() {
-		return null;
+		return new SettingsForm().root;
 	}
 
 	@Override public boolean isModified() {
