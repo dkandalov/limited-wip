@@ -22,10 +22,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	@Override public void initComponent() {
 		Settings settings = ServiceManager.getService(Settings.class);
 
-		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-			AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
-			autoRevertProjectComponent.onNewSettings(settings);
-		}
+		notifyAllProjectsAbout(settings);
 	}
 
 	@Override public void disposeComponent() {
@@ -42,7 +39,9 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Override public void apply() throws ConfigurationException {
-		// TODO
+		settingsForm.initialState.loadState(settingsForm.currentState);
+
+		notifyAllProjectsAbout(settingsForm.currentState);
 	}
 
 	@Override public void reset() {
@@ -67,5 +66,12 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 
 	@Override public String getHelpTopic() {
 		return null;
+	}
+
+	private void notifyAllProjectsAbout(Settings settings) {
+		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+			AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
+			autoRevertProjectComponent.onNewSettings(settings);
+		}
 	}
 }
