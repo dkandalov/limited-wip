@@ -15,6 +15,9 @@
 
     <application-components>
         <component>
+            <implementation-class>ru.autorevert.AutoRevertAppComponent</implementation-class>
+        </component>
+        <component>
             <implementation-class>ru.autorevert.TimerEventsSource</implementation-class>
         </component>
     </application-components>
