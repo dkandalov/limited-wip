@@ -3,7 +3,6 @@ package ru.autorevert;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 /**
@@ -108,6 +107,14 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenTimeTillRevertChangesAfterStart_should_ApplyItOnlyAfterNext_Commit() {
-		fail();
+		model.start();
+		model.onNewSettings(1);
+		model.onTimer();
+		model.onCommit();
+		model.onTimer();
+		model.onTimer();
+		model.onTimer();
+
+		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
 }
