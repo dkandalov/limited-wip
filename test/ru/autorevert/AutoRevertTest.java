@@ -90,10 +90,10 @@ public class AutoRevertTest {
 		model.start();
 		model.onTimer();
 		model.onNewSettings(3);
-		model.onTimer(); // reverts changes
+		model.onTimer(); // reverts changes after 2nd time event
 		model.onTimer();
 		model.onTimer();
-		model.onTimer();
+		model.onTimer(); // reverts changes after 3d time event
 		model.onTimer();
 
 		verify(ideActions, times(2)).revertCurrentChangeList();

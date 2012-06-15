@@ -9,9 +9,10 @@ package ru.autorevert;
 public class Model {
 	private final IdeNotifications ideNotifications;
 	private final IdeActions ideActions;
-	private final int timeEventsTillRevert;
 
 	private boolean started = false;
+	private int newTimeEventTillRevert;
+	private int timeEventsTillRevert;
 	private int timeEventCounter;
 
 	public Model(IdeNotifications ideNotifications, IdeActions ideActions, int timeEventsTillRevert) {
@@ -52,8 +53,7 @@ public class Model {
 		ideNotifications.onCommit(timeEventsTillRevert);
 	}
 
-	public void onNewSettings(int timeEventsTillRevert) {
-		// TODO implement
-
+	public void onNewSettings(int newTimeEventTillRevert) {
+		this.newTimeEventTillRevert = newTimeEventTillRevert;
 	}
 }
