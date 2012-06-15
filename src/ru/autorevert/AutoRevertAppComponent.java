@@ -38,15 +38,15 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Override public boolean isModified() {
-		return settingsForm.isModfied();
+		return settingsForm.currentState.equals(settingsForm.initialState);
 	}
 
 	@Override public void apply() throws ConfigurationException {
-		settingsForm.apply();
+		// TODO
 	}
 
 	@Override public void reset() {
-		settingsForm.reset();
+		settingsForm.currentState.loadState(settingsForm.initialState);
 	}
 
 	@Override public void disposeUIResources() {

@@ -16,8 +16,8 @@ public class SettingsForm {
 	private JCheckBox TODOCheckBox2;
 	private JCheckBox TODOCheckBox3;
 
-	private final Settings initialState;
-	private Settings currentState;
+	public final Settings initialState;
+	public Settings currentState;
 
 	public SettingsForm(Settings initialState) {
 		this.initialState = initialState;
@@ -33,18 +33,5 @@ public class SettingsForm {
 				}
 			}
 		});
-	}
-
-	public boolean isModfied() {
-		return currentState.equals(initialState);
-	}
-
-	public void apply() {
-		// TODO implement
-
-	}
-
-	public void reset() {
-		currentState.loadState(initialState);
 	}
 }
