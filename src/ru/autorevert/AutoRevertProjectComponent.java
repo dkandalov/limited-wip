@@ -39,7 +39,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 		timerEventsSource.addListener(listener);
 
 		// register commit callback
-		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(new Runnable() {
+		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(myProject, new Runnable() {
 			@Override public void run() {
 				model.onCommit();
 			}
@@ -70,9 +70,11 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
+		private final Project project;
 		private final Runnable callback;
 
-		MyHandlerFactory(Runnable callback) {
+		MyHandlerFactory(Project project, Runnable callback) {
+			this.project = project;
 			this.callback = callback;
 		}
 
@@ -80,8 +82,9 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 		public CheckinHandler createHandler(final CheckinProjectPanel panel, CommitContext commitContext) {
 			return new CheckinHandler() {
 				@Override public void checkinSuccessful() {
-					ChangeListManager changeListManager = ChangeListManager.getInstance(panel.getProject());
+					if (!project.equals(panel.getProject())) return;
 
+					ChangeListManager changeListManager = ChangeListManager.getInstance(panel.getProject());
 					int uncommittedSize = changeListManager.getDefaultChangeList().getChanges().size() - panel.getSelectedChanges().size();
 					if (uncommittedSize == 0) {
 						callback.run();
