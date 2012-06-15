@@ -111,9 +111,9 @@ public class AutoRevertTest {
 		model.onNewSettings(1);
 		model.onTimer();
 		model.onCommit();
-		model.onTimer();
-		model.onTimer();
-		model.onTimer();
+		model.onTimer(); // reverts changes after 1st time event
+		model.onTimer(); // reverts changes after 1st time event
+		model.onTimer(); // reverts changes after 1st time event
 
 		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
