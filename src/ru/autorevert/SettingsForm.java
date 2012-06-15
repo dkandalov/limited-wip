@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
  * Date: 14/06/2012
  */
 public class SettingsForm {
-	private JComboBox secondsTillRevertComboBox;
+	private JComboBox minutesTillRevertComboBox;
 	private JCheckBox TODOCheckBox;
 	private JCheckBox TODOCheckBox1;
 	private JCheckBox TODOCheckBox2;
@@ -22,17 +22,20 @@ public class SettingsForm {
 	public SettingsForm(Settings settings) {
 		this.settings = settings;
 		this.uiState = settings;
-		
-		secondsTillRevertComboBox.addActionListener(new ActionListener() {
+
+		minutesTillRevertComboBox.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				uiState.minutesTillRevert = Integer.valueOf((String) secondsTillRevertComboBox.getModel().getSelectedItem());
+				try {
+					uiState.minutesTillRevert = Integer.valueOf((String) minutesTillRevertComboBox.getModel().getSelectedItem());
+				} catch (NumberFormatException e1) {
+					minutesTillRevertComboBox.getModel().setSelectedItem(uiState.minutesTillRevert);
+				}
 			}
 		});
 	}
 
 	public boolean isModfied() {
-		// TODO implement
-		return false;
+		return uiState.equals(settings);
 	}
 
 	public void apply() {
