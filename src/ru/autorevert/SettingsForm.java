@@ -9,33 +9,34 @@ import java.awt.event.ActionListener;
  * Date: 14/06/2012
  */
 public class SettingsForm {
+	public JPanel root;
 	private JComboBox minutesTillRevertComboBox;
 	private JCheckBox TODOCheckBox;
 	private JCheckBox TODOCheckBox1;
 	private JCheckBox TODOCheckBox2;
-	public JPanel root;
 	private JCheckBox TODOCheckBox3;
 
-	private final Settings settings;
-	private Settings uiState;
+	private final Settings initialState;
+	private Settings currentState;
 
-	public SettingsForm(Settings settings) {
-		this.settings = settings;
-		this.uiState = settings;
+	public SettingsForm(Settings initialState) {
+		this.initialState = initialState;
+		this.currentState = new Settings();
+		currentState.loadState(initialState);
 
 		minutesTillRevertComboBox.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				try {
-					uiState.minutesTillRevert = Integer.valueOf((String) minutesTillRevertComboBox.getModel().getSelectedItem());
+					currentState.minutesTillRevert = Integer.valueOf((String) minutesTillRevertComboBox.getModel().getSelectedItem());
 				} catch (NumberFormatException e1) {
-					minutesTillRevertComboBox.getModel().setSelectedItem(uiState.minutesTillRevert);
+					minutesTillRevertComboBox.getModel().setSelectedItem(currentState.minutesTillRevert);
 				}
 			}
 		});
 	}
 
 	public boolean isModfied() {
-		return uiState.equals(settings);
+		return currentState.equals(initialState);
 	}
 
 	public void apply() {
@@ -44,7 +45,6 @@ public class SettingsForm {
 	}
 
 	public void reset() {
-		// TODO implement
-
+		currentState.loadState(initialState);
 	}
 }
