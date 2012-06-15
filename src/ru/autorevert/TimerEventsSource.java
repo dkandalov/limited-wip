@@ -13,8 +13,8 @@ import java.util.TimerTask;
  * Date: 10/06/2012
  */
 public class TimerEventsSource implements ApplicationComponent {
+	private static final int ONE_SECOND = 1000;
 
-	private static final int ONE_SECONDS = 1000;
 	private final Timer timer = new Timer();
 	private final List<Listener> listeners = new ArrayList<Listener>();
 
@@ -25,7 +25,7 @@ public class TimerEventsSource implements ApplicationComponent {
 					listener.onTimerEvent();
 				}
 			}
-		}, 0, ONE_SECONDS);
+		}, 0, ONE_SECOND);
 	}
 
 	@Override public void disposeComponent() {

@@ -16,8 +16,8 @@ public class SettingsForm {
 	private JCheckBox TODOCheckBox2;
 	private JCheckBox TODOCheckBox3;
 
-	public final Settings initialState;
-	public Settings currentState;
+	private final Settings initialState;
+	private Settings currentState;
 	private boolean isUpdatingUI;
 
 	public SettingsForm(Settings initialState) {
@@ -51,5 +51,17 @@ public class SettingsForm {
 			}
 		} catch (NumberFormatException ignored) {
 		}
+	}
+
+	public boolean isModified() {
+		return !currentState.equals(initialState);
+	}
+
+	public void applyChanges() {
+		initialState.loadState(currentState);
+	}
+
+	public void resetChanges() {
+		currentState.loadState(initialState);
 	}
 }
