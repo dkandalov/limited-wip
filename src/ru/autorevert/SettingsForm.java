@@ -46,7 +46,7 @@ public class SettingsForm {
 	private void updateStateFromUI() {
 		try {
 			Integer value = Integer.valueOf((String) minutesTillRevertComboBox.getSelectedItem());
-			if (value > 0) {
+			if (value >= Settings.MIN_MINUTES_TO_REVERT && value <= Settings.MAX_MINUTES_TO_REVERT) {
 				currentState.minutesTillRevert = value;
 			}
 		} catch (NumberFormatException ignored) {
