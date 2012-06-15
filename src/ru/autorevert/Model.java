@@ -25,9 +25,7 @@ public class Model {
 	public synchronized void start() {
 		started = true;
 		timeEventCounter = 0;
-		if (timeEventsTillRevert != newTimeEventTillRevert) {
-			timeEventsTillRevert = newTimeEventTillRevert;
-		}
+
 		ideNotifications.onAutoRevertStarted(timeEventsTillRevert);
 	}
 

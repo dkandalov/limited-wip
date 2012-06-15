@@ -86,7 +86,17 @@ public class AutoRevertTest {
 		model.onTimer();  inOrder.verify(ideNotifications).onTimer(1);
 	}
 
-	@Test public void whenReceivesChangeOfTimeTillRevert_should_ApplyItOnlyAfterNextRevert() {
+	@Test public void whenTimeTillRevertChanges_should_ApplyItAfterStart() {
+		model.onNewSettings(3);
+		model.onTimer();
+		model.onTimer();
+		model.onTimer();
+		model.onTimer();
+
+		verify(ideActions).revertCurrentChangeList();
+	}
+
+	@Test public void whenTimeTillRevertChanges_should_ApplyItOnlyAfterNextRevert() {
 		model.start();
 		model.onTimer();
 		model.onNewSettings(3);
