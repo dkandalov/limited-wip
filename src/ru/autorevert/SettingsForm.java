@@ -26,17 +26,23 @@ public class SettingsForm {
 
 		minutesTillRevertComboBox.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				try {
-					Integer value = Integer.valueOf((String) minutesTillRevertComboBox.getModel().getSelectedItem());
-					if (value > 0) {
-						currentState.minutesTillRevert = value;
-					} else {
-						minutesTillRevertComboBox.getModel().setSelectedItem(currentState.minutesTillRevert);
-					}
-				} catch (NumberFormatException e1) {
-					minutesTillRevertComboBox.getModel().setSelectedItem(currentState.minutesTillRevert);
-				}
+				updateStateFromUI();
+				updateUIFromState();
 			}
 		});
+	}
+
+	private void updateUIFromState() {
+		minutesTillRevertComboBox.getModel().setSelectedItem(currentState.minutesTillRevert);
+	}
+
+	private void updateStateFromUI() {
+		try {
+			Integer value = Integer.valueOf((String) minutesTillRevertComboBox.getSelectedItem());
+			if (value > 0) {
+				currentState.minutesTillRevert = value;
+			}
+		} catch (NumberFormatException ignored) {
+		}
 	}
 }
