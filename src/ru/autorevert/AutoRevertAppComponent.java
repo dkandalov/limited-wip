@@ -4,6 +4,8 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +20,12 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	private SettingsForm settingsForm;
 
 	@Override public void initComponent() {
+		Settings settings = ServiceManager.getService(Settings.class);
+
+		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+			AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
+			autoRevertProjectComponent.onNewSettings(settings);
+		}
 	}
 
 	@Override public void disposeComponent() {
