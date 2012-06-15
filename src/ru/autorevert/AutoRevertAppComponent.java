@@ -21,7 +21,6 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 
 	@Override public void initComponent() {
 		Settings settings = ServiceManager.getService(Settings.class);
-
 		notifyAllProjectsAbout(settings);
 	}
 
@@ -40,7 +39,6 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 
 	@Override public void apply() throws ConfigurationException {
 		settingsForm.initialState.loadState(settingsForm.currentState);
-
 		notifyAllProjectsAbout(settingsForm.currentState);
 	}
 

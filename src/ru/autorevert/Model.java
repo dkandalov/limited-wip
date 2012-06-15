@@ -51,4 +51,9 @@ public class Model {
 		timeEventCounter = 0;
 		ideNotifications.onCommit(timeEventsTillRevert);
 	}
+
+	public void onNewSettings(Settings settings) {
+		// TODO implement
+
+	}
 }

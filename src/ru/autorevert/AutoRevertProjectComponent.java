@@ -66,8 +66,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	}
 
 	public void onNewSettings(Settings settings) {
-		// TODO implement
-
+		model.onNewSettings(settings);
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
