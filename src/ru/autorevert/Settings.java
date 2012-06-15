@@ -15,6 +15,10 @@ public class Settings implements PersistentStateComponent<Settings>  {
 
 	public int minutesTillRevert = DEFAULT_MINUTES_TILL_REVERT;
 
+	public int secondsTillRevert() {
+		return minutesTillRevert * 60;
+	}
+
 	@Override public Settings getState() {
 		return this;
 	}

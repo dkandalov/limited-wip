@@ -28,7 +28,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 		super.projectOpened();
 
 		Settings settings = ServiceManager.getService(Settings.class);
-		model = new Model(new IdeNotifications(myProject), new IdeActions(myProject), settings.minutesTillRevert * 60);
+		model = new Model(new IdeNotifications(myProject), new IdeActions(myProject), settings.secondsTillRevert());
 
 		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
 		listener = new TimerEventsSource.Listener() {
@@ -66,7 +66,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	}
 
 	public void onNewSettings(Settings settings) {
-		model.onNewSettings(settings.minutesTillRevert * 60);
+		model.onNewSettings(settings.secondsTillRevert());
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
