@@ -87,25 +87,22 @@ public class AutoRevertTest {
 	}
 
 	@Test public void whenTimeTillRevertChanges_should_ApplyItAfterStart() {
-		model.onNewSettings(3);
-		model.onTimer();
-		model.onTimer();
+		model.onNewSettings(1);
+		model.start();
 		model.onTimer();
 		model.onTimer();
 
-		verify(ideActions).revertCurrentChangeList();
+		verify(ideActions, times(2)).revertCurrentChangeList();
 	}
 
 	@Test public void whenTimeTillRevertChanges_should_ApplyItOnlyAfterNextRevert() {
 		model.start();
 		model.onTimer();
-		model.onNewSettings(3);
+		model.onNewSettings(1);
 		model.onTimer(); // reverts changes after 2nd time event
-		model.onTimer();
-		model.onTimer();
-		model.onTimer(); // reverts changes after 3d time event
-		model.onTimer();
+		model.onTimer(); // reverts changes after 1st time event
+		model.onTimer(); // reverts changes after 1st time event
 
-		verify(ideActions, times(2)).revertCurrentChangeList();
+		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
 }
