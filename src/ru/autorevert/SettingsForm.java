@@ -18,11 +18,13 @@ public class SettingsForm {
 
 	public final Settings initialState;
 	public Settings currentState;
+	private boolean isUpdatingUI;
 
 	public SettingsForm(Settings initialState) {
 		this.initialState = initialState;
 		this.currentState = new Settings();
 		currentState.loadState(initialState);
+		updateUIFromState();
 
 		minutesTillRevertComboBox.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
@@ -32,8 +34,13 @@ public class SettingsForm {
 		});
 	}
 
-	private void updateUIFromState() {
-		minutesTillRevertComboBox.getModel().setSelectedItem(currentState.minutesTillRevert);
+	public void updateUIFromState() {
+		if (isUpdatingUI) return;
+		isUpdatingUI = true;
+
+		minutesTillRevertComboBox.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
+
+		isUpdatingUI = false;
 	}
 
 	private void updateStateFromUI() {
