@@ -38,8 +38,8 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Override public void apply() throws ConfigurationException {
-		settingsForm.applyChanges();
-//		notifyAllProjectsAbout(settingsForm.currentState);
+		Settings newSettings = settingsForm.applyChanges();
+		notifyAllProjectsAbout(newSettings);
 	}
 
 	@Override public void reset() {

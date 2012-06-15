@@ -57,8 +57,9 @@ public class SettingsForm {
 		return !currentState.equals(initialState);
 	}
 
-	public void applyChanges() {
+	public Settings applyChanges() {
 		initialState.loadState(currentState);
+		return initialState;
 	}
 
 	public void resetChanges() {
