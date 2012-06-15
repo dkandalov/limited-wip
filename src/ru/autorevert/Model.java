@@ -52,7 +52,7 @@ public class Model {
 		ideNotifications.onCommit(timeEventsTillRevert);
 	}
 
-	public void onNewSettings(Settings settings) {
+	public void onNewSettings(int timeEventsTillRevert) {
 		// TODO implement
 
 	}
