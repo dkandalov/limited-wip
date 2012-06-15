@@ -2,6 +2,7 @@ package ru.autorevert;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
@@ -28,7 +29,8 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	@Override public void projectOpened() {
 		super.projectOpened();
 
-		model = new Model(new IdeNotifications(myProject), new IdeActions(myProject), TIME_EVENT_TILL_REVERT);
+		Settings settings = ServiceManager.getService(Settings.class);
+		model = new Model(new IdeNotifications(myProject), new IdeActions(myProject), settings.minutesTillRevert * 60);
 
 		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
 		listener = new TimerEventsSource.Listener() {
