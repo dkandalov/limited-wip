@@ -2,7 +2,7 @@ package ru.autorevert;
 
 /**
  * TODO should reset timer on user revert?
- *
+ * <p/>
  * User: dima
  * Date: 10/06/2012
  */
@@ -47,13 +47,14 @@ public class Model {
 
 		if (timeEventCounter >= timeEventsTillRevert) {
 			timeEventCounter = 0;
-			ideActions.revertCurrentChangeList();
 			updateTimeEventsTillRevert();
+			ideActions.revertCurrentChangeList();
 		}
 	}
 
 	public synchronized void onCommit() {
 		timeEventCounter = 0;
+		updateTimeEventsTillRevert();
 		ideNotifications.onCommit(timeEventsTillRevert);
 	}
 
