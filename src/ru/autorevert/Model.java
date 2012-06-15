@@ -19,11 +19,15 @@ public class Model {
 		this.ideNotifications = ideNotifications;
 		this.ideActions = ideActions;
 		this.timeEventsTillRevert = timeEventsTillRevert;
+		this.newTimeEventTillRevert = timeEventsTillRevert;
 	}
 
 	public synchronized void start() {
 		started = true;
 		timeEventCounter = 0;
+		if (timeEventsTillRevert != newTimeEventTillRevert) {
+			timeEventsTillRevert = newTimeEventTillRevert;
+		}
 		ideNotifications.onAutoRevertStarted(timeEventsTillRevert);
 	}
 
@@ -45,6 +49,9 @@ public class Model {
 		if (timeEventCounter >= timeEventsTillRevert) {
 			timeEventCounter = 0;
 			ideActions.revertCurrentChangeList();
+			if (timeEventsTillRevert != newTimeEventTillRevert) {
+				timeEventsTillRevert = newTimeEventTillRevert;
+			}
 		}
 	}
 
