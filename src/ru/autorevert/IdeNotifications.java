@@ -43,7 +43,7 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void onCommit(int timeEventsTillRevert) { // TODO all projects receive onCommit(); shouldn't send when auto-revert stopped
+	public void onCommit(int timeEventsTillRevert) {
 		widget.showTime(formatTime(timeEventsTillRevert));
 		updateStatusBar();
 	}
@@ -120,7 +120,7 @@ public class IdeNotifications {
 				}
 
 				@Override public String getTooltipText() {
-					return null;
+					return "Click to start/stop auto-revert";
 				}
 			};
 		}
