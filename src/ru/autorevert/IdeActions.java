@@ -40,8 +40,6 @@ public class IdeActions {
 					for (Change change : changeList.getChanges()) {
 						FileDocumentManager.getInstance().reloadFiles(change.getVirtualFile());
 					}
-
-//					showPopup(project, "!" + changeList.getName() + " " + changeList.getChanges()); // TODO
 				}
 			});
 

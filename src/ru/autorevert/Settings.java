@@ -13,6 +13,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 public class Settings implements PersistentStateComponent<Settings>  {
 	public static final Integer MIN_MINUTES_TO_REVERT = 1;
 	public static final Integer MAX_MINUTES_TO_REVERT = 99;
+
 	private static final int DEFAULT_MINUTES_TILL_REVERT = 2;
 
 	public int minutesTillRevert = DEFAULT_MINUTES_TILL_REVERT;
