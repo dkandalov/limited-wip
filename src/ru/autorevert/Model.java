@@ -25,9 +25,8 @@ public class Model {
 	public synchronized void start() {
 		started = true;
 		timeEventCounter = 0;
-		if (timeEventsTillRevert != newTimeEventTillRevert) {
-			timeEventsTillRevert = newTimeEventTillRevert;
-		}
+		updateTimeEventsTillRevert();
+
 		ideNotifications.onAutoRevertStarted(timeEventsTillRevert);
 	}
 
@@ -49,9 +48,7 @@ public class Model {
 		if (timeEventCounter >= timeEventsTillRevert) {
 			timeEventCounter = 0;
 			ideActions.revertCurrentChangeList();
-			if (timeEventsTillRevert != newTimeEventTillRevert) {
-				timeEventsTillRevert = newTimeEventTillRevert;
-			}
+			updateTimeEventsTillRevert();
 		}
 	}
 
@@ -62,5 +59,11 @@ public class Model {
 
 	public void onNewSettings(int newTimeEventTillRevert) {
 		this.newTimeEventTillRevert = newTimeEventTillRevert;
+	}
+
+	private void updateTimeEventsTillRevert() {
+		if (timeEventsTillRevert != newTimeEventTillRevert) {
+			timeEventsTillRevert = newTimeEventTillRevert;
+		}
 	}
 }
