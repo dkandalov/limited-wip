@@ -32,6 +32,7 @@ public class SettingsForm {
 			}
 		};
 		minutesTillRevertComboBox.addActionListener(commonActionListener);
+		showTimerInToolbarCheckBox.addActionListener(commonActionListener);
 	}
 
 	public void updateUIFromState() {
@@ -39,6 +40,7 @@ public class SettingsForm {
 		isUpdatingUI = true;
 
 		minutesTillRevertComboBox.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
+		showTimerInToolbarCheckBox.setSelected(currentState.showTimerInToolbar);
 
 		isUpdatingUI = false;
 	}
@@ -49,6 +51,7 @@ public class SettingsForm {
 			if (value >= Settings.MIN_MINUTES_TO_REVERT && value <= Settings.MAX_MINUTES_TO_REVERT) {
 				currentState.minutesTillRevert = value;
 			}
+			currentState.showTimerInToolbar = showTimerInToolbarCheckBox.isSelected();
 		} catch (NumberFormatException ignored) {
 		}
 	}
