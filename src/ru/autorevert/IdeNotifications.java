@@ -21,7 +21,6 @@ public class IdeNotifications {
 
 	private final MyStatusBarWidget widget = new MyStatusBarWidget();
 	private final Project project;
-	private boolean showTimerInToolbar;
 
 	public IdeNotifications(Project project) {
 		this.project = project;
@@ -61,7 +60,7 @@ public class IdeNotifications {
 	}
 
 	public void onNewSettings(boolean showTimerInToolbar) {
-		// TODO
+		widget.shouldShowTimerInToolbar(showTimerInToolbar);
 	}
 
 	private static String formatTime(int seconds) {
@@ -76,6 +75,7 @@ public class IdeNotifications {
 
 		private StatusBar statusBar;
 		private String text = "";
+		private boolean showTimerInToolbar;
 
 		@Override public void install(@NotNull StatusBar statusBar) {
 			this.statusBar = statusBar;
@@ -91,6 +91,10 @@ public class IdeNotifications {
 
 		public void showThatStopped() {
 			text = STOPPED_TEXT;
+		}
+
+		public void shouldShowTimerInToolbar(boolean value) {
+			this.showTimerInToolbar = value;
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {

@@ -28,9 +28,11 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	@Override public void projectOpened() {
 		super.projectOpened();
 
-		ideNotifications = new IdeNotifications(myProject);
 		Settings settings = ServiceManager.getService(Settings.class);
+		ideNotifications = new IdeNotifications(myProject);
 		model = new Model(ideNotifications, new IdeActions(myProject), settings.secondsTillRevert());
+
+		onNewSettings(settings);
 
 		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
 		listener = new TimerEventsSourceAppComponent.Listener() {
