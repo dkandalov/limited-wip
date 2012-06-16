@@ -1,6 +1,8 @@
-package ru.groovy
+package ru.autorevert.groovy_playground
 
 import com.intellij.ide.DataManager
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.notification.NotificationsManager
 import com.intellij.openapi.keymap.KeymapManager
@@ -14,8 +16,14 @@ import java.awt.event.MouseEvent
 import javax.swing.KeyStroke
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.wm.*
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
+
+/*
+ * This groovy script was used to explore how IntelliJ API works.
+ * It's not required by the rest of the project. It left here as a reference.
+ *
+ * This script is only useful with another (unpublished) plugin which
+ * reevaluates groovy scripts in IntelliJ at runtime making feedback loop shorter.
+ */
 
 static registerInMetaClasses(AnActionEvent anActionEvent) {
 	[Object.metaClass, Class.metaClass].each {

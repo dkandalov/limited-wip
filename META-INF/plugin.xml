@@ -6,7 +6,13 @@
     <idea-version since-build="8000"/>
     <description>
         <![CDATA[<html><body>
-				Every 2 minutes automatically reverts all changes in active change list.
+Reverts active change list every N minutes.
+
+To start/stop automatic revert:
+ - use alt+shift+A shortcut or
+ - click on widget in toolbar (right-bottom corner of project window)
+
+TODO
 				</body></html>
 		]]>
     </description>
