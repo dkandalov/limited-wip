@@ -64,6 +64,8 @@ public class Model {
 	}
 
 	public synchronized void onCommit() {
+		if (!started) return;
+
 		timeEventCounter = 0;
 		updateTimeEventsTillRevert();
 		ideNotifications.onCommit(timeEventsTillRevert);

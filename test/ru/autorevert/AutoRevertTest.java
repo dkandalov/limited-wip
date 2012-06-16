@@ -99,6 +99,14 @@ public class AutoRevertTest {
 		model.onTimer();  inOrder.verify(ideNotifications).onTimer(1);
 	}
 
+	@Test public void whenNotStarted_should_NOT_NotifyUIAboutCommits() {
+		model.onCommit();
+		model.start();
+		model.onCommit();
+
+		verify(ideNotifications, times(1)).onCommit(anyInt());
+	}
+
 	@Test public void whenTimeTillRevertChanges_should_ApplyItAfterStart() {
 		model.onNewSettings(1);
 		model.start();
