@@ -110,15 +110,12 @@ public class IdeNotifications {
 		private static final String STARTED_TEXT = "Auto-revert started";
 		private static final String STOPPED_TEXT = "Auto-revert stopped";
 
-		private StatusBar statusBar;
 		private String text = "";
 
 		@Override public void install(@NotNull StatusBar statusBar) {
-			this.statusBar = statusBar;
 		}
 
 		@Override public void dispose() {
-			statusBar = null;
 		}
 
 		public void showTime(String timeLeft) {

@@ -1,4 +1,11 @@
-
+TBD:
  - quick commit action (probably using current task description as a commit comment)
  - disable commit if project doesn't compile
  - stats about average commit time (proportion to currently configured timeout, etc)
+
+Problems / questions:
+ - should reset timer on user revert?
+ - probably should detect commit dialog being open and don't revert in this case
+ - still get errors when commit overlaps auto-revert
+ - still get "reload from file system" popup questions
+

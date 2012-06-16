@@ -14,8 +14,6 @@
 package ru.autorevert;
 
 /**
- * TODO should reset timer on user revert?
- * <p/>
  * User: dima
  * Date: 10/06/2012
  */

@@ -40,9 +40,6 @@ public class IdeActions {
 
 			SwingUtilities.invokeAndWait(new Runnable() {
 				@Override public void run() {
-					// TODO probably should detect commit dialog being open and don't revert in this case
-					// TODO still get errors when commit overlaps auto-revert
-					// TODO still get "reload from file system" popup questions
 					LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
 					if (changeList.getChanges().isEmpty()) {
 						result[0] = false;
