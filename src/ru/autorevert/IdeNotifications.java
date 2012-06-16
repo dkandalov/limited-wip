@@ -49,23 +49,27 @@ public class IdeNotifications {
 	}
 
 	public void onCommit(int timeEventsTillRevert) {
-		widget.showTime(formatTime(timeEventsTillRevert));
+		if (showTimerInToolbar) {
+			widget.showTime(formatTime(timeEventsTillRevert));
+		}
 		updateStatusBar();
 	}
 
 	public void onTimer(int secondsLeft) {
-		widget.showTime(formatTime(secondsLeft));
+		if (showTimerInToolbar) {
+			widget.showTime(formatTime(secondsLeft));
+		}
 		updateStatusBar();
+	}
+
+	public void onNewSettings(boolean showTimerInToolbar) {
+		this.showTimerInToolbar = showTimerInToolbar;
 	}
 
 	private void updateStatusBar() {
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 		if (statusBar == null) return;
 		statusBar.updateWidget(widget.ID());
-	}
-
-	public void onNewSettings(boolean showTimerInToolbar) {
-		this.showTimerInToolbar = showTimerInToolbar;
 	}
 
 	private static String formatTime(int seconds) {

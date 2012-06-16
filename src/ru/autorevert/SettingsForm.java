@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 public class SettingsForm {
 	public JPanel root;
 	private JComboBox minutesTillRevertComboBox;
-	private JCheckBox TODOCheckBox;
+	private JCheckBox showTimerInToolbarCheckBox;
 	private JCheckBox notImplementedCheckBox;
 	private JCheckBox notImplementedCheckBox1;
 
@@ -25,12 +25,13 @@ public class SettingsForm {
 		currentState.loadState(initialState);
 		updateUIFromState();
 
-		minutesTillRevertComboBox.addActionListener(new ActionListener() {
+		ActionListener commonActionListener = new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				updateStateFromUI();
 				updateUIFromState();
 			}
-		});
+		};
+		minutesTillRevertComboBox.addActionListener(commonActionListener);
 	}
 
 	public void updateUIFromState() {
