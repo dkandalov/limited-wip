@@ -43,6 +43,6 @@ TODO
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceInterface="ru.autorevert.Settings" serviceImplementation="ru.autorevert.Settings"/>
+        <applicationService serviceInterface="ru.autorevert.settings.Settings" serviceImplementation="ru.autorevert.settings.Settings"/>
     </extensions>
 </idea-plugin>
