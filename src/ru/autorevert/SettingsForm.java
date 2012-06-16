@@ -11,9 +11,9 @@ import java.awt.event.ActionListener;
 public class SettingsForm {
 	public JPanel root;
 	private JComboBox minutesTillRevertComboBox;
-	private JCheckBox TODOCheckBox1;
-	private JCheckBox TODOCheckBox3;
-	private JCheckBox TODOCheckBox2;
+	private JCheckBox TODOCheckBox;
+	private JCheckBox notImplementedCheckBox;
+	private JCheckBox notImplementedCheckBox1;
 
 	private final Settings initialState;
 	private Settings currentState;

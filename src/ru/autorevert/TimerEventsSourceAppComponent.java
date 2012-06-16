@@ -12,7 +12,7 @@ import java.util.TimerTask;
  * User: dima
  * Date: 10/06/2012
  */
-public class TimerEventsSource implements ApplicationComponent {
+public class TimerEventsSourceAppComponent implements ApplicationComponent {
 	private static final int ONE_SECOND = 1000;
 
 	private final Timer timer = new Timer();
@@ -34,7 +34,7 @@ public class TimerEventsSource implements ApplicationComponent {
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "AutoRevert-TimerEventsSource";
+		return "AutoRevert-TimeEventsSource";
 	}
 
 	public void addListener(Listener listener) {

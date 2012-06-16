@@ -18,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	private Model model;
-	private TimerEventsSource.Listener listener;
+	private TimerEventsSourceAppComponent.Listener listener;
+	private IdeNotifications ideNotifications;
 
 	protected AutoRevertProjectComponent(Project project) {
 		super(project);
@@ -27,11 +28,12 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	@Override public void projectOpened() {
 		super.projectOpened();
 
+		ideNotifications = new IdeNotifications(myProject);
 		Settings settings = ServiceManager.getService(Settings.class);
-		model = new Model(new IdeNotifications(myProject), new IdeActions(myProject), settings.secondsTillRevert());
+		model = new Model(ideNotifications, new IdeActions(myProject), settings.secondsTillRevert());
 
-		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
-		listener = new TimerEventsSource.Listener() {
+		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
+		listener = new TimerEventsSourceAppComponent.Listener() {
 			@Override public void onTimerEvent() {
 				model.onTimer();
 			}
@@ -49,7 +51,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	@Override public void disposeComponent() {
 		super.disposeComponent();
 
-		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
+		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
 		timerEventsSource.removeListener(listener);
 	}
 
@@ -66,6 +68,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	}
 
 	public void onNewSettings(Settings settings) {
+		ideNotifications.onNewSettings();
 		model.onNewSettings(settings.secondsTillRevert());
 	}
 

@@ -59,6 +59,11 @@ public class IdeNotifications {
 		statusBar.updateWidget(widget.ID());
 	}
 
+	public void onNewSettings() {
+		// TODO implement
+
+	}
+
 	private static String formatTime(int seconds) {
 		int min = seconds / 60;
 		int sec = seconds % 60;
