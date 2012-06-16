@@ -21,6 +21,7 @@ public class IdeNotifications {
 
 	private final MyStatusBarWidget widget = new MyStatusBarWidget();
 	private final Project project;
+	private boolean showTimerInToolbar;
 
 	public IdeNotifications(Project project) {
 		this.project = project;
@@ -34,7 +35,11 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
-		widget.showTime(formatTime(timeEventsTillRevert));
+		if (showTimerInToolbar) {
+			widget.showTime(formatTime(timeEventsTillRevert));
+		} else {
+			widget.showThatStarted();
+		}
 		updateStatusBar();
 	}
 
@@ -60,7 +65,7 @@ public class IdeNotifications {
 	}
 
 	public void onNewSettings(boolean showTimerInToolbar) {
-		widget.shouldShowTimerInToolbar(showTimerInToolbar);
+		this.showTimerInToolbar = showTimerInToolbar;
 	}
 
 	private static String formatTime(int seconds) {
@@ -71,11 +76,11 @@ public class IdeNotifications {
 
 	public static class MyStatusBarWidget implements StatusBarWidget {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
+		private static final String STARTED_TEXT = "Auto-revert started";
 		private static final String STOPPED_TEXT = "Auto-revert stopped";
 
 		private StatusBar statusBar;
 		private String text = "";
-		private boolean showTimerInToolbar;
 
 		@Override public void install(@NotNull StatusBar statusBar) {
 			this.statusBar = statusBar;
@@ -89,12 +94,12 @@ public class IdeNotifications {
 			text = TIME_LEFT_PREFIX_TEXT + timeLeft;
 		}
 
-		public void showThatStopped() {
-			text = STOPPED_TEXT;
+		public void showThatStarted() {
+			text = STARTED_TEXT;
 		}
 
-		public void shouldShowTimerInToolbar(boolean value) {
-			this.showTimerInToolbar = value;
+		public void showThatStopped() {
+			text = STOPPED_TEXT;
 		}
 
 		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
