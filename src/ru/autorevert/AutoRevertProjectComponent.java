@@ -68,7 +68,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 	}
 
 	public void onNewSettings(Settings settings) {
-		ideNotifications.onNewSettings();
+		ideNotifications.onNewSettings(settings.showTimerInToolbar);
 		model.onNewSettings(settings.secondsTillRevert());
 	}
 

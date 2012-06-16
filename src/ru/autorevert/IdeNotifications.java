@@ -21,6 +21,7 @@ public class IdeNotifications {
 
 	private final MyStatusBarWidget widget = new MyStatusBarWidget();
 	private final Project project;
+	private boolean showTimerInToolbar;
 
 	public IdeNotifications(Project project) {
 		this.project = project;
@@ -59,9 +60,8 @@ public class IdeNotifications {
 		statusBar.updateWidget(widget.ID());
 	}
 
-	public void onNewSettings() {
-		// TODO implement
-
+	public void onNewSettings(boolean showTimerInToolbar) {
+		// TODO
 	}
 
 	private static String formatTime(int seconds) {
@@ -74,7 +74,7 @@ public class IdeNotifications {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
 		private static final String STOPPED_TEXT = "Auto-revert stopped";
 
-		public StatusBar statusBar;
+		private StatusBar statusBar;
 		private String text = "";
 
 		@Override public void install(@NotNull StatusBar statusBar) {
