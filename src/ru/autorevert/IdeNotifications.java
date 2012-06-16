@@ -34,6 +34,15 @@ public class IdeNotifications {
 		statusBar.updateWidget(widget.ID());
 	}
 
+	public void onProjectClosed() {
+		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+		if (statusBar == null) return;
+
+		widget.showThatStopped();
+		statusBar.removeWidget(widget.ID());
+		statusBar.updateWidget(widget.ID());
+	}
+
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
 		if (showTimerInToolbar) {
 			widget.showTime(formatTime(timeEventsTillRevert));

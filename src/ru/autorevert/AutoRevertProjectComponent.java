@@ -50,6 +50,11 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 		}));
 	}
 
+	@Override public void projectClosed() {
+		super.projectClosed();
+		ideNotifications.onProjectClosed();
+	}
+
 	@Override public void disposeComponent() {
 		super.disposeComponent();
 
