@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.autorevert;
+package ru.autorevert.components;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
@@ -24,6 +24,10 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import org.jetbrains.annotations.NotNull;
+import ru.autorevert.IdeActions;
+import ru.autorevert.IdeNotifications;
+import ru.autorevert.Model;
+import ru.autorevert.settings.Settings;
 
 /**
  * User: dima

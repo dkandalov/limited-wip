@@ -22,6 +22,7 @@ import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
+import ru.autorevert.components.AutoRevertProjectComponent;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
