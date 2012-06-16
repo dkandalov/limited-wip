@@ -51,6 +51,8 @@ public class IdeNotifications {
 	public void onCommit(int timeEventsTillRevert) {
 		if (showTimerInToolbar) {
 			widget.showTime(formatTime(timeEventsTillRevert));
+		} else {
+			widget.showThatStarted();
 		}
 		updateStatusBar();
 	}
@@ -58,6 +60,8 @@ public class IdeNotifications {
 	public void onTimer(int secondsLeft) {
 		if (showTimerInToolbar) {
 			widget.showTime(formatTime(secondsLeft));
+		} else {
+			widget.showThatStarted();
 		}
 		updateStatusBar();
 	}
