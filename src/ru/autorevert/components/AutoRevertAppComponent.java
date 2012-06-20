@@ -67,7 +67,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Nls @Override public String getDisplayName() {
-		return "VCS auto-revert settings";
+		return "VCS auto-revert";
 	}
 
 	@NotNull @Override public String getComponentName() {
