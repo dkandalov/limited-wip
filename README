@@ -9,7 +9,7 @@ To start/stop automatic revert:
 
 Reasons to auto-revert changes:
  - to teach yourself proper TDD. Set up auto-revert to 2 minutes or so. Focus only on one part of red-green-refactor cycle. (See http://jamesshore.com/Blog/Red-Green-Refactor.html or http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd)
- - to limit work-in-progress. Auto-revert forces you to commit or lose changes. If committed changes are at least compilable, you won't get involved in "big bang" refactorings and code changes. It's like Pomodoro but you have to finish something. (http://en.wikipedia.org/wiki/Pomodoro_Technique)
+ - to limit work-in-progress. Auto-revert forces you to commit or lose changes. If committed changes are at least compilable, you won't get involved in big bang refactorings and code changes. It's like Pomodoro but you have to finish something. (http://en.wikipedia.org/wiki/Pomodoro_Technique)
  - not to be too attached to your code. If it's reverted, just write again and probably it will be better this time. (See http://blog.jayfields.com/2009/03/kill-your-darlings.html)
  - it's fun because it's like a arcade computer game.
  - it's an experiment to see your limits.

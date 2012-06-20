@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>AutoRevert</id>
     <name>AutoRevert</name>
-    <version>0.0</version>
+    <version>0.1</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <idea-version since-build="8000"/>
     <description>
@@ -9,10 +9,10 @@
 Reverts active change list every N minutes.
 
 To start/stop automatic revert:
- - use alt+shift+A shortcut or
- - click on widget in toolbar (right-bottom corner of project window)
+ - use alt+shift+A shortcut or...
+ - click on widget in the toolbar (right-bottom corner of project window)
 
-TODO
+For reasons why auto-revert changes please see readme at https://github.com/dkandalov/auto-revert-plugin
 				</body></html>
 		]]>
     </description>
@@ -35,7 +35,7 @@ TODO
     </project-components>
 
     <actions>
-        <!-- TODO icon="/fileTypes/text.png"-->
+        <!-- TODO icon="/fileTypes/text.png" ?-->
         <action id="StartAutoRevert" class="ru.autorevert.components.StartOrStopAutoRevertAction" text="Start auto-revert">
             <add-to-group group-id="ToolsMenu" anchor="last" />
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift a"/>
