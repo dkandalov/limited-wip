@@ -9,6 +9,7 @@
     </content>
     <orderEntry type="jdk" jdkName="IDEA IC-111.277" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="org.mockito:mockito-all:1.8.4" level="project" />
   </component>
 </module>
 

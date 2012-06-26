@@ -71,7 +71,7 @@ public class Model {
 		ideNotifications.onCommit(timeEventsTillRevert);
 	}
 
-	public void onNewSettings(int newTimeEventTillRevert) {
+	public synchronized void onNewSettings(int newTimeEventTillRevert) {
 		this.newTimeEventTillRevert = newTimeEventTillRevert;
 	}
 
