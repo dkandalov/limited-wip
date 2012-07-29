@@ -10,7 +10,7 @@
     <orderEntry type="jdk" jdkName="IDEA IC-111.277" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="org.mockito:mockito-all:1.8.4" level="project" />
-    <orderEntry type="library" name="groovy-1.8.3" level="application" />
+    <orderEntry type="library" scope="TEST" name="groovy-1.8.3" level="application" />
   </component>
 </module>
 

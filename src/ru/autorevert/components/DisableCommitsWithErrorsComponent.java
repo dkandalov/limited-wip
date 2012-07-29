@@ -139,7 +139,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 			notificationsManager.notify(new Notification(
 					AutoRevertAppComponent.DISPLAY_NAME,
 					"You cannot commit because project has errors",
-					"(This can be turned off in <a href=\"\">Settings</a> dialog)",
+					"(It can be turned off in <a href=\"\">Settings</a> dialog)",
 					NotificationType.WARNING,
 					listener
 			));
