@@ -1,13 +1,11 @@
 package ru.autorevert.components;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
-import com.intellij.notification.NotificationsManager;
+import com.intellij.notification.*;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
@@ -23,6 +21,7 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import ru.autorevert.settings.Settings;
 
+import javax.swing.event.HyperlinkEvent;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -116,9 +115,21 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 		}
 
 		private void notifyThatCommitWasCancelled() {
+			NotificationListener listener = new NotificationListener() {
+				@Override
+				public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+					ShowSettingsUtil.getInstance().showSettingsDialog((Project) null, AutoRevertAppComponent.class);
+				}
+			};
+
 			Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
-			notificationsManager.notify(new Notification(AutoRevertAppComponent.DISPLAY_NAME, AutoRevertAppComponent.DISPLAY_NAME,
-					"Commits with errors are disabled.\n(Can be enabled in application settings.)", NotificationType.WARNING));
+			notificationsManager.notify(new Notification(
+					AutoRevertAppComponent.DISPLAY_NAME,
+					"Commit was cancelled because project has errors",
+					"(You can disable it <a href=\"\">here</a>)",
+					NotificationType.WARNING,
+					listener
+			));
 		}
 
 		@NotNull @Override protected CheckinHandler createVcsHandler(CheckinProjectPanel panel) {
