@@ -25,7 +25,6 @@ public class SettingsForm {
 	public JPanel root;
 	private JComboBox minutesTillRevertComboBox;
 	private JCheckBox showTimerInToolbarCheckBox;
-	private JCheckBox notImplementedCheckBox;
 	private JCheckBox disableCommitsWithErrorsCheckBox;
 
 	private final Settings initialState;
