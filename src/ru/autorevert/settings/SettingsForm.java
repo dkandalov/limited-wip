@@ -26,7 +26,7 @@ public class SettingsForm {
 	private JComboBox minutesTillRevertComboBox;
 	private JCheckBox showTimerInToolbarCheckBox;
 	private JCheckBox notImplementedCheckBox;
-	private JCheckBox notImplementedCheckBox1;
+	private JCheckBox disableCommitsWithErrorsCheckBox;
 
 	private final Settings initialState;
 	private Settings currentState;
@@ -46,6 +46,7 @@ public class SettingsForm {
 		};
 		minutesTillRevertComboBox.addActionListener(commonActionListener);
 		showTimerInToolbarCheckBox.addActionListener(commonActionListener);
+		disableCommitsWithErrorsCheckBox.addActionListener(commonActionListener);
 	}
 
 	public void updateUIFromState() {
@@ -54,6 +55,7 @@ public class SettingsForm {
 
 		minutesTillRevertComboBox.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
 		showTimerInToolbarCheckBox.setSelected(currentState.showTimerInToolbar);
+		disableCommitsWithErrorsCheckBox.setSelected(currentState.disableCommitsWithErrors);
 
 		isUpdatingUI = false;
 	}
@@ -65,6 +67,7 @@ public class SettingsForm {
 				currentState.minutesTillRevert = value;
 			}
 			currentState.showTimerInToolbar = showTimerInToolbarCheckBox.isSelected();
+			currentState.disableCommitsWithErrors = disableCommitsWithErrorsCheckBox.isSelected();
 		} catch (NumberFormatException ignored) {
 		}
 	}

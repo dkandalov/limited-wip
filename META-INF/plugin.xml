@@ -37,7 +37,7 @@ Dedicated to LMAX people.
             <implementation-class>ru.autorevert.components.TimerEventsSourceAppComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>ru.autorevert.components.ProhibitingCheckinHandlerComponent</implementation-class>
+            <implementation-class>ru.autorevert.components.DisableCommitsWithErrorsComponent</implementation-class>
         </component>
     </application-components>
 

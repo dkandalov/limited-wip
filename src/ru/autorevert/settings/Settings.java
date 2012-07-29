@@ -27,11 +27,10 @@ public class Settings implements PersistentStateComponent<Settings>  {
 	public static final Integer MIN_MINUTES_TO_REVERT = 1;
 	public static final Integer MAX_MINUTES_TO_REVERT = 99;
 
-	private static final int DEFAULT_MINUTES_TILL_REVERT = 2;
-	private static final boolean DEFAULT_SHOW_TIMER_IN_TOOLBAR = true;
+	public int minutesTillRevert = 2;
+	public boolean showTimerInToolbar = true;
+	public boolean disableCommitsWithErrors = false;
 
-	public int minutesTillRevert = DEFAULT_MINUTES_TILL_REVERT;
-	public boolean showTimerInToolbar = DEFAULT_SHOW_TIMER_IN_TOOLBAR;
 
 	public int secondsTillRevert() {
 		return minutesTillRevert * 60;
@@ -54,6 +53,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 
 		if (minutesTillRevert != settings.minutesTillRevert) return false;
 		if (showTimerInToolbar != settings.showTimerInToolbar) return false;
+		if (disableCommitsWithErrors != settings.disableCommitsWithErrors) return false;
 
 		return true;
 	}
@@ -62,6 +62,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 	public int hashCode() {
 		int result = minutesTillRevert;
 		result = 31 * result + (showTimerInToolbar ? 1 : 0);
+		result = 31 * result + (disableCommitsWithErrors ? 1 : 0);
 		return result;
 	}
 
@@ -69,6 +70,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		return "Settings{" +
 				"minutesTillRevert=" + minutesTillRevert +
 				", showTimerInToolbar=" + showTimerInToolbar +
+				", disableCommitsWithErrors=" + disableCommitsWithErrors +
 				'}';
 	}
 

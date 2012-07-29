@@ -32,6 +32,7 @@ import javax.swing.*;
  * Date: 14/06/2012
  */
 public class AutoRevertAppComponent implements ApplicationComponent, Configurable {
+	public static final String DISPLAY_NAME = "VCS auto-revert";
 
 	private SettingsForm settingsForm;
 
@@ -68,7 +69,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Nls @Override public String getDisplayName() {
-		return "VCS auto-revert";
+		return DISPLAY_NAME;
 	}
 
 	@NotNull @Override public String getComponentName() {
@@ -88,7 +89,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 			AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
 			autoRevertProjectComponent.onNewSettings(settings);
 		}
-		ProhibitingCheckinHandlerComponent component = ApplicationManager.getApplication().getComponent(ProhibitingCheckinHandlerComponent.class);
+		DisableCommitsWithErrorsComponent component = ApplicationManager.getApplication().getComponent(DisableCommitsWithErrorsComponent.class);
 		component.onNewSettings(settings);
 	}
 }

@@ -32,8 +32,8 @@ import static java.util.Arrays.asList;
  * User: dima
  * Date: 29/07/2012
  */
-public class ProhibitingCheckinHandlerComponent implements ApplicationComponent, Settings.Listener {
-	private static final Logger LOG = Logger.getInstance(ProhibitingCheckinHandlerComponent.class);
+public class DisableCommitsWithErrorsComponent implements ApplicationComponent, Settings.Listener {
+	private static final Logger LOG = Logger.getInstance(DisableCommitsWithErrorsComponent.class);
 
 	private final Ref<Boolean> enabled = Ref.create(false);
 
@@ -72,11 +72,11 @@ public class ProhibitingCheckinHandlerComponent implements ApplicationComponent,
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "ProhibitingCheckinHandlerComponent";
+		return "DisableCommitsWithErrorsComponent";
 	}
 
 	@Override public void onNewSettings(Settings settings) {
-		enabled.set(false); // TODO
+		enabled.set(settings.disableCommitsWithErrors);
 	}
 
 	private static class ProhibitingCheckinHandlerFactory extends VcsCheckinHandlerFactory {
@@ -96,14 +96,19 @@ public class ProhibitingCheckinHandlerComponent implements ApplicationComponent,
 					WolfTheProblemSolver wolf = WolfTheProblemSolver.getInstance(project);
 					for (Module module : ModuleManager.getInstance(project).getModules()) {
 						if (wolf.hasProblemFilesBeneath(module)) {
-							Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
-							notificationsManager.notify(new Notification("aaa", "Autorevert", "Commits with errors are disabled", NotificationType.WARNING));
+							notifyThatCommitWasCancelled();
 							return false;
 						}
 					}
 					return true;
 				}
 			};
+		}
+
+		private void notifyThatCommitWasCancelled() {
+			Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
+			notificationsManager.notify(new Notification(AutoRevertAppComponent.DISPLAY_NAME, AutoRevertAppComponent.DISPLAY_NAME,
+					"Commits with errors are disabled.\n(Can be enabled in application settings.)", NotificationType.WARNING));
 		}
 
 		@NotNull @Override protected CheckinHandler createVcsHandler(CheckinProjectPanel panel) {

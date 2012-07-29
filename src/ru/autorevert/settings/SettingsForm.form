@@ -54,7 +54,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <enabled value="false"/>
+          <enabled value="true"/>
           <text value="Disable commits with errors"/>
         </properties>
       </component>
@@ -95,13 +95,13 @@
           <text value="(not implemented)"/>
         </properties>
       </component>
-      <component id="b071c" class="javax.swing.JCheckBox" binding="notImplementedCheckBox1" default-binding="true">
+      <component id="b071c" class="javax.swing.JCheckBox" binding="disableCommitsWithErrorsCheckBox">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <enabled value="false"/>
-          <text value="(not implemented)"/>
+          <enabled value="true"/>
+          <text value=""/>
         </properties>
       </component>
       <hspacer id="f5ee4">
