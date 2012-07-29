@@ -39,7 +39,16 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 
 	@SuppressWarnings("unchecked")
 	@Override public void initComponent() {
-		// TODO comment
+
+		// This is a hack caused by limitations of IntelliJ API.
+		//  - cannot use CheckinHandlerFactory because its createSystemReadyHandler() is never called
+		//  - cannot use VcsCheckinHandlerFactory through extension points because need to register
+		//    checkin handler for all VCSs available
+		//  - cannot use CheckinHandlersManager#registerCheckinHandlerFactory() because it doesn't properly
+		//    register VcsCheckinHandlerFactory
+		//
+		// Therefore, this hack with reflection.
+
 		accessField(CheckinHandlersManager.getInstance(), asList("b", "myVcsMap"), new Function<MultiMap, Void>() {
 			@Override public Void fun(MultiMap multiMap) {
 
@@ -53,13 +62,14 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void accessField(Object o, List<String> fieldNames, Function function) {
+	private static void accessField(Object o, List<String> possibleFieldNames, Function function) {
 		for (Field field : o.getClass().getDeclaredFields()) {
-			if (fieldNames.contains(field.getName())) {
+			if (possibleFieldNames.contains(field.getName())) {
 				field.setAccessible(true);
 				try {
 
 					function.fun(field.get(o));
+					return;
 
 				} catch (Exception e) {
 					LOG.warn("Error while initializing ProhibitingCheckinHandlerFactory");
