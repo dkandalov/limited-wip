@@ -13,6 +13,7 @@
  */
 package ru.autorevert.components;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.Configurable;
@@ -36,7 +37,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 
 	@Override public void initComponent() {
 		Settings settings = ServiceManager.getService(Settings.class);
-		notifyAllProjectsAbout(settings);
+		notifyAutorevertComponentsAbout(settings);
 	}
 
 	@Override public void disposeComponent() {
@@ -54,7 +55,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 
 	@Override public void apply() throws ConfigurationException {
 		Settings newSettings = settingsForm.applyChanges();
-		notifyAllProjectsAbout(newSettings);
+		notifyAutorevertComponentsAbout(newSettings);
 	}
 
 	@Override public void reset() {
@@ -82,10 +83,12 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 		return null;
 	}
 
-	private void notifyAllProjectsAbout(Settings settings) {
+	private void notifyAutorevertComponentsAbout(Settings settings) {
 		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
 			AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
 			autoRevertProjectComponent.onNewSettings(settings);
 		}
+		ProhibitingCheckinHandlerComponent component = ApplicationManager.getApplication().getComponent(ProhibitingCheckinHandlerComponent.class);
+		component.onNewSettings(settings);
 	}
 }

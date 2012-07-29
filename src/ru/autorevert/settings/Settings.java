@@ -71,4 +71,8 @@ public class Settings implements PersistentStateComponent<Settings>  {
 				", showTimerInToolbar=" + showTimerInToolbar +
 				'}';
 	}
+
+	public interface Listener {
+		void onNewSettings(Settings settings);
+	}
 }

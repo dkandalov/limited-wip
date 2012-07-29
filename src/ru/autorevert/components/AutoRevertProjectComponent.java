@@ -33,7 +33,7 @@ import ru.autorevert.settings.Settings;
  * User: dima
  * Date: 10/06/2012
  */
-public class AutoRevertProjectComponent extends AbstractProjectComponent {
+public class AutoRevertProjectComponent extends AbstractProjectComponent implements Settings.Listener {
 	private Model model;
 	private TimerEventsSourceAppComponent.Listener listener;
 	private IdeNotifications ideNotifications;
@@ -91,7 +91,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent {
 		model.stop();
 	}
 
-	public void onNewSettings(Settings settings) {
+	@Override public void onNewSettings(Settings settings) {
 		ideNotifications.onNewSettings(settings.showTimerInToolbar);
 		model.onNewSettings(settings.secondsTillRevert());
 	}

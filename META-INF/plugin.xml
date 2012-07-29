@@ -21,11 +21,13 @@ Reasons to auto-revert changes:
 <li>it's fun because it's like arcade computer game.</li>
 <li>it's an experiment to see your limits.</li>
 </ul>
+Dedicated to LMAX people.
 </body></html>
 		]]>
     </description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.vcs</depends>
 
     <application-components>
         <component>
@@ -33,6 +35,9 @@ Reasons to auto-revert changes:
         </component>
         <component>
             <implementation-class>ru.autorevert.components.TimerEventsSourceAppComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>ru.autorevert.components.ProhibitingCheckinHandlerComponent</implementation-class>
         </component>
     </application-components>
 
