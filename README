@@ -2,11 +2,14 @@ This is a plugin for IntelliJ IDEA (http://www.jetbrains.com/idea).
 It reverts active change list every N minutes.
 
 How to use it:
-TODO
-
-To start/stop automatic revert:
- - use alt+shift+A shortcut or
- - click on widget in toolbar (right-bottom corner of project window)
+ - choose how often to revert changes in Settings - VCS auto-revert
+ - start auto-revert (alt+shift+A or click on widget in the toolbar)
+ - work on a feature:
+   - if your changes auto-reverted before you finish and commit,
+     start over and probably think how to make smaller steps
+   - if you finish and commit before you run out of time, timer will be reset.
+ - if you use really small time intervals (like 2 or 5 minutes), there won't be much
+   time to write commit messages. In this case "Quick commit" action can be useful (ctrl+alt+shift+K).
 
 
 Reasons to auto-revert changes:

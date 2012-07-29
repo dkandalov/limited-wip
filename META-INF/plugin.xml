@@ -7,21 +7,21 @@
     <idea-version since-build="8000"/>
     <description>
         <![CDATA[<html><body>
-<p>Reverts active change list every N minutes.<p/>
-To start&#47;stop automatic revert:
+Reverts active change list every N minutes:
 <ul>
-<li>use alt+shift+A shortcut or</li>
-<li>click on widget in the toolbar (right-bottom corner of project window)</li>
+ <li>choose how often to revert changes in "Settings - VCS auto-revert"</li>
+ <li>start auto-revert (alt+shift+A)</li>
+ <li>work on a feature:
+   <ul>
+     <li>if your changes auto-reverted before you finish and commit, start over and try making smaller steps;</li>
+     <li>if you finish and commit before you run out of time, timer will be reset.</li>
+   </ul>
+ </li>
+ <li>with really small time intervals (like 2 or 5 minutes), there won't be much time to write commit messages. In this case "Quick commit" action can be useful (ctrl+alt+shift+K).</li>
 </ul>
 <br/>
-Reasons to auto-revert changes:
-<ul>
-<li>to teach yourself proper TDD. Set up auto-revert to 2 minutes or so. Focus only on one part of red-green-refactor cycle. (See http://jamesshore.com/Blog/Red-Green-Refactor.html or http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd)</li>
-<li>to limit work-in-progress. Auto-revert forces you to commit or lose changes. If committed changes are at least compilable, you won't get involved in big bang refactorings and code changes. It's like Pomodoro but you have to finish something. (http://en.wikipedia.org/wiki/Pomodoro_Technique)</li>
-<li>not to be too attached to your code. If it's reverted, just write again and probably it will be better this time. (See http://blog.jayfields.com/2009/03/kill-your-darlings.html)</li>
-<li>it's fun because it's like arcade computer game.</li>
-<li>it's an experiment to see your limits.</li>
-</ul>
+See https://github.com/dkandalov/auto-revert-plugin for more details.
+<br/><br/>
 Dedicated to LMAX people.
 </body></html>
 		]]>
