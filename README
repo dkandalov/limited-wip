@@ -1,6 +1,8 @@
 This is a plugin for IntelliJ IDEA (http://www.jetbrains.com/idea).
 It reverts active change list every N minutes.
 
+How to use it:
+TODO
 
 To start/stop automatic revert:
  - use alt+shift+A shortcut or
