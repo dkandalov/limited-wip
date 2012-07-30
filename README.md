@@ -15,7 +15,7 @@ How to use it
 
 How I use it
 ------------
-I have been using it mostly when writing code katas (http://http://codekata.pragprog.com) with 2 minute auto-revert interval.
+I have been using it mostly when writing code katas (http://codekata.pragprog.com) with 2 minute auto-revert interval.
 It was one of the most mind-changing experiences when I had to think of a insanely small steps to fit into 2 minutes
 (assuming I cannot commit uncompilable code). It led me to "not doing clever" things and thinking how to evolve code
 without causing "unpredictable" cascade of changes.
