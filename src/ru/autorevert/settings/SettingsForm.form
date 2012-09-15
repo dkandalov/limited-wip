@@ -83,7 +83,8 @@
         </constraints>
         <properties>
           <enabled value="true"/>
-          <text value=""/>
+          <selected value="false"/>
+          <text value="(works only for java)"/>
         </properties>
       </component>
       <hspacer id="f5ee4">

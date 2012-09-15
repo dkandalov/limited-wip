@@ -82,7 +82,7 @@ public class QuickCommitAction extends AnAction {
 					VcsConfiguration.getInstance(project).saveCommitMessage(commitMessage);
 					if (project != null) {
 						AutoRevertProjectComponent autoRevert = project.getComponent(AutoRevertProjectComponent.class);
-						autoRevert.model.onCommit();
+						autoRevert.onQuickCommit();
 					}
 				}
 			}

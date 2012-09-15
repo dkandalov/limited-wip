@@ -33,6 +33,10 @@ Dedicated to LMAX people.
         <li>"Disable commits with errors" option</li>
         <li>"Quick commit" action</li>
       </ul>
+      <b>0.1.2</b>
+      <ul>
+        <li>Icons; resetting timer after quick commit</li>
+      </ul>
     ]]>
     </change-notes>
 

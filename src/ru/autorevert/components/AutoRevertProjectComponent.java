@@ -34,7 +34,7 @@ import ru.autorevert.settings.Settings;
  * Date: 10/06/2012
  */
 public class AutoRevertProjectComponent extends AbstractProjectComponent implements Settings.Listener {
-	Model model;
+	private Model model;
 	private TimerEventsSourceAppComponent.Listener listener;
 	private IdeNotifications ideNotifications;
 
@@ -94,6 +94,10 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent impleme
 	@Override public void onNewSettings(Settings settings) {
 		ideNotifications.onNewSettings(settings.showTimerInToolbar);
 		model.onNewSettings(settings.secondsTillRevert());
+	}
+
+	public void onQuickCommit() {
+		model.onCommit();
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
