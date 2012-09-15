@@ -19,14 +19,12 @@ import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
-
-import javax.swing.*;
-import java.lang.reflect.InvocationTargetException;
+import com.intellij.util.ui.UIUtil;
 
 /**
-* User: dima
-* Date: 12/06/2012
-*/
+ * User: dima
+ * Date: 12/06/2012
+ */
 public class IdeActions {
 	private final Project project;
 
@@ -35,30 +33,23 @@ public class IdeActions {
 	}
 
 	public boolean revertCurrentChangeList() {
-		try {
-			final boolean[] result = new boolean[]{true};
+		final boolean[] result = new boolean[]{true};
 
-			SwingUtilities.invokeAndWait(new Runnable() {
-				@Override public void run() {
-					LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
-					if (changeList.getChanges().isEmpty()) {
-						result[0] = false;
-						return;
-					}
-
-					new RollbackWorker(project, true).doRollback(changeList.getChanges(), true, null, null);
-					for (Change change : changeList.getChanges()) {
-						FileDocumentManager.getInstance().reloadFiles(change.getVirtualFile());
-					}
+		UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+			@Override public void run() {
+				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
+				if (changeList.getChanges().isEmpty()) {
+					result[0] = false;
+					return;
 				}
-			});
 
-			return result[0];
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return false;
+				new RollbackWorker(project, true).doRollback(changeList.getChanges(), true, null, null);
+				for (Change change : changeList.getChanges()) {
+					FileDocumentManager.getInstance().reloadFiles(change.getVirtualFile());
+				}
+			}
+		});
+
+		return result[0];
 	}
 }
