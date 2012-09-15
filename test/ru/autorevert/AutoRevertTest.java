@@ -13,7 +13,6 @@
  */
 package ru.autorevert;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -28,14 +27,8 @@ public class AutoRevertTest {
 
 	private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
 	private final IdeActions ideActions = mock(IdeActions.class);
-	private Model model;
+	private final Model model = new Model(ideNotifications, ideActions, CHANGE_TIMEOUT_IN_SECS);
 
-	@Before
-	public void setup(){
-
-		model = new Model(ideNotifications, ideActions, CHANGE_TIMEOUT_IN_SECS);
-
-	}
 
 	@Test public void whenStarted_Should_SendAutoRevertMessageToUI() {
 		model.start();
@@ -49,20 +42,9 @@ public class AutoRevertTest {
 
 		model.onTimer(); inOrder.verify(ideNotifications, times(0)).onTimer(anyInt());
 		model.start();
-		//TODO - comment here saying what you're trying to achieve
-		model.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
-		//model.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(1));
-		//model.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
+		model.onTimer(); inOrder.verify(ideNotifications).onTimer(anyInt());
 	}
 
-	private void callOnTimer(int numberOfTimes){
-		for(int i = 0; i < numberOfTimes; i++){
-			model.onTimer();
-
-		}
-	}
-
-	//TODO - better name
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_ShouldRevertCurrentChangeList() {
 		model.start();
 
@@ -152,5 +134,11 @@ public class AutoRevertTest {
 		model.onTimer(); // reverts changes after 1st time event
 
 		verify(ideActions, times(3)).revertCurrentChangeList();
+	}
+
+	private void callOnTimer(int numberOfTimes){
+		for(int i = 0; i < numberOfTimes; i++){
+			model.onTimer();
+		}
 	}
 }

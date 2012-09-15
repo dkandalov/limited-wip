@@ -34,7 +34,7 @@ import ru.autorevert.settings.Settings;
  * Date: 10/06/2012
  */
 public class AutoRevertProjectComponent extends AbstractProjectComponent implements Settings.Listener {
-	private Model model;
+	Model model;
 	private TimerEventsSourceAppComponent.Listener listener;
 	private IdeNotifications ideNotifications;
 
