@@ -58,20 +58,24 @@ Dedicated to LMAX people.
     </project-components>
 
     <actions>
-        <!-- TODO icon="/fileTypes/text.png" ?-->
-        <action id="StartAutoRevert" class="ru.autorevert.components.StartOrStopAutoRevertAction" text="Start auto-revert">
+        <action id="StartAutoRevert" class="ru.autorevert.components.StartOrStopAutoRevertAction"
+                text="Start auto-revert" icon="/icons/rollback.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift a"/>
         </action>
-        <action id="QuickCommitAction" class="ru.autorevert.components.QuickCommitAction" text="Quick commit">
+        <action id="QuickCommitAction" class="ru.autorevert.components.QuickCommitAction"
+                text="Quick commit" icon="/icons/commit.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift k"/>
         </action>
-        <!-- this action is only needed for manual testing -->
+
+        <!-- this action is here only for manual testing -->
+<!--
         <action id="RevertCurrentChangeListAction" class="ru.autorevert.components.RevertCurrentChangeListAction" text="Revert change list">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift r"/>
         </action>
+-->
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

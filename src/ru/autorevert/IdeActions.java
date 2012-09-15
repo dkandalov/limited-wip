@@ -17,9 +17,15 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
+
+import java.util.Collection;
+
+import static com.intellij.util.containers.ContainerUtil.map;
+import static com.intellij.util.containers.ContainerUtil.toArray;
 
 /**
  * User: dima
@@ -37,16 +43,20 @@ public class IdeActions {
 
 		UIUtil.invokeAndWaitIfNeeded(new Runnable() {
 			@Override public void run() {
-				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
-				if (changeList.getChanges().isEmpty()) {
+				Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
+				if (changes.isEmpty()) {
 					result[0] = false;
 					return;
 				}
 
-				new RollbackWorker(project, true).doRollback(changeList.getChanges(), true, null, null);
-				for (Change change : changeList.getChanges()) {
-					FileDocumentManager.getInstance().reloadFiles(change.getVirtualFile());
-				}
+				new RollbackWorker(project, true).doRollback(changes, true, null, null);
+
+				VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
+					@Override public VirtualFile fun(Change change) {
+						return change.getVirtualFile();
+					}
+				}), new VirtualFile[changes.size()]);
+				FileDocumentManager.getInstance().reloadFiles(changedFiles);
 			}
 		});
 
