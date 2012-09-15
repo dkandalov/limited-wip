@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>AutoRevert</id>
     <name>AutoRevert</name>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <category>Misc</category>
     <idea-version since-build="120.0"/>
