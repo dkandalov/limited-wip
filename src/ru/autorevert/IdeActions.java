@@ -49,7 +49,7 @@ public class IdeActions {
 					return;
 				}
 
-				new RollbackWorker(project, true).doRollback(changes, true, null, null);
+				new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
 
 				VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
 					@Override public VirtualFile fun(Change change) {

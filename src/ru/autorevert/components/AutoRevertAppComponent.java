@@ -76,10 +76,6 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 		return "AutoRevertAppComponent";
 	}
 
-	@Override public Icon getIcon() {
-		return null;
-	}
-
 	@Override public String getHelpTopic() {
 		return null;
 	}
