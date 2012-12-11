@@ -13,6 +13,7 @@
  */
 package ru.autorevert;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.Change;
@@ -32,6 +33,7 @@ import static com.intellij.util.containers.ContainerUtil.toArray;
  * Date: 12/06/2012
  */
 public class IdeActions {
+	private static final Logger LOG = Logger.getInstance("#ru.autorevert.IdeActions");
 	private final Project project;
 
 	public IdeActions(Project project) {
@@ -43,20 +45,27 @@ public class IdeActions {
 
 		UIUtil.invokeAndWaitIfNeeded(new Runnable() {
 			@Override public void run() {
-				Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
-				if (changes.isEmpty()) {
-					result[0] = false;
-					return;
-				}
+				try {
 
-				new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
-
-				VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
-					@Override public VirtualFile fun(Change change) {
-						return change.getVirtualFile();
+					Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
+					if (changes.isEmpty()) {
+						result[0] = false;
+						return;
 					}
-				}), new VirtualFile[changes.size()]);
-				FileDocumentManager.getInstance().reloadFiles(changedFiles);
+
+					new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
+
+					VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
+						@Override public VirtualFile fun(Change change) {
+							return change.getVirtualFile();
+						}
+					}), new VirtualFile[changes.size()]);
+					FileDocumentManager.getInstance().reloadFiles(changedFiles);
+
+				} catch (Exception e) {
+					// observed exception while reloading project at the time of auto-revert
+					LOG.error("Error while doing revert", e);
+				}
 			}
 		});
 
