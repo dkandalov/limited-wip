@@ -40,10 +40,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-/**
- * User: dima
- * Date: 29/07/2012
- */
 public class DisableCommitsWithErrorsComponent implements ApplicationComponent, Settings.Listener {
 	private static final Logger LOG = Logger.getInstance(DisableCommitsWithErrorsComponent.class);
 
@@ -109,7 +105,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 			this.enabled = enabled;
 		}
 
-		@Override public BeforeCheckinDialogHandler createSystemReadyHandler(final Project project) {
+		@Override public BeforeCheckinDialogHandler createSystemReadyHandler(@NotNull final Project project) {
 			return new BeforeCheckinDialogHandler() {
 				@Override
 				public boolean beforeCommitDialogShownCallback(Iterable<CommitExecutor> commitExecutors, boolean b) {
@@ -131,7 +127,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 			NotificationListener listener = new NotificationListener() {
 				@Override
 				public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-					ShowSettingsUtil.getInstance().showSettingsDialog((Project) null, AutoRevertAppComponent.class);
+					ShowSettingsUtil.getInstance().showSettingsDialog(null, AutoRevertAppComponent.class);
 				}
 			};
 

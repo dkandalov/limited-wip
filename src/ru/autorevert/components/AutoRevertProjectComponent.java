@@ -29,10 +29,6 @@ import ru.autorevert.IdeNotifications;
 import ru.autorevert.Model;
 import ru.autorevert.settings.Settings;
 
-/**
- * User: dima
- * Date: 10/06/2012
- */
 public class AutoRevertProjectComponent extends AbstractProjectComponent implements Settings.Listener {
 	private Model model;
 	private TimerEventsSourceAppComponent.Listener listener;
@@ -110,7 +106,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent impleme
 		}
 
 		@NotNull @Override
-		public CheckinHandler createHandler(final CheckinProjectPanel panel, CommitContext commitContext) {
+		public CheckinHandler createHandler(@NotNull final CheckinProjectPanel panel, @NotNull CommitContext commitContext) {
 			return new CheckinHandler() {
 				@Override public void checkinSuccessful() {
 					if (!project.equals(panel.getProject())) return;

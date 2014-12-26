@@ -31,6 +31,7 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import com.intellij.util.FunctionUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -40,16 +41,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * User: dima
- * Date: 29/07/2012
- */
+
 public class QuickCommitAction extends AnAction {
 
 	private static final Pattern MESSAGE_PATTERN = Pattern.compile("^(.*?)(\\d+)$");
 
-	@Override public void actionPerformed(final AnActionEvent event) {
+	@Override public void actionPerformed(@NotNull final AnActionEvent event) {
 		final Project project = getEventProject(event);
+		if (project == null) return;
 
 		if (anySystemCheckinHandlerCancelsCommit(project)) return;
 
@@ -74,16 +73,18 @@ public class QuickCommitAction extends AnAction {
 						new ArrayList<Change>(defaultChangeList.getChanges()),
 						"",
 						commitMessage,
-						noCheckinHandlers, true, true, FunctionUtil.nullConstant()
+						noCheckinHandlers, true, true, FunctionUtil.nullConstant(),
+						new CommitResultHandler() {
+							@Override public void onSuccess(@NotNull String commitMessage) {}
+							@Override public void onFailure() {}
+						}
 				);
 
 				boolean committed = commitHelper.doCommit();
 				if (committed) {
 					VcsConfiguration.getInstance(project).saveCommitMessage(commitMessage);
-					if (project != null) {
-						AutoRevertProjectComponent autoRevert = project.getComponent(AutoRevertProjectComponent.class);
-						autoRevert.onQuickCommit();
-					}
+					AutoRevertProjectComponent autoRevert = project.getComponent(AutoRevertProjectComponent.class);
+					autoRevert.onQuickCommit();
 				}
 			}
 		};
@@ -97,12 +98,12 @@ public class QuickCommitAction extends AnAction {
 
 	/**
 	 * Couldn't find better way to "reuse" this code but to copy-paste it from
-	 * {@link com.intellij.openapi.vcs.changes.ui.CommitChangeListDialog#commit}.
+	 * {@link com.intellij.openapi.vcs.changes.ui.CommitChangeListDialog}.
 	 */
 	private static boolean anySystemCheckinHandlerCancelsCommit(Project project) {
 		final AbstractVcs[] allActiveVcss = ProjectLevelVcsManager.getInstance(project).getAllActiveVcss();
 		final List<VcsCheckinHandlerFactory> factoryList =
-				CheckinHandlersManager.getInstance().getMatchingVcsFactories(Arrays.<AbstractVcs>asList(allActiveVcss));
+				CheckinHandlersManager.getInstance().getMatchingVcsFactories(Arrays.asList(allActiveVcss));
 		for (BaseCheckinHandlerFactory factory : factoryList) {
 			final BeforeCheckinDialogHandler handler = factory.createSystemReadyHandler(project);
 			if (handler != null) {

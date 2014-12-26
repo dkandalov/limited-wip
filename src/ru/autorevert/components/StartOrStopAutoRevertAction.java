@@ -16,13 +16,10 @@ package ru.autorevert.components;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * User: dima
- * Date: 10/06/2012
- */
 public class StartOrStopAutoRevertAction extends AnAction {
-	@Override public void actionPerformed(AnActionEvent event) {
+	@Override public void actionPerformed(@NotNull AnActionEvent event) {
 		Project project = event.getProject();
 		if (project == null) return;
 
@@ -34,7 +31,7 @@ public class StartOrStopAutoRevertAction extends AnAction {
 		}
 	}
 
-	@Override public void update(AnActionEvent event) {
+	@Override public void update(@NotNull AnActionEvent event) {
 		String text = textFor(event.getProject());
 		event.getPresentation().setText(text);
 		event.getPresentation().setDescription(text);

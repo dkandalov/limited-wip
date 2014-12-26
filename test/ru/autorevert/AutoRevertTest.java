@@ -18,10 +18,7 @@ import org.mockito.InOrder;
 
 import static org.mockito.Mockito.*;
 
-/**
- * User: dima
- * Date: 08/06/2012
- */
+
 public class AutoRevertTest {
 	private static final int CHANGE_TIMEOUT_IN_SECS = 2;
 

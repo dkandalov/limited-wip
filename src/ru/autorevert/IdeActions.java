@@ -28,10 +28,6 @@ import java.util.Collection;
 import static com.intellij.util.containers.ContainerUtil.map;
 import static com.intellij.util.containers.ContainerUtil.toArray;
 
-/**
- * User: dima
- * Date: 12/06/2012
- */
 public class IdeActions {
 	private static final Logger LOG = Logger.getInstance("#ru.autorevert.IdeActions");
 	private final Project project;

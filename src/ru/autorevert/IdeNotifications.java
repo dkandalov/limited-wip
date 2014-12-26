@@ -27,12 +27,7 @@ import ru.autorevert.components.AutoRevertProjectComponent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-/**
- * User: dima
- * Date: 12/06/2012
- */
 public class IdeNotifications {
-
 	private final MyStatusBarWidget widget = new MyStatusBarWidget();
 	private final Project project;
 	private boolean showTimerInToolbar;
@@ -104,6 +99,7 @@ public class IdeNotifications {
 		int sec = seconds % 60;
 		return String.format("%02d", min) + ":" + String.format("%02d", sec);
 	}
+
 
 	public static class MyStatusBarWidget implements StatusBarWidget {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";

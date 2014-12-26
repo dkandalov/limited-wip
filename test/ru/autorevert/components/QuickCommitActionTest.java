@@ -19,10 +19,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static ru.autorevert.components.QuickCommitAction.nextCommitMessage;
 
-/**
- * User: dima
- * Date: 29/07/2012
- */
 public class QuickCommitActionTest {
 	@Test public void shouldComeUpWithNextCommitMessage() {
 		assertThat(nextCommitMessage(null), equalTo(" 0"));

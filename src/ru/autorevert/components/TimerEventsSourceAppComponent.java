@@ -21,10 +21,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * User: dima
- * Date: 10/06/2012
- */
+
 public class TimerEventsSourceAppComponent implements ApplicationComponent {
 	private static final int ONE_SECOND = 1000;
 

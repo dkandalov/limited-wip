@@ -13,10 +13,7 @@
  */
 package ru.autorevert;
 
-/**
- * User: dima
- * Date: 10/06/2012
- */
+
 public class Model {
 	private final IdeNotifications ideNotifications;
 	private final IdeActions ideActions;

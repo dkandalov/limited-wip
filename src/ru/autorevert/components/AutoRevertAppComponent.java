@@ -27,10 +27,6 @@ import ru.autorevert.settings.SettingsForm;
 
 import javax.swing.*;
 
-/**
- * User: dima
- * Date: 14/06/2012
- */
 public class AutoRevertAppComponent implements ApplicationComponent, Configurable {
 	public static final String DISPLAY_NAME = "VCS auto-revert";
 
