@@ -27,14 +27,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class AutoRevertAppComponent implements ApplicationComponent, Configurable {
-	public static final String DISPLAY_NAME = "VCS auto-revert";
+public class LimitedWIPAppComponent implements ApplicationComponent, Configurable {
+	public static final String DISPLAY_NAME = "Limited WIP";
 
 	private SettingsForm settingsForm;
 
 	@Override public void initComponent() {
 		Settings settings = ServiceManager.getService(Settings.class);
-		notifyAutorevertComponentsAbout(settings);
+		notifyComponentsAbout(settings);
 	}
 
 	@Override public void disposeComponent() {
@@ -52,7 +52,7 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 
 	@Override public void apply() throws ConfigurationException {
 		Settings newSettings = settingsForm.applyChanges();
-		notifyAutorevertComponentsAbout(newSettings);
+		notifyComponentsAbout(newSettings);
 	}
 
 	@Override public void reset() {
@@ -76,10 +76,10 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 		return null;
 	}
 
-	private void notifyAutorevertComponentsAbout(Settings settings) {
+	private void notifyComponentsAbout(Settings settings) {
 		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-			AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
-			autoRevertProjectComponent.onNewSettings(settings);
+			LimitedWIPProjectComponent projectComponent = project.getComponent(LimitedWIPProjectComponent.class);
+			projectComponent.onNewSettings(settings);
 		}
 		DisableCommitsWithErrorsComponent component = ApplicationManager.getApplication().getComponent(DisableCommitsWithErrorsComponent.class);
 		component.onNewSettings(settings);

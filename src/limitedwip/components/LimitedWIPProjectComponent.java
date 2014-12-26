@@ -29,12 +29,12 @@ import org.jetbrains.annotations.NotNull;
 import limitedwip.IdeActions;
 import limitedwip.IdeNotifications;
 
-public class AutoRevertProjectComponent extends AbstractProjectComponent implements Settings.Listener {
+public class LimitedWIPProjectComponent extends AbstractProjectComponent implements Settings.Listener {
 	private Model model;
 	private TimerEventsSourceAppComponent.Listener listener;
 	private IdeNotifications ideNotifications;
 
-	protected AutoRevertProjectComponent(Project project) {
+	protected LimitedWIPProjectComponent(Project project) {
 		super(project);
 	}
 

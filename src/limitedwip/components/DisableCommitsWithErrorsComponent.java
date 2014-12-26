@@ -127,13 +127,13 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 			NotificationListener listener = new NotificationListener() {
 				@Override
 				public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-					ShowSettingsUtil.getInstance().showSettingsDialog(null, AutoRevertAppComponent.class);
+					ShowSettingsUtil.getInstance().showSettingsDialog(null, LimitedWIPAppComponent.class);
 				}
 			};
 
 			Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
 			notificationsManager.notify(new Notification(
-					AutoRevertAppComponent.DISPLAY_NAME,
+					LimitedWIPAppComponent.DISPLAY_NAME,
 					"You cannot commit because project has errors",
 					"(It can be turned off in <a href=\"\">Settings</a> dialog)",
 					NotificationType.WARNING,

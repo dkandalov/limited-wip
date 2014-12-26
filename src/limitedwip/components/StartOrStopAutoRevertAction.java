@@ -23,11 +23,11 @@ public class StartOrStopAutoRevertAction extends AnAction {
 		Project project = event.getProject();
 		if (project == null) return;
 
-		AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
-		if (autoRevertProjectComponent.isStarted()) {
-			autoRevertProjectComponent.stop();
+		LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
+		if (limitedWIPProjectComponent.isStarted()) {
+			limitedWIPProjectComponent.stop();
 		} else {
-			autoRevertProjectComponent.start();
+			limitedWIPProjectComponent.start();
 		}
 	}
 
@@ -41,7 +41,7 @@ public class StartOrStopAutoRevertAction extends AnAction {
 	private static String textFor(Project project) {
 		if (project == null) return "Start auto-revert";
 
-		if (project.getComponent(AutoRevertProjectComponent.class).isStarted()) {
+		if (project.getComponent(LimitedWIPProjectComponent.class).isStarted()) {
 			return "Stop auto-revert";
 		} else {
 			return "Start auto-revert";

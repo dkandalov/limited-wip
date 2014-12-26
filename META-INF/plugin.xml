@@ -1,10 +1,14 @@
 <idea-plugin version="2">
-    <id>AutoRevert</id>
-    <name>AutoRevert</name>
-    <version>0.1.2</version>
+    <id>LimitedWIP</id>
+    <name>LimitedWIP</name>
+    <version>0.1.3</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <category>Misc</category>
-    <idea-version since-build="120.0"/>
+
+    <!-- https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges -->
+    <!-- since IJ 13 -->
+    <idea-version since-build="134.0"/>
+
     <description>
         <![CDATA[<html><body>
 Reverts active change list every N minutes:
@@ -45,7 +49,7 @@ Dedicated to LMAX people.
 
     <application-components>
         <component>
-            <implementation-class>limitedwip.components.AutoRevertAppComponent</implementation-class>
+            <implementation-class>limitedwip.components.LimitedWIPAppComponent</implementation-class>
         </component>
         <component>
             <implementation-class>limitedwip.components.TimerEventsSourceAppComponent</implementation-class>
@@ -57,7 +61,7 @@ Dedicated to LMAX people.
 
     <project-components>
         <component>
-            <implementation-class>limitedwip.components.AutoRevertProjectComponent</implementation-class>
+            <implementation-class>limitedwip.components.LimitedWIPProjectComponent</implementation-class>
         </component>
     </project-components>
 
@@ -75,7 +79,7 @@ Dedicated to LMAX people.
 
         <!-- this action is here only for manual testing -->
 <!--
-        <action id="RevertCurrentChangeListAction" class="ru.autorevert.components.RevertCurrentChangeListAction" text="Revert change list">
+        <action id="RevertCurrentChangeListAction" class="limitedwip.components.RevertCurrentChangeListAction" text="Revert change list">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift r"/>
         </action>

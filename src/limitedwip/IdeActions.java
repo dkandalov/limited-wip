@@ -29,7 +29,7 @@ import static com.intellij.util.containers.ContainerUtil.map;
 import static com.intellij.util.containers.ContainerUtil.toArray;
 
 public class IdeActions {
-	private static final Logger LOG = Logger.getInstance("#ru.autorevert.IdeActions");
+	private static final Logger LOG = Logger.getInstance("#limitedwip.IdeActions");
 	private final Project project;
 
 	public IdeActions(Project project) {

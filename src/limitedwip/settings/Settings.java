@@ -18,7 +18,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 
-@State(name = "AutoRevertSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/autorevert.settings.xml")})
+@State(name = "AutoRevertSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/limitedwip.settings.xml")})
 public class Settings implements PersistentStateComponent<Settings>  {
 	public static final Integer MIN_MINUTES_TO_REVERT = 1;
 	public static final Integer MAX_MINUTES_TO_REVERT = 99;
