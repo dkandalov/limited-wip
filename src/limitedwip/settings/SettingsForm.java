@@ -17,10 +17,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * User: dima
- * Date: 14/06/2012
- */
 public class SettingsForm {
 	public JPanel root;
 	private JComboBox minutesTillRevertComboBox;
@@ -62,7 +58,7 @@ public class SettingsForm {
 	private void updateStateFromUI() {
 		try {
 			Integer value = Integer.valueOf((String) minutesTillRevertComboBox.getSelectedItem());
-			if (value >= Settings.MIN_MINUTES_TO_REVERT && value <= Settings.MAX_MINUTES_TO_REVERT) {
+			if (value >= Settings.minMinutesToRevert && value <= Settings.maxMinutesToRevert) {
 				currentState.minutesTillRevert = value;
 			}
 			currentState.showTimerInToolbar = showTimerInToolbarCheckBox.isSelected();

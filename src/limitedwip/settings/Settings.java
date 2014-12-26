@@ -18,10 +18,10 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 
-@State(name = "AutoRevertSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/limitedwip.settings.xml")})
+@State(name = "LimitedWIPSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/limitedwip.settings.xml")})
 public class Settings implements PersistentStateComponent<Settings>  {
-	public static final Integer MIN_MINUTES_TO_REVERT = 1;
-	public static final Integer MAX_MINUTES_TO_REVERT = 99;
+	public static final Integer minMinutesToRevert = 1;
+	public static final Integer maxMinutesToRevert = 99;
 
 	public int minutesTillRevert = 2;
 	public boolean showTimerInToolbar = true;

@@ -44,7 +44,7 @@ public class TimerEventsSourceAppComponent implements ApplicationComponent {
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "AutoRevert-TimeEventsSource";
+		return "LimitedWIP-TimeEventsSource";
 	}
 
 	public void addListener(Listener listener) {

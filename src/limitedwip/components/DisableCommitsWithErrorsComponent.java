@@ -133,7 +133,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 
 			Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
 			notificationsManager.notify(new Notification(
-					LimitedWIPAppComponent.DISPLAY_NAME,
+					LimitedWIPAppComponent.displayName,
 					"You cannot commit because project has errors",
 					"(It can be turned off in <a href=\"\">Settings</a> dialog)",
 					NotificationType.WARNING,

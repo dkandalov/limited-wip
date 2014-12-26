@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class LimitedWIPAppComponent implements ApplicationComponent, Configurable {
-	public static final String DISPLAY_NAME = "Limited WIP";
+	public static final String displayName = "Limited WIP";
+	private static final String limitedWIPAppComponentId = "LimitedWIPAppComponent";
 
 	private SettingsForm settingsForm;
 
@@ -65,11 +66,11 @@ public class LimitedWIPAppComponent implements ApplicationComponent, Configurabl
 	}
 
 	@Nls @Override public String getDisplayName() {
-		return DISPLAY_NAME;
+		return displayName;
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "AutoRevertAppComponent";
+		return limitedWIPAppComponentId;
 	}
 
 	@Override public String getHelpTopic() {

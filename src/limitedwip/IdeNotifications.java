@@ -164,7 +164,7 @@ public class IdeNotifications {
 		}
 
 		@NotNull @Override public String ID() {
-			return "AutoRevert_StatusBarWidget";
+			return "LimitedWIP_StatusBarWidget";
 		}
 	}
 }
