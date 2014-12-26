@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.autorevert.components;
+package limitedwip.components;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
@@ -23,11 +23,11 @@ import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
+import limitedwip.Model;
+import limitedwip.settings.Settings;
 import org.jetbrains.annotations.NotNull;
-import ru.autorevert.IdeActions;
-import ru.autorevert.IdeNotifications;
-import ru.autorevert.Model;
-import ru.autorevert.settings.Settings;
+import limitedwip.IdeActions;
+import limitedwip.IdeNotifications;
 
 public class AutoRevertProjectComponent extends AbstractProjectComponent implements Settings.Listener {
 	private Model model;

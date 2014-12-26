@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.autorevert;
+package limitedwip;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -21,8 +21,8 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Consumer;
+import limitedwip.components.AutoRevertProjectComponent;
 import org.jetbrains.annotations.NotNull;
-import ru.autorevert.components.AutoRevertProjectComponent;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

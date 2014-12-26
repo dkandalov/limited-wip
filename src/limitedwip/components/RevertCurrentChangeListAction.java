@@ -1,9 +1,9 @@
-package ru.autorevert.components;
+package limitedwip.components;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.autorevert.IdeActions;
+import limitedwip.IdeActions;
 
 
 public class RevertCurrentChangeListAction extends AnAction {

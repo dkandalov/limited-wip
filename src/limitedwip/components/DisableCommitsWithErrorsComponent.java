@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.autorevert.components;
+package limitedwip.components;
 
 import com.intellij.notification.*;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -31,8 +31,8 @@ import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
+import limitedwip.settings.Settings;
 import org.jetbrains.annotations.NotNull;
-import ru.autorevert.settings.Settings;
 
 import javax.swing.event.HyperlinkEvent;
 import java.lang.reflect.Field;

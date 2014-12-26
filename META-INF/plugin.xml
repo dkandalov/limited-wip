@@ -45,29 +45,29 @@ Dedicated to LMAX people.
 
     <application-components>
         <component>
-            <implementation-class>ru.autorevert.components.AutoRevertAppComponent</implementation-class>
+            <implementation-class>limitedwip.components.AutoRevertAppComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>ru.autorevert.components.TimerEventsSourceAppComponent</implementation-class>
+            <implementation-class>limitedwip.components.TimerEventsSourceAppComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>ru.autorevert.components.DisableCommitsWithErrorsComponent</implementation-class>
+            <implementation-class>limitedwip.components.DisableCommitsWithErrorsComponent</implementation-class>
         </component>
     </application-components>
 
     <project-components>
         <component>
-            <implementation-class>ru.autorevert.components.AutoRevertProjectComponent</implementation-class>
+            <implementation-class>limitedwip.components.AutoRevertProjectComponent</implementation-class>
         </component>
     </project-components>
 
     <actions>
-        <action id="StartAutoRevert" class="ru.autorevert.components.StartOrStopAutoRevertAction"
+        <action id="StartAutoRevert" class="limitedwip.components.StartOrStopAutoRevertAction"
                 text="Start auto-revert" icon="/icons/rollback.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift a"/>
         </action>
-        <action id="QuickCommitAction" class="ru.autorevert.components.QuickCommitAction"
+        <action id="QuickCommitAction" class="limitedwip.components.QuickCommitAction"
                 text="Quick commit" icon="/icons/commit.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift k"/>
@@ -83,6 +83,6 @@ Dedicated to LMAX people.
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceInterface="ru.autorevert.settings.Settings" serviceImplementation="ru.autorevert.settings.Settings"/>
+        <applicationService serviceInterface="limitedwip.settings.Settings" serviceImplementation="limitedwip.settings.Settings"/>
     </extensions>
 </idea-plugin>
