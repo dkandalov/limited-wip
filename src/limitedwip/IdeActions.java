@@ -32,8 +32,7 @@ import com.intellij.util.ui.UIUtil;
 
 import java.util.Collection;
 
-import static com.intellij.openapi.diff.impl.util.TextDiffTypeEnum.DELETED;
-import static com.intellij.openapi.diff.impl.util.TextDiffTypeEnum.NONE;
+import static com.intellij.openapi.diff.impl.util.TextDiffTypeEnum.*;
 import static com.intellij.util.containers.ContainerUtil.map;
 import static com.intellij.util.containers.ContainerUtil.toArray;
 
@@ -76,11 +75,16 @@ public class IdeActions {
 
 		String contentBefore = beforeRevision != null ? beforeRevision.getContent() : "";
 		String contentAfter = afterRevision != null ? afterRevision.getContent() : "";
+		if (contentBefore == null) contentBefore = "";
+		if (contentAfter == null) contentAfter = "";
 
 		int result = 0;
 		for (LineFragment fragment : compareProcessor.process(contentBefore, contentAfter)) {
-			if (fragment.getType() == DELETED) result += fragment.getModifiedLines1();
-			else if (fragment.getType() != NONE) result += fragment.getModifiedLines2();
+			if (fragment.getType() == DELETED) {
+				result += fragment.getModifiedLines1();
+			} else if (fragment.getType() == CHANGED || fragment.getType() == CONFLICT || fragment.getType() == INSERT) {
+				result += fragment.getModifiedLines2();
+			}
 		}
 		return result;
 	}
