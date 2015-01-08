@@ -24,7 +24,7 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import limitedwip.AutoRevert;
-import limitedwip.settings.Settings;
+import limitedwip.ui.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 import limitedwip.IdeActions;
 import limitedwip.IdeNotifications;

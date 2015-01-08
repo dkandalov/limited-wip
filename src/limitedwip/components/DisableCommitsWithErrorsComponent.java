@@ -31,7 +31,7 @@ import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
-import limitedwip.settings.Settings;
+import limitedwip.ui.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;

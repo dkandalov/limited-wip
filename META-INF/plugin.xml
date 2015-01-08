@@ -66,12 +66,12 @@ Dedicated to LMAX people.
     </project-components>
 
     <actions>
-        <action id="StartAutoRevert" class="limitedwip.components.StartOrStopAutoRevertAction"
+        <action id="StartAutoRevert" class="limitedwip.ui.StartOrStopAutoRevertAction"
                 text="Start auto-revert" icon="/limitedwip/icons/rollback.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift a"/>
         </action>
-        <action id="QuickCommitAction" class="limitedwip.components.QuickCommitAction"
+        <action id="QuickCommitAction" class="limitedwip.ui.QuickCommitAction"
                 text="Quick commit" icon="/limitedwip/icons/commit.png">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift k"/>
@@ -79,7 +79,7 @@ Dedicated to LMAX people.
 
         <!-- this action is here only for manual testing -->
 <!--
-        <action id="RevertCurrentChangeListAction" class="limitedwip.components.RevertCurrentChangeListAction" text="Revert change list">
+        <action id="RevertCurrentChangeListAction" class="limitedwip.ui.RevertCurrentChangeListAction" text="Revert change list">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift r"/>
         </action>
@@ -87,6 +87,6 @@ Dedicated to LMAX people.
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceInterface="limitedwip.settings.Settings" serviceImplementation="limitedwip.settings.Settings"/>
+        <applicationService serviceInterface="limitedwip.ui.settings.Settings" serviceImplementation="limitedwip.ui.settings.Settings"/>
     </extensions>
 </idea-plugin>
