@@ -15,21 +15,22 @@ package limitedwip.components;
 
 import org.junit.Test;
 
+import static limitedwip.components.QuickCommitAction.nextCommitMessage;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class QuickCommitActionTest {
 	@Test public void shouldComeUpWithNextCommitMessage() {
-		assertThat(QuickCommitAction.nextCommitMessage(null), equalTo(" 0"));
-		assertThat(QuickCommitAction.nextCommitMessage(""), equalTo(" 0"));
+		assertThat(nextCommitMessage(null), equalTo(" 0"));
+		assertThat(nextCommitMessage(""), equalTo(" 0"));
 
-		assertThat(QuickCommitAction.nextCommitMessage(" 0"), equalTo(" 1"));
-		assertThat(QuickCommitAction.nextCommitMessage(" 1"), equalTo(" 2"));
+		assertThat(nextCommitMessage(" 0"), equalTo(" 1"));
+		assertThat(nextCommitMessage(" 1"), equalTo(" 2"));
 
-		assertThat(QuickCommitAction.nextCommitMessage("some message"), equalTo("some message 0"));
-		assertThat(QuickCommitAction.nextCommitMessage("some message 0"), equalTo("some message 1"));
-		assertThat(QuickCommitAction.nextCommitMessage("some message 9"), equalTo("some message 10"));
-		assertThat(QuickCommitAction.nextCommitMessage("some message 10"), equalTo("some message 11"));
-		assertThat(QuickCommitAction.nextCommitMessage("some message 19"), equalTo("some message 20"));
+		assertThat(nextCommitMessage("some message"), equalTo("some message 0"));
+		assertThat(nextCommitMessage("some message 0"), equalTo("some message 1"));
+		assertThat(nextCommitMessage("some message 9"), equalTo("some message 10"));
+		assertThat(nextCommitMessage("some message 10"), equalTo("some message 11"));
+		assertThat(nextCommitMessage("some message 19"), equalTo("some message 20"));
 	}
 }

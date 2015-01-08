@@ -24,11 +24,11 @@ public class AutoRevertTest {
 
 	private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
 	private final IdeActions ideActions = mock(IdeActions.class);
-	private final Model model = new Model(ideNotifications, ideActions, CHANGE_TIMEOUT_IN_SECS);
+	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions, CHANGE_TIMEOUT_IN_SECS);
 
 
 	@Test public void whenStarted_Should_SendAutoRevertMessageToUI() {
-		model.start();
+		autoRevert.start();
 
 		verify(ideNotifications).onAutoRevertStarted(eq(CHANGE_TIMEOUT_IN_SECS));
 		verifyZeroInteractions(ideActions);
@@ -37,13 +37,13 @@ public class AutoRevertTest {
 	@Test public void shouldOnlySendNotificationEventsWhenModelStarted() {
 		InOrder inOrder = inOrder(ideNotifications);
 
-		model.onTimer(); inOrder.verify(ideNotifications, times(0)).onTimer(anyInt());
-		model.start();
-		model.onTimer(); inOrder.verify(ideNotifications).onTimer(anyInt());
+		autoRevert.onTimer(); inOrder.verify(ideNotifications, times(0)).onTimer(anyInt());
+		autoRevert.start();
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(anyInt());
 	}
 
 	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_ShouldRevertCurrentChangeList() {
-		model.start();
+		autoRevert.start();
 
 		callOnTimer(2 * CHANGE_TIMEOUT_IN_SECS);
 
@@ -52,10 +52,10 @@ public class AutoRevertTest {
 	}
 
 	@Test public void when_Stopped_Should_Not_Perform_Revert() {
-		model.start();
-		model.onTimer();
-		model.stop();
-		model.onTimer();
+		autoRevert.start();
+		autoRevert.onTimer();
+		autoRevert.stop();
+		autoRevert.onTimer();
 
 		verify(ideNotifications).onAutoRevertStarted(anyInt());
 		verify(ideNotifications).onAutoRevertStopped();
@@ -65,19 +65,19 @@ public class AutoRevertTest {
 	@Test public void whenStopped_should_ResetTimeLeftTillRevert_And_NotifyUI() {
 		InOrder inOrder = inOrder(ideNotifications);
 
-		model.start();
-		model.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
-		model.stop();
-		model.start();
-		model.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
-		model.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(1));
+		autoRevert.start();
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
+		autoRevert.stop();
+		autoRevert.start();
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(1));
 	}
 
 	@Test public void no_Reverts_Performed_After_Commit() {
-		model.start();
-		model.onTimer();
-		model.onCommit();
-		model.onTimer();
+		autoRevert.start();
+		autoRevert.onTimer();
+		autoRevert.onCommit();
+		autoRevert.onTimer();
 
 		verify(ideNotifications).onAutoRevertStarted(anyInt());
 		verifyZeroInteractions(ideActions);
@@ -86,56 +86,56 @@ public class AutoRevertTest {
 	@Test public void resets_Timer_And_NotifiesUI_On_Commit() {
 		InOrder inOrder = inOrder(ideNotifications);
 
-		model.start();
-		model.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
-		model.onCommit(); inOrder.verify(ideNotifications).onCommit(CHANGE_TIMEOUT_IN_SECS);
-		model.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
-		model.onTimer();  inOrder.verify(ideNotifications).onTimer(1);
+		autoRevert.start();
+		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
+		autoRevert.onCommit(); inOrder.verify(ideNotifications).onCommit(CHANGE_TIMEOUT_IN_SECS);
+		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
+		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimer(1);
 	}
 
 	@Test public void whenNotStarted_Does_NOT_NotifyUIAboutCommits() {
-		model.onCommit();
-		model.start();
-		model.onCommit();
+		autoRevert.onCommit();
+		autoRevert.start();
+		autoRevert.onCommit();
 
 		verify(ideNotifications, times(1)).onCommit(anyInt());
 	}
 
 	@Test public void whenTimeOutChangesBeforeStarting_should_ApplyAtNextStart() {
-		model.onNewSettings(1);
-		model.start();
-		model.onTimer();
-		model.onTimer();
+		autoRevert.onNewSettings(1);
+		autoRevert.start();
+		autoRevert.onTimer();
+		autoRevert.onTimer();
 
 		verify(ideActions, times(2)).revertCurrentChangeList();
 	}
 
 	@Test public void whenTimeOutChangesAfterStart_should_ApplyItAfterEndOfCurrentTimeOut() {
-		model.start();
-		model.onNewSettings(1);
-		model.onTimer();
-		model.onTimer(); // reverts changes after 2nd time event
-		model.onTimer(); // reverts changes after 1st time event
-		model.onTimer(); // reverts changes after 1st time event
+		autoRevert.start();
+		autoRevert.onNewSettings(1);
+		autoRevert.onTimer();
+		autoRevert.onTimer(); // reverts changes after 2nd time event
+		autoRevert.onTimer(); // reverts changes after 1st time event
+		autoRevert.onTimer(); // reverts changes after 1st time event
 
 		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
 
 	@Test public void whenTimeOutChangesAfterStart_should_ApplyItAfterNext_Commit() {
-		model.start();
-		model.onNewSettings(1);
-		model.onTimer();
-		model.onCommit();
-		model.onTimer(); // reverts changes after 1st time event
-		model.onTimer(); // reverts changes after 1st time event
-		model.onTimer(); // reverts changes after 1st time event
+		autoRevert.start();
+		autoRevert.onNewSettings(1);
+		autoRevert.onTimer();
+		autoRevert.onCommit();
+		autoRevert.onTimer(); // reverts changes after 1st time event
+		autoRevert.onTimer(); // reverts changes after 1st time event
+		autoRevert.onTimer(); // reverts changes after 1st time event
 
 		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
 
 	private void callOnTimer(int numberOfTimes){
 		for(int i = 0; i < numberOfTimes; i++){
-			model.onTimer();
+			autoRevert.onTimer();
 		}
 	}
 }

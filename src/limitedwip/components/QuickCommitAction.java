@@ -113,7 +113,7 @@ public class QuickCommitAction extends AnAction {
 		return false;
 	}
 
-	public static String nextCommitMessage(@Nullable String lastCommitMessage) {
+	static String nextCommitMessage(@Nullable String lastCommitMessage) {
 		if (lastCommitMessage == null) lastCommitMessage = "";
 
 		if (endsWithDigits(lastCommitMessage)) {

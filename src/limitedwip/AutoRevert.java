@@ -14,7 +14,7 @@
 package limitedwip;
 
 
-public class Model {
+public class AutoRevert {
 	private final IdeNotifications ideNotifications;
 	private final IdeActions ideActions;
 
@@ -23,7 +23,7 @@ public class Model {
 	private int timeEventsTillRevert;
 	private int timeEventCounter;
 
-	public Model(IdeNotifications ideNotifications, IdeActions ideActions, int timeEventsTillRevert) {
+	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, int timeEventsTillRevert) {
 		this.ideNotifications = ideNotifications;
 		this.ideActions = ideActions;
 		this.timeEventsTillRevert = timeEventsTillRevert;

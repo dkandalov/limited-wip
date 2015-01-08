@@ -23,14 +23,14 @@ import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
-import limitedwip.Model;
+import limitedwip.AutoRevert;
 import limitedwip.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 import limitedwip.IdeActions;
 import limitedwip.IdeNotifications;
 
 public class LimitedWIPProjectComponent extends AbstractProjectComponent implements Settings.Listener {
-	private Model model;
+	private AutoRevert autoRevert;
 	private TimerEventsSourceAppComponent.Listener listener;
 	private IdeNotifications ideNotifications;
 
@@ -43,14 +43,14 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 
 		Settings settings = ServiceManager.getService(Settings.class);
 		ideNotifications = new IdeNotifications(myProject);
-		model = new Model(ideNotifications, new IdeActions(myProject), settings.secondsTillRevert());
+		autoRevert = new AutoRevert(ideNotifications, new IdeActions(myProject), settings.secondsTillRevert());
 
 		onNewSettings(settings);
 
 		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
 		listener = new TimerEventsSourceAppComponent.Listener() {
 			@Override public void onTimerEvent() {
-				model.onTimer();
+				autoRevert.onTimer();
 			}
 		};
 		timerEventsSource.addListener(listener);
@@ -58,7 +58,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		// register commit callback
 		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(myProject, new Runnable() {
 			@Override public void run() {
-				model.onCommit();
+				autoRevert.onCommit();
 			}
 		}));
 	}
@@ -76,24 +76,24 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 	}
 
 	public void start() {
-		model.start();
+		autoRevert.start();
 	}
 
 	public boolean isStarted() {
-		return model.isStarted();
+		return autoRevert.isStarted();
 	}
 
 	public void stop() {
-		model.stop();
+		autoRevert.stop();
 	}
 
 	@Override public void onNewSettings(Settings settings) {
 		ideNotifications.onNewSettings(settings.showTimerInToolbar);
-		model.onNewSettings(settings.secondsTillRevert());
+		autoRevert.onNewSettings(settings.secondsTillRevert());
 	}
 
 	public void onQuickCommit() {
-		model.onCommit();
+		autoRevert.onCommit();
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
