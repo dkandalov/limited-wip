@@ -13,6 +13,7 @@
  */
 package limitedwip;
 
+import limitedwip.AutoRevert.SettingsUpdate;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -27,31 +28,34 @@ public class AutoRevertTest {
 	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions, CHANGE_TIMEOUT_IN_SECS);
 
 
-	@Test public void whenStarted_Should_SendAutoRevertMessageToUI() {
+	@Test public void sendsUIStartupNotification() {
 		autoRevert.start();
 
 		verify(ideNotifications).onAutoRevertStarted(eq(CHANGE_TIMEOUT_IN_SECS));
 		verifyZeroInteractions(ideActions);
 	}
 
-	@Test public void shouldOnlySendNotificationEventsWhenModelStarted() {
+	@Test public void sendsUINotificationOnTimer_OnlyWhenStarted() {
 		InOrder inOrder = inOrder(ideNotifications);
 
-		autoRevert.onTimer(); inOrder.verify(ideNotifications, times(0)).onTimer(anyInt());
+		autoRevert.onTimer(); inOrder.verify(ideNotifications, times(0)).onTimeTillRevert(anyInt());
 		autoRevert.start();
-		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(anyInt());
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(anyInt());
 	}
 
-	@Test public void whenStarted_And_ReceivesEnoughTimeUpdates_ShouldRevertCurrentChangeList() {
+	@Test public void revertsChanges_WhenReceivedEnoughTimeUpdates() {
 		autoRevert.start();
 
-		callOnTimer(2 * CHANGE_TIMEOUT_IN_SECS);
+		autoRevert.onTimer();
+		autoRevert.onTimer();
+		autoRevert.onTimer();
+		autoRevert.onTimer();
 
 		verify(ideActions, times(2)).revertCurrentChangeList();
 		verifyNoMoreInteractions(ideActions);
 	}
 
-	@Test public void when_Stopped_Should_Not_Perform_Revert() {
+	@Test public void doesNotRevertChanges_WhenStopped() {
 		autoRevert.start();
 		autoRevert.onTimer();
 		autoRevert.stop();
@@ -62,47 +66,37 @@ public class AutoRevertTest {
 		verifyZeroInteractions(ideActions);
 	}
 
-	@Test public void whenStopped_should_ResetTimeLeftTillRevert_And_NotifyUI() {
+	@Test public void resetsTimeTillRevert_WhenStopped() {
 		InOrder inOrder = inOrder(ideNotifications);
 
 		autoRevert.start();
-		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
 		autoRevert.stop();
 		autoRevert.start();
-		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(2));
-		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimer(eq(1));
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
+		autoRevert.onTimer(); inOrder.verify(ideNotifications).onTimeTillRevert(eq(1));
 	}
 
-	@Test public void no_Reverts_Performed_After_Commit() {
-		autoRevert.start();
-		autoRevert.onTimer();
-		autoRevert.onCommit();
-		autoRevert.onTimer();
-
-		verify(ideNotifications).onAutoRevertStarted(anyInt());
-		verifyZeroInteractions(ideActions);
-	}
-
-	@Test public void resets_Timer_And_NotifiesUI_On_Commit() {
+	@Test public void resetsTimeTillRevert_WhenCommitted() {
 		InOrder inOrder = inOrder(ideNotifications);
 
 		autoRevert.start();
-		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
+		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
 		autoRevert.onCommit(); inOrder.verify(ideNotifications).onCommit(CHANGE_TIMEOUT_IN_SECS);
-		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimer(2);
-		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimer(1);
+		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
+		autoRevert.onTimer();  inOrder.verify(ideNotifications).onTimeTillRevert(eq(1));
 	}
 
-	@Test public void whenNotStarted_Does_NOT_NotifyUIAboutCommits() {
-		autoRevert.onCommit();
+	@Test public void sendsUINotificationOnCommit_OnlyWhenStarted() {
+		InOrder inOrder = inOrder(ideNotifications);
+
+		autoRevert.onCommit(); inOrder.verify(ideNotifications, times(0)).onCommit(anyInt());
 		autoRevert.start();
-		autoRevert.onCommit();
-
-		verify(ideNotifications, times(1)).onCommit(anyInt());
+		autoRevert.onCommit(); inOrder.verify(ideNotifications).onCommit(anyInt());
 	}
 
-	@Test public void whenTimeOutChangesBeforeStarting_should_ApplyAtNextStart() {
-		autoRevert.onNewSettings(1);
+	@Test public void appliesRevertTimeOutChange_AfterStart() {
+		autoRevert.on(new SettingsUpdate(1));
 		autoRevert.start();
 		autoRevert.onTimer();
 		autoRevert.onTimer();
@@ -110,9 +104,9 @@ public class AutoRevertTest {
 		verify(ideActions, times(2)).revertCurrentChangeList();
 	}
 
-	@Test public void whenTimeOutChangesAfterStart_should_ApplyItAfterEndOfCurrentTimeOut() {
+	@Test public void appliesRevertTimeoutChange_AfterEndOfCurrentTimeOut() {
 		autoRevert.start();
-		autoRevert.onNewSettings(1);
+		autoRevert.on(new SettingsUpdate(1));
 		autoRevert.onTimer();
 		autoRevert.onTimer(); // reverts changes after 2nd time event
 		autoRevert.onTimer(); // reverts changes after 1st time event
@@ -121,9 +115,9 @@ public class AutoRevertTest {
 		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
 
-	@Test public void whenTimeOutChangesAfterStart_should_ApplyItAfterNext_Commit() {
+	@Test public void appliesRevertTimeoutChange_AfterCommit() {
 		autoRevert.start();
-		autoRevert.onNewSettings(1);
+		autoRevert.on(new SettingsUpdate(1));
 		autoRevert.onTimer();
 		autoRevert.onCommit();
 		autoRevert.onTimer(); // reverts changes after 1st time event
@@ -133,9 +127,4 @@ public class AutoRevertTest {
 		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
 
-	private void callOnTimer(int numberOfTimes){
-		for(int i = 0; i < numberOfTimes; i++){
-			autoRevert.onTimer();
-		}
-	}
 }

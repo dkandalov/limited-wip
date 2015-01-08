@@ -51,7 +51,7 @@ public class AutoRevert {
 		if (!started) return;
 
 		timeEventCounter++;
-		ideNotifications.onTimer(timeEventsTillRevert - timeEventCounter + 1);
+		ideNotifications.onTimeTillRevert(timeEventsTillRevert - timeEventCounter + 1);
 
 		if (timeEventCounter >= timeEventsTillRevert) {
 			timeEventCounter = 0;
@@ -68,13 +68,27 @@ public class AutoRevert {
 		ideNotifications.onCommit(timeEventsTillRevert);
 	}
 
-	public synchronized void onNewSettings(int newTimeEventTillRevert) {
-		this.newTimeEventTillRevert = newTimeEventTillRevert;
+	public synchronized void on(SettingsUpdate settingsUpdate) {
+		this.newTimeEventTillRevert = settingsUpdate.secondsTillRevert;
 	}
 
 	private void updateTimeEventsTillRevert() {
 		if (timeEventsTillRevert != newTimeEventTillRevert) {
 			timeEventsTillRevert = newTimeEventTillRevert;
+		}
+	}
+
+	public static class SettingsUpdate {
+		public final boolean enabled;
+		public final int secondsTillRevert;
+
+		public SettingsUpdate(int secondsTillRevert) {
+			this(true, secondsTillRevert);
+		}
+
+		public SettingsUpdate(boolean enabled, int secondsTillRevert) {
+			this.enabled = enabled;
+			this.secondsTillRevert = secondsTillRevert;
 		}
 	}
 }

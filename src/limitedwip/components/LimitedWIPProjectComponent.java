@@ -24,6 +24,7 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import limitedwip.AutoRevert;
+import limitedwip.AutoRevert.SettingsUpdate;
 import limitedwip.ChangeSizeWatchdog;
 import limitedwip.ui.settings.Settings;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +95,10 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 
 	@Override public void onNewSettings(Settings settings) {
 		ideNotifications.onNewSettings(settings.showTimerInToolbar);
-		autoRevert.onNewSettings(settings.secondsTillRevert());
+		autoRevert.on(new SettingsUpdate(
+				settings.autoRevertEnabled,
+				settings.secondsTillRevert())
+		);
 		changeSizeWatchdog.onNewSettings(
 				settings.maxLinesInChange,
 				settings.disableCommitsAboveThreshold

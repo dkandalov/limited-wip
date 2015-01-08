@@ -56,7 +56,7 @@ public class IdeNotifications {
 		if (showTimerInToolbar) {
 			widget.showTime(formatTime(timeEventsTillRevert));
 		} else {
-			widget.showThatStarted();
+			widget.showStartupText();
 		}
 		updateStatusBar();
 	}
@@ -70,16 +70,16 @@ public class IdeNotifications {
 		if (showTimerInToolbar) {
 			widget.showTime(formatTime(timeEventsTillRevert));
 		} else {
-			widget.showThatStarted();
+			widget.showStartupText();
 		}
 		updateStatusBar();
 	}
 
-	public void onTimer(int secondsLeft) {
+	public void onTimeTillRevert(int secondsLeft) {
 		if (showTimerInToolbar) {
 			widget.showTime(formatTime(secondsLeft));
 		} else {
-			widget.showThatStarted();
+			widget.showStartupText();
 		}
 		updateStatusBar();
 	}
@@ -118,7 +118,7 @@ public class IdeNotifications {
 			text = TIME_LEFT_PREFIX_TEXT + timeLeft;
 		}
 
-		public void showThatStarted() {
+		public void showStartupText() {
 			text = STARTED_TEXT;
 		}
 
