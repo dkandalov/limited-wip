@@ -23,7 +23,7 @@
         <properties/>
         <border type="none" title="Auto-revert current change list on timeout"/>
         <children>
-          <component id="69887" class="javax.swing.JCheckBox">
+          <component id="69887" class="javax.swing.JCheckBox" binding="autoRevertEnabled">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -57,7 +57,7 @@
               <text value="Show timer in toolbar"/>
             </properties>
           </component>
-          <component id="c20a1" class="javax.swing.JComboBox" binding="minutesTillRevertComboBox" default-binding="true">
+          <component id="c20a1" class="javax.swing.JComboBox" binding="minutesTillRevert" default-binding="true">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -81,7 +81,7 @@
               <text value="minutes"/>
             </properties>
           </component>
-          <component id="d1c58" class="javax.swing.JCheckBox" binding="showTimerInToolbarCheckBox">
+          <component id="d1c58" class="javax.swing.JCheckBox" binding="showTimerInToolbar">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -102,7 +102,7 @@
           <text value="Disable commits with errors"/>
         </properties>
       </component>
-      <component id="b071c" class="javax.swing.JCheckBox" binding="disableCommitsWithErrorsCheckBox">
+      <component id="b071c" class="javax.swing.JCheckBox" binding="disableCommitsWithErrors">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -120,7 +120,7 @@
         <properties/>
         <border type="none" title="Notify when current change list size exceeds threshold"/>
         <children>
-          <component id="5d4b2" class="javax.swing.JCheckBox">
+          <component id="5d4b2" class="javax.swing.JCheckBox" binding="watchdogEnabled">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -145,7 +145,7 @@
               <text value="Max change size"/>
             </properties>
           </component>
-          <component id="28bf" class="javax.swing.JComboBox" default-binding="true">
+          <component id="28bf" class="javax.swing.JComboBox" binding="maxLinesInChange">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -162,7 +162,6 @@
                 <item value="180"/>
                 <item value="200"/>
               </model>
-              <selectedIndex value="2"/>
             </properties>
           </component>
           <component id="12925" class="javax.swing.JLabel">
@@ -182,7 +181,7 @@
               <text value="Show remaining in toolbar"/>
             </properties>
           </component>
-          <component id="817cd" class="javax.swing.JCheckBox">
+          <component id="817cd" class="javax.swing.JCheckBox" binding="showRemainingInToolbar">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -201,7 +200,7 @@
               <text value="Disable commits above threshold"/>
             </properties>
           </component>
-          <component id="4e590" class="javax.swing.JCheckBox">
+          <component id="4e590" class="javax.swing.JCheckBox" binding="disableCommitsAboveThreshold">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

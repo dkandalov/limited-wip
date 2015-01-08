@@ -19,9 +19,16 @@ import java.awt.event.ActionListener;
 
 public class SettingsForm {
 	public JPanel root;
-	private JComboBox minutesTillRevertComboBox;
-	private JCheckBox showTimerInToolbarCheckBox;
-	private JCheckBox disableCommitsWithErrorsCheckBox;
+
+	private JCheckBox watchdogEnabled;
+	private JComboBox maxLinesInChange;
+	private JCheckBox showRemainingInToolbar;
+	private JCheckBox disableCommitsAboveThreshold;
+
+	private JCheckBox autoRevertEnabled;
+	private JComboBox minutesTillRevert;
+	private JCheckBox showTimerInToolbar;
+	private JCheckBox disableCommitsWithErrors;
 
 	private final Settings initialState;
 	private Settings currentState;
@@ -39,30 +46,64 @@ public class SettingsForm {
 				updateUIFromState();
 			}
 		};
-		minutesTillRevertComboBox.addActionListener(commonActionListener);
-		showTimerInToolbarCheckBox.addActionListener(commonActionListener);
-		disableCommitsWithErrorsCheckBox.addActionListener(commonActionListener);
+
+		watchdogEnabled.addActionListener(commonActionListener);
+		maxLinesInChange.addActionListener(commonActionListener);
+		showRemainingInToolbar.addActionListener(commonActionListener);
+		disableCommitsAboveThreshold.addActionListener(commonActionListener);
+
+		autoRevertEnabled.addActionListener(commonActionListener);
+		minutesTillRevert.addActionListener(commonActionListener);
+		showTimerInToolbar.addActionListener(commonActionListener);
+
+		disableCommitsWithErrors.addActionListener(commonActionListener);
 	}
 
 	public void updateUIFromState() {
 		if (isUpdatingUI) return;
 		isUpdatingUI = true;
 
-		minutesTillRevertComboBox.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
-		showTimerInToolbarCheckBox.setSelected(currentState.showTimerInToolbar);
-		disableCommitsWithErrorsCheckBox.setSelected(currentState.disableCommitsWithErrors);
+		watchdogEnabled.setSelected(currentState.watchdogEnabled);
+		maxLinesInChange.setEnabled(currentState.watchdogEnabled);
+		showRemainingInToolbar.setEnabled(currentState.watchdogEnabled);
+		disableCommitsAboveThreshold.setEnabled(currentState.watchdogEnabled);
+
+		maxLinesInChange.setSelectedItem(String.valueOf(currentState.maxLinesInChange));
+		showRemainingInToolbar.setSelected(currentState.showRemainingInToolbar);
+		disableCommitsAboveThreshold.setSelected(currentState.disableCommitsAboveThreshold);
+
+
+		autoRevertEnabled.setSelected(currentState.autoRevertEnabled);
+		minutesTillRevert.setEnabled(currentState.autoRevertEnabled);
+		showTimerInToolbar.setEnabled(currentState.autoRevertEnabled);
+
+		minutesTillRevert.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
+		showTimerInToolbar.setSelected(currentState.showTimerInToolbar);
+
+
+		disableCommitsWithErrors.setSelected(currentState.disableCommitsWithErrors);
 
 		isUpdatingUI = false;
 	}
 
 	private void updateStateFromUI() {
 		try {
-			Integer value = Integer.valueOf((String) minutesTillRevertComboBox.getSelectedItem());
-			if (value >= Settings.minMinutesToRevert && value <= Settings.maxMinutesToRevert) {
-				currentState.minutesTillRevert = value;
+			currentState.watchdogEnabled = watchdogEnabled.isSelected();
+			Integer lineCount = Integer.valueOf((String) minutesTillRevert.getSelectedItem());
+			if (Settings.changedLinesRange.isWithin(lineCount)) {
+				currentState.maxLinesInChange = lineCount;
 			}
-			currentState.showTimerInToolbar = showTimerInToolbarCheckBox.isSelected();
-			currentState.disableCommitsWithErrors = disableCommitsWithErrorsCheckBox.isSelected();
+			currentState.showRemainingInToolbar = showRemainingInToolbar.isSelected();
+			currentState.disableCommitsAboveThreshold = disableCommitsAboveThreshold.isSelected();
+
+			currentState.autoRevertEnabled = autoRevertEnabled.isSelected();
+			Integer minutes = Integer.valueOf((String) minutesTillRevert.getSelectedItem());
+			if (Settings.minutesToRevertRange.isWithin(minutes)) {
+				currentState.minutesTillRevert = minutes;
+			}
+			currentState.showTimerInToolbar = showTimerInToolbar.isSelected();
+
+			currentState.disableCommitsWithErrors = disableCommitsWithErrors.isSelected();
 		} catch (NumberFormatException ignored) {
 		}
 	}

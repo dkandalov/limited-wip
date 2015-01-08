@@ -16,16 +16,23 @@ package limitedwip.ui.settings;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.Range;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 
 @State(name = "LimitedWIPSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/limitedwip.ui.settings.xml")})
 public class Settings implements PersistentStateComponent<Settings>  {
-	public static final Integer minMinutesToRevert = 1;
-	public static final Integer maxMinutesToRevert = 99;
+	public static final Range<Integer> minutesToRevertRange = new Range<Integer>(1, 99);
+	public static final Range<Integer> changedLinesRange = new Range<Integer>(1, 999);
 
+	public boolean autoRevertEnabled = false;
 	public int minutesTillRevert = 2;
 	public boolean showTimerInToolbar = true;
 	public boolean disableCommitsWithErrors = false;
+
+	public boolean watchdogEnabled = true;
+	public int maxLinesInChange = 80;
+	public boolean showRemainingInToolbar = true;
+	public boolean disableCommitsAboveThreshold = false;
 
 
 	public int secondsTillRevert() {
@@ -40,33 +47,47 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		XmlSerializerUtil.copyBean(state, this);
 	}
 
-	@SuppressWarnings("RedundantIfStatement") @Override
-	public boolean equals(Object o) {
+	@SuppressWarnings("RedundantIfStatement")
+	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
 		Settings settings = (Settings) o;
 
-		if (minutesTillRevert != settings.minutesTillRevert) return false;
-		if (showTimerInToolbar != settings.showTimerInToolbar) return false;
+		if (autoRevertEnabled != settings.autoRevertEnabled) return false;
+		if (disableCommitsAboveThreshold != settings.disableCommitsAboveThreshold) return false;
 		if (disableCommitsWithErrors != settings.disableCommitsWithErrors) return false;
+		if (maxLinesInChange != settings.maxLinesInChange) return false;
+		if (minutesTillRevert != settings.minutesTillRevert) return false;
+		if (showRemainingInToolbar != settings.showRemainingInToolbar) return false;
+		if (showTimerInToolbar != settings.showTimerInToolbar) return false;
+		if (watchdogEnabled != settings.watchdogEnabled) return false;
 
 		return true;
 	}
 
-	@Override
-	public int hashCode() {
-		int result = minutesTillRevert;
+	@Override public int hashCode() {
+		int result = (autoRevertEnabled ? 1 : 0);
+		result = 31 * result + minutesTillRevert;
 		result = 31 * result + (showTimerInToolbar ? 1 : 0);
 		result = 31 * result + (disableCommitsWithErrors ? 1 : 0);
+		result = 31 * result + (watchdogEnabled ? 1 : 0);
+		result = 31 * result + maxLinesInChange;
+		result = 31 * result + (showRemainingInToolbar ? 1 : 0);
+		result = 31 * result + (disableCommitsAboveThreshold ? 1 : 0);
 		return result;
 	}
 
 	@Override public String toString() {
 		return "Settings{" +
-				"minutesTillRevert=" + minutesTillRevert +
+				"autoRevertEnabled=" + autoRevertEnabled +
+				", minutesTillRevert=" + minutesTillRevert +
 				", showTimerInToolbar=" + showTimerInToolbar +
 				", disableCommitsWithErrors=" + disableCommitsWithErrors +
+				", watchdogEnabled=" + watchdogEnabled +
+				", maxLinesInChange=" + maxLinesInChange +
+				", showRemainingInToolbar=" + showRemainingInToolbar +
+				", disableCommitsAboveThreshold=" + disableCommitsAboveThreshold +
 				'}';
 	}
 
