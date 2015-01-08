@@ -24,6 +24,7 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import limitedwip.AutoRevert;
+import limitedwip.ChangeSizeWatchdog;
 import limitedwip.ui.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 import limitedwip.IdeActions;
@@ -33,6 +34,8 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 	private AutoRevert autoRevert;
 	private TimerEventsSourceAppComponent.Listener listener;
 	private IdeNotifications ideNotifications;
+	private ChangeSizeWatchdog changeSizeWatchdog;
+	private IdeActions ideActions;
 
 	protected LimitedWIPProjectComponent(Project project) {
 		super(project);
@@ -43,7 +46,9 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 
 		Settings settings = ServiceManager.getService(Settings.class);
 		ideNotifications = new IdeNotifications(myProject);
-		autoRevert = new AutoRevert(ideNotifications, new IdeActions(myProject), settings.secondsTillRevert());
+		ideActions = new IdeActions(myProject);
+		autoRevert = new AutoRevert(ideNotifications, ideActions, settings.secondsTillRevert());
+		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications);
 
 		onNewSettings(settings);
 
@@ -51,11 +56,11 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		listener = new TimerEventsSourceAppComponent.Listener() {
 			@Override public void onTimerEvent() {
 				autoRevert.onTimer();
+				changeSizeWatchdog.onChangeSizeUpdate(ideActions.currentChangeListSizeInLines());
 			}
 		};
 		timerEventsSource.addListener(listener);
 
-		// register commit callback
 		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(myProject, new Runnable() {
 			@Override public void run() {
 				autoRevert.onCommit();
@@ -75,21 +80,25 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		timerEventsSource.removeListener(listener);
 	}
 
-	public void start() {
+	public void startAutoRevert() {
 		autoRevert.start();
 	}
 
-	public boolean isStarted() {
+	public boolean isAutoRevertStarted() {
 		return autoRevert.isStarted();
 	}
 
-	public void stop() {
+	public void stopAutoRevert() {
 		autoRevert.stop();
 	}
 
 	@Override public void onNewSettings(Settings settings) {
 		ideNotifications.onNewSettings(settings.showTimerInToolbar);
 		autoRevert.onNewSettings(settings.secondsTillRevert());
+		changeSizeWatchdog.onNewSettings(
+				settings.maxLinesInChange,
+				settings.disableCommitsAboveThreshold
+		);
 	}
 
 	public void onQuickCommit() {

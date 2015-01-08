@@ -144,10 +144,10 @@ public class IdeNotifications {
 							if (project == null) return;
 
 							LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-							if (limitedWIPProjectComponent.isStarted()) {
-								limitedWIPProjectComponent.stop();
+							if (limitedWIPProjectComponent.isAutoRevertStarted()) {
+								limitedWIPProjectComponent.stopAutoRevert();
 							} else {
-								limitedWIPProjectComponent.start();
+								limitedWIPProjectComponent.startAutoRevert();
 							}
 						}
 					};

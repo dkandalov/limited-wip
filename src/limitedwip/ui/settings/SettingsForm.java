@@ -64,24 +64,21 @@ public class SettingsForm {
 		isUpdatingUI = true;
 
 		watchdogEnabled.setSelected(currentState.watchdogEnabled);
-		maxLinesInChange.setEnabled(currentState.watchdogEnabled);
-		showRemainingInToolbar.setEnabled(currentState.watchdogEnabled);
-		disableCommitsAboveThreshold.setEnabled(currentState.watchdogEnabled);
-
 		maxLinesInChange.setSelectedItem(String.valueOf(currentState.maxLinesInChange));
 		showRemainingInToolbar.setSelected(currentState.showRemainingInToolbar);
 		disableCommitsAboveThreshold.setSelected(currentState.disableCommitsAboveThreshold);
 
-
 		autoRevertEnabled.setSelected(currentState.autoRevertEnabled);
-		minutesTillRevert.setEnabled(currentState.autoRevertEnabled);
-		showTimerInToolbar.setEnabled(currentState.autoRevertEnabled);
-
 		minutesTillRevert.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
 		showTimerInToolbar.setSelected(currentState.showTimerInToolbar);
 
-
 		disableCommitsWithErrors.setSelected(currentState.disableCommitsWithErrors);
+
+		minutesTillRevert.setEnabled(currentState.autoRevertEnabled);
+		showTimerInToolbar.setEnabled(currentState.autoRevertEnabled);
+		maxLinesInChange.setEnabled(currentState.watchdogEnabled);
+		showRemainingInToolbar.setEnabled(currentState.watchdogEnabled);
+		disableCommitsAboveThreshold.setEnabled(currentState.watchdogEnabled);
 
 		isUpdatingUI = false;
 	}

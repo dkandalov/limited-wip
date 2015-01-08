@@ -25,10 +25,10 @@ public class StartOrStopAutoRevertAction extends AnAction {
 		if (project == null) return;
 
 		LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-		if (limitedWIPProjectComponent.isStarted()) {
-			limitedWIPProjectComponent.stop();
+		if (limitedWIPProjectComponent.isAutoRevertStarted()) {
+			limitedWIPProjectComponent.stopAutoRevert();
 		} else {
-			limitedWIPProjectComponent.start();
+			limitedWIPProjectComponent.startAutoRevert();
 		}
 	}
 
@@ -42,7 +42,7 @@ public class StartOrStopAutoRevertAction extends AnAction {
 	private static String textFor(Project project) {
 		if (project == null) return "Start auto-revert";
 
-		if (project.getComponent(LimitedWIPProjectComponent.class).isStarted()) {
+		if (project.getComponent(LimitedWIPProjectComponent.class).isAutoRevertStarted()) {
 			return "Stop auto-revert";
 		} else {
 			return "Start auto-revert";

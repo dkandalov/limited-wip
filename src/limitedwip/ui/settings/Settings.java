@@ -27,12 +27,13 @@ public class Settings implements PersistentStateComponent<Settings>  {
 	public boolean autoRevertEnabled = false;
 	public int minutesTillRevert = 2;
 	public boolean showTimerInToolbar = true;
-	public boolean disableCommitsWithErrors = false;
 
 	public boolean watchdogEnabled = true;
 	public int maxLinesInChange = 80;
-	public boolean showRemainingInToolbar = true;
 	public boolean disableCommitsAboveThreshold = false;
+	public boolean showRemainingInToolbar = true;
+
+	public boolean disableCommitsWithErrors = false;
 
 
 	public int secondsTillRevert() {
