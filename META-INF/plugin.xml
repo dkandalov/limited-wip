@@ -76,14 +76,6 @@ Dedicated to LMAX people.
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift k"/>
         </action>
-
-        <!-- this action is here only for manual testing -->
-<!--
-        <action id="RevertCurrentChangeListAction" class="limitedwip.ui.RevertCurrentChangeListAction" text="Revert change list">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift r"/>
-        </action>
--->
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
