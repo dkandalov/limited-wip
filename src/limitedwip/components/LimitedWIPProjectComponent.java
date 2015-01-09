@@ -71,6 +71,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(myProject, new Runnable() {
 			@Override public void run() {
 				autoRevert.onCommit();
+				changeSizeWatchdog.onCommit();
 			}
 		}));
 	}
@@ -100,10 +101,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 	}
 
 	@Override public void onSettings(Settings settings) {
-		ideNotifications.onSettings(
-				settings.showTimerInToolbar,
-				settings.autoRevertEnabled
-		);
+		ideNotifications.onSettingsUpdate(settings);
 		autoRevert.onSettings(new AutoRevert.Settings(
 				settings.autoRevertEnabled,
 				settings.secondsTillRevert()
@@ -113,16 +111,15 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 				settings.maxLinesInChange,
 				settings.notificationIntervalInSeconds()
 		));
-
-		if (settings.disableCommitsAboveThreshold) {
-			ideActions.disableCommitsAboveThreshold(settings.maxLinesInChange);
-		} else {
-			ideActions.enableAllCommits();
-		}
 	}
 
 	public void onQuickCommit() {
 		autoRevert.onCommit();
+		changeSizeWatchdog.onCommit();
+	}
+
+	public void skipNotificationsUntilCommit() {
+		changeSizeWatchdog.skipNotificationsUntilCommit();
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {

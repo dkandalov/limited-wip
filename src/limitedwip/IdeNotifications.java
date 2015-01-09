@@ -14,6 +14,7 @@
 package limitedwip;
 
 import com.intellij.ide.DataManager;
+import com.intellij.notification.*;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
@@ -21,27 +22,27 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Consumer;
+import limitedwip.components.LimitedWIPAppComponent;
 import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.ui.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public class IdeNotifications {
 	private final AutoRevertStatusBarWidget autoRevertWidget = new AutoRevertStatusBarWidget();
+	private final WatchdogStatusBarWidget watchdogWidget = new WatchdogStatusBarWidget();
 	private final Project project;
-	private boolean showTimerInToolbar;
-	private boolean autoRevertEnabled;
+	private Settings settings;
 
-	public IdeNotifications(Project project) {
+
+	public IdeNotifications(Project project, Settings settings) {
 		this.project = project;
+		this.settings = settings;
 
-		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-		if (statusBar != null) {
-			autoRevertWidget.showStoppedText();
-			statusBar.addWidget(autoRevertWidget);
-			statusBar.updateWidget(autoRevertWidget.ID());
-		}
+		onSettingsUpdate(settings);
 	}
 
 	public void onProjectClosed() {
@@ -54,7 +55,7 @@ public class IdeNotifications {
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
-		if (showTimerInToolbar) {
+		if (settings.showTimerInToolbar) {
 			autoRevertWidget.showTime(formatTime(timeEventsTillRevert));
 		} else {
 			autoRevertWidget.showStartedText();
@@ -68,7 +69,7 @@ public class IdeNotifications {
 	}
 
 	public void onCommit(int timeEventsTillRevert) {
-		if (showTimerInToolbar) {
+		if (settings.showTimerInToolbar) {
 			autoRevertWidget.showTime(formatTime(timeEventsTillRevert));
 		} else {
 			autoRevertWidget.showStartedText();
@@ -77,7 +78,7 @@ public class IdeNotifications {
 	}
 
 	public void onTimeTillRevert(int secondsLeft) {
-		if (showTimerInToolbar) {
+		if (settings.showTimerInToolbar) {
 			autoRevertWidget.showTime(formatTime(secondsLeft));
 		} else {
 			autoRevertWidget.showStartedText();
@@ -85,26 +86,39 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void onSettings(boolean showTimerInToolbar, boolean autoRevertEnabled) {
-		this.showTimerInToolbar = showTimerInToolbar;
-		this.autoRevertEnabled = autoRevertEnabled;
+	public void onSettingsUpdate(Settings settings) {
+		this.settings = settings;
 		updateStatusBar();
 	}
+
 
 	private void updateStatusBar() {
 		StatusBar statusBar = statusBarFor(project);
 		if (statusBar != null) {
-			boolean hasWidget = statusBar.getWidget(autoRevertWidget.ID()) != null;
-			if (hasWidget && autoRevertEnabled) {
+			boolean hasAutoRevertWidget = statusBar.getWidget(autoRevertWidget.ID()) != null;
+			if (hasAutoRevertWidget && settings.autoRevertEnabled) {
 				statusBar.updateWidget(autoRevertWidget.ID());
 
-			} else if (hasWidget) {
+			} else if (hasAutoRevertWidget) {
 				statusBar.removeWidget(autoRevertWidget.ID());
 
-			} else if (autoRevertEnabled) {
+			} else if (settings.autoRevertEnabled) {
 				autoRevertWidget.showStoppedText();
 				statusBar.addWidget(autoRevertWidget);
 				statusBar.updateWidget(autoRevertWidget.ID());
+			}
+
+			boolean hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null;
+			if (hasWatchdogWidget && settings.watchdogEnabled) {
+				statusBar.updateWidget(watchdogWidget.ID());
+
+			} else if (hasWatchdogWidget) {
+				statusBar.removeWidget(watchdogWidget.ID());
+
+			} else if (settings.watchdogEnabled) {
+				watchdogWidget.showStoppedText();
+				statusBar.addWidget(watchdogWidget);
+				statusBar.updateWidget(watchdogWidget.ID());
 			}
 		}
 	}
@@ -119,12 +133,30 @@ public class IdeNotifications {
 		return String.format("%02d", min) + ":" + String.format("%02d", sec);
 	}
 
-	public void onChangeSizeTooBig(int changeSize, int maxChangeSize) {
-		// TODO implement
+	public void onChangeSizeTooBig(int linesChanged, int changedLinesLimit) {
+		NotificationListener listener = new NotificationListener() {
+			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+				LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
+				limitedWIPProjectComponent.skipNotificationsUntilCommit();
+			}
+		};
+
+		Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
+		notificationsManager.notify(new Notification(
+				LimitedWIPAppComponent.displayName,
+				"Change Exceeded Limit",
+				"Lines changed: " + linesChanged + "; " +
+					"Limit: " + changedLinesLimit + "<br/>" +
+					"Please consider committing or reverting changes" +
+					"(<a href=\"\">Click here</a> to skip notifications till next commit)",
+				NotificationType.WARNING,
+				listener
+		));
 	}
 
 
-	public static class AutoRevertStatusBarWidget implements StatusBarWidget {
+	// TODO update
+	private static class WatchdogStatusBarWidget implements StatusBarWidget {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
 		private static final String STARTED_TEXT = "Auto-revert started";
 		private static final String STOPPED_TEXT = "Auto-revert stopped";
@@ -187,7 +219,74 @@ public class IdeNotifications {
 		}
 
 		@NotNull @Override public String ID() {
-			return "LimitedWIP_StatusBarWidget";
+			return "LimitedWIP_" + this.getClass().getSimpleName();
+		}
+	}
+
+	private static class AutoRevertStatusBarWidget implements StatusBarWidget {
+		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
+		private static final String STARTED_TEXT = "Auto-revert started";
+		private static final String STOPPED_TEXT = "Auto-revert stopped";
+
+		private String text = "";
+
+		@Override public void install(@NotNull StatusBar statusBar) {
+		}
+
+		@Override public void dispose() {
+		}
+
+		public void showTime(String timeLeft) {
+			text = TIME_LEFT_PREFIX_TEXT + timeLeft;
+		}
+
+		public void showStartedText() {
+			text = STARTED_TEXT;
+		}
+
+		public void showStoppedText() {
+			text = STOPPED_TEXT;
+		}
+
+		@Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
+			return new StatusBarWidget.TextPresentation() {
+				@NotNull @Override public String getText() {
+					return text;
+				}
+
+				@NotNull @Override public String getMaxPossibleText() {
+					return TIME_LEFT_PREFIX_TEXT + "99:99";
+				}
+
+				@Override public Consumer<MouseEvent> getClickConsumer() {
+					return new Consumer<MouseEvent>() {
+						@Override public void consume(MouseEvent mouseEvent) {
+							DataContext dataContext = DataManager.getInstance().getDataContext(mouseEvent.getComponent());
+							Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+							if (project == null) return;
+
+							LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
+							if (limitedWIPProjectComponent.isAutoRevertStarted()) {
+								limitedWIPProjectComponent.stopAutoRevert();
+							} else {
+								limitedWIPProjectComponent.startAutoRevert();
+							}
+						}
+					};
+				}
+
+				@Override public float getAlignment() {
+					return Component.CENTER_ALIGNMENT;
+				}
+
+				@Override public String getTooltipText() {
+					return "Click to start/stop auto-revert";
+				}
+			};
+		}
+
+		@NotNull @Override public String ID() {
+			return "LimitedWIP_" + this.getClass().getSimpleName();
 		}
 	}
 }
