@@ -5,7 +5,9 @@
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
-    <properties/>
+    <properties>
+      <enabled value="true"/>
+    </properties>
     <border type="none"/>
     <children>
       <vspacer id="a4ae6">
@@ -54,7 +56,7 @@
             </constraints>
             <properties>
               <enabled value="true"/>
-              <text value="Show timer in toolbar"/>
+              <text value="Show time till revert"/>
             </properties>
           </component>
           <component id="c20a1" class="javax.swing.JComboBox" binding="minutesTillRevert" default-binding="true">
@@ -178,7 +180,7 @@
             </constraints>
             <properties>
               <enabled value="true"/>
-              <text value="Show remaining in toolbar"/>
+              <text value="Show remaining changes in toolbar"/>
             </properties>
           </component>
           <component id="817cd" class="javax.swing.JCheckBox" binding="showRemainingInToolbar">
