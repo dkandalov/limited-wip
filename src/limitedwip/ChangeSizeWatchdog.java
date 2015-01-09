@@ -2,23 +2,27 @@ package limitedwip;
 
 public class ChangeSizeWatchdog {
     private final IdeNotifications ideNotifications;
-    private final Settings settings;
 
+    private Settings settings;
     private int lastNotificationTime = -1;
+
 
     public ChangeSizeWatchdog(IdeNotifications ideNotifications, Settings settings) {
         this.ideNotifications = ideNotifications;
         this.settings = settings;
+        on(settings);
     }
 
     public synchronized void onChangeSizeUpdate(int changeListSizeInLines, int seconds) {
+        if (!settings.enabled) return;
+
         boolean exceededThreshold = changeListSizeInLines > settings.maxLinesInChange;
         boolean timeToNotify =
                 lastNotificationTime == -1 ||
                 (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
 
         if (exceededThreshold && timeToNotify) {
-            ideNotifications.onChangeExceededThreshold(
+            ideNotifications.onChangeSizeTooBig(
                     changeListSizeInLines,
                     settings.maxLinesInChange
             );
@@ -26,20 +30,28 @@ public class ChangeSizeWatchdog {
         }
     }
 
-    public synchronized void onNewSettings(int maxLinesInChange, boolean disableCommitsAboveThreshold) {
-        // TODO implement
-
+    public synchronized void on(Settings settings) {
+        lastNotificationTime = -1;
+        this.settings = settings;
     }
 
-    public static class Settings {
-        public final int maxLinesInChange;
-        public final boolean disableCommitsAboveThreshold;
-        public final int notificationIntervalInSeconds;
+    public synchronized void skipNotificationsUntilCommit() {
+        // TODO
+    }
 
-        public Settings(boolean disableCommitsAboveThreshold, int maxLinesInChange, int notificationIntervalInSeconds) {
-            this.disableCommitsAboveThreshold = disableCommitsAboveThreshold;
+
+    public static class Settings {
+        public final boolean enabled;
+        public final int maxLinesInChange;
+        public final int notificationIntervalInSeconds;
+        public final boolean disableCommitsAboveThreshold; // TODO use
+
+        public Settings(boolean enabled, int maxLinesInChange, int notificationIntervalInSeconds,
+                        boolean disableCommitsAboveThreshold) {
+            this.enabled = enabled;
             this.maxLinesInChange = maxLinesInChange;
             this.notificationIntervalInSeconds = notificationIntervalInSeconds;
+            this.disableCommitsAboveThreshold = disableCommitsAboveThreshold;
         }
     }
 }

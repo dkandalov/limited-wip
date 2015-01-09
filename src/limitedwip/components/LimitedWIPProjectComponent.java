@@ -52,9 +52,10 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 				settings.secondsTillRevert()
 		));
 		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, new ChangeSizeWatchdog.Settings(
-				settings.disableCommitsAboveThreshold,
+				settings.watchdogEnabled,
 				settings.maxLinesInChange,
-				settings.notificationIntervalInSeconds()
+				settings.notificationIntervalInSeconds(),
+				settings.disableCommitsAboveThreshold
 		));
 
 		onNewSettings(settings);
@@ -106,12 +107,14 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		);
 		autoRevert.on(new AutoRevert.Settings(
 				settings.autoRevertEnabled,
-				settings.secondsTillRevert())
-		);
-		changeSizeWatchdog.onNewSettings(
+				settings.secondsTillRevert()
+		));
+		changeSizeWatchdog.on(new ChangeSizeWatchdog.Settings(
+				settings.watchdogEnabled,
 				settings.maxLinesInChange,
+				settings.notificationIntervalInSeconds(),
 				settings.disableCommitsAboveThreshold
-		);
+		));
 	}
 
 	public void onQuickCommit() {

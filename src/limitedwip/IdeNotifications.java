@@ -119,7 +119,7 @@ public class IdeNotifications {
 		return String.format("%02d", min) + ":" + String.format("%02d", sec);
 	}
 
-	public void onChangeExceededThreshold(int changeSize, int maxChangeSize) {
+	public void onChangeSizeTooBig(int changeSize, int maxChangeSize) {
 		// TODO implement
 	}
 
