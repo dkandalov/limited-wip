@@ -55,8 +55,8 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 
 		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
 		listener = new TimerEventsSourceAppComponent.Listener() {
-			@Override public void onTimerEvent() {
-				autoRevert.onTimer();
+			@Override public void onTimerUpdate(int secondsSinceStart) {
+				autoRevert.onTimer(secondsSinceStart);
 				changeSizeWatchdog.onChangeSizeUpdate(ideActions.currentChangeListSizeInLines());
 			}
 		};

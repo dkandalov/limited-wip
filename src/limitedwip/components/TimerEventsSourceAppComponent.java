@@ -23,19 +23,21 @@ import java.util.TimerTask;
 
 
 public class TimerEventsSourceAppComponent implements ApplicationComponent {
-	private static final int ONE_SECOND = 1000;
+	private static final int oneSecond = 1000;
 
 	private final Timer timer = new Timer();
 	private final List<Listener> listeners = new ArrayList<Listener>();
+	private int secondsSinceStart = 0;
 
 	@Override public void initComponent() {
 		timer.schedule(new TimerTask() {
 			@Override public void run() {
+				secondsSinceStart++;
 				for (Listener listener : listeners) {
-					listener.onTimerEvent();
+					listener.onTimerUpdate(secondsSinceStart);
 				}
 			}
-		}, 0, ONE_SECOND);
+		}, 0, oneSecond);
 	}
 
 	@Override public void disposeComponent() {
@@ -56,6 +58,6 @@ public class TimerEventsSourceAppComponent implements ApplicationComponent {
 	}
 
 	public interface Listener {
-		void onTimerEvent();
+		void onTimerUpdate(int secondsSinceStart);
 	}
 }

@@ -19,15 +19,15 @@ public class AutoRevert {
 	private final IdeActions ideActions;
 
 	private boolean started = false;
-	private int newTimeEventTillRevert;
-	private int timeEventsTillRevert;
+	private int newSecondsTillRevert;
+	private int secondsTillRevert;
 	private int timeEventCounter;
 
-	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, int timeEventsTillRevert) {
+	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, int secondsTillRevert) {
 		this.ideNotifications = ideNotifications;
 		this.ideActions = ideActions;
-		this.timeEventsTillRevert = timeEventsTillRevert;
-		this.newTimeEventTillRevert = timeEventsTillRevert;
+		this.secondsTillRevert = secondsTillRevert;
+		this.newSecondsTillRevert = secondsTillRevert;
 	}
 
 	public synchronized void start() {
@@ -35,7 +35,7 @@ public class AutoRevert {
 		timeEventCounter = 0;
 		updateTimeEventsTillRevert();
 
-		ideNotifications.onAutoRevertStarted(timeEventsTillRevert);
+		ideNotifications.onAutoRevertStarted(secondsTillRevert);
 	}
 
 	public synchronized void stop() {
@@ -47,13 +47,13 @@ public class AutoRevert {
 		return started;
 	}
 
-	public synchronized void onTimer() {
+	public synchronized void onTimer(int secondsSinceStart) {
 		if (!started) return;
 
 		timeEventCounter++;
-		ideNotifications.onTimeTillRevert(timeEventsTillRevert - timeEventCounter + 1);
+		ideNotifications.onTimeTillRevert(secondsTillRevert - timeEventCounter + 1);
 
-		if (timeEventCounter >= timeEventsTillRevert) {
+		if (timeEventCounter >= secondsTillRevert) {
 			timeEventCounter = 0;
 			updateTimeEventsTillRevert();
 			ideActions.revertCurrentChangeList();
@@ -65,19 +65,19 @@ public class AutoRevert {
 
 		timeEventCounter = 0;
 		updateTimeEventsTillRevert();
-		ideNotifications.onCommit(timeEventsTillRevert);
+		ideNotifications.onCommit(secondsTillRevert);
 	}
 
 	public synchronized void on(SettingsUpdate settingsUpdate) {
-		this.newTimeEventTillRevert = settingsUpdate.secondsTillRevert;
+		this.newSecondsTillRevert = settingsUpdate.secondsTillRevert;
 		if (!settingsUpdate.enabled && started) {
 			stop();
 		}
 	}
 
 	private void updateTimeEventsTillRevert() {
-		if (timeEventsTillRevert != newTimeEventTillRevert) {
-			timeEventsTillRevert = newTimeEventTillRevert;
+		if (secondsTillRevert != newSecondsTillRevert) {
+			secondsTillRevert = newSecondsTillRevert;
 		}
 	}
 

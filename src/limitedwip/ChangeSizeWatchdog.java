@@ -7,12 +7,12 @@ public class ChangeSizeWatchdog {
         this.ideNotifications = ideNotifications;
     }
 
-    public void onChangeSizeUpdate(int changeListSizeInLines) {
+    public synchronized void onChangeSizeUpdate(int changeListSizeInLines) {
         // TODO implement
 
     }
 
-    public void onNewSettings(int maxLinesInChange, boolean disableCommitsAboveThreshold) {
+    public synchronized void onNewSettings(int maxLinesInChange, boolean disableCommitsAboveThreshold) {
         // TODO implement
 
     }
