@@ -58,6 +58,16 @@ public class ChangeSizeWatchdogTest {
         verifyZeroInteractions(ideNotifications);
     }
 
+    @Test public void canSkipNotificationsUtilNextCommit() {
+        watchdog.skipNotificationsUntilCommit();
+        watchdog.onChangeSizeUpdate(200, next());
+        watchdog.onChangeSizeUpdate(200, next());
+        watchdog.onCommit();
+        watchdog.onChangeSizeUpdate(200, next());
+
+        verify(ideNotifications).onChangeSizeTooBig(200, maxLinesInChange);
+    }
+
     @Before public void setUp() throws Exception {
         secondsSinceStart = 0;
     }

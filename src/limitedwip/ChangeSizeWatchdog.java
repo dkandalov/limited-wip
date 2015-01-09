@@ -5,6 +5,7 @@ public class ChangeSizeWatchdog {
 
     private Settings settings;
     private int lastNotificationTime = -1;
+    private boolean skipNotificationsUtilCommit = false;
 
 
     public ChangeSizeWatchdog(IdeNotifications ideNotifications, Settings settings) {
@@ -14,7 +15,7 @@ public class ChangeSizeWatchdog {
     }
 
     public synchronized void onChangeSizeUpdate(int changeListSizeInLines, int seconds) {
-        if (!settings.enabled) return;
+        if (!settings.enabled || skipNotificationsUtilCommit) return;
 
         boolean exceededThreshold = changeListSizeInLines > settings.maxLinesInChange;
         boolean timeToNotify =
@@ -35,8 +36,12 @@ public class ChangeSizeWatchdog {
         this.settings = settings;
     }
 
+    public synchronized void onCommit() {
+        skipNotificationsUtilCommit = false;
+    }
+
     public synchronized void skipNotificationsUntilCommit() {
-        // TODO
+        skipNotificationsUtilCommit = true;
     }
 
 
