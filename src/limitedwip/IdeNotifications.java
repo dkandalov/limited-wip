@@ -119,6 +119,10 @@ public class IdeNotifications {
 		return String.format("%02d", min) + ":" + String.format("%02d", sec);
 	}
 
+	public void onChangeExceededThreshold(int changeSize, int maxChangeSize) {
+		// TODO implement
+	}
+
 
 	public static class AutoRevertStatusBarWidget implements StatusBarWidget {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";

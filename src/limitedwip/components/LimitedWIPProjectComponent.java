@@ -53,7 +53,8 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		));
 		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, new ChangeSizeWatchdog.Settings(
 				settings.disableCommitsAboveThreshold,
-				settings.maxLinesInChange
+				settings.maxLinesInChange,
+				settings.notificationIntervalInSeconds()
 		));
 
 		onNewSettings(settings);

@@ -13,6 +13,8 @@
  */
 package limitedwip.ui.settings;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +24,7 @@ public class SettingsForm {
 
 	private JCheckBox watchdogEnabled;
 	private JComboBox maxLinesInChange;
+	private JComboBox notificationInterval;
 	private JCheckBox showRemainingInToolbar;
 	private JCheckBox disableCommitsAboveThreshold;
 
@@ -41,7 +44,7 @@ public class SettingsForm {
 		updateUIFromState();
 
 		ActionListener commonActionListener = new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
+			@Override public void actionPerformed(@NotNull ActionEvent event) {
 				updateStateFromUI();
 				updateUIFromState();
 			}
@@ -49,6 +52,7 @@ public class SettingsForm {
 
 		watchdogEnabled.addActionListener(commonActionListener);
 		maxLinesInChange.addActionListener(commonActionListener);
+		notificationInterval.addActionListener(commonActionListener);
 		showRemainingInToolbar.addActionListener(commonActionListener);
 		disableCommitsAboveThreshold.addActionListener(commonActionListener);
 
@@ -65,6 +69,7 @@ public class SettingsForm {
 
 		watchdogEnabled.setSelected(currentState.watchdogEnabled);
 		maxLinesInChange.setSelectedItem(String.valueOf(currentState.maxLinesInChange));
+		notificationInterval.setSelectedItem(String.valueOf(currentState.notificationIntervalInMinutes));
 		showRemainingInToolbar.setSelected(currentState.showRemainingInToolbar);
 		disableCommitsAboveThreshold.setSelected(currentState.disableCommitsAboveThreshold);
 
@@ -77,6 +82,7 @@ public class SettingsForm {
 		minutesTillRevert.setEnabled(currentState.autoRevertEnabled);
 		showTimerInToolbar.setEnabled(currentState.autoRevertEnabled);
 		maxLinesInChange.setEnabled(currentState.watchdogEnabled);
+		notificationInterval.setEnabled(currentState.watchdogEnabled);
 		showRemainingInToolbar.setEnabled(currentState.watchdogEnabled);
 		disableCommitsAboveThreshold.setEnabled(currentState.watchdogEnabled);
 
@@ -86,15 +92,19 @@ public class SettingsForm {
 	private void updateStateFromUI() {
 		try {
 			currentState.watchdogEnabled = watchdogEnabled.isSelected();
-			Integer lineCount = Integer.valueOf((String) minutesTillRevert.getSelectedItem());
+			Integer lineCount = Integer.valueOf((String) maxLinesInChange.getSelectedItem());
 			if (Settings.changedLinesRange.isWithin(lineCount)) {
 				currentState.maxLinesInChange = lineCount;
+			}
+			Integer minutes = Integer.valueOf((String) notificationInterval.getSelectedItem());
+			if (Settings.notificationIntervalRange.isWithin(minutes)) {
+				currentState.notificationIntervalInMinutes = minutes;
 			}
 			currentState.showRemainingInToolbar = showRemainingInToolbar.isSelected();
 			currentState.disableCommitsAboveThreshold = disableCommitsAboveThreshold.isSelected();
 
 			currentState.autoRevertEnabled = autoRevertEnabled.isSelected();
-			Integer minutes = Integer.valueOf((String) minutesTillRevert.getSelectedItem());
+			minutes = Integer.valueOf((String) minutesTillRevert.getSelectedItem());
 			if (Settings.minutesToRevertRange.isWithin(minutes)) {
 				currentState.minutesTillRevert = minutes;
 			}

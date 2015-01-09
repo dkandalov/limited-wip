@@ -23,6 +23,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 public class Settings implements PersistentStateComponent<Settings>  {
 	public static final Range<Integer> minutesToRevertRange = new Range<Integer>(1, 99);
 	public static final Range<Integer> changedLinesRange = new Range<Integer>(1, 999);
+	public static final Range<Integer> notificationIntervalRange = new Range<Integer>(1, 99);
 
 	public boolean autoRevertEnabled = false;
 	public int minutesTillRevert = 2;
@@ -30,6 +31,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 
 	public boolean watchdogEnabled = true;
 	public int maxLinesInChange = 80;
+	public int notificationIntervalInMinutes = 1;
 	public boolean disableCommitsAboveThreshold = false;
 	public boolean showRemainingInToolbar = true;
 
@@ -40,6 +42,10 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		return minutesTillRevert * 60;
 	}
 
+	public int notificationIntervalInSeconds() {
+		return notificationIntervalInMinutes * 60;
+	}
+
 	@Override public Settings getState() {
 		return this;
 	}
@@ -48,8 +54,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		XmlSerializerUtil.copyBean(state, this);
 	}
 
-	@SuppressWarnings("RedundantIfStatement")
-	@Override public boolean equals(Object o) {
+	@SuppressWarnings("RedundantIfStatement") @Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
@@ -60,6 +65,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		if (disableCommitsWithErrors != settings.disableCommitsWithErrors) return false;
 		if (maxLinesInChange != settings.maxLinesInChange) return false;
 		if (minutesTillRevert != settings.minutesTillRevert) return false;
+		if (notificationIntervalInMinutes != settings.notificationIntervalInMinutes) return false;
 		if (showRemainingInToolbar != settings.showRemainingInToolbar) return false;
 		if (showTimerInToolbar != settings.showTimerInToolbar) return false;
 		if (watchdogEnabled != settings.watchdogEnabled) return false;
@@ -71,11 +77,12 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		int result = (autoRevertEnabled ? 1 : 0);
 		result = 31 * result + minutesTillRevert;
 		result = 31 * result + (showTimerInToolbar ? 1 : 0);
-		result = 31 * result + (disableCommitsWithErrors ? 1 : 0);
 		result = 31 * result + (watchdogEnabled ? 1 : 0);
 		result = 31 * result + maxLinesInChange;
-		result = 31 * result + (showRemainingInToolbar ? 1 : 0);
+		result = 31 * result + notificationIntervalInMinutes;
 		result = 31 * result + (disableCommitsAboveThreshold ? 1 : 0);
+		result = 31 * result + (showRemainingInToolbar ? 1 : 0);
+		result = 31 * result + (disableCommitsWithErrors ? 1 : 0);
 		return result;
 	}
 
@@ -84,11 +91,12 @@ public class Settings implements PersistentStateComponent<Settings>  {
 				"autoRevertEnabled=" + autoRevertEnabled +
 				", minutesTillRevert=" + minutesTillRevert +
 				", showTimerInToolbar=" + showTimerInToolbar +
-				", disableCommitsWithErrors=" + disableCommitsWithErrors +
 				", watchdogEnabled=" + watchdogEnabled +
 				", maxLinesInChange=" + maxLinesInChange +
-				", showRemainingInToolbar=" + showRemainingInToolbar +
+				", notificationIntervalInMinutes=" + notificationIntervalInMinutes +
 				", disableCommitsAboveThreshold=" + disableCommitsAboveThreshold +
+				", showRemainingInToolbar=" + showRemainingInToolbar +
+				", disableCommitsWithErrors=" + disableCommitsWithErrors +
 				'}';
 	}
 
