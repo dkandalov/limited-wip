@@ -24,12 +24,11 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import limitedwip.AutoRevert;
-import limitedwip.AutoRevert.SettingsUpdate;
 import limitedwip.ChangeSizeWatchdog;
-import limitedwip.ui.settings.Settings;
-import org.jetbrains.annotations.NotNull;
 import limitedwip.IdeActions;
 import limitedwip.IdeNotifications;
+import limitedwip.ui.settings.Settings;
+import org.jetbrains.annotations.NotNull;
 
 public class LimitedWIPProjectComponent extends AbstractProjectComponent implements Settings.Listener {
 	private AutoRevert autoRevert;
@@ -48,8 +47,14 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		Settings settings = ServiceManager.getService(Settings.class);
 		ideNotifications = new IdeNotifications(myProject);
 		ideActions = new IdeActions(myProject);
-		autoRevert = new AutoRevert(ideNotifications, ideActions, settings.secondsTillRevert());
-		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications);
+		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
+				settings.autoRevertEnabled,
+				settings.secondsTillRevert()
+		));
+		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, new ChangeSizeWatchdog.Settings(
+				settings.disableCommitsAboveThreshold,
+				settings.maxLinesInChange
+		));
 
 		onNewSettings(settings);
 
@@ -57,7 +62,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		listener = new TimerEventsSource.Listener() {
 			@Override public void onTimerUpdate(int seconds) {
 				autoRevert.onTimer(seconds);
-				changeSizeWatchdog.onChangeSizeUpdate(ideActions.currentChangeListSizeInLines());
+				changeSizeWatchdog.onChangeSizeUpdate(ideActions.currentChangeListSizeInLines(), seconds);
 			}
 		};
 		timerEventsSource.addListener(listener);
@@ -98,7 +103,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 				settings.showTimerInToolbar,
 				settings.autoRevertEnabled
 		);
-		autoRevert.on(new SettingsUpdate(
+		autoRevert.on(new AutoRevert.Settings(
 				settings.autoRevertEnabled,
 				settings.secondsTillRevert())
 		);

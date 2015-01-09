@@ -26,7 +26,8 @@ public class AutoRevertTest {
 
 	private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
 	private final IdeActions ideActions = mock(IdeActions.class);
-	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions, secondsTillRevert);
+	private final AutoRevert.Settings settings = new Settings(true, secondsTillRevert);
+	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions, settings);
 	private int secondsSinceStart;
 
 

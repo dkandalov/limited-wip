@@ -18,27 +18,26 @@ public class AutoRevert {
 	private final IdeNotifications ideNotifications;
 	private final IdeActions ideActions;
 
+	private Settings settings;
 	private boolean started = false;
-	private int newSecondsTillRevert;
-	private int secondsTillRevert;
 	private int startSeconds;
-	private boolean disabled;
+	private int remainingSeconds;
 
-	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, int secondsTillRevert) {
+
+	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, Settings settings) {
 		this.ideNotifications = ideNotifications;
 		this.ideActions = ideActions;
-		this.secondsTillRevert = secondsTillRevert;
-		this.newSecondsTillRevert = secondsTillRevert;
+		this.settings = settings;
 	}
 
 	public synchronized void start() {
-		if (disabled) return;
+		if (!settings.enabled) return;
 
 		started = true;
 		startSeconds = -1;
 		applyNewSettings();
 
-		ideNotifications.onAutoRevertStarted(secondsTillRevert);
+		ideNotifications.onAutoRevertStarted(remainingSeconds);
 	}
 
 	public synchronized void stop() {
@@ -58,9 +57,9 @@ public class AutoRevert {
 		}
 		int secondsPassed = seconds - startSeconds;
 
-		ideNotifications.onTimeTillRevert(secondsTillRevert - secondsPassed + 1);
+		ideNotifications.onTimeTillRevert(remainingSeconds - secondsPassed + 1);
 
-		if (secondsPassed >= secondsTillRevert) {
+		if (secondsPassed >= remainingSeconds) {
 			startSeconds = -1;
 			applyNewSettings();
 			ideActions.revertCurrentChangeList();
@@ -72,20 +71,19 @@ public class AutoRevert {
 
 		startSeconds = -1;
 		applyNewSettings();
-		ideNotifications.onCommit(secondsTillRevert);
+		ideNotifications.onCommit(remainingSeconds);
 	}
 
 	public synchronized void on(Settings settings) {
-		this.newSecondsTillRevert = settings.secondsTillRevert;
-		this.disabled = !settings.enabled;
-		if (started && disabled) {
+		this.settings = settings;
+		if (started && !settings.enabled) {
 			stop();
 		}
 	}
 
 	private void applyNewSettings() {
-		if (secondsTillRevert != newSecondsTillRevert) {
-			secondsTillRevert = newSecondsTillRevert;
+		if (remainingSeconds != settings.secondsTillRevert) {
+			remainingSeconds = settings.secondsTillRevert;
 		}
 	}
 
