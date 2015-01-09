@@ -22,6 +22,7 @@ public class AutoRevert {
 	private int newSecondsTillRevert;
 	private int secondsTillRevert;
 	private int startSeconds;
+	private boolean disabled;
 
 	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, int secondsTillRevert) {
 		this.ideNotifications = ideNotifications;
@@ -31,9 +32,11 @@ public class AutoRevert {
 	}
 
 	public synchronized void start() {
+		if (disabled) return;
+
 		started = true;
 		startSeconds = -1;
-		applySettingsForSecondsTillRevert();
+		applyNewSettings();
 
 		ideNotifications.onAutoRevertStarted(secondsTillRevert);
 	}
@@ -59,7 +62,7 @@ public class AutoRevert {
 
 		if (secondsPassed >= secondsTillRevert) {
 			startSeconds = -1;
-			applySettingsForSecondsTillRevert();
+			applyNewSettings();
 			ideActions.revertCurrentChangeList();
 		}
 	}
@@ -68,32 +71,33 @@ public class AutoRevert {
 		if (!started) return;
 
 		startSeconds = -1;
-		applySettingsForSecondsTillRevert();
+		applyNewSettings();
 		ideNotifications.onCommit(secondsTillRevert);
 	}
 
-	public synchronized void on(SettingsUpdate settingsUpdate) {
-		this.newSecondsTillRevert = settingsUpdate.secondsTillRevert;
-		if (!settingsUpdate.enabled && started) {
+	public synchronized void on(Settings settings) {
+		this.newSecondsTillRevert = settings.secondsTillRevert;
+		this.disabled = !settings.enabled;
+		if (started && disabled) {
 			stop();
 		}
 	}
 
-	private void applySettingsForSecondsTillRevert() {
+	private void applyNewSettings() {
 		if (secondsTillRevert != newSecondsTillRevert) {
 			secondsTillRevert = newSecondsTillRevert;
 		}
 	}
 
-	public static class SettingsUpdate {
+	public static class Settings {
 		public final boolean enabled;
 		public final int secondsTillRevert;
 
-		public SettingsUpdate(int secondsTillRevert) {
+		public Settings(int secondsTillRevert) {
 			this(true, secondsTillRevert);
 		}
 
-		public SettingsUpdate(boolean enabled, int secondsTillRevert) {
+		public Settings(boolean enabled, int secondsTillRevert) {
 			this.enabled = enabled;
 			this.secondsTillRevert = secondsTillRevert;
 		}

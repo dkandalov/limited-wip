@@ -13,7 +13,7 @@
  */
 package limitedwip;
 
-import limitedwip.AutoRevert.SettingsUpdate;
+import limitedwip.AutoRevert.Settings;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -68,15 +68,6 @@ public class AutoRevertTest {
 		verifyZeroInteractions(ideActions);
 	}
 
-	@Test public void doesNotRevertChanges_WhenDisabled() {
-		autoRevert.start();
-		autoRevert.onTimer(next());
-		autoRevert.on(new SettingsUpdate(false, 2));
-		autoRevert.onTimer(next());
-
-		verifyZeroInteractions(ideActions);
-	}
-
 	@Test public void resetsTimeTillRevert_WhenStopped() {
 		InOrder inOrder = inOrder(ideNotifications);
 
@@ -107,7 +98,7 @@ public class AutoRevertTest {
 	}
 
 	@Test public void appliesRevertTimeOutChange_AfterStart() {
-		autoRevert.on(new SettingsUpdate(1));
+		autoRevert.on(new Settings(1));
 		autoRevert.start();
 		autoRevert.onTimer(next());
 		autoRevert.onTimer(next());
@@ -117,7 +108,7 @@ public class AutoRevertTest {
 
 	@Test public void appliesRevertTimeoutChange_AfterEndOfCurrentTimeOut() {
 		autoRevert.start();
-		autoRevert.on(new SettingsUpdate(1));
+		autoRevert.on(new Settings(1));
 		autoRevert.onTimer(next());
 		autoRevert.onTimer(next()); // reverts changes after 2nd time event
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
@@ -128,7 +119,7 @@ public class AutoRevertTest {
 
 	@Test public void appliesRevertTimeoutChange_AfterCommit() {
 		autoRevert.start();
-		autoRevert.on(new SettingsUpdate(1));
+		autoRevert.on(new Settings(1));
 		autoRevert.onTimer(next());
 		autoRevert.onCommit();
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
@@ -138,6 +129,22 @@ public class AutoRevertTest {
 		verify(ideActions, times(3)).revertCurrentChangeList();
 	}
 
+	@Test public void doesNotSendUIStartupNotification_WhenDisabled() {
+		autoRevert.on(new Settings(false, secondsTillRevert));
+		autoRevert.start();
+
+		verifyZeroInteractions(ideNotifications);
+		verifyZeroInteractions(ideActions);
+	}
+
+	@Test public void doesNotRevertChanges_WhenDisabled() {
+		autoRevert.start();
+		autoRevert.onTimer(next());
+		autoRevert.on(new Settings(false, 2));
+		autoRevert.onTimer(next());
+
+		verifyZeroInteractions(ideActions);
+	}
 
 	@Before public void setUp() throws Exception {
 		secondsSinceStart = 0;
