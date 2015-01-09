@@ -4,17 +4,25 @@ public class ChangeSizeWatchdog {
     private final IdeNotifications ideNotifications;
     private final Settings settings;
 
+    private int lastNotificationTime = -1;
+
     public ChangeSizeWatchdog(IdeNotifications ideNotifications, Settings settings) {
         this.ideNotifications = ideNotifications;
         this.settings = settings;
     }
 
     public synchronized void onChangeSizeUpdate(int changeListSizeInLines, int seconds) {
-        if (changeListSizeInLines > settings.maxLinesInChange) {
+        boolean exceededThreshold = changeListSizeInLines > settings.maxLinesInChange;
+        boolean timeToNotify =
+                lastNotificationTime == -1 ||
+                (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
+
+        if (exceededThreshold && timeToNotify) {
             ideNotifications.onChangeExceededThreshold(
                     changeListSizeInLines,
                     settings.maxLinesInChange
             );
+            lastNotificationTime = seconds;
         }
     }
 

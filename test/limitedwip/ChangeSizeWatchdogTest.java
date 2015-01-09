@@ -30,10 +30,12 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void sendsChangeSizeNotification_OnlyOnOneOfSeveralUpdates() {
+        watchdog.onChangeSizeUpdate(200, next()); // send notification
         watchdog.onChangeSizeUpdate(200, next());
+        watchdog.onChangeSizeUpdate(200, next()); // send notification
         watchdog.onChangeSizeUpdate(200, next());
 
-        verify(ideNotifications).onChangeExceededThreshold(200, maxLinesInChange);
+        verify(ideNotifications, times(2)).onChangeExceededThreshold(200, maxLinesInChange);
     }
 
     @Before public void setUp() throws Exception {
