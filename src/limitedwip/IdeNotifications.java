@@ -14,7 +14,10 @@
 package limitedwip;
 
 import com.intellij.ide.DataManager;
-import com.intellij.notification.*;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -111,7 +114,7 @@ public class IdeNotifications {
 
         } else if (settings.autoRevertEnabled) {
             autoRevertWidget.showStoppedText();
-            statusBar.addWidget(autoRevertWidget);
+            statusBar.addWidget(autoRevertWidget, "before Position");
             statusBar.updateWidget(autoRevertWidget.ID());
         }
 
@@ -124,7 +127,7 @@ public class IdeNotifications {
 
         } else if (settings.watchdogEnabled) {
             watchdogWidget.showInitialText(settings.maxLinesInChange);
-            statusBar.addWidget(watchdogWidget);
+            statusBar.addWidget(watchdogWidget, "before Position");
             statusBar.updateWidget(watchdogWidget.ID());
         }
 	}
