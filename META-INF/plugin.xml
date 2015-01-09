@@ -68,12 +68,10 @@ Dedicated to LMAX people.
     <actions>
         <action id="StartAutoRevert" class="limitedwip.ui.StartOrStopAutoRevertAction"
                 text="Start auto-revert" icon="/limitedwip/icons/rollback.png">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift a"/>
         </action>
         <action id="QuickCommitAction" class="limitedwip.ui.QuickCommitAction"
                 text="Quick commit" icon="/limitedwip/icons/commit.png">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift k"/>
         </action>
     </actions>

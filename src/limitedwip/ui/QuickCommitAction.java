@@ -37,7 +37,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,9 +105,9 @@ public class QuickCommitAction extends AnAction {
 		final List<VcsCheckinHandlerFactory> factoryList =
 				CheckinHandlersManager.getInstance().getMatchingVcsFactories(Arrays.asList(allActiveVcss));
 		for (BaseCheckinHandlerFactory factory : factoryList) {
-			final BeforeCheckinDialogHandler handler = factory.createSystemReadyHandler(project);
-			if (handler != null) {
-				if (! handler.beforeCommitDialogShownCallback(Collections.<CommitExecutor>emptyList(), false)) return true;
+			BeforeCheckinDialogHandler handler = factory.createSystemReadyHandler(project);
+			if (handler != null && !handler.beforeCommitDialogShown(project, new ArrayList<Change>(), new ArrayList<CommitExecutor>(), false)) {
+				return true;
 			}
 		}
 		return false;
