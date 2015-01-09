@@ -153,11 +153,11 @@ public class IdeNotifications {
 
 		Notification notification = new Notification(
 				LimitedWIPAppComponent.displayName,
-				"Change Exceeded Limit",
+				"Change Size Exceeded Limit",
 				"Lines changed: " + linesChanged + "; " +
-						"Limit: " + changedLinesLimit + "<br/>" +
-						"Please consider committing or reverting changes<br/>" +
-						"(<a href=\"\">Click here</a> to skip notifications till next commit)",
+					"Limit: " + changedLinesLimit + "<br/>" +
+					"Please consider committing, splitting or reverting changes<br/>" +
+					"(<a href=\"\">Click here</a> to skip notifications till next commit)",
 				NotificationType.WARNING,
 				listener
 		);

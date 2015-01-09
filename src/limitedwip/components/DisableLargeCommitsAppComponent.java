@@ -56,7 +56,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 		Notification notification = new Notification(
 				LimitedWIPAppComponent.displayName,
 				"Commit was cancelled because change size is above threshold<br/>",
-				"(It can be changed in <a href=\"\">IDE Settings</a>)",
+				"(This can be reconfigured in IDE <a href=\"\">Settings</a>)",
 				NotificationType.WARNING,
 				listener
 		);
