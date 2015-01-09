@@ -21,7 +21,7 @@ public class AutoRevert {
 	private boolean started = false;
 	private int newSecondsTillRevert;
 	private int secondsTillRevert;
-	private int timeEventCounter;
+	private int startSeconds;
 
 	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, int secondsTillRevert) {
 		this.ideNotifications = ideNotifications;
@@ -32,8 +32,8 @@ public class AutoRevert {
 
 	public synchronized void start() {
 		started = true;
-		timeEventCounter = 0;
-		updateTimeEventsTillRevert();
+		startSeconds = -1;
+		applySettingsForSecondsTillRevert();
 
 		ideNotifications.onAutoRevertStarted(secondsTillRevert);
 	}
@@ -47,15 +47,19 @@ public class AutoRevert {
 		return started;
 	}
 
-	public synchronized void onTimer(int secondsSinceStart) {
+	public synchronized void onTimer(int seconds) {
 		if (!started) return;
 
-		timeEventCounter++;
-		ideNotifications.onTimeTillRevert(secondsTillRevert - timeEventCounter + 1);
+		if (startSeconds == -1) {
+			startSeconds = seconds - 1;
+		}
+		int secondsPassed = seconds - startSeconds;
 
-		if (timeEventCounter >= secondsTillRevert) {
-			timeEventCounter = 0;
-			updateTimeEventsTillRevert();
+		ideNotifications.onTimeTillRevert(secondsTillRevert - secondsPassed + 1);
+
+		if (secondsPassed >= secondsTillRevert) {
+			startSeconds = -1;
+			applySettingsForSecondsTillRevert();
 			ideActions.revertCurrentChangeList();
 		}
 	}
@@ -63,8 +67,8 @@ public class AutoRevert {
 	public synchronized void onCommit() {
 		if (!started) return;
 
-		timeEventCounter = 0;
-		updateTimeEventsTillRevert();
+		startSeconds = -1;
+		applySettingsForSecondsTillRevert();
 		ideNotifications.onCommit(secondsTillRevert);
 	}
 
@@ -75,7 +79,7 @@ public class AutoRevert {
 		}
 	}
 
-	private void updateTimeEventsTillRevert() {
+	private void applySettingsForSecondsTillRevert() {
 		if (secondsTillRevert != newSecondsTillRevert) {
 			secondsTillRevert = newSecondsTillRevert;
 		}

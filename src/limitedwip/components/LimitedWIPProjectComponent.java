@@ -33,7 +33,7 @@ import limitedwip.IdeNotifications;
 
 public class LimitedWIPProjectComponent extends AbstractProjectComponent implements Settings.Listener {
 	private AutoRevert autoRevert;
-	private TimerEventsSourceAppComponent.Listener listener;
+	private TimerEventsSource.Listener listener;
 	private IdeNotifications ideNotifications;
 	private ChangeSizeWatchdog changeSizeWatchdog;
 	private IdeActions ideActions;
@@ -53,10 +53,10 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 
 		onNewSettings(settings);
 
-		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
-		listener = new TimerEventsSourceAppComponent.Listener() {
-			@Override public void onTimerUpdate(int secondsSinceStart) {
-				autoRevert.onTimer(secondsSinceStart);
+		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
+		listener = new TimerEventsSource.Listener() {
+			@Override public void onTimerUpdate(int seconds) {
+				autoRevert.onTimer(seconds);
 				changeSizeWatchdog.onChangeSizeUpdate(ideActions.currentChangeListSizeInLines());
 			}
 		};
@@ -77,7 +77,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 	@Override public void disposeComponent() {
 		super.disposeComponent();
 
-		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
+		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
 		timerEventsSource.removeListener(listener);
 	}
 

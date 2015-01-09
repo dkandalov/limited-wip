@@ -22,7 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class TimerEventsSourceAppComponent implements ApplicationComponent {
+public class TimerEventsSource implements ApplicationComponent {
 	private static final int oneSecond = 1000;
 
 	private final Timer timer = new Timer();
@@ -58,6 +58,6 @@ public class TimerEventsSourceAppComponent implements ApplicationComponent {
 	}
 
 	public interface Listener {
-		void onTimerUpdate(int secondsSinceStart);
+		void onTimerUpdate(int seconds);
 	}
 }
