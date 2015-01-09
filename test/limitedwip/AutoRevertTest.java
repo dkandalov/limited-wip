@@ -26,7 +26,7 @@ public class AutoRevertTest {
 
 	private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
 	private final IdeActions ideActions = mock(IdeActions.class);
-	private final AutoRevert.Settings settings = new Settings(true, secondsTillRevert);
+	private final Settings settings = new Settings(true, secondsTillRevert);
 	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions, settings);
 	private int secondsSinceStart;
 
@@ -99,7 +99,7 @@ public class AutoRevertTest {
 	}
 
 	@Test public void appliesRevertTimeOutChange_AfterStart() {
-		autoRevert.on(new Settings(1));
+		autoRevert.onSettings(new Settings(1));
 		autoRevert.start();
 		autoRevert.onTimer(next());
 		autoRevert.onTimer(next());
@@ -109,7 +109,7 @@ public class AutoRevertTest {
 
 	@Test public void appliesRevertTimeoutChange_AfterEndOfCurrentTimeOut() {
 		autoRevert.start();
-		autoRevert.on(new Settings(1));
+		autoRevert.onSettings(new Settings(1));
 		autoRevert.onTimer(next());
 		autoRevert.onTimer(next()); // reverts changes after 2nd time event
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
@@ -120,7 +120,7 @@ public class AutoRevertTest {
 
 	@Test public void appliesRevertTimeoutChange_AfterCommit() {
 		autoRevert.start();
-		autoRevert.on(new Settings(1));
+		autoRevert.onSettings(new Settings(1));
 		autoRevert.onTimer(next());
 		autoRevert.onCommit();
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
@@ -131,7 +131,7 @@ public class AutoRevertTest {
 	}
 
 	@Test public void doesNotSendUIStartupNotification_WhenDisabled() {
-		autoRevert.on(new Settings(false, secondsTillRevert));
+		autoRevert.onSettings(new Settings(false, secondsTillRevert));
 		autoRevert.start();
 
 		verifyZeroInteractions(ideNotifications);
@@ -141,7 +141,7 @@ public class AutoRevertTest {
 	@Test public void doesNotRevertChanges_WhenDisabled() {
 		autoRevert.start();
 		autoRevert.onTimer(next());
-		autoRevert.on(new Settings(false, 2));
+		autoRevert.onSettings(new Settings(false, 2));
 		autoRevert.onTimer(next());
 
 		verifyZeroInteractions(ideActions);

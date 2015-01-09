@@ -74,7 +74,7 @@ public class AutoRevert {
 		ideNotifications.onCommit(remainingSeconds);
 	}
 
-	public synchronized void on(Settings settings) {
+	public synchronized void onSettings(Settings settings) {
 		this.settings = settings;
 		if (started && !settings.enabled) {
 			stop();

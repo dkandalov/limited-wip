@@ -80,9 +80,9 @@ public class LimitedWIPAppComponent implements ApplicationComponent, Configurabl
 	private void notifyComponentsAbout(Settings settings) {
 		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
 			LimitedWIPProjectComponent projectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-			projectComponent.onNewSettings(settings);
+			projectComponent.onSettings(settings);
 		}
 		DisableCommitsWithErrorsComponent component = ApplicationManager.getApplication().getComponent(DisableCommitsWithErrorsComponent.class);
-		component.onNewSettings(settings);
+		component.onSettings(settings);
 	}
 }

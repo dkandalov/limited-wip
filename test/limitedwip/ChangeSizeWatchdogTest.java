@@ -12,7 +12,7 @@ public class ChangeSizeWatchdogTest {
     private static final int notificationIntervalInSeconds = 2;
 
     private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
-    private final Settings settings = new Settings(true, maxLinesInChange, notificationIntervalInSeconds, false);
+    private final Settings settings = new Settings(true, maxLinesInChange, notificationIntervalInSeconds);
     private final ChangeSizeWatchdog watchdog = new ChangeSizeWatchdog(ideNotifications, settings);
 
     private int secondsSinceStart;
@@ -45,13 +45,13 @@ public class ChangeSizeWatchdogTest {
         watchdog.onChangeSizeUpdate(200, next());
         inOrder.verify(ideNotifications).onChangeSizeTooBig(200, maxLinesInChange);
 
-        watchdog.on(settingsWithChangeSizeThreshold(150));
+        watchdog.onSettings(settingsWithChangeSizeThreshold(150));
         watchdog.onChangeSizeUpdate(200, next());
         inOrder.verify(ideNotifications).onChangeSizeTooBig(200, 150);
     }
 
     @Test public void doesNotSendNotification_WhenDisabled() {
-        watchdog.on(watchdogDisabledSettings());
+        watchdog.onSettings(watchdogDisabledSettings());
         watchdog.onChangeSizeUpdate(200, next());
         watchdog.onChangeSizeUpdate(200, next());
 
@@ -67,10 +67,10 @@ public class ChangeSizeWatchdogTest {
     }
 
     private static Settings watchdogDisabledSettings() {
-        return new Settings(false, 150, 2, false);
+        return new Settings(false, 150, 2);
     }
 
     private static Settings settingsWithChangeSizeThreshold(int maxLinesInChange) {
-        return new Settings(true, maxLinesInChange, 2, false);
+        return new Settings(true, maxLinesInChange, 2);
     }
 }

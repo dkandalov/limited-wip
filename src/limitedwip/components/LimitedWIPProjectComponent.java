@@ -54,11 +54,10 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, new ChangeSizeWatchdog.Settings(
 				settings.watchdogEnabled,
 				settings.maxLinesInChange,
-				settings.notificationIntervalInSeconds(),
-				settings.disableCommitsAboveThreshold
+				settings.notificationIntervalInSeconds()
 		));
 
-		onNewSettings(settings);
+		onSettings(settings);
 
 		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
 		listener = new TimerEventsSource.Listener() {
@@ -100,21 +99,26 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		autoRevert.stop();
 	}
 
-	@Override public void onNewSettings(Settings settings) {
-		ideNotifications.onNewSettings(
+	@Override public void onSettings(Settings settings) {
+		ideNotifications.onSettings(
 				settings.showTimerInToolbar,
 				settings.autoRevertEnabled
 		);
-		autoRevert.on(new AutoRevert.Settings(
+		autoRevert.onSettings(new AutoRevert.Settings(
 				settings.autoRevertEnabled,
 				settings.secondsTillRevert()
 		));
-		changeSizeWatchdog.on(new ChangeSizeWatchdog.Settings(
+		changeSizeWatchdog.onSettings(new ChangeSizeWatchdog.Settings(
 				settings.watchdogEnabled,
 				settings.maxLinesInChange,
-				settings.notificationIntervalInSeconds(),
-				settings.disableCommitsAboveThreshold
+				settings.notificationIntervalInSeconds()
 		));
+
+		if (settings.disableCommitsAboveThreshold) {
+			ideActions.disableCommitsAboveThreshold(settings.maxLinesInChange);
+		} else {
+			ideActions.enableAllCommits();
+		}
 	}
 
 	public void onQuickCommit() {

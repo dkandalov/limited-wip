@@ -85,7 +85,7 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void onNewSettings(boolean showTimerInToolbar, boolean autoRevertEnabled) {
+	public void onSettings(boolean showTimerInToolbar, boolean autoRevertEnabled) {
 		this.showTimerInToolbar = showTimerInToolbar;
 		this.autoRevertEnabled = autoRevertEnabled;
 		updateStatusBar();

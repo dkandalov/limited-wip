@@ -93,7 +93,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 		return "DisableCommitsWithErrorsComponent";
 	}
 
-	@Override public void onNewSettings(Settings settings) {
+	@Override public void onSettings(Settings settings) {
 		enabled.set(settings.disableCommitsWithErrors);
 	}
 

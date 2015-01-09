@@ -101,6 +101,6 @@ public class Settings implements PersistentStateComponent<Settings>  {
 	}
 
 	public interface Listener {
-		void onNewSettings(Settings settings);
+		void onSettings(Settings settings);
 	}
 }

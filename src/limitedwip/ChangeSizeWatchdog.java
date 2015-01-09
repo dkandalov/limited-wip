@@ -10,7 +10,7 @@ public class ChangeSizeWatchdog {
     public ChangeSizeWatchdog(IdeNotifications ideNotifications, Settings settings) {
         this.ideNotifications = ideNotifications;
         this.settings = settings;
-        on(settings);
+        onSettings(settings);
     }
 
     public synchronized void onChangeSizeUpdate(int changeListSizeInLines, int seconds) {
@@ -30,7 +30,7 @@ public class ChangeSizeWatchdog {
         }
     }
 
-    public synchronized void on(Settings settings) {
+    public synchronized void onSettings(Settings settings) {
         lastNotificationTime = -1;
         this.settings = settings;
     }
@@ -44,14 +44,11 @@ public class ChangeSizeWatchdog {
         public final boolean enabled;
         public final int maxLinesInChange;
         public final int notificationIntervalInSeconds;
-        public final boolean disableCommitsAboveThreshold; // TODO use
 
-        public Settings(boolean enabled, int maxLinesInChange, int notificationIntervalInSeconds,
-                        boolean disableCommitsAboveThreshold) {
+        public Settings(boolean enabled, int maxLinesInChange, int notificationIntervalInSeconds) {
             this.enabled = enabled;
             this.maxLinesInChange = maxLinesInChange;
             this.notificationIntervalInSeconds = notificationIntervalInSeconds;
-            this.disableCommitsAboveThreshold = disableCommitsAboveThreshold;
         }
     }
 }

@@ -120,4 +120,14 @@ public class IdeActions {
 
 		return result[0];
 	}
+
+	public void enableAllCommits() {
+		// TODO implement
+
+	}
+
+	public void disableCommitsAboveThreshold(int maxLinesInChange) {
+		// TODO implement
+
+	}
 }
