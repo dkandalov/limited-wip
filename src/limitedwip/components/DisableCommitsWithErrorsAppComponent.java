@@ -19,25 +19,23 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.problems.WolfTheProblemSolver;
-import limitedwip.components.VcsUtil.CheckinListener;
-import limitedwip.ui.settings.Settings;
+import limitedwip.components.VcsIdeUtil.CheckinListener;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.List;
 
-import static limitedwip.components.VcsUtil.registerBeforeCheckInListener;
+import static limitedwip.components.VcsIdeUtil.registerBeforeCheckInListener;
 
-public class DisableCommitsWithErrorsComponent implements ApplicationComponent, Settings.Listener {
-	private final Ref<Boolean> enabled = Ref.create(false);
+public class DisableCommitsWithErrorsAppComponent implements ApplicationComponent {
+	private boolean enabled;
 
 	@Override public void initComponent() {
 		registerBeforeCheckInListener(new CheckinListener() {
 			@Override public boolean allowCheckIn(@NotNull Project project, @NotNull List<Change> changes) {
-				if (!enabled.get()) return true;
+				if (!enabled) return true;
 
 				WolfTheProblemSolver wolf = WolfTheProblemSolver.getInstance(project);
 				for (Module module : ModuleManager.getInstance(project).getModules()) {
@@ -53,8 +51,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 
 	private void notifyThatCommitWasCancelled() {
 		NotificationListener listener = new NotificationListener() {
-			@Override
-			public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
 				ShowSettingsUtil.getInstance().showSettingsDialog(null, LimitedWIPAppComponent.class);
 			}
 		};
@@ -63,7 +60,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 		notificationsManager.notify(new Notification(
 				LimitedWIPAppComponent.displayName,
 				"You cannot commit because project has errors",
-				"(It can be turned off in <a href=\"\">Settings</a> dialog)",
+				"(It can be turned off in <a href=\"\">IDE Settings</a>)",
 				NotificationType.WARNING,
 				listener
 		));
@@ -76,7 +73,7 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 		return "DisableCommitsWithErrorsComponent";
 	}
 
-	@Override public void onSettings(Settings settings) {
-		enabled.set(settings.disableCommitsWithErrors);
+	public void onSettingsUpdate(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

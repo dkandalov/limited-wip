@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>LimitedWIP</id>
     <name>LimitedWIP</name>
-    <version>0.1.3</version>
+    <version>0.2</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <category>Misc</category>
 
@@ -52,10 +52,13 @@ Dedicated to LMAX people.
             <implementation-class>limitedwip.components.LimitedWIPAppComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>limitedwip.components.TimerEventsSourceAppComponent</implementation-class>
+            <implementation-class>limitedwip.components.TimerEventsSource</implementation-class>
         </component>
         <component>
-            <implementation-class>limitedwip.components.DisableCommitsWithErrorsComponent</implementation-class>
+            <implementation-class>limitedwip.components.DisableCommitsWithErrorsAppComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>limitedwip.components.DisableLargeCommitsAppComponent</implementation-class>
         </component>
     </application-components>
 

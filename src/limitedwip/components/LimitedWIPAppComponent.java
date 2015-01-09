@@ -82,7 +82,13 @@ public class LimitedWIPAppComponent implements ApplicationComponent, Configurabl
 			LimitedWIPProjectComponent projectComponent = project.getComponent(LimitedWIPProjectComponent.class);
 			projectComponent.onSettings(settings);
 		}
-		DisableCommitsWithErrorsComponent component = ApplicationManager.getApplication().getComponent(DisableCommitsWithErrorsComponent.class);
-		component.onSettings(settings);
+
+		ApplicationManager.getApplication()
+				.getComponent(DisableCommitsWithErrorsAppComponent.class)
+				.onSettingsUpdate(settings.disableCommitsWithErrors);
+
+		ApplicationManager.getApplication()
+				.getComponent(DisableLargeCommitsAppComponent.class)
+				.onSettingsUpdate(settings.disableCommitsAboveThreshold, settings.maxLinesInChange);
 	}
 }
