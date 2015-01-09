@@ -70,6 +70,9 @@ public class AutoRevert {
 
 	public synchronized void on(SettingsUpdate settingsUpdate) {
 		this.newTimeEventTillRevert = settingsUpdate.secondsTillRevert;
+		if (!settingsUpdate.enabled && started) {
+			stop();
+		}
 	}
 
 	private void updateTimeEventsTillRevert() {

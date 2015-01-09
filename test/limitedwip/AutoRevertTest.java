@@ -66,6 +66,15 @@ public class AutoRevertTest {
 		verifyZeroInteractions(ideActions);
 	}
 
+	@Test public void doesNotRevertChanges_WhenDisabled() {
+		autoRevert.start();
+		autoRevert.onTimer();
+		autoRevert.on(new SettingsUpdate(false, 2));
+		autoRevert.onTimer();
+
+		verifyZeroInteractions(ideActions);
+	}
+
 	@Test public void resetsTimeTillRevert_WhenStopped() {
 		InOrder inOrder = inOrder(ideNotifications);
 

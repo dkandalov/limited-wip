@@ -28,70 +28,89 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public class IdeNotifications {
-	private final MyStatusBarWidget widget = new MyStatusBarWidget();
+	private final AutoRevertStatusBarWidget autoRevertWidget = new AutoRevertStatusBarWidget();
 	private final Project project;
 	private boolean showTimerInToolbar;
+	private boolean autoRevertEnabled;
 
 	public IdeNotifications(Project project) {
 		this.project = project;
 
 		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-		if (statusBar == null) return;
-
-		widget.showThatStopped();
-		statusBar.addWidget(widget);
-		statusBar.updateWidget(widget.ID());
+		if (statusBar != null) {
+			autoRevertWidget.showStoppedText();
+			statusBar.addWidget(autoRevertWidget);
+			statusBar.updateWidget(autoRevertWidget.ID());
+		}
 	}
 
 	public void onProjectClosed() {
-		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-		if (statusBar == null) return;
-
-		widget.showThatStopped();
-		statusBar.removeWidget(widget.ID());
-		statusBar.updateWidget(widget.ID());
+		StatusBar statusBar = statusBarFor(project);
+		if (statusBar != null) {
+			autoRevertWidget.showStoppedText();
+			statusBar.removeWidget(autoRevertWidget.ID());
+			statusBar.updateWidget(autoRevertWidget.ID());
+		}
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
 		if (showTimerInToolbar) {
-			widget.showTime(formatTime(timeEventsTillRevert));
+			autoRevertWidget.showTime(formatTime(timeEventsTillRevert));
 		} else {
-			widget.showStartupText();
+			autoRevertWidget.showStartedText();
 		}
 		updateStatusBar();
 	}
 
 	public void onAutoRevertStopped() {
-		widget.showThatStopped();
+		autoRevertWidget.showStoppedText();
 		updateStatusBar();
 	}
 
 	public void onCommit(int timeEventsTillRevert) {
 		if (showTimerInToolbar) {
-			widget.showTime(formatTime(timeEventsTillRevert));
+			autoRevertWidget.showTime(formatTime(timeEventsTillRevert));
 		} else {
-			widget.showStartupText();
+			autoRevertWidget.showStartedText();
 		}
 		updateStatusBar();
 	}
 
 	public void onTimeTillRevert(int secondsLeft) {
 		if (showTimerInToolbar) {
-			widget.showTime(formatTime(secondsLeft));
+			autoRevertWidget.showTime(formatTime(secondsLeft));
 		} else {
-			widget.showStartupText();
+			autoRevertWidget.showStartedText();
 		}
 		updateStatusBar();
 	}
 
-	public void onNewSettings(boolean showTimerInToolbar) {
+	public void onNewSettings(boolean showTimerInToolbar, boolean autoRevertEnabled) {
 		this.showTimerInToolbar = showTimerInToolbar;
+		this.autoRevertEnabled = autoRevertEnabled;
+		updateStatusBar();
 	}
 
 	private void updateStatusBar() {
-		StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-		if (statusBar == null) return;
-		statusBar.updateWidget(widget.ID());
+		StatusBar statusBar = statusBarFor(project);
+		if (statusBar != null) {
+			boolean hasWidget = statusBar.getWidget(autoRevertWidget.ID()) != null;
+			if (hasWidget && autoRevertEnabled) {
+				statusBar.updateWidget(autoRevertWidget.ID());
+
+			} else if (hasWidget) {
+				statusBar.removeWidget(autoRevertWidget.ID());
+
+			} else if (autoRevertEnabled) {
+				autoRevertWidget.showStoppedText();
+				statusBar.addWidget(autoRevertWidget);
+				statusBar.updateWidget(autoRevertWidget.ID());
+			}
+		}
+	}
+
+	private static StatusBar statusBarFor(Project project) {
+		return WindowManager.getInstance().getStatusBar(project);
 	}
 
 	private static String formatTime(int seconds) {
@@ -101,7 +120,7 @@ public class IdeNotifications {
 	}
 
 
-	public static class MyStatusBarWidget implements StatusBarWidget {
+	public static class AutoRevertStatusBarWidget implements StatusBarWidget {
 		private static final String TIME_LEFT_PREFIX_TEXT = "Auto-revert in ";
 		private static final String STARTED_TEXT = "Auto-revert started";
 		private static final String STOPPED_TEXT = "Auto-revert stopped";
@@ -118,11 +137,11 @@ public class IdeNotifications {
 			text = TIME_LEFT_PREFIX_TEXT + timeLeft;
 		}
 
-		public void showStartupText() {
+		public void showStartedText() {
 			text = STARTED_TEXT;
 		}
 
-		public void showThatStopped() {
+		public void showStoppedText() {
 			text = STOPPED_TEXT;
 		}
 

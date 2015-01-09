@@ -94,7 +94,10 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 	}
 
 	@Override public void onNewSettings(Settings settings) {
-		ideNotifications.onNewSettings(settings.showTimerInToolbar);
+		ideNotifications.onNewSettings(
+				settings.showTimerInToolbar,
+				settings.autoRevertEnabled
+		);
 		autoRevert.on(new SettingsUpdate(
 				settings.autoRevertEnabled,
 				settings.secondsTillRevert())
