@@ -14,6 +14,7 @@
 package limitedwip.components;
 
 import com.intellij.notification.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -56,21 +57,21 @@ public class DisableCommitsWithErrorsAppComponent implements ApplicationComponen
 			}
 		};
 
-		Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
-		notificationsManager.notify(new Notification(
+		Notification notification = new Notification(
 				LimitedWIPAppComponent.displayName,
 				"You cannot commit because project has errors",
 				"(It can be turned off in <a href=\"\">IDE Settings</a>)",
 				NotificationType.WARNING,
 				listener
-		));
+		);
+		ApplicationManager.getApplication().getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
 	}
 
 	@Override public void disposeComponent() {
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "DisableCommitsWithErrorsComponent";
+		return this.getClass().getCanonicalName();
 	}
 
 	public void onSettingsUpdate(boolean enabled) {

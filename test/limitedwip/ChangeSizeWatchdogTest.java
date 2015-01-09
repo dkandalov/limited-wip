@@ -21,7 +21,7 @@ public class ChangeSizeWatchdogTest {
     @Test public void doesNotSendNotification_WhenChangeSizeIsBelowThreshold() {
         watchdog.onChangeSizeUpdate(10, next());
 
-        verifyZeroInteractions(ideNotifications);
+        verify(ideNotifications, times(0)).onChangeSizeTooBig(anyInt(), anyInt());
     }
 
     @Test public void sendsNotification_WhenChangeSizeIsAboveThreshold() {
@@ -59,7 +59,7 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void canSkipNotificationsUtilNextCommit() {
-        watchdog.skipNotificationsUntilCommit();
+        watchdog.skipNotificationsUntilCommit(true);
         watchdog.onChangeSizeUpdate(200, next());
         watchdog.onChangeSizeUpdate(200, next());
         watchdog.onCommit();

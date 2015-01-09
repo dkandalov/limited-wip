@@ -23,11 +23,10 @@ public class ChangeSizeWatchdog {
                 (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
 
         if (exceededThreshold && timeToNotify) {
-            ideNotifications.onChangeSizeTooBig(
-                    changeListSizeInLines,
-                    settings.maxLinesInChange
-            );
+            ideNotifications.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
             lastNotificationTime = seconds;
+        } else {
+            ideNotifications.currentChangeListSize(changeListSizeInLines, settings.maxLinesInChange);
         }
     }
 
@@ -40,8 +39,9 @@ public class ChangeSizeWatchdog {
         skipNotificationsUtilCommit = false;
     }
 
-    public synchronized void skipNotificationsUntilCommit() {
-        skipNotificationsUtilCommit = true;
+    public synchronized void skipNotificationsUntilCommit(boolean value) {
+        skipNotificationsUtilCommit = value;
+        lastNotificationTime = -1;
     }
 
 

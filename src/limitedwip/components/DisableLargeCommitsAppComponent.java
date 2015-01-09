@@ -14,6 +14,7 @@
 package limitedwip.components;
 
 import com.intellij.notification.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -52,21 +53,21 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 			}
 		};
 
-		Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
-		notificationsManager.notify(new Notification(
+		Notification notification = new Notification(
 				LimitedWIPAppComponent.displayName,
-				"Commit was cancelled because change size is above threshold",
+				"Commit was cancelled because change size is above threshold<br/>",
 				"(It can be changed in <a href=\"\">IDE Settings</a>)",
 				NotificationType.WARNING,
 				listener
-		));
+		);
+		ApplicationManager.getApplication().getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
 	}
 
 	@Override public void disposeComponent() {
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "DisableCommitsWithErrorsComponent";
+		return this.getClass().getCanonicalName();
 	}
 
 	public void onSettingsUpdate(boolean enabled, int maxLinesInChange) {

@@ -45,7 +45,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		super.projectOpened();
 
 		Settings settings = ServiceManager.getService(Settings.class);
-		ideNotifications = new IdeNotifications(myProject);
+		ideNotifications = new IdeNotifications(myProject, settings);
 		ideActions = new IdeActions(myProject);
 		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
 				settings.autoRevertEnabled,
@@ -118,8 +118,8 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		changeSizeWatchdog.onCommit();
 	}
 
-	public void skipNotificationsUntilCommit() {
-		changeSizeWatchdog.skipNotificationsUntilCommit();
+	public void skipNotificationsUntilCommit(boolean value) {
+		changeSizeWatchdog.skipNotificationsUntilCommit(value);
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
