@@ -31,7 +31,6 @@ public class SettingsForm {
 	private JCheckBox autoRevertEnabled;
 	private JComboBox minutesTillRevert;
 	private JCheckBox showTimerInToolbar;
-	private JCheckBox disableCommitsWithErrors;
 
 	private final Settings initialState;
 	private Settings currentState;
@@ -59,8 +58,6 @@ public class SettingsForm {
 		autoRevertEnabled.addActionListener(commonActionListener);
 		minutesTillRevert.addActionListener(commonActionListener);
 		showTimerInToolbar.addActionListener(commonActionListener);
-
-		disableCommitsWithErrors.addActionListener(commonActionListener);
 	}
 
 	public void updateUIFromState() {
@@ -76,8 +73,6 @@ public class SettingsForm {
 		autoRevertEnabled.setSelected(currentState.autoRevertEnabled);
 		minutesTillRevert.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
 		showTimerInToolbar.setSelected(currentState.showTimerInToolbar);
-
-		disableCommitsWithErrors.setSelected(currentState.disableCommitsWithErrors);
 
 		minutesTillRevert.setEnabled(currentState.autoRevertEnabled);
 		showTimerInToolbar.setEnabled(currentState.autoRevertEnabled);
@@ -110,7 +105,6 @@ public class SettingsForm {
 			}
 			currentState.showTimerInToolbar = showTimerInToolbar.isSelected();
 
-			currentState.disableCommitsWithErrors = disableCommitsWithErrors.isSelected();
 		} catch (NumberFormatException ignored) {
 		}
 	}

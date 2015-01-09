@@ -84,10 +84,6 @@ public class LimitedWIPAppComponent implements ApplicationComponent, Configurabl
 		}
 
 		ApplicationManager.getApplication()
-				.getComponent(DisableCommitsWithErrorsAppComponent.class)
-				.onSettingsUpdate(settings.disableCommitsWithErrors);
-
-		ApplicationManager.getApplication()
 				.getComponent(DisableLargeCommitsAppComponent.class)
 				.onSettingsUpdate(settings.disableCommitsAboveThreshold, settings.maxLinesInChange);
 	}

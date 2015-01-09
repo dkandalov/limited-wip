@@ -55,9 +55,6 @@ Dedicated to LMAX people.
             <implementation-class>limitedwip.components.TimerEventsSource</implementation-class>
         </component>
         <component>
-            <implementation-class>limitedwip.components.DisableCommitsWithErrorsAppComponent</implementation-class>
-        </component>
-        <component>
             <implementation-class>limitedwip.components.DisableLargeCommitsAppComponent</implementation-class>
         </component>
     </application-components>
