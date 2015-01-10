@@ -13,6 +13,8 @@
  */
 package limitedwip;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -54,27 +56,32 @@ public class IdeActions {
 
 		UIUtil.invokeAndWaitIfNeeded(new Runnable() {
 			@Override public void run() {
-				try {
+				Application application = ApplicationManager.getApplication();
+				application.runWriteAction(new Runnable() {
+					@Override public void run() {
+						try {
 
-					Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
-					if (changes.isEmpty()) {
-						result[0] = false;
-						return;
-					}
+							Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
+							if (changes.isEmpty()) {
+								result[0] = false;
+								return;
+							}
 
-					new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
+							new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
 
-					VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
-						@Override public VirtualFile fun(Change change) {
-							return change.getVirtualFile();
+							VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
+								@Override public VirtualFile fun(Change change) {
+									return change.getVirtualFile();
+								}
+							}), new VirtualFile[changes.size()]);
+							FileDocumentManager.getInstance().reloadFiles(changedFiles);
+
+						} catch (Exception e) {
+							// observed exception while reloading project at the time of auto-revert
+							LOG.error("Error while doing revert", e);
 						}
-					}), new VirtualFile[changes.size()]);
-					FileDocumentManager.getInstance().reloadFiles(changedFiles);
-
-				} catch (Exception e) {
-					// observed exception while reloading project at the time of auto-revert
-					LOG.error("Error while doing revert", e);
-				}
+					}
+				});
 			}
 		});
 
