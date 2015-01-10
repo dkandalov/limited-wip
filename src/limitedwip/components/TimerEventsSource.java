@@ -14,27 +14,33 @@
 package limitedwip.components;
 
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class TimerEventsSource implements ApplicationComponent {
+	private static final Logger log = Logger.getInstance(TimerEventsSource.class);
 	private static final int oneSecond = 1000;
 
 	private final Timer timer = new Timer();
-	private final List<Listener> listeners = new ArrayList<Listener>();
+	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
 	private int secondsSinceStart = 0;
 
 	@Override public void initComponent() {
 		timer.schedule(new TimerTask() {
 			@Override public void run() {
-				secondsSinceStart++;
-				for (Listener listener : listeners) {
-					listener.onTimerUpdate(secondsSinceStart);
+				try {
+					secondsSinceStart++;
+					for (Listener listener : listeners) {
+                        listener.onTimerUpdate(secondsSinceStart);
+                    }
+				} catch (Exception e) {
+					log.error(e);
 				}
 			}
 		}, 0, oneSecond);

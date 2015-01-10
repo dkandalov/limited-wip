@@ -28,7 +28,7 @@ import static com.intellij.openapi.diff.impl.util.TextDiffTypeEnum.*;
 import static java.util.Arrays.asList;
 
 public class VcsIdeUtil {
-    private static final Logger LOG = Logger.getInstance(VcsIdeUtil.class);
+    private static final Logger log = Logger.getInstance(VcsIdeUtil.class);
 
     public static int currentChangeListSizeInLines(Collection<Change> changes) {
         int result = 0;
@@ -109,7 +109,7 @@ public class VcsIdeUtil {
                 }
             }
         }
-        LOG.warn("Failed to access fields: " + possibleFieldNames + " on '" + object + "'");
+        log.warn("Failed to access fields: " + possibleFieldNames + " on '" + object + "'");
     }
 
 

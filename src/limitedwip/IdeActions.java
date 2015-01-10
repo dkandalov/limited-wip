@@ -33,7 +33,7 @@ import static com.intellij.util.containers.ContainerUtil.map;
 import static com.intellij.util.containers.ContainerUtil.toArray;
 
 public class IdeActions {
-	private static final Logger LOG = Logger.getInstance("#limitedwip.IdeActions");
+	private static final Logger log = Logger.getInstance(IdeActions.class);
 	private final Project project;
 
 	public IdeActions(Project project) {
@@ -78,7 +78,7 @@ public class IdeActions {
 
 						} catch (Exception e) {
 							// observed exception while reloading project at the time of auto-revert
-							LOG.error("Error while doing revert", e);
+							log.error("Error while doing revert", e);
 						}
 					}
 				});
