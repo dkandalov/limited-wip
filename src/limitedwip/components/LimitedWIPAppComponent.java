@@ -16,18 +16,19 @@ package limitedwip.components;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import limitedwip.ui.settings.Settings;
 import limitedwip.ui.settings.SettingsForm;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class LimitedWIPAppComponent implements ApplicationComponent, Configurable {
+public class LimitedWIPAppComponent implements ApplicationComponent, SearchableConfigurable {
 	public static final String displayName = "Limited WIP";
 	private static final String limitedWIPAppComponentId = "LimitedWIPAppComponent";
 
@@ -86,5 +87,13 @@ public class LimitedWIPAppComponent implements ApplicationComponent, Configurabl
 		ApplicationManager.getApplication()
 				.getComponent(DisableLargeCommitsAppComponent.class)
 				.onSettingsUpdate(settings.disableCommitsAboveThreshold, settings.maxLinesInChange);
+	}
+
+	@NotNull @Override public String getId() {
+		return limitedWIPAppComponentId;
+	}
+
+	@Nullable @Override public Runnable enableSearch(String option) {
+		return null;
 	}
 }
