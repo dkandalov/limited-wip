@@ -1,6 +1,6 @@
 <idea-plugin version="2">
     <id>LimitedWIP</id>
-    <name>LimitedWIP</name>
+    <name>Limited WIP</name>
     <version>0.2.0</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <category>Misc</category>
