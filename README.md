@@ -1,14 +1,13 @@
 ### What is this?
 
-This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time.
-
-It has two parts:
+This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time. It has two parts:
  - notification when current change list size exceeds limit
  - revert current change list after a timeout
 
 Screenshots of plugin preferences/toolbar/notifications:
 <img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/settings.png?raw=true" align="center"/>
 <br/><br/>
+(click on auto-revert to start/stop or use alt+shift+A)
 <img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/toolbar.png?raw=true" align="center"/>
 <br/><br/>
 <img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/change-size-exceeded.png?raw=true" align="center"/>
@@ -21,16 +20,13 @@ Screenshots of plugin preferences/toolbar/notifications:
 ### Why?
 
 Assumptions:
- - making small focused changes is better than making changes which go on until "everything is done"
+ - small focused changes are better than changes which go on until "everything is done"
  - people are good at self-deception and not following rules
 
 This plugin is intended as a tool to limit your work-in-progress (and prevent yourself from cheating).
 
 
 ### How to use it?
-
- - start auto-revert (alt+shift+A or click on widget in the toolbar)
- - see "IDE Preferences -> Limited WIP"
 
 There are probably many ways to make use of limited WIP, here are some ideas.
 
