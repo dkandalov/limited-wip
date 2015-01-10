@@ -8,6 +8,7 @@ Screenshots of plugin preferences/toolbar/notifications:
 <img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/settings.png?raw=true" align="center"/>
 <br/><br/>
 (click on auto-revert to start/stop or use alt+shift+A)
+<br/>
 <img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/toolbar.png?raw=true" align="center"/>
 <br/><br/>
 <img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/change-size-exceeded.png?raw=true" align="center"/>
