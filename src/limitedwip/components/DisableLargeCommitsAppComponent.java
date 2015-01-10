@@ -13,12 +13,17 @@
  */
 package limitedwip.components;
 
-import com.intellij.notification.*;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.LocalChangeList;
 import limitedwip.components.VcsIdeUtil.CheckinListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +41,8 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 			@Override public boolean allowCheckIn(@NotNull Project project, @NotNull List<Change> changes) {
 				if (!enabled) return true;
 
-				int changeListSize = VcsIdeUtil.currentChangeListSizeInLines(changes);
+				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
+				int changeListSize = VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
 				if (changeListSize > maxLinesInChange) {
 					notifyThatCommitWasCancelled();
 					return false;
@@ -49,15 +55,15 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 	private void notifyThatCommitWasCancelled() {
 		NotificationListener listener = new NotificationListener() {
 			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-				ShowSettingsUtil.getInstance().showSettingsDialog(null, LimitedWIPAppComponent.class);
+				ShowSettingsUtil.getInstance().showSettingsDialog(null, LimitedWIPAppComponent.displayName);
 			}
 		};
 
 		Notification notification = new Notification(
 				LimitedWIPAppComponent.displayName,
 				"Commit was cancelled because change size is above threshold<br/>",
-				"(This can be reconfigured in IDE <a href=\"\">Settings</a>)",
-				NotificationType.WARNING,
+				"(Change size threshold be configured in <a href=\"\">IDE settings</a>)",
+				NotificationType.ERROR,
 				listener
 		);
 		ApplicationManager.getApplication().getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
