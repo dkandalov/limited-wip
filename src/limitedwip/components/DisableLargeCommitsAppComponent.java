@@ -13,14 +13,15 @@
  */
 package limitedwip.components;
 
+import com.intellij.ide.DataManager;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
@@ -35,16 +36,21 @@ import static limitedwip.components.VcsIdeUtil.registerBeforeCheckInListener;
 public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 	private boolean enabled;
 	private int maxLinesInChange;
+	private boolean allowOnce;
 
 	@Override public void initComponent() {
 		registerBeforeCheckInListener(new CheckinListener() {
 			@Override public boolean allowCheckIn(@NotNull Project project, @NotNull List<Change> changes) {
+				if (allowOnce) {
+					allowOnce = false;
+					return true;
+				}
 				if (!enabled) return true;
 
 				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
 				int changeListSize = VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
 				if (changeListSize > maxLinesInChange) {
-					notifyThatCommitWasCancelled();
+					notifyThatCommitWasCancelled(project);
 					return false;
 				}
 				return true;
@@ -52,21 +58,30 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 		});
 	}
 
-	private void notifyThatCommitWasCancelled() {
+	private void notifyThatCommitWasCancelled(Project project) {
 		NotificationListener listener = new NotificationListener() {
 			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-				ShowSettingsUtil.getInstance().showSettingsDialog(null, LimitedWIPAppComponent.displayName);
+				allowOnce = true;
+				AnActionEvent actionEvent = new AnActionEvent(
+						null,
+						DataManager.getInstance().getDataContextFromFocus().getResultSync(),
+						ActionPlaces.UNKNOWN,
+						new Presentation(),
+						ActionManager.getInstance(),
+						0
+				);
+				new CommonCheckinProjectAction().actionPerformed(actionEvent);
 			}
 		};
 
 		Notification notification = new Notification(
 				LimitedWIPAppComponent.displayName,
 				"Commit was cancelled because change size is above threshold<br/>",
-				"(Change size threshold be configured in <a href=\"\">IDE settings</a>)",
+				"(<a href=\"\">Click here</a> to force commit anyway)",
 				NotificationType.ERROR,
 				listener
 		);
-		ApplicationManager.getApplication().getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
+		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
 	}
 
 	@Override public void disposeComponent() {

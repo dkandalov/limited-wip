@@ -17,7 +17,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
@@ -156,6 +155,6 @@ public class IdeNotifications {
 				NotificationType.WARNING,
 				listener
 		);
-		ApplicationManager.getApplication().getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
+		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
 	}
 }
