@@ -32,7 +32,7 @@ public class VcsIdeUtil {
 
     public static int currentChangeListSizeInLines(Collection<Change> changes) {
         int result = 0;
-        TextCompareProcessor compareProcessor = new TextCompareProcessor(ComparisonPolicy.IGNORE_SPACE);
+        TextCompareProcessor compareProcessor = new TextCompareProcessor(ComparisonPolicy.TRIM_SPACE);
 
         for (Change change : changes) {
             try {
