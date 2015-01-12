@@ -18,13 +18,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
-import com.intellij.util.ui.UIUtil;
 import limitedwip.components.VcsIdeUtil;
 
 import java.util.Collection;
@@ -41,50 +41,37 @@ public class IdeActions {
 	}
 
 	public int currentChangeListSizeInLines() {
-		final int[] result = {0};
-		UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-			@Override public void run() {
+		return ApplicationManager.getApplication().runReadAction(new Computable<Integer>() {
+			@Override public Integer compute() {
 				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
-				result[0] = VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
+				return VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
 			}
 		});
-		return result[0];
 	}
 	
-	public boolean revertCurrentChangeList() {
-		final boolean[] result = new boolean[]{true};
+	public void revertCurrentChangeList() {
+		Application application = ApplicationManager.getApplication();
+		application.runWriteAction(new Runnable() {
+            @Override public void run() {
+                try {
 
-		UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-			@Override public void run() {
-				Application application = ApplicationManager.getApplication();
-				application.runWriteAction(new Runnable() {
-					@Override public void run() {
-						try {
+                    Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
+                    if (changes.isEmpty()) return;
 
-							Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
-							if (changes.isEmpty()) {
-								result[0] = false;
-								return;
-							}
+                    new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
 
-							new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
+                    VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
+                        @Override public VirtualFile fun(Change change) {
+                            return change.getVirtualFile();
+                        }
+                    }), new VirtualFile[changes.size()]);
+                    FileDocumentManager.getInstance().reloadFiles(changedFiles);
 
-							VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
-								@Override public VirtualFile fun(Change change) {
-									return change.getVirtualFile();
-								}
-							}), new VirtualFile[changes.size()]);
-							FileDocumentManager.getInstance().reloadFiles(changedFiles);
-
-						} catch (Exception e) {
-							// observed exception while reloading project at the time of auto-revert
-							log.error("Error while doing revert", e);
-						}
-					}
-				});
-			}
-		});
-
-		return result[0];
+                } catch (Exception e) {
+                    // observed exception while reloading project at the time of auto-revert
+                    log.error("Error while doing revert", e);
+                }
+            }
+        });
 	}
 }
