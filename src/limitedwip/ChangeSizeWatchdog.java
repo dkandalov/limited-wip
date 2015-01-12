@@ -15,19 +15,21 @@ public class ChangeSizeWatchdog {
     }
 
     public synchronized void onChangeSizeUpdate(int changeListSizeInLines, int seconds) {
-        if (!settings.enabled || skipNotificationsUtilCommit) return;
+        if (!settings.enabled) return;
 
-        boolean exceededThreshold = changeListSizeInLines > settings.maxLinesInChange;
-        boolean timeToNotify =
-                lastNotificationTime == -1 ||
-                (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
+        if (!skipNotificationsUtilCommit) {
+            boolean exceededThreshold = changeListSizeInLines > settings.maxLinesInChange;
+            boolean timeToNotify =
+                    lastNotificationTime == -1 ||
+                            (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
 
-        if (exceededThreshold && timeToNotify) {
-            ideNotifications.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
-            lastNotificationTime = seconds;
-        } else {
-            ideNotifications.currentChangeListSize(changeListSizeInLines, settings.maxLinesInChange);
+            if (exceededThreshold && timeToNotify) {
+                ideNotifications.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
+                lastNotificationTime = seconds;
+            }
         }
+
+        ideNotifications.currentChangeListSize(changeListSizeInLines, settings.maxLinesInChange);
     }
 
     public synchronized void onSettings(Settings settings) {

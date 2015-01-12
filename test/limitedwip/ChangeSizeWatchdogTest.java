@@ -68,6 +68,23 @@ public class ChangeSizeWatchdogTest {
         verify(ideNotifications).onChangeSizeTooBig(200, maxLinesInChange);
     }
 
+    @Test public void sendsChangeSizeUpdate() {
+        watchdog.onChangeSizeUpdate(200, next());
+        verify(ideNotifications).currentChangeListSize(200, maxLinesInChange);
+    }
+
+    @Test public void sendsChangeSizeUpdate_WhenSkipNotificationUntilNextCommit() {
+        watchdog.skipNotificationsUntilCommit(true);
+        watchdog.onChangeSizeUpdate(200, next());
+        verify(ideNotifications).currentChangeListSize(200, maxLinesInChange);
+    }
+
+    @Test public void doesNotSendChangeSizeUpdate_WhenDisabled() {
+        watchdog.onSettings(watchdogDisabledSettings());
+        watchdog.onChangeSizeUpdate(200, next());
+        verifyZeroInteractions(ideNotifications);
+    }
+
     @Before public void setUp() throws Exception {
         secondsSinceStart = 0;
     }
