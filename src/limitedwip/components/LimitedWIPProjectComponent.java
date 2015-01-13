@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.autorevert.components;
+package limitedwip.components;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
@@ -23,22 +23,21 @@ import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
+import limitedwip.AutoRevert;
+import limitedwip.ChangeSizeWatchdog;
+import limitedwip.IdeActions;
+import limitedwip.IdeNotifications;
+import limitedwip.ui.settings.Settings;
 import org.jetbrains.annotations.NotNull;
-import ru.autorevert.IdeActions;
-import ru.autorevert.IdeNotifications;
-import ru.autorevert.Model;
-import ru.autorevert.settings.Settings;
 
-/**
- * User: dima
- * Date: 10/06/2012
- */
-public class AutoRevertProjectComponent extends AbstractProjectComponent implements Settings.Listener {
-	private Model model;
-	private TimerEventsSourceAppComponent.Listener listener;
+public class LimitedWIPProjectComponent extends AbstractProjectComponent implements Settings.Listener {
+	private AutoRevert autoRevert;
+	private TimerEventsSource.Listener listener;
 	private IdeNotifications ideNotifications;
+	private ChangeSizeWatchdog changeSizeWatchdog;
+	private IdeActions ideActions;
 
-	protected AutoRevertProjectComponent(Project project) {
+	protected LimitedWIPProjectComponent(Project project) {
 		super(project);
 	}
 
@@ -46,23 +45,33 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent impleme
 		super.projectOpened();
 
 		Settings settings = ServiceManager.getService(Settings.class);
-		ideNotifications = new IdeNotifications(myProject);
-		model = new Model(ideNotifications, new IdeActions(myProject), settings.secondsTillRevert());
+		ideNotifications = new IdeNotifications(myProject, settings);
+		ideActions = new IdeActions(myProject);
+		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
+				settings.autoRevertEnabled,
+				settings.secondsTillRevert()
+		));
+		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, new ChangeSizeWatchdog.Settings(
+				settings.watchdogEnabled,
+				settings.maxLinesInChange,
+				settings.notificationIntervalInSeconds()
+		));
 
-		onNewSettings(settings);
+		onSettings(settings);
 
-		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
-		listener = new TimerEventsSourceAppComponent.Listener() {
-			@Override public void onTimerEvent() {
-				model.onTimer();
+		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
+		listener = new TimerEventsSource.Listener() {
+			@Override public void onTimerUpdate(int seconds) {
+				autoRevert.onTimer(seconds);
+				changeSizeWatchdog.onChangeSizeUpdate(ideActions.currentChangeListSizeInLines(), seconds);
 			}
 		};
 		timerEventsSource.addListener(listener);
 
-		// register commit callback
 		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(myProject, new Runnable() {
 			@Override public void run() {
-				model.onCommit();
+				autoRevert.onCommit();
+				changeSizeWatchdog.onCommit();
 			}
 		}));
 	}
@@ -75,29 +84,42 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent impleme
 	@Override public void disposeComponent() {
 		super.disposeComponent();
 
-		TimerEventsSourceAppComponent timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSourceAppComponent.class);
+		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
 		timerEventsSource.removeListener(listener);
 	}
 
-	public void start() {
-		model.start();
+	public void startAutoRevert() {
+		autoRevert.start();
 	}
 
-	public boolean isStarted() {
-		return model.isStarted();
+	public boolean isAutoRevertStarted() {
+		return autoRevert.isStarted();
 	}
 
-	public void stop() {
-		model.stop();
+	public void stopAutoRevert() {
+		autoRevert.stop();
 	}
 
-	@Override public void onNewSettings(Settings settings) {
-		ideNotifications.onNewSettings(settings.showTimerInToolbar);
-		model.onNewSettings(settings.secondsTillRevert());
+	@Override public void onSettings(Settings settings) {
+		ideNotifications.onSettingsUpdate(settings);
+		autoRevert.onSettings(new AutoRevert.Settings(
+				settings.autoRevertEnabled,
+				settings.secondsTillRevert()
+		));
+		changeSizeWatchdog.onSettings(new ChangeSizeWatchdog.Settings(
+				settings.watchdogEnabled,
+				settings.maxLinesInChange,
+				settings.notificationIntervalInSeconds()
+		));
 	}
 
 	public void onQuickCommit() {
-		model.onCommit();
+		autoRevert.onCommit();
+		changeSizeWatchdog.onCommit();
+	}
+
+	public void skipNotificationsUntilCommit(boolean value) {
+		changeSizeWatchdog.skipNotificationsUntilCommit(value);
 	}
 
 	private static class MyHandlerFactory extends CheckinHandlerFactory {
@@ -110,7 +132,7 @@ public class AutoRevertProjectComponent extends AbstractProjectComponent impleme
 		}
 
 		@NotNull @Override
-		public CheckinHandler createHandler(final CheckinProjectPanel panel, CommitContext commitContext) {
+		public CheckinHandler createHandler(@NotNull final CheckinProjectPanel panel, @NotNull CommitContext commitContext) {
 			return new CheckinHandler() {
 				@Override public void checkinSuccessful() {
 					if (!project.equals(panel.getProject())) return;

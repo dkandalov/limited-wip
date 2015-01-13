@@ -1,32 +1,55 @@
-What is this?
------------
-This is a plugin for IntelliJ IDEA which reverts active change list every N minutes. Looks like this:
+### What is this?
 
-<img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/toolbar.png?raw=true" alt="auto-revert screenshot" title="auto-revert screenshot" align="left" />
-<br/><br/><br/><br/>
-It can be installed using IntelliJ plugin manager (Settings -> Plugins).<br/>
+This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time. It has two parts:
+ - notification when current change list size exceeds limit
+ - revert current change list after a timeout
 
-
-
-Why?
--------------------
- - to teach yourself proper TDD. Set up auto-revert to 2 minutes or so. Focus only on one part of red-green-refactor cycle. (See http://jamesshore.com/Blog/Red-Green-Refactor.html or http://butunclebob.com/ArticleS.UncleBob.TheThreeRulesOfTdd)
- - to limit work-in-progress. Auto-revert forces you to commit or lose changes. If committed changes are at least compilable, you won't get involved in big bang refactorings and code changes. It's like Pomodoro but you have to finish something. (http://en.wikipedia.org/wiki/Pomodoro_Technique)
- - not to be too attached to your code. If it's reverted, just write again and probably it will be better this time. (See http://blog.jayfields.com/2009/03/kill-your-darlings.html)
- - it's fun because it's like arcade computer game.
- - it's an experiment to see your limits.
-
-
-How to use it?
---------------
- - choose how often to revert changes in Settings -> VCS auto-revert
- - start auto-revert (alt+shift+A or click on widget in the toolbar)
- - work on a feature:
-   - if your changes auto-reverted before you finish and commit,
-     start over and probably think how to make smaller steps
-   - if you finish and commit before you run out of time, timer will be reset.
- - if you use really small time intervals (like 2 or 5 minutes), there won't be much
-   time to write commit messages. In this case "Quick commit" action can be useful (ctrl+alt+shift+K).
+Screenshots of plugin preferences/toolbar/notifications:
+<img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/settings.png?raw=true" align="center"/>
+<br/><br/>
+(click on auto-revert to start/stop or use alt+shift+A)
+<br/>
+<img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/toolbar.png?raw=true" align="center"/>
+<br/><br/>
+<img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/change-size-exceeded.png?raw=true" align="center"/>
+<br/><br/>
+<img src="https://github.com/dkandalov/auto-revert-plugin/blob/master/commit-was-cancelled.png?raw=true" align="center"/>
+<br/><br/>
+<br/><br/>
 
 
-Dedicated to LMAX people.
+### Why?
+
+Assumptions:
+ - small focused changes are better than changes which go on until "everything is done"
+ - people are good at self-deception and not following rules
+
+This plugin is intended as a tool to limit your work-in-progress (and prevent yourself from cheating).
+
+
+### How to use it?
+
+There are probably many ways to make use of limited WIP, here are some ideas.
+
+Smaller commits:
+ - enable notification on change list size exceeding limit
+ - make changes
+ - if you get change size notification, commit or split you changes into several commits
+
+"Hardcore" TDD:
+ - choose a code kata (e.g. from [here](http://codingdojo.org/cgi-bin/index.pl?KataCatalogue))
+ - set up auto-revert to 2 minutes or so
+ - focus only on one part of [red-green-refactor](http://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html) cycle
+ - commit after finishing part of the cycle
+ - if changes are auto-reverted, consider if there is a smaller change you could make
+
+Incremental refactoring:
+ - choose a piece of code to refactor
+ - set up auto-revert to 5-10 minutes
+ - make refactoring changes before timeout
+ - if changes are auto-reverted, find a way to make the same changes in incremental way
+
+Learn your limits:
+ - come up with a change you want to make
+ - set up auto-revert to the time you think it'll take you to make the change
+ - try making the change till you finish it before auto-revert

@@ -11,30 +11,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.autorevert.components;
+package limitedwip.ui;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import limitedwip.components.LimitedWIPProjectComponent;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * User: dima
- * Date: 10/06/2012
- */
 public class StartOrStopAutoRevertAction extends AnAction {
-	@Override public void actionPerformed(AnActionEvent event) {
+	@Override public void actionPerformed(@NotNull AnActionEvent event) {
 		Project project = event.getProject();
 		if (project == null) return;
 
-		AutoRevertProjectComponent autoRevertProjectComponent = project.getComponent(AutoRevertProjectComponent.class);
-		if (autoRevertProjectComponent.isStarted()) {
-			autoRevertProjectComponent.stop();
+		LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
+		if (limitedWIPProjectComponent.isAutoRevertStarted()) {
+			limitedWIPProjectComponent.stopAutoRevert();
 		} else {
-			autoRevertProjectComponent.start();
+			limitedWIPProjectComponent.startAutoRevert();
 		}
 	}
 
-	@Override public void update(AnActionEvent event) {
+	@Override public void update(@NotNull AnActionEvent event) {
 		String text = textFor(event.getProject());
 		event.getPresentation().setText(text);
 		event.getPresentation().setDescription(text);
@@ -44,7 +42,7 @@ public class StartOrStopAutoRevertAction extends AnAction {
 	private static String textFor(Project project) {
 		if (project == null) return "Start auto-revert";
 
-		if (project.getComponent(AutoRevertProjectComponent.class).isStarted()) {
+		if (project.getComponent(LimitedWIPProjectComponent.class).isAutoRevertStarted()) {
 			return "Stop auto-revert";
 		} else {
 			return "Start auto-revert";

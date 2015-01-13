@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.autorevert.components;
+package limitedwip.components;
 
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
@@ -21,24 +21,23 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * User: dima
- * Date: 10/06/2012
- */
-public class TimerEventsSourceAppComponent implements ApplicationComponent {
-	private static final int ONE_SECOND = 1000;
+
+public class TimerEventsSource implements ApplicationComponent {
+	private static final int oneSecond = 1000;
 
 	private final Timer timer = new Timer();
 	private final List<Listener> listeners = new ArrayList<Listener>();
+	private int secondsSinceStart = 0;
 
 	@Override public void initComponent() {
 		timer.schedule(new TimerTask() {
 			@Override public void run() {
+				secondsSinceStart++;
 				for (Listener listener : listeners) {
-					listener.onTimerEvent();
+					listener.onTimerUpdate(secondsSinceStart);
 				}
 			}
-		}, 0, ONE_SECOND);
+		}, 0, oneSecond);
 	}
 
 	@Override public void disposeComponent() {
@@ -47,7 +46,7 @@ public class TimerEventsSourceAppComponent implements ApplicationComponent {
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "AutoRevert-TimeEventsSource";
+		return "LimitedWIP-TimeEventsSource";
 	}
 
 	public void addListener(Listener listener) {
@@ -59,6 +58,6 @@ public class TimerEventsSourceAppComponent implements ApplicationComponent {
 	}
 
 	public interface Listener {
-		void onTimerEvent();
+		void onTimerUpdate(int seconds);
 	}
 }
