@@ -135,14 +135,13 @@ public class DisableCommitsWithErrorsComponent implements ApplicationComponent, 
 				}
 			};
 
-			Notifications notificationsManager = (Notifications) NotificationsManager.getNotificationsManager();
-			notificationsManager.notify(new Notification(
+			new Notification(
 					AutoRevertAppComponent.DISPLAY_NAME,
 					"You cannot commit because project has errors",
 					"(It can be turned off in <a href=\"\">Settings</a> dialog)",
 					NotificationType.WARNING,
 					listener
-			));
+			).notify(null);
 		}
 
 		@NotNull @Override protected CheckinHandler createVcsHandler(CheckinProjectPanel panel) {

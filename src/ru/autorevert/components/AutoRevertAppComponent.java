@@ -13,6 +13,8 @@
  */
 package ru.autorevert.components;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -39,6 +41,17 @@ public class AutoRevertAppComponent implements ApplicationComponent, Configurabl
 	@Override public void initComponent() {
 		Settings settings = ServiceManager.getService(Settings.class);
 		notifyAutorevertComponentsAbout(settings);
+
+		ApplicationManager.getApplication().invokeLater(new Runnable() {
+			@Override public void run() {
+				new Notification(
+						AutoRevertAppComponent.DISPLAY_NAME,
+						"Auto-revert plugin is deprecated",
+						"Please use <a href=\"https://plugins.jetbrains.com/plugin/7655?pr=idea\">Limited WIP</a> plugin instead",
+						NotificationType.ERROR
+				).notify(null);
+			}
+		});
 	}
 
 	@Override public void disposeComponent() {

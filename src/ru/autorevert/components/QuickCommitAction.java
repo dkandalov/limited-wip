@@ -74,7 +74,7 @@ public class QuickCommitAction extends AnAction {
 						new ArrayList<Change>(defaultChangeList.getChanges()),
 						"",
 						commitMessage,
-						noCheckinHandlers, true, true, FunctionUtil.nullConstant()
+						noCheckinHandlers, true, true, FunctionUtil.nullConstant(), null
 				);
 
 				boolean committed = commitHelper.doCommit();
