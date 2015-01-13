@@ -27,7 +27,7 @@ public class TimerEventsSource implements ApplicationComponent {
 	private static final Logger log = Logger.getInstance(TimerEventsSource.class);
 	private static final int oneSecond = 1000;
 
-	private final Timer timer = new Timer();
+	private final Timer timer = new Timer("LimitedWIP-TimeEvents");
 	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
 	private int secondsSinceStart = 0;
 

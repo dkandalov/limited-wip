@@ -34,15 +34,17 @@ import java.util.List;
 import static limitedwip.components.VcsIdeUtil.registerBeforeCheckInListener;
 
 public class DisableLargeCommitsAppComponent implements ApplicationComponent {
+	private static final int maxShowCommitDialogAttempts = 3;
+
 	private boolean enabled;
 	private int maxLinesInChange;
-	private boolean allowOnce;
+	private boolean allowCommitOnceWithoutCheck = false;
 
 	@Override public void initComponent() {
 		registerBeforeCheckInListener(new CheckinListener() {
 			@Override public boolean allowCheckIn(@NotNull Project project, @NotNull List<Change> changes) {
-				if (allowOnce) {
-					allowOnce = false;
+				if (allowCommitOnceWithoutCheck) {
+					allowCommitOnceWithoutCheck = false;
 					return true;
 				}
 				if (!enabled) return true;
@@ -61,16 +63,11 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 	private void notifyThatCommitWasCancelled(Project project) {
 		NotificationListener listener = new NotificationListener() {
 			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-				allowOnce = true;
-				AnActionEvent actionEvent = new AnActionEvent(
-						null,
-						DataManager.getInstance().getDataContextFromFocus().getResultSync(),
-						ActionPlaces.UNKNOWN,
-						new Presentation(),
-						ActionManager.getInstance(),
-						0
-				);
-				new CommonCheckinProjectAction().actionPerformed(actionEvent);
+				allowCommitOnceWithoutCheck = true;
+				boolean succeeded = showCommitDialog(0);
+				if (!succeeded) {
+					allowCommitOnceWithoutCheck = false;
+				}
 			}
 		};
 
@@ -82,6 +79,45 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 				listener
 		);
 		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
+	}
+
+	/**
+	 * Use retrying logic because of UI deadlock (not sure why exactly this happened):
+	 *  "AWT-EventQueue-1 14.0.2#IU-139.658.4, eap:true" prio=0 tid=0x0 nid=0x0 waiting on condition
+	 *  java.lang.Thread.State: WAITING on com.intellij.util.concurrency.Semaphore$Sync@4071d2c1
+	 *  at sun.misc.Unsafe.park(Native Method)
+	 *  at java.util.concurrent.locks.LockSupport.park(LockSupport.java:156)
+	 *  at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:811)
+	 *  at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:969)
+	 *  at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	 *  at com.intellij.util.concurrency.Semaphore.waitForUnsafe(Semaphore.java:74)
+	 *  at com.intellij.openapi.util.ActionCallback.waitFor(ActionCallback.java:269)
+	 *  at com.intellij.openapi.util.AsyncResult.getResultSync(AsyncResult.java:147)
+	 *  at com.intellij.openapi.util.AsyncResult.getResultSync(AsyncResult.java:142)
+	 *  at limitedwip.components.DisableLargeCommitsAppComponent$2.hyperlinkUpdate(DisableLargeCommitsAppComponent.java:65)
+	 *  at com.intellij.notification.impl.ui.NotificationsUtil$1.hyperlinkUpdate(NotificationsUtil.java:75)
+	 */
+	private static boolean showCommitDialog(int showCommitDialogAttempts) {
+		if (showCommitDialogAttempts > maxShowCommitDialogAttempts) {
+			return false;
+		}
+
+		DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResultSync(500);
+		if (dataContext == null) {
+			return showCommitDialog(showCommitDialogAttempts + 1);
+		}
+
+		AnActionEvent actionEvent = new AnActionEvent(
+				null,
+				dataContext,
+				ActionPlaces.UNKNOWN,
+				new Presentation(),
+				ActionManager.getInstance(),
+				0
+		);
+		new CommonCheckinProjectAction().actionPerformed(actionEvent);
+
+		return true;
 	}
 
 	@Override public void disposeComponent() {
