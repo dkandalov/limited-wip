@@ -17,7 +17,7 @@ Plugin to limit the amount of changes you make at a time. It has two parts:
     <li>revert current change list after a timeout</li>
 </ul>
 <br/>
-See https://github.com/dkandalov/limited-wip for more details.
+See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkandalov/limited-wip</a> for more details.
 </body></html>
 		]]>
     </description>
