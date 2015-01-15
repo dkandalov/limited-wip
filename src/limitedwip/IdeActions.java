@@ -50,28 +50,32 @@ public class IdeActions {
 	}
 	
 	public void revertCurrentChangeList() {
-		Application application = ApplicationManager.getApplication();
-		application.runWriteAction(new Runnable() {
-            @Override public void run() {
-                try {
+		final Application application = ApplicationManager.getApplication();
+		application.invokeLater(new Runnable() {
+			@Override public void run() {
+				application.runWriteAction(new Runnable() {
+					@Override public void run() {
+						try {
 
-                    Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
-                    if (changes.isEmpty()) return;
+							Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
+							if (changes.isEmpty()) return;
 
-                    new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
+							new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
 
-                    VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
-                        @Override public VirtualFile fun(Change change) {
-                            return change.getVirtualFile();
-                        }
-                    }), new VirtualFile[changes.size()]);
-                    FileDocumentManager.getInstance().reloadFiles(changedFiles);
+							VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
+								@Override public VirtualFile fun(Change change) {
+									return change.getVirtualFile();
+								}
+							}), new VirtualFile[changes.size()]);
+							FileDocumentManager.getInstance().reloadFiles(changedFiles);
 
-                } catch (Exception e) {
-                    // observed exception while reloading project at the time of auto-revert
-                    log.error("Error while doing revert", e);
-                }
-            }
-        });
+						} catch (Exception e) {
+							// observed exception while reloading project at the time of auto-revert
+							log.error("Error while doing revert", e);
+						}
+					}
+				});
+			}
+		});
 	}
 }
