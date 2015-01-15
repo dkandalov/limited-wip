@@ -3,6 +3,8 @@ package limitedwip.components;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diff.impl.ComparisonPolicy;
 import com.intellij.openapi.diff.impl.fragments.LineFragment;
+import com.intellij.openapi.diff.impl.processing.DiffPolicy;
+import com.intellij.openapi.diff.impl.processing.HighlightMode;
 import com.intellij.openapi.diff.impl.processing.TextCompareProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
@@ -32,7 +34,11 @@ public class VcsIdeUtil {
 
     public static int currentChangeListSizeInLines(Collection<Change> changes) {
         int result = 0;
-        TextCompareProcessor compareProcessor = new TextCompareProcessor(ComparisonPolicy.TRIM_SPACE);
+        TextCompareProcessor compareProcessor = new TextCompareProcessor(
+                ComparisonPolicy.TRIM_SPACE,
+                DiffPolicy.LINES_WO_FORMATTING,
+                HighlightMode.BY_LINE
+        );
 
         for (Change change : changes) {
             try {
