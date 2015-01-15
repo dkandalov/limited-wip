@@ -1,4 +1,4 @@
-### What is this?
+## What is this?
 
 This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time. It has two parts:
  - notification when current change list size exceeds limit
@@ -17,7 +17,7 @@ Screenshots of plugin preferences/toolbar/notifications:
 <br/><br/>
 
 
-### Why?
+## Why?
 
 Assumptions:
  - small focused changes are better than changes which go on until "everything is done"
@@ -26,7 +26,7 @@ Assumptions:
 This plugin is intended as a tool to limit your work-in-progress (and prevent yourself from cheating).
 
 
-### How to use it?
+## How to use it?
 
 There are probably many ways to make use of limited WIP, here are some ideas.
 
