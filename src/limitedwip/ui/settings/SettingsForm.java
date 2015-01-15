@@ -30,6 +30,7 @@ public class SettingsForm {
 
 	private JCheckBox autoRevertEnabled;
 	private JComboBox minutesTillRevert;
+	private JCheckBox notifyOnRevert;
 	private JCheckBox showTimerInToolbar;
 
 	private final Settings initialState;
@@ -57,6 +58,7 @@ public class SettingsForm {
 
 		autoRevertEnabled.addActionListener(commonActionListener);
 		minutesTillRevert.addActionListener(commonActionListener);
+		notifyOnRevert.addActionListener(commonActionListener);
 		showTimerInToolbar.addActionListener(commonActionListener);
 	}
 
@@ -72,9 +74,11 @@ public class SettingsForm {
 
 		autoRevertEnabled.setSelected(currentState.autoRevertEnabled);
 		minutesTillRevert.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
+		notifyOnRevert.setSelected(currentState.notifyOnRevert);
 		showTimerInToolbar.setSelected(currentState.showTimerInToolbar);
 
 		minutesTillRevert.setEnabled(currentState.autoRevertEnabled);
+		notifyOnRevert.setEnabled(currentState.autoRevertEnabled);
 		showTimerInToolbar.setEnabled(currentState.autoRevertEnabled);
 		maxLinesInChange.setEnabled(currentState.watchdogEnabled);
 		notificationInterval.setEnabled(currentState.watchdogEnabled);
@@ -103,6 +107,7 @@ public class SettingsForm {
 			if (Settings.minutesToRevertRange.isWithin(minutes)) {
 				currentState.minutesTillRevert = minutes;
 			}
+			currentState.notifyOnRevert = notifyOnRevert.isSelected();
 			currentState.showTimerInToolbar = showTimerInToolbar.isSelected();
 
 		} catch (NumberFormatException ignored) {

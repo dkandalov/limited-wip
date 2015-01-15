@@ -27,6 +27,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 
 	public boolean autoRevertEnabled = false;
 	public int minutesTillRevert = 2;
+	public boolean notifyOnRevert = true;
 	public boolean showTimerInToolbar = true;
 
 	public boolean watchdogEnabled = true;
@@ -63,6 +64,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		if (maxLinesInChange != settings.maxLinesInChange) return false;
 		if (minutesTillRevert != settings.minutesTillRevert) return false;
 		if (notificationIntervalInMinutes != settings.notificationIntervalInMinutes) return false;
+		if (notifyOnRevert != settings.notifyOnRevert) return false;
 		if (showRemainingInToolbar != settings.showRemainingInToolbar) return false;
 		if (showTimerInToolbar != settings.showTimerInToolbar) return false;
 		if (watchdogEnabled != settings.watchdogEnabled) return false;
@@ -78,6 +80,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		result = 31 * result + maxLinesInChange;
 		result = 31 * result + notificationIntervalInMinutes;
 		result = 31 * result + (disableCommitsAboveThreshold ? 1 : 0);
+		result = 31 * result + (notifyOnRevert ? 1 : 0);
 		result = 31 * result + (showRemainingInToolbar ? 1 : 0);
 		return result;
 	}
@@ -91,6 +94,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 				", maxLinesInChange=" + maxLinesInChange +
 				", notificationIntervalInMinutes=" + notificationIntervalInMinutes +
 				", disableCommitsAboveThreshold=" + disableCommitsAboveThreshold +
+				", notifyOnRevert=" + notifyOnRevert +
 				", showRemainingInToolbar=" + showRemainingInToolbar +
 				'}';
 	}
