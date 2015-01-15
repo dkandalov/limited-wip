@@ -85,7 +85,7 @@ public class AutoRevertTest {
 
 		autoRevert.start();
 		autoRevert.onTimer(next());  inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
-		autoRevert.onCommit(); inOrder.verify(ideNotifications).onCommit(secondsTillRevert);
+		autoRevert.onAllFilesCommitted(); inOrder.verify(ideNotifications).onCommit(secondsTillRevert);
 		autoRevert.onTimer(next());  inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
 		autoRevert.onTimer(next());  inOrder.verify(ideNotifications).onTimeTillRevert(eq(1));
 	}
@@ -93,9 +93,9 @@ public class AutoRevertTest {
 	@Test public void sendsUINotificationOnCommit_OnlyWhenStarted() {
 		InOrder inOrder = inOrder(ideNotifications);
 
-		autoRevert.onCommit(); inOrder.verify(ideNotifications, times(0)).onCommit(anyInt());
+		autoRevert.onAllFilesCommitted(); inOrder.verify(ideNotifications, times(0)).onCommit(anyInt());
 		autoRevert.start();
-		autoRevert.onCommit(); inOrder.verify(ideNotifications).onCommit(anyInt());
+		autoRevert.onAllFilesCommitted(); inOrder.verify(ideNotifications).onCommit(anyInt());
 	}
 
 	@Test public void appliesRevertTimeOutChange_AfterStart() {
@@ -122,7 +122,7 @@ public class AutoRevertTest {
 		autoRevert.start();
 		autoRevert.onSettings(new Settings(1));
 		autoRevert.onTimer(next());
-		autoRevert.onCommit();
+		autoRevert.onAllFilesCommitted();
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
 		autoRevert.onTimer(next()); // reverts changes after 1st time event

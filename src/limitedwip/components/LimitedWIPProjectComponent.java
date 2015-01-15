@@ -23,6 +23,7 @@ import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
+import com.intellij.util.Consumer;
 import limitedwip.AutoRevert;
 import limitedwip.ChangeSizeWatchdog;
 import limitedwip.IdeActions;
@@ -31,13 +32,15 @@ import limitedwip.ui.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 
 public class LimitedWIPProjectComponent extends AbstractProjectComponent implements Settings.Listener {
-	private AutoRevert autoRevert;
-	private TimerEventsSource.Listener listener;
-	private IdeNotifications ideNotifications;
 	private ChangeSizeWatchdog changeSizeWatchdog;
-	private IdeActions ideActions;
+	private AutoRevert autoRevert;
+	private IdeNotifications ideNotifications;
 
-	protected LimitedWIPProjectComponent(Project project) {
+	private TimerEventsSource.Listener timerListener;
+	private CheckinSizeHandlerFactory checkinSizeHandlerFactory;
+
+
+	public LimitedWIPProjectComponent(Project project) {
 		super(project);
 	}
 
@@ -46,7 +49,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 
 		Settings settings = ServiceManager.getService(Settings.class);
 		ideNotifications = new IdeNotifications(myProject, settings);
-		ideActions = new IdeActions(myProject);
+		IdeActions ideActions = new IdeActions(myProject);
 		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
 				settings.autoRevertEnabled,
 				settings.secondsTillRevert()
@@ -56,36 +59,32 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 				settings.maxLinesInChange,
 				settings.notificationIntervalInSeconds()
 		));
-
-		onSettings(settings);
-
-		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
-		listener = new TimerEventsSource.Listener() {
+		timerListener = new TimerEventsSource.Listener() {
 			@Override public void onTimerUpdate(int seconds) {
 				autoRevert.onTimer(seconds);
 				changeSizeWatchdog.onTimer(seconds);
 			}
 		};
-		timerEventsSource.addListener(listener);
-
-		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(new MyHandlerFactory(myProject, new Runnable() {
-			@Override public void run() {
-				autoRevert.onCommit();
+		checkinSizeHandlerFactory = new CheckinSizeHandlerFactory(myProject, new Consumer<Integer>() {
+			@Override public void consume(Integer uncommittedFilesSize) {
+				if (uncommittedFilesSize == 0) {
+					autoRevert.onAllFilesCommitted();
+				}
 				changeSizeWatchdog.onCommit();
 			}
-		}));
+		});
+
+		onSettings(settings);
+
+		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).addListener(timerListener);
+		CheckinHandlersManager.getInstance().registerCheckinHandlerFactory(checkinSizeHandlerFactory);
 	}
 
 	@Override public void projectClosed() {
 		super.projectClosed();
 		ideNotifications.onProjectClosed();
-	}
-
-	@Override public void disposeComponent() {
-		super.disposeComponent();
-
-		TimerEventsSource timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
-		timerEventsSource.removeListener(listener);
+		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).removeListener(timerListener);
+		CheckinHandlersManager.getInstance().unregisterCheckinHandlerFactory(checkinSizeHandlerFactory);
 	}
 
 	public void startAutoRevert() {
@@ -114,7 +113,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 	}
 
 	public void onQuickCommit() {
-		autoRevert.onCommit();
+		autoRevert.onAllFilesCommitted();
 		changeSizeWatchdog.onCommit();
 	}
 
@@ -122,11 +121,12 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		changeSizeWatchdog.skipNotificationsUntilCommit(value);
 	}
 
-	private static class MyHandlerFactory extends CheckinHandlerFactory {
-		private final Project project;
-		private final Runnable callback;
 
-		MyHandlerFactory(Project project, Runnable callback) {
+	private static class CheckinSizeHandlerFactory extends CheckinHandlerFactory {
+		private final Project project;
+		private final Consumer<Integer> callback;
+
+		public CheckinSizeHandlerFactory(Project project, Consumer<Integer> callback) {
 			this.project = project;
 			this.callback = callback;
 		}
@@ -138,10 +138,8 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 					if (!project.equals(panel.getProject())) return;
 
 					ChangeListManager changeListManager = ChangeListManager.getInstance(panel.getProject());
-					int uncommittedSize = changeListManager.getDefaultChangeList().getChanges().size() - panel.getSelectedChanges().size();
-					if (uncommittedSize == 0) {
-						callback.run();
-					}
+					int uncommittedFilesSize = changeListManager.getDefaultChangeList().getChanges().size() - panel.getSelectedChanges().size();
+					callback.consume(uncommittedFilesSize);
 				}
 			};
 		}

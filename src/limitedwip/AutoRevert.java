@@ -66,7 +66,7 @@ public class AutoRevert {
 		}
 	}
 
-	public synchronized void onCommit() {
+	public synchronized void onAllFilesCommitted() {
 		if (!started) return;
 
 		startSeconds = -1;
