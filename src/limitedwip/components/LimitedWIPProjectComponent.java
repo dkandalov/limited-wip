@@ -51,7 +51,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 				settings.autoRevertEnabled,
 				settings.secondsTillRevert()
 		));
-		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, new ChangeSizeWatchdog.Settings(
+		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, ideActions, new ChangeSizeWatchdog.Settings(
 				settings.watchdogEnabled,
 				settings.maxLinesInChange,
 				settings.notificationIntervalInSeconds()
@@ -63,7 +63,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		listener = new TimerEventsSource.Listener() {
 			@Override public void onTimerUpdate(int seconds) {
 				autoRevert.onTimer(seconds);
-				changeSizeWatchdog.onChangeSizeUpdate(ideActions.currentChangeListSizeInLines(), seconds);
+				changeSizeWatchdog.onTimer(seconds);
 			}
 		};
 		timerEventsSource.addListener(listener);

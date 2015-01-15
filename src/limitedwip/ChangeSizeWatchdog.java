@@ -3,19 +3,23 @@ package limitedwip;
 public class ChangeSizeWatchdog {
     private final IdeNotifications ideNotifications;
 
+    private final IdeActions ideActions;
     private Settings settings;
     private int lastNotificationTime = -1;
     private boolean skipNotificationsUtilCommit = false;
 
 
-    public ChangeSizeWatchdog(IdeNotifications ideNotifications, Settings settings) {
+    public ChangeSizeWatchdog(IdeNotifications ideNotifications, IdeActions ideActions, Settings settings) {
         this.ideNotifications = ideNotifications;
+        this.ideActions = ideActions;
         this.settings = settings;
         onSettings(settings);
     }
 
-    public synchronized void onChangeSizeUpdate(int changeListSizeInLines, int seconds) {
+    public synchronized void onTimer(int seconds) {
         if (!settings.enabled) return;
+
+        int changeListSizeInLines = ideActions.currentChangeListSizeInLines();
 
         if (!skipNotificationsUtilCommit) {
             boolean exceededThreshold = changeListSizeInLines > settings.maxLinesInChange;
