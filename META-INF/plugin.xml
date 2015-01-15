@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>LimitedWIP</id>
     <name>Limited WIP</name>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <category>Misc</category>
 
@@ -14,7 +14,7 @@
 Plugin to limit the amount of changes you make at a time. It has two parts:
 <ul>
     <li>notification when current change list size exceeds limit</li>
-    <li>revert current change list after a timeout</li>
+    <li>revert current change list after a timeout (ctrl+shift+A to start/stop)</li>
 </ul>
 <br/>
 See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkandalov/limited-wip</a> for more details.

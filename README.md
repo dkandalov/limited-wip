@@ -2,7 +2,7 @@
 
 This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time. It has two parts:
  - notification when current change list size exceeds limit
- - revert current change list after a timeout
+ - revert current change list after a timeout (ctrl+shift+A to start/stop)
 
 Screenshots of plugin preferences/toolbar/notifications:
 <img src="https://github.com/dkandalov/limited-wip/blob/master/settings.png?raw=true" align="center"/>
