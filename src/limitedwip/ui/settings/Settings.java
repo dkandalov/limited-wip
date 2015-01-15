@@ -34,7 +34,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 	public int maxLinesInChange = 80;
 	public int notificationIntervalInMinutes = 1;
 	public boolean disableCommitsAboveThreshold = false;
-	public boolean showRemainingInToolbar = true;
+	public boolean showRemainingChangesInToolbar = true;
 
 
 	public int secondsTillRevert() {
@@ -65,7 +65,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		if (minutesTillRevert != settings.minutesTillRevert) return false;
 		if (notificationIntervalInMinutes != settings.notificationIntervalInMinutes) return false;
 		if (notifyOnRevert != settings.notifyOnRevert) return false;
-		if (showRemainingInToolbar != settings.showRemainingInToolbar) return false;
+		if (showRemainingChangesInToolbar != settings.showRemainingChangesInToolbar) return false;
 		if (showTimerInToolbar != settings.showTimerInToolbar) return false;
 		if (watchdogEnabled != settings.watchdogEnabled) return false;
 
@@ -81,7 +81,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		result = 31 * result + notificationIntervalInMinutes;
 		result = 31 * result + (disableCommitsAboveThreshold ? 1 : 0);
 		result = 31 * result + (notifyOnRevert ? 1 : 0);
-		result = 31 * result + (showRemainingInToolbar ? 1 : 0);
+		result = 31 * result + (showRemainingChangesInToolbar ? 1 : 0);
 		return result;
 	}
 
@@ -95,7 +95,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 				", notificationIntervalInMinutes=" + notificationIntervalInMinutes +
 				", disableCommitsAboveThreshold=" + disableCommitsAboveThreshold +
 				", notifyOnRevert=" + notifyOnRevert +
-				", showRemainingInToolbar=" + showRemainingInToolbar +
+				", showRemainingChangesInToolbar=" + showRemainingChangesInToolbar +
 				'}';
 	}
 

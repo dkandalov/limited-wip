@@ -69,7 +69,7 @@ public class SettingsForm {
 		watchdogEnabled.setSelected(currentState.watchdogEnabled);
 		maxLinesInChange.setSelectedItem(String.valueOf(currentState.maxLinesInChange));
 		notificationInterval.setSelectedItem(String.valueOf(currentState.notificationIntervalInMinutes));
-		showRemainingInToolbar.setSelected(currentState.showRemainingInToolbar);
+		showRemainingInToolbar.setSelected(currentState.showRemainingChangesInToolbar);
 		disableCommitsAboveThreshold.setSelected(currentState.disableCommitsAboveThreshold);
 
 		autoRevertEnabled.setSelected(currentState.autoRevertEnabled);
@@ -99,7 +99,7 @@ public class SettingsForm {
 			if (Settings.notificationIntervalRange.isWithin(minutes)) {
 				currentState.notificationIntervalInMinutes = minutes;
 			}
-			currentState.showRemainingInToolbar = showRemainingInToolbar.isSelected();
+			currentState.showRemainingChangesInToolbar = showRemainingInToolbar.isSelected();
 			currentState.disableCommitsAboveThreshold = disableCommitsAboveThreshold.isSelected();
 
 			currentState.autoRevertEnabled = autoRevertEnabled.isSelected();

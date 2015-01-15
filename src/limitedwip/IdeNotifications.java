@@ -113,13 +113,14 @@ public class IdeNotifications {
         }
 
 		boolean hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null;
-		if (hasWatchdogWidget && settings.watchdogEnabled) {
+		boolean shouldShowWatchdog = settings.watchdogEnabled && settings.showRemainingChangesInToolbar;
+		if (hasWatchdogWidget && shouldShowWatchdog) {
             statusBar.updateWidget(watchdogWidget.ID());
 
         } else if (hasWatchdogWidget) {
             statusBar.removeWidget(watchdogWidget.ID());
 
-        } else if (settings.watchdogEnabled) {
+        } else if (shouldShowWatchdog) {
             watchdogWidget.showInitialText(settings.maxLinesInChange);
             statusBar.addWidget(watchdogWidget, "before Position");
             statusBar.updateWidget(watchdogWidget.ID());
