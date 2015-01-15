@@ -66,6 +66,16 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
+	public void onChangesRevert() {
+		Notification notification = new Notification(
+				LimitedWIPAppComponent.displayName,
+				"Current change list was auto-reverted",
+				"(to disable it use widget in the bottom toolbar)",
+				NotificationType.WARNING
+		);
+		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
+	}
+
 	public void onCommit(int timeEventsTillRevert) {
 		if (settings.showTimerInToolbar) {
 			autoRevertWidget.showTime(formatTime(timeEventsTillRevert));

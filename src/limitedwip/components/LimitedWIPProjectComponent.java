@@ -52,7 +52,8 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		IdeActions ideActions = new IdeActions(myProject);
 		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
 				settings.autoRevertEnabled,
-				settings.secondsTillRevert()
+				settings.secondsTillRevert(),
+				settings.notifyOnRevert
 		));
 		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, ideActions, new ChangeSizeWatchdog.Settings(
 				settings.watchdogEnabled,
@@ -103,7 +104,8 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		ideNotifications.onSettingsUpdate(settings);
 		autoRevert.onSettings(new AutoRevert.Settings(
 				settings.autoRevertEnabled,
-				settings.secondsTillRevert()
+				settings.secondsTillRevert(),
+				settings.notifyOnRevert
 		));
 		changeSizeWatchdog.onSettings(new ChangeSizeWatchdog.Settings(
 				settings.watchdogEnabled,

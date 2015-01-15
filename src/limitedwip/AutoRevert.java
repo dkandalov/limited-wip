@@ -63,6 +63,9 @@ public class AutoRevert {
 			startSeconds = -1;
 			applyNewSettings();
 			ideActions.revertCurrentChangeList();
+			if (settings.notifyOnRevert) {
+				ideNotifications.onChangesRevert();
+			}
 		}
 	}
 
@@ -90,14 +93,16 @@ public class AutoRevert {
 	public static class Settings {
 		public final boolean enabled;
 		public final int secondsTillRevert;
+		public final boolean notifyOnRevert;
 
 		public Settings(int secondsTillRevert) {
-			this(true, secondsTillRevert);
+			this(true, secondsTillRevert, true);
 		}
 
-		public Settings(boolean enabled, int secondsTillRevert) {
+		public Settings(boolean enabled, int secondsTillRevert, boolean notifyOnRevert) {
 			this.enabled = enabled;
 			this.secondsTillRevert = secondsTillRevert;
+			this.notifyOnRevert = notifyOnRevert;
 		}
 	}
 }
