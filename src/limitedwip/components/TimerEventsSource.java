@@ -15,6 +15,7 @@ package limitedwip.components;
 
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class TimerEventsSource implements ApplicationComponent {
 					for (Listener listener : listeners) {
                         listener.onTimerUpdate(secondsSinceStart);
                     }
+				} catch (ProcessCanceledException ignored) {
 				} catch (Exception e) {
 					log.error(e);
 				}
