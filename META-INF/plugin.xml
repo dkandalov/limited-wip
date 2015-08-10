@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>LimitedWIP</id>
     <name>Limited WIP</name>
-    <version>0.2.2</version>
+    <version>0.2.3</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <category>Misc</category>
 
@@ -50,7 +50,6 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
         </action>
         <action id="QuickCommitAction" class="limitedwip.ui.QuickCommitAction"
                 text="Quick commit" icon="/limitedwip/icons/commit.png">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift k"/>
         </action>
     </actions>
 

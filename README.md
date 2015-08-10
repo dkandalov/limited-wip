@@ -1,13 +1,11 @@
-## What is this?
+## Limited WIP IntelliJ plugin
 
-This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time. It has two parts:
+This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time. It has two main features:
  - notification when current change list size exceeds limit
- - revert current change list after a timeout (ctrl+shift+A to start/stop)
+ - reverting current change list after a timeout (ctrl+shift+A to start/stop)
 
-Screenshots of plugin preferences/toolbar/notifications:
+Here are some screenshots of plugin preferences/toolbar/notifications:
 <img src="https://github.com/dkandalov/limited-wip/blob/master/settings.png?raw=true" align="center"/>
-<br/><br/>
-(click on auto-revert to start/stop or use alt+shift+A)
 <br/>
 <img src="https://github.com/dkandalov/limited-wip/blob/master/toolbar.png?raw=true" align="center"/>
 <br/><br/>
@@ -19,11 +17,10 @@ Screenshots of plugin preferences/toolbar/notifications:
 
 ## Why?
 
-Assumptions:
+This plugin is intended as a tool to limit your work-in-progress (and prevent yourself from cheating).
+It's based on the following assumptions:
  - small focused changes are better than changes which go on until "everything is done"
  - people are good at self-deception and not following rules
-
-This plugin is intended as a tool to limit your work-in-progress (and prevent yourself from cheating).
 
 
 ## How to use it?
