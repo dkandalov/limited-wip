@@ -6,8 +6,8 @@
     <category>Misc</category>
 
     <!-- https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges -->
-    <!-- since IJ 13 -->
-    <idea-version since-build="134.0"/>
+    <!-- since IJ 15 EAP, 8b5226d commit 'Cleanup (deprecated VCS check-in API dropped)' -->
+    <idea-version since-build="142.1563"/>
 
     <description>
         <![CDATA[<html><body>
@@ -56,5 +56,6 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceInterface="limitedwip.ui.settings.Settings" serviceImplementation="limitedwip.ui.settings.Settings"/>
+        <vcsCheckinHandlerFactory implementation="limitedwip.components.CheckinHandlerFactory"/>
     </extensions>
 </idea-plugin>

@@ -28,7 +28,6 @@ import com.intellij.openapi.vcs.changes.ui.CommitHelper;
 import com.intellij.openapi.vcs.checkin.BaseCheckinHandlerFactory;
 import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
-import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import com.intellij.util.FunctionUtil;
 import limitedwip.components.LimitedWIPProjectComponent;
@@ -36,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,8 +100,8 @@ public class QuickCommitAction extends AnAction {
 	 */
 	private static boolean anySystemCheckinHandlerCancelsCommit(Project project) {
 		final AbstractVcs[] allActiveVcss = ProjectLevelVcsManager.getInstance(project).getAllActiveVcss();
-		final List<VcsCheckinHandlerFactory> factoryList =
-				CheckinHandlersManager.getInstance().getMatchingVcsFactories(Arrays.asList(allActiveVcss));
+		final List<BaseCheckinHandlerFactory> factoryList =
+				CheckinHandlersManager.getInstance().getRegisteredCheckinHandlerFactories(allActiveVcss);
 		for (BaseCheckinHandlerFactory factory : factoryList) {
 			BeforeCheckinDialogHandler handler = factory.createSystemReadyHandler(project);
 			if (handler != null && !handler.beforeCommitDialogShown(project, new ArrayList<Change>(), new ArrayList<CommitExecutor>(), false)) {

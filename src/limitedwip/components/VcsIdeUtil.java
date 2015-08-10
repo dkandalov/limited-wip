@@ -119,7 +119,7 @@ public class VcsIdeUtil {
     }
 
 
-    public static interface CheckinListener {
+    public interface CheckinListener {
         boolean allowCheckIn(@NotNull Project project, @NotNull List<Change> changes);
     }
 

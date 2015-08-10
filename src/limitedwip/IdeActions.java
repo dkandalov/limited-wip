@@ -41,6 +41,7 @@ public class IdeActions {
 	}
 
 	public int currentChangeListSizeInLines() {
+        // TODO check time it took to calculate change list and break earlier if it's too slow
 		return ApplicationManager.getApplication().runReadAction(new Computable<Integer>() {
 			@Override public Integer compute() {
 				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
@@ -60,7 +61,7 @@ public class IdeActions {
 							Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
 							if (changes.isEmpty()) return;
 
-							new RollbackWorker(project, "auto-revert").doRollback(changes, true, null, null);
+							new RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null);
 
 							VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
 								@Override public VirtualFile fun(Change change) {
