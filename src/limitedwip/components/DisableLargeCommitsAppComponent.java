@@ -50,7 +50,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 				if (!enabled) return true;
 
 				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
-				int changeListSize = VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
+				int changeListSize = VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges()).value;
 				if (changeListSize > maxLinesInChange) {
 					notifyThatCommitWasCancelled(project);
 					return false;

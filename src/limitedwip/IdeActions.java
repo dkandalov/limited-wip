@@ -26,6 +26,7 @@ import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import limitedwip.components.VcsIdeUtil;
+import limitedwip.components.VcsIdeUtil.ChangeSize;
 
 import java.util.Collection;
 
@@ -40,10 +41,10 @@ public class IdeActions {
 		this.project = project;
 	}
 
-	public int currentChangeListSizeInLines() {
+	public ChangeSize currentChangeListSizeInLines() {
         // TODO check time it took to calculate change list and break earlier if it's too slow
-		return ApplicationManager.getApplication().runReadAction(new Computable<Integer>() {
-			@Override public Integer compute() {
+		return ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
+			@Override public ChangeSize compute() {
 				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
 				return VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
 			}

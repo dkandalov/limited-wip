@@ -22,6 +22,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import limitedwip.components.LimitedWIPAppComponent;
 import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.components.VcsIdeUtil;
 import limitedwip.ui.AutoRevertStatusBarWidget;
 import limitedwip.ui.WatchdogStatusBarWidget;
 import limitedwip.ui.settings.Settings;
@@ -94,7 +95,7 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void currentChangeListSize(int linesInChange, int maxLinesInChange) {
+	public void currentChangeListSize(VcsIdeUtil.ChangeSize linesInChange, int maxLinesInChange) {
 		watchdogWidget.showChangeSize(linesInChange, maxLinesInChange);
 		updateStatusBar();
 	}
@@ -151,7 +152,8 @@ public class IdeNotifications {
 		NotificationListener listener = new NotificationListener() {
 			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
 				LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-				limitedWIPProjectComponent.skipNotificationsUntilCommit(true);
+                assert limitedWIPProjectComponent != null;
+                limitedWIPProjectComponent.skipNotificationsUntilCommit(true);
 				notification.expire();
 			}
 		};

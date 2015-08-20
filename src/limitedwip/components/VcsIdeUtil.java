@@ -31,19 +31,21 @@ import static java.util.Arrays.asList;
 
 public class VcsIdeUtil {
     private static final Logger log = Logger.getInstance(VcsIdeUtil.class);
+    private static final long durationThresholdMillis = 1000;
 
-    public static int currentChangeListSizeInLines(Collection<Change> changes) {
-        int result = 0;
+    public static ChangeSize currentChangeListSizeInLines(Collection<Change> changes) {
         TextCompareProcessor compareProcessor = new TextCompareProcessor(
                 ComparisonPolicy.TRIM_SPACE,
                 DiffPolicy.LINES_WO_FORMATTING,
                 HighlightMode.BY_LINE
         );
 
+        long startTime = System.currentTimeMillis();
+        ChangeSize result = new ChangeSize(0);
         for (Change change : changes) {
             try {
 
-                result += amountOfChangedLinesIn(change, compareProcessor);
+                result = result.add(amountOfChangedLinesIn(change, compareProcessor, startTime));
 
             } catch (VcsException ignored) {
             } catch (FilesTooBigForDiffException ignored) {
@@ -52,13 +54,13 @@ public class VcsIdeUtil {
         return result;
     }
 
-    private static int amountOfChangedLinesIn(Change change, TextCompareProcessor compareProcessor) throws VcsException, FilesTooBigForDiffException {
+    private static ChangeSize amountOfChangedLinesIn(Change change, TextCompareProcessor compareProcessor, long startTime) throws VcsException, FilesTooBigForDiffException {
         ContentRevision beforeRevision = change.getBeforeRevision();
         ContentRevision afterRevision = change.getAfterRevision();
 
         ContentRevision revision = afterRevision;
         if (revision == null) revision = beforeRevision;
-        if (revision == null || revision.getFile().getFileType().isBinary()) return 0;
+        if (revision == null || revision.getFile().getFileType().isBinary()) return new ChangeSize(0);
 
         String contentBefore = beforeRevision != null ? beforeRevision.getContent() : "";
         String contentAfter = afterRevision != null ? afterRevision.getContent() : "";
@@ -72,8 +74,12 @@ public class VcsIdeUtil {
             } else if (fragment.getType() == CHANGED || fragment.getType() == CONFLICT || fragment.getType() == INSERT) {
                 result += fragment.getModifiedLines2();
             }
+            long duration = System.currentTimeMillis() - startTime;
+            if (duration > durationThresholdMillis) {
+                return new ChangeSize(result, true);
+            }
         }
-        return result;
+        return new ChangeSize(result);
     }
 
     @SuppressWarnings("unchecked")
@@ -121,6 +127,46 @@ public class VcsIdeUtil {
 
     public interface CheckinListener {
         boolean allowCheckIn(@NotNull Project project, @NotNull List<Change> changes);
+    }
+
+
+    public static class ChangeSize {
+        public final int value;
+        public final boolean timedOut;
+
+        public ChangeSize(int value) {
+            this(value, false);
+        }
+
+        public ChangeSize(int value, boolean timedOut) {
+            this.value = value;
+            this.timedOut = timedOut;
+        }
+
+        public ChangeSize add(ChangeSize that) {
+            return new ChangeSize(this.value + that.value, this.timedOut | that.timedOut);
+        }
+
+        @Override public String toString() {
+            String result = "ChangeSize(" + value;
+            if (timedOut) result += ", timedOut";
+            return result + ")";
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ChangeSize that = (ChangeSize) o;
+
+            return value == that.value && timedOut == that.timedOut;
+        }
+
+        @Override public int hashCode() {
+            int result = value;
+            result = 31 * result + (timedOut ? 1 : 0);
+            return result;
+        }
     }
 
 

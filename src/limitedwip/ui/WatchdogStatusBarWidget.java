@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
 import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.components.VcsIdeUtil.ChangeSize;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -24,8 +25,12 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
     @Override public void dispose() {
     }
 
-    public void showChangeSize(int linesInChange, int maxLinesInChange) {
-        text = textPrefix + linesInChange + "/" + maxLinesInChange;
+    public void showChangeSize(ChangeSize linesInChange, int maxLinesInChange) {
+        if (linesInChange.timedOut) {
+            text = textPrefix + ">=" + linesInChange.value + "/" + maxLinesInChange;
+        } else {
+            text = textPrefix + linesInChange.value + "/" + maxLinesInChange;
+        }
     }
 
     public void showInitialText(int maxLinesInChange) {

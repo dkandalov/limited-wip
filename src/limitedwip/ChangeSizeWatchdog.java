@@ -1,5 +1,7 @@
 package limitedwip;
 
+import limitedwip.components.VcsIdeUtil.ChangeSize;
+
 public class ChangeSizeWatchdog {
     private final IdeNotifications ideNotifications;
 
@@ -19,16 +21,16 @@ public class ChangeSizeWatchdog {
     public synchronized void onTimer(int seconds) {
         if (!settings.enabled) return;
 
-        int changeListSizeInLines = ideActions.currentChangeListSizeInLines();
+        ChangeSize changeListSizeInLines = ideActions.currentChangeListSizeInLines();
 
         if (!skipNotificationsUtilCommit) {
-            boolean exceededThreshold = changeListSizeInLines > settings.maxLinesInChange;
+            boolean exceededThreshold = changeListSizeInLines.value > settings.maxLinesInChange;
             boolean timeToNotify =
                     lastNotificationTime == -1 ||
                             (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
 
             if (exceededThreshold && timeToNotify) {
-                ideNotifications.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
+                ideNotifications.onChangeSizeTooBig(changeListSizeInLines.value, settings.maxLinesInChange);
                 lastNotificationTime = seconds;
             }
         }
