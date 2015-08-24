@@ -59,7 +59,7 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
                         if (project == null) return;
 
                         LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-                        limitedWIPProjectComponent.skipNotificationsUntilCommit(false);
+                        limitedWIPProjectComponent.toggleSkipNotificationsUntilCommit();
                     }
                 };
             }

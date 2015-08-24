@@ -100,8 +100,14 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		changeSizeWatchdog.onCommit();
 	}
 
+    public void toggleSkipNotificationsUntilCommit() {
+        boolean value = changeSizeWatchdog.toggleSkipNotificationsUntilCommit();
+        ideNotifications.onSkipNotificationUntilCommit(value);
+    }
+
 	public void skipNotificationsUntilCommit(boolean value) {
 		changeSizeWatchdog.skipNotificationsUntilCommit(value);
+        ideNotifications.onSkipNotificationUntilCommit(value);
 	}
 
     public void onVcsCommit(int uncommittedFilesSize) {

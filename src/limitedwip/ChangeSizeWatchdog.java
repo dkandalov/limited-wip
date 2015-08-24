@@ -52,6 +52,11 @@ public class ChangeSizeWatchdog {
         lastNotificationTime = -1;
     }
 
+    public synchronized boolean toggleSkipNotificationsUntilCommit() {
+        skipNotificationsUntilCommit(!skipNotificationsUtilCommit);
+        return skipNotificationsUtilCommit;
+    }
+
 
     public static class Settings {
         public final boolean enabled;

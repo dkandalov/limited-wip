@@ -105,8 +105,18 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
+    public void onSkipNotificationUntilCommit(boolean value) {
+        String stateDescription = value ? "disabled" : "enabled";
+        Notification notification = new Notification(
+                LimitedWIPAppComponent.displayName,
+                "Change size notifications are " + stateDescription,
+                "(use widget in the bottom toolbar to toggle it)",
+                NotificationType.INFORMATION
+        );
+        project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
+    }
 
-	private void updateStatusBar() {
+    private void updateStatusBar() {
 		StatusBar statusBar = statusBarFor(project);
 		if (statusBar == null) return;
 
