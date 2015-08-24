@@ -80,7 +80,7 @@
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="minutes"/>
+              <text value="minute(s)"/>
             </properties>
           </component>
           <component id="d1c58" class="javax.swing.JCheckBox" binding="showTimerInToolbar">
@@ -244,7 +244,7 @@
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="minutes"/>
+              <text value="minute(s)"/>
             </properties>
           </component>
         </children>

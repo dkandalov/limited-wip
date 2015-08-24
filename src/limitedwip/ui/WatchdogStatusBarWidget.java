@@ -27,7 +27,7 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
 
     public void showChangeSize(ChangeSize linesInChange, int maxLinesInChange) {
         if (linesInChange.timedOut) {
-            text = textPrefix + ">=" + linesInChange.value + "/" + maxLinesInChange;
+            text = textPrefix + "≥" + linesInChange.value + "/" + maxLinesInChange;
         } else {
             text = textPrefix + linesInChange.value + "/" + maxLinesInChange;
         }
