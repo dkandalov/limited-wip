@@ -36,19 +36,30 @@ import static com.intellij.util.containers.ContainerUtil.toArray;
 public class IdeActions {
 	private static final Logger log = Logger.getInstance(IdeActions.class);
 	private final Project project;
+    private ChangeSize lastChangeSize = new ChangeSize(0);
+    private int skipChecks;
 
-	public IdeActions(Project project) {
+    public IdeActions(Project project) {
 		this.project = project;
 	}
 
 	public ChangeSize currentChangeListSizeInLines() {
-        // TODO check time it took to calculate change list and break earlier if it's too slow
-		return ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
-			@Override public ChangeSize compute() {
-				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
-				return VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
-			}
-		});
+        if (skipChecks > 0) {
+            skipChecks--;
+            return lastChangeSize;
+        }
+        ChangeSize changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
+            @Override public ChangeSize compute() {
+                LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
+                return VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
+            }
+        });
+        if (changeSize.timedOut) {
+            changeSize = new ChangeSize(lastChangeSize.value, true);
+            skipChecks = 10;
+        }
+        lastChangeSize = changeSize;
+        return changeSize;
 	}
 	
 	public void revertCurrentChangeList() {
