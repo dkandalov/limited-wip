@@ -5,6 +5,7 @@ import limitedwip.components.VcsIdeUtil.ChangeSize;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.Matchers;
 
 import static org.mockito.Mockito.*;
 
@@ -25,7 +26,7 @@ public class ChangeSizeWatchdogTest {
 
         watchdog.onTimer(next());
 
-        verify(ideNotifications, times(0)).onChangeSizeTooBig(anyInt(), anyInt());
+        verify(ideNotifications, times(0)).onChangeSizeTooBig(Matchers.<ChangeSize>any(), anyInt());
     }
 
     @Test public void sendsNotification_WhenChangeSizeIsAboveThreshold() {
@@ -33,7 +34,7 @@ public class ChangeSizeWatchdogTest {
 
         watchdog.onTimer(next());
 
-        verify(ideNotifications).onChangeSizeTooBig(200, maxLinesInChange);
+        verify(ideNotifications).onChangeSizeTooBig(new ChangeSize(200), maxLinesInChange);
     }
 
     @Test public void sendsChangeSizeNotification_OnlyOnOneOfSeveralUpdates() {
@@ -44,7 +45,7 @@ public class ChangeSizeWatchdogTest {
         watchdog.onTimer(next()); // send notification
         watchdog.onTimer(next());
 
-        verify(ideNotifications, times(2)).onChangeSizeTooBig(200, maxLinesInChange);
+        verify(ideNotifications, times(2)).onChangeSizeTooBig(new ChangeSize(200), maxLinesInChange);
     }
 
     @Test public void sendsChangeSizeNotification_AfterSettingsChange() {
@@ -52,11 +53,11 @@ public class ChangeSizeWatchdogTest {
         InOrder inOrder = inOrder(ideNotifications);
 
         watchdog.onTimer(next());
-        inOrder.verify(ideNotifications).onChangeSizeTooBig(200, maxLinesInChange);
+        inOrder.verify(ideNotifications).onChangeSizeTooBig(new ChangeSize(200), maxLinesInChange);
 
         watchdog.onSettings(settingsWithChangeSizeThreshold(150));
         watchdog.onTimer(next());
-        inOrder.verify(ideNotifications).onChangeSizeTooBig(200, 150);
+        inOrder.verify(ideNotifications).onChangeSizeTooBig(new ChangeSize(200), 150);
     }
 
     @Test public void doesNotSendNotification_WhenDisabled() {
@@ -78,7 +79,7 @@ public class ChangeSizeWatchdogTest {
         watchdog.onCommit();
         watchdog.onTimer(next());
 
-        verify(ideNotifications).onChangeSizeTooBig(200, maxLinesInChange);
+        verify(ideNotifications).onChangeSizeTooBig(new ChangeSize(200), maxLinesInChange);
     }
 
     @Test public void sendsChangeSizeUpdate() {

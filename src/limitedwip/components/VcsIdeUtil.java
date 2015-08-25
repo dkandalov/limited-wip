@@ -31,7 +31,7 @@ import static java.util.Arrays.asList;
 
 public class VcsIdeUtil {
     private static final Logger log = Logger.getInstance(VcsIdeUtil.class);
-    private static final long durationThresholdMillis = 100;
+    private static final long durationThresholdMillis = 200;
 
     public static ChangeSize currentChangeListSizeInLines(Collection<Change> changes) {
         TextCompareProcessor compareProcessor = new TextCompareProcessor(

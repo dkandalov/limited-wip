@@ -30,7 +30,7 @@ public class ChangeSizeWatchdog {
                             (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
 
             if (exceededThreshold && timeToNotify) {
-                ideNotifications.onChangeSizeTooBig(changeListSizeInLines.value, settings.maxLinesInChange);
+                ideNotifications.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
                 lastNotificationTime = seconds;
             }
         }

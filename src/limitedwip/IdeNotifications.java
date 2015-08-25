@@ -22,7 +22,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import limitedwip.components.LimitedWIPAppComponent;
 import limitedwip.components.LimitedWIPProjectComponent;
-import limitedwip.components.VcsIdeUtil;
+import limitedwip.components.VcsIdeUtil.ChangeSize;
 import limitedwip.ui.AutoRevertStatusBarWidget;
 import limitedwip.ui.WatchdogStatusBarWidget;
 import limitedwip.ui.settings.Settings;
@@ -95,8 +95,8 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void currentChangeListSize(VcsIdeUtil.ChangeSize linesInChange, int maxLinesInChange) {
-		watchdogWidget.showChangeSize(linesInChange, maxLinesInChange);
+	public void currentChangeListSize(ChangeSize linesInChange, int maxLinesInChange) {
+		watchdogWidget.showChangeSize(asString(linesInChange), maxLinesInChange);
 		updateStatusBar();
 	}
 
@@ -106,7 +106,7 @@ public class IdeNotifications {
 	}
 
     public void onSkipNotificationUntilCommit(boolean value) {
-        String stateDescription = value ? "disabled" : "enabled";
+        String stateDescription = value ? "disabled till next commit" : "enabled";
         Notification notification = new Notification(
                 LimitedWIPAppComponent.displayName,
                 "Change size notifications are " + stateDescription,
@@ -158,7 +158,7 @@ public class IdeNotifications {
 		return String.format("%02d", min) + ":" + String.format("%02d", sec);
 	}
 
-	public void onChangeSizeTooBig(int linesChanged, int changedLinesLimit) {
+	public void onChangeSizeTooBig(ChangeSize linesChanged, int changedLinesLimit) {
 		NotificationListener listener = new NotificationListener() {
 			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
 				LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
@@ -171,7 +171,7 @@ public class IdeNotifications {
 		Notification notification = new Notification(
 				LimitedWIPAppComponent.displayName,
 				"Change Size Exceeded Limit",
-				"Lines changed: " + linesChanged + "; " +
+				"Lines changed: " + asString(linesChanged) + "; " +
 					"limit: " + changedLinesLimit + "<br/>" +
 					"Please consider committing, splitting or reverting changes<br/>" +
 					"(<a href=\"\">Click here</a> to skip notifications till next commit)",
@@ -180,4 +180,8 @@ public class IdeNotifications {
 		);
 		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
 	}
+
+    private static String asString(ChangeSize changeSize) {
+        return changeSize.timedOut ? "≈" + changeSize.value : String.valueOf(changeSize.value);
+    }
 }
