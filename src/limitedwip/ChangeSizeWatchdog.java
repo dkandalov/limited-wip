@@ -59,9 +59,9 @@ public class ChangeSizeWatchdog {
 
 
     public static class Settings {
-        public final boolean enabled;
-        public final int maxLinesInChange;
-        public final int notificationIntervalInSeconds;
+	    private final boolean enabled;
+	    private final int maxLinesInChange;
+	    private final int notificationIntervalInSeconds;
 
         public Settings(boolean enabled, int maxLinesInChange, int notificationIntervalInSeconds) {
             this.enabled = enabled;

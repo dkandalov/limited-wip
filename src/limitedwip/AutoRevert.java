@@ -91,9 +91,9 @@ public class AutoRevert {
 	}
 
 	public static class Settings {
-		public final boolean enabled;
-		public final int secondsTillRevert;
-		public final boolean notifyOnRevert;
+		private final boolean enabled;
+		private final int secondsTillRevert;
+		private final boolean notifyOnRevert;
 
 		public Settings(int secondsTillRevert) {
 			this(true, secondsTillRevert, true);

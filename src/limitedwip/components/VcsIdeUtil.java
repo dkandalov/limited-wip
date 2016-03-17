@@ -95,22 +95,20 @@ public class VcsIdeUtil {
         //
         // Therefore, using reflection.
 
-        accessField(CheckinHandlersManager.getInstance(), asList("b", "myVcsMap"), new Function<MultiMap, Void>() {
+        accessField(CheckinHandlersManager.getInstance(), asList("a", "b", "myVcsMap"), MultiMap.class, new Function<MultiMap, Void>() {
             @Override public Void fun(MultiMap multiMap) {
-
                 for (Object key : multiMap.keySet()) {
                     multiMap.putValue(key, new DelegatingCheckinHandlerFactory((VcsKey) key, listener));
                 }
-
                 return null;
             }
         });
     }
 
     @SuppressWarnings("unchecked")
-    private static void accessField(Object object, List<String> possibleFieldNames, Function function) {
+    private static void accessField(Object object, List<String> possibleFieldNames, Class aClass, Function function) {
         for (Field field : object.getClass().getDeclaredFields()) {
-            if (possibleFieldNames.contains(field.getName())) {
+            if (possibleFieldNames.contains(field.getName()) && aClass.isAssignableFrom(field.getType())) {
                 field.setAccessible(true);
                 try {
 

@@ -99,8 +99,8 @@ public class QuickCommitAction extends AnAction {
 	 * {@link com.intellij.openapi.vcs.changes.ui.CommitChangeListDialog}.
 	 */
 	private static boolean anySystemCheckinHandlerCancelsCommit(Project project) {
-		final AbstractVcs[] allActiveVcss = ProjectLevelVcsManager.getInstance(project).getAllActiveVcss();
-		final List<BaseCheckinHandlerFactory> factoryList =
+		AbstractVcs<?>[] allActiveVcss = ProjectLevelVcsManager.getInstance(project).getAllActiveVcss();
+		List<BaseCheckinHandlerFactory> factoryList =
 				CheckinHandlersManager.getInstance().getRegisteredCheckinHandlerFactories(allActiveVcss);
 		for (BaseCheckinHandlerFactory factory : factoryList) {
 			BeforeCheckinDialogHandler handler = factory.createSystemReadyHandler(project);

@@ -44,8 +44,8 @@ public class AutoRevertStatusBarWidget implements StatusBarWidget {
                 return text;
             }
 
-            @NotNull @Override public String getMaxPossibleText() {
-                return timeTillRevertText + "99:99";
+            @Deprecated @NotNull @Override public String getMaxPossibleText() {
+                return "";
             }
 
             @Override public String getTooltipText() {
