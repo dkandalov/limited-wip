@@ -20,7 +20,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import limitedwip.ui.settings.Settings;
+import limitedwip.ui.settings.LimitedWIPSettings;
 import limitedwip.ui.settings.SettingsForm;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class LimitedWIPAppComponent implements ApplicationComponent, SearchableC
 	private SettingsForm settingsForm;
 
 	@Override public void initComponent() {
-		Settings settings = ServiceManager.getService(Settings.class);
+		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
 		notifyComponentsAbout(settings);
 	}
 
@@ -43,7 +43,7 @@ public class LimitedWIPAppComponent implements ApplicationComponent, SearchableC
 	}
 
 	@Override public JComponent createComponent() {
-		Settings settings = ServiceManager.getService(Settings.class);
+		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
 		settingsForm = new SettingsForm(settings);
 		return settingsForm.root;
 	}
@@ -53,7 +53,7 @@ public class LimitedWIPAppComponent implements ApplicationComponent, SearchableC
 	}
 
 	@Override public void apply() throws ConfigurationException {
-		Settings newSettings = settingsForm.applyChanges();
+		LimitedWIPSettings newSettings = settingsForm.applyChanges();
 		notifyComponentsAbout(newSettings);
 	}
 
@@ -78,10 +78,9 @@ public class LimitedWIPAppComponent implements ApplicationComponent, SearchableC
 		return null;
 	}
 
-	private void notifyComponentsAbout(Settings settings) {
+	private void notifyComponentsAbout(LimitedWIPSettings settings) {
 		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-			LimitedWIPProjectComponent projectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-			projectComponent.onSettings(settings);
+			project.getComponent(LimitedWIPProjectComponent.class).onSettingsUpdate(settings);
 		}
 
 		ApplicationManager.getApplication()

@@ -19,8 +19,9 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.Range;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 
+// TODO doesn't show up in UI
 @State(name = "LimitedWIPSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/limitedwip.ui.settings.xml")})
-public class Settings implements PersistentStateComponent<Settings>  {
+public class LimitedWIPSettings implements PersistentStateComponent<LimitedWIPSettings>  {
 	public static final Range<Integer> minutesToRevertRange = new Range<Integer>(1, 99);
 	public static final Range<Integer> changedLinesRange = new Range<Integer>(1, 999);
 	public static final Range<Integer> notificationIntervalRange = new Range<Integer>(1, 99);
@@ -45,11 +46,11 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		return notificationIntervalInMinutes * 60;
 	}
 
-	@Override public Settings getState() {
+	@Override public LimitedWIPSettings getState() {
 		return this;
 	}
 
-	@Override public void loadState(Settings state) {
+	@Override public void loadState(LimitedWIPSettings state) {
 		XmlSerializerUtil.copyBean(state, this);
 	}
 
@@ -57,7 +58,7 @@ public class Settings implements PersistentStateComponent<Settings>  {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		Settings settings = (Settings) o;
+		LimitedWIPSettings settings = (LimitedWIPSettings) o;
 
 		if (autoRevertEnabled != settings.autoRevertEnabled) return false;
 		if (disableCommitsAboveThreshold != settings.disableCommitsAboveThreshold) return false;
@@ -100,6 +101,6 @@ public class Settings implements PersistentStateComponent<Settings>  {
 	}
 
 	public interface Listener {
-		void onSettings(Settings settings);
+		void onSettingsUpdate(LimitedWIPSettings settings);
 	}
 }

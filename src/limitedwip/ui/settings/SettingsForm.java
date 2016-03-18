@@ -33,13 +33,13 @@ public class SettingsForm {
 	private JCheckBox notifyOnRevert;
 	private JCheckBox showTimerInToolbar;
 
-	private final Settings initialState;
-	private Settings currentState;
+	private final LimitedWIPSettings initialState;
+	private LimitedWIPSettings currentState;
 	private boolean isUpdatingUI;
 
-	public SettingsForm(Settings initialState) {
+	public SettingsForm(LimitedWIPSettings initialState) {
 		this.initialState = initialState;
-		this.currentState = new Settings();
+		this.currentState = new LimitedWIPSettings();
 		currentState.loadState(initialState);
 		updateUIFromState();
 
@@ -92,11 +92,11 @@ public class SettingsForm {
 		try {
 			currentState.watchdogEnabled = watchdogEnabled.isSelected();
 			Integer lineCount = Integer.valueOf((String) maxLinesInChange.getSelectedItem());
-			if (Settings.changedLinesRange.isWithin(lineCount)) {
+			if (LimitedWIPSettings.changedLinesRange.isWithin(lineCount)) {
 				currentState.maxLinesInChange = lineCount;
 			}
 			Integer minutes = Integer.valueOf((String) notificationInterval.getSelectedItem());
-			if (Settings.notificationIntervalRange.isWithin(minutes)) {
+			if (LimitedWIPSettings.notificationIntervalRange.isWithin(minutes)) {
 				currentState.notificationIntervalInMinutes = minutes;
 			}
 			currentState.showRemainingChangesInToolbar = showRemainingInToolbar.isSelected();
@@ -104,7 +104,7 @@ public class SettingsForm {
 
 			currentState.autoRevertEnabled = autoRevertEnabled.isSelected();
 			minutes = Integer.valueOf((String) minutesTillRevert.getSelectedItem());
-			if (Settings.minutesToRevertRange.isWithin(minutes)) {
+			if (LimitedWIPSettings.minutesToRevertRange.isWithin(minutes)) {
 				currentState.minutesTillRevert = minutes;
 			}
 			currentState.notifyOnRevert = notifyOnRevert.isSelected();
@@ -118,7 +118,7 @@ public class SettingsForm {
 		return !currentState.equals(initialState);
 	}
 
-	public Settings applyChanges() {
+	public LimitedWIPSettings applyChanges() {
 		initialState.loadState(currentState);
 		return initialState;
 	}

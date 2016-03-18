@@ -25,7 +25,7 @@ import limitedwip.components.LimitedWIPProjectComponent;
 import limitedwip.components.VcsIdeUtil.ChangeSize;
 import limitedwip.ui.AutoRevertStatusBarWidget;
 import limitedwip.ui.WatchdogStatusBarWidget;
-import limitedwip.ui.settings.Settings;
+import limitedwip.ui.settings.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
@@ -34,10 +34,10 @@ public class IdeNotifications {
 	private final AutoRevertStatusBarWidget autoRevertWidget = new AutoRevertStatusBarWidget();
 	private final WatchdogStatusBarWidget watchdogWidget = new WatchdogStatusBarWidget();
 	private final Project project;
-	private Settings settings;
+	private LimitedWIPSettings settings;
 
 
-	public IdeNotifications(Project project, Settings settings) {
+	public IdeNotifications(Project project, LimitedWIPSettings settings) {
 		this.project = project;
 		this.settings = settings;
 
@@ -100,7 +100,7 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void onSettingsUpdate(Settings settings) {
+	public void onSettingsUpdate(LimitedWIPSettings settings) {
 		this.settings = settings;
 		updateStatusBar();
 	}

@@ -54,7 +54,7 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceInterface="limitedwip.ui.settings.Settings" serviceImplementation="limitedwip.ui.settings.Settings"/>
+        <applicationService serviceInterface="limitedwip.ui.settings.LimitedWIPSettings" serviceImplementation="limitedwip.ui.settings.LimitedWIPSettings"/>
         <vcsCheckinHandlerFactory implementation="limitedwip.components.CheckinHandlerFactory"/>
     </extensions>
 </idea-plugin>

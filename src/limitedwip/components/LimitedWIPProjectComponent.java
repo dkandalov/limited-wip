@@ -21,9 +21,9 @@ import limitedwip.AutoRevert;
 import limitedwip.ChangeSizeWatchdog;
 import limitedwip.IdeActions;
 import limitedwip.IdeNotifications;
-import limitedwip.ui.settings.Settings;
+import limitedwip.ui.settings.LimitedWIPSettings;
 
-public class LimitedWIPProjectComponent extends AbstractProjectComponent implements Settings.Listener {
+public class LimitedWIPProjectComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener {
 	private ChangeSizeWatchdog changeSizeWatchdog;
 	private AutoRevert autoRevert;
 	private IdeNotifications ideNotifications;
@@ -38,7 +38,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 	@Override public void projectOpened() {
 		super.projectOpened();
 
-		Settings settings = ServiceManager.getService(Settings.class);
+		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
 		ideNotifications = new IdeNotifications(myProject, settings);
 		IdeActions ideActions = new IdeActions(myProject);
 		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
@@ -58,7 +58,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 			}
 		};
 
-		onSettings(settings);
+		onSettingsUpdate(settings);
 
 		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).addListener(timerListener);
 	}
@@ -81,7 +81,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		autoRevert.stop();
 	}
 
-	@Override public void onSettings(Settings settings) {
+	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
 		ideNotifications.onSettingsUpdate(settings);
 		autoRevert.onSettings(new AutoRevert.Settings(
 				settings.autoRevertEnabled,

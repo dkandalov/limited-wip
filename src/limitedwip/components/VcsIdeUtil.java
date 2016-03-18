@@ -34,7 +34,9 @@ public class VcsIdeUtil {
     private static final long durationThresholdMillis = 200;
 
     public static ChangeSize currentChangeListSizeInLines(Collection<Change> changes) {
-        TextCompareProcessor compareProcessor = new TextCompareProcessor(
+	    /* TODO this must be already available in VCS plugin (this implementation seems to freeze UI every now and then)*/
+
+	    TextCompareProcessor compareProcessor = new TextCompareProcessor(
                 ComparisonPolicy.TRIM_SPACE,
                 DiffPolicy.LINES_WO_FORMATTING,
                 HighlightMode.BY_LINE
