@@ -13,13 +13,10 @@
  */
 package limitedwip.components;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import limitedwip.ui.settings.LimitedWIPSettings;
 import limitedwip.ui.settings.SettingsForm;
 import org.jetbrains.annotations.Nls;
@@ -27,20 +24,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LimitedWIPAppComponent implements ApplicationComponent, SearchableConfigurable {
 	public static final String displayName = "Limited WIP";
 	private static final String limitedWIPAppComponentId = "LimitedWIPAppComponent";
 
 	private SettingsForm settingsForm;
+	private final List<LimitedWIPSettings.Listener> settingsListeners = new ArrayList<LimitedWIPSettings.Listener>();
 
-	@Override public void initComponent() {
-		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
-		notifyComponentsAbout(settings);
-	}
+	@Override public void initComponent() { }
 
-	@Override public void disposeComponent() {
-	}
+	@Override public void disposeComponent() { }
 
 	@Override public JComponent createComponent() {
 		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
@@ -54,7 +50,23 @@ public class LimitedWIPAppComponent implements ApplicationComponent, SearchableC
 
 	@Override public void apply() throws ConfigurationException {
 		LimitedWIPSettings newSettings = settingsForm.applyChanges();
-		notifyComponentsAbout(newSettings);
+		notifySettingsListeners(newSettings);
+	}
+
+	public void addSettingsListener(LimitedWIPSettings.Listener listener) {
+		settingsListeners.add(listener);
+		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
+		listener.onSettingsUpdate(settings);
+	}
+
+	public void removeSettingsListener(LimitedWIPSettings.Listener listener) {
+		settingsListeners.remove(listener);
+	}
+
+	private void notifySettingsListeners(LimitedWIPSettings newSettings) {
+		for (LimitedWIPSettings.Listener listener : settingsListeners) {
+			listener.onSettingsUpdate(newSettings);
+		}
 	}
 
 	@Override public void reset() {
@@ -76,16 +88,6 @@ public class LimitedWIPAppComponent implements ApplicationComponent, SearchableC
 
 	@Override public String getHelpTopic() {
 		return null;
-	}
-
-	private void notifyComponentsAbout(LimitedWIPSettings settings) {
-		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-			project.getComponent(LimitedWIPProjectComponent.class).onSettingsUpdate(settings);
-		}
-
-		ApplicationManager.getApplication()
-				.getComponent(DisableLargeCommitsAppComponent.class)
-				.onSettingsUpdate(settings.disableCommitsAboveThreshold, settings.maxLinesInChange);
 	}
 
 	@NotNull @Override public String getId() {

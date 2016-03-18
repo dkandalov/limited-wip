@@ -19,6 +19,7 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
@@ -26,6 +27,7 @@ import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import limitedwip.components.VcsIdeUtil.CheckinListener;
+import limitedwip.ui.settings.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
@@ -33,7 +35,7 @@ import java.util.List;
 
 import static limitedwip.components.VcsIdeUtil.registerBeforeCheckInListener;
 
-public class DisableLargeCommitsAppComponent implements ApplicationComponent {
+public class DisableLargeCommitsAppComponent implements ApplicationComponent, LimitedWIPSettings.Listener {
 	private static final int maxShowCommitDialogAttempts = 3;
 
 	private boolean enabled;
@@ -58,6 +60,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 				return true;
 			}
 		});
+		ApplicationManager.getApplication().getComponent(LimitedWIPAppComponent.class).addSettingsListener(this);
 	}
 
 	private void notifyThatCommitWasCancelled(Project project) {
@@ -127,8 +130,8 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent {
 		return this.getClass().getCanonicalName();
 	}
 
-	public void onSettingsUpdate(boolean enabled, int maxLinesInChange) {
-		this.enabled = enabled;
-		this.maxLinesInChange = maxLinesInChange;
+	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
+		this.enabled = settings.disableCommitsAboveThreshold;
+		this.maxLinesInChange = settings.maxLinesInChange;
 	}
 }

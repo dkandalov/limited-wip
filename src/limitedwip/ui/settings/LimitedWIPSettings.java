@@ -20,7 +20,10 @@ import com.intellij.util.Range;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 
 // TODO doesn't show up in UI
-@State(name = "LimitedWIPSettings", storages = {@Storage(id = "other", file = "$APP_CONFIG$/limitedwip.ui.settings.xml")})
+@State(
+	name = "LimitedWIPSettings",
+	storages = @Storage(id = "other", file = "$APP_CONFIG$/limitedwip.ui.settings.xml")
+)
 public class LimitedWIPSettings implements PersistentStateComponent<LimitedWIPSettings>  {
 	public static final Range<Integer> minutesToRevertRange = new Range<Integer>(1, 99);
 	public static final Range<Integer> changedLinesRange = new Range<Integer>(1, 999);
