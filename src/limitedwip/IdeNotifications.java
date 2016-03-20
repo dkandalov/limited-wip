@@ -22,7 +22,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import limitedwip.components.LimitedWIPAppComponent;
 import limitedwip.components.LimitedWIPProjectComponent;
-import limitedwip.components.VcsIdeUtil.ChangeSize;
+import limitedwip.components.ChangeSize;
 import limitedwip.ui.AutoRevertStatusBarWidget;
 import limitedwip.ui.WatchdogStatusBarWidget;
 import limitedwip.ui.settings.LimitedWIPSettings;

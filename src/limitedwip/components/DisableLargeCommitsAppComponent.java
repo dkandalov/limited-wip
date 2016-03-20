@@ -24,8 +24,6 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.LocalChangeList;
 import limitedwip.ui.settings.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,8 +48,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 				}
 				if (!enabled) return true;
 
-				LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
-				int changeListSize = VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges()).value;
+				int changeListSize = ChangeSizeProjectComponent.getInstance(project).currentChangeListSizeInLines().value;
 				if (changeListSize > maxLinesInChange) {
 					notifyThatCommitWasCancelled(project);
 					return false;

@@ -1,7 +1,7 @@
 package limitedwip;
 
 import limitedwip.ChangeSizeWatchdog.Settings;
-import limitedwip.components.VcsIdeUtil.ChangeSize;
+import limitedwip.components.ChangeSize;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

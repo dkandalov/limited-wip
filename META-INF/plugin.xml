@@ -41,6 +41,9 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
         <component>
             <implementation-class>limitedwip.components.LimitedWIPProjectComponent</implementation-class>
         </component>
+        <component>
+            <implementation-class>limitedwip.components.ChangeSizeProjectComponent</implementation-class>
+        </component>
     </project-components>
 
     <actions>

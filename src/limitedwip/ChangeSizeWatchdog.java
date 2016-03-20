@@ -1,6 +1,6 @@
 package limitedwip;
 
-import limitedwip.components.VcsIdeUtil.ChangeSize;
+import limitedwip.components.ChangeSize;
 
 public class ChangeSizeWatchdog {
     private final IdeNotifications ideNotifications;

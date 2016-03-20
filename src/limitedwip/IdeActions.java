@@ -26,7 +26,7 @@ import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import limitedwip.components.VcsIdeUtil;
-import limitedwip.components.VcsIdeUtil.ChangeSize;
+import limitedwip.components.ChangeSize;
 
 import java.util.Collection;
 
