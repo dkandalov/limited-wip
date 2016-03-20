@@ -1,93 +1,28 @@
 package limitedwip.components;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.diff.impl.ComparisonPolicy;
-import com.intellij.openapi.diff.impl.fragments.LineFragment;
-import com.intellij.openapi.diff.impl.processing.DiffPolicy;
-import com.intellij.openapi.diff.impl.processing.HighlightMode;
-import com.intellij.openapi.diff.impl.processing.TextCompareProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
-import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsKey;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.CommitExecutor;
-import com.intellij.openapi.vcs.changes.ContentRevision;
-import com.intellij.openapi.vcs.changes.FakeRevision;
 import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import com.intellij.util.Function;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.diff.FilesTooBigForDiffException;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.List;
 
-import static com.intellij.openapi.diff.impl.util.TextDiffTypeEnum.*;
 import static java.util.Arrays.asList;
 
 public class VcsIdeUtil {
     private static final Logger log = Logger.getInstance(VcsIdeUtil.class);
-    public static final long durationThresholdMillis = 200;
 
-    public static ChangeSize currentChangeListSizeInLines(Collection<Change> changes, long startTime) {
-	    /* TODO this must be already available in VCS plugin (this implementation seems to freeze UI every now and then)*/
-
-	    TextCompareProcessor compareProcessor = new TextCompareProcessor(
-                ComparisonPolicy.TRIM_SPACE,
-                DiffPolicy.LINES_WO_FORMATTING,
-                HighlightMode.BY_LINE
-        );
-
-        ChangeSize result = new ChangeSize(0);
-        for (Change change : changes) {
-            try {
-
-                result = result.add(amountOfChangedLinesIn(change, compareProcessor, startTime));
-
-            } catch (VcsException ignored) {
-            } catch (FilesTooBigForDiffException ignored) {
-            }
-        }
-        return result;
-    }
-
-    private static ChangeSize amountOfChangedLinesIn(Change change, TextCompareProcessor compareProcessor, long startTime) throws VcsException, FilesTooBigForDiffException {
-        ContentRevision beforeRevision = change.getBeforeRevision();
-        ContentRevision afterRevision = change.getAfterRevision();
-	    if (beforeRevision instanceof FakeRevision || afterRevision instanceof FakeRevision) {
-		    return new ChangeSize(0, true);
-	    }
-
-        ContentRevision revision = afterRevision;
-        if (revision == null) revision = beforeRevision;
-        if (revision == null || revision.getFile().getFileType().isBinary()) return new ChangeSize(0);
-
-        String contentBefore = beforeRevision != null ? beforeRevision.getContent() : "";
-        String contentAfter = afterRevision != null ? afterRevision.getContent() : "";
-        if (contentBefore == null) contentBefore = "";
-        if (contentAfter == null) contentAfter = "";
-
-        int result = 0;
-        for (LineFragment fragment : compareProcessor.process(contentBefore, contentAfter)) {
-            if (fragment.getType() == DELETED) {
-                result += fragment.getModifiedLines1();
-            } else if (fragment.getType() == CHANGED || fragment.getType() == CONFLICT || fragment.getType() == INSERT) {
-                result += fragment.getModifiedLines2();
-            }
-            long duration = System.currentTimeMillis() - startTime;
-            if (duration > durationThresholdMillis) {
-                return new ChangeSize(result, true);
-            }
-        }
-        return new ChangeSize(result);
-    }
-
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
     public static void registerBeforeCheckInListener(final CheckinListener listener) {
         // This is a hack caused by limitations of IntelliJ API.
         //  - cannot use CheckinHandlerFactory because:
