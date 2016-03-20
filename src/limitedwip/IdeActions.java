@@ -25,8 +25,8 @@ import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
-import limitedwip.components.VcsIdeUtil;
 import limitedwip.components.ChangeSize;
+import limitedwip.components.ChangeSizeProjectComponent;
 
 import java.util.Collection;
 
@@ -51,10 +51,10 @@ public class IdeActions {
         ChangeSize changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
             @Override public ChangeSize compute() {
                 LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
-                return VcsIdeUtil.currentChangeListSizeInLines(changeList.getChanges());
+                return ChangeSizeProjectComponent.getInstance(project).currentChangeListSizeInLines();
             }
         });
-        if (changeSize.timedOut) {
+        if (changeSize.isApproximate) {
             changeSize = new ChangeSize(lastChangeSize.value, true);
             skipChecks = 10;
         }

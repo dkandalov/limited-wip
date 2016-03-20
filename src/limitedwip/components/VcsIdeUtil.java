@@ -13,6 +13,7 @@ import com.intellij.openapi.vcs.VcsKey;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.CommitExecutor;
 import com.intellij.openapi.vcs.changes.ContentRevision;
+import com.intellij.openapi.vcs.changes.FakeRevision;
 import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory;
@@ -31,9 +32,9 @@ import static java.util.Arrays.asList;
 
 public class VcsIdeUtil {
     private static final Logger log = Logger.getInstance(VcsIdeUtil.class);
-    private static final long durationThresholdMillis = 200;
+    public static final long durationThresholdMillis = 200;
 
-    public static ChangeSize currentChangeListSizeInLines(Collection<Change> changes) {
+    public static ChangeSize currentChangeListSizeInLines(Collection<Change> changes, long startTime) {
 	    /* TODO this must be already available in VCS plugin (this implementation seems to freeze UI every now and then)*/
 
 	    TextCompareProcessor compareProcessor = new TextCompareProcessor(
@@ -42,7 +43,6 @@ public class VcsIdeUtil {
                 HighlightMode.BY_LINE
         );
 
-        long startTime = System.currentTimeMillis();
         ChangeSize result = new ChangeSize(0);
         for (Change change : changes) {
             try {
@@ -59,6 +59,9 @@ public class VcsIdeUtil {
     private static ChangeSize amountOfChangedLinesIn(Change change, TextCompareProcessor compareProcessor, long startTime) throws VcsException, FilesTooBigForDiffException {
         ContentRevision beforeRevision = change.getBeforeRevision();
         ContentRevision afterRevision = change.getAfterRevision();
+	    if (beforeRevision instanceof FakeRevision || afterRevision instanceof FakeRevision) {
+		    return new ChangeSize(0, true);
+	    }
 
         ContentRevision revision = afterRevision;
         if (revision == null) revision = beforeRevision;

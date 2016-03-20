@@ -182,6 +182,6 @@ public class IdeNotifications {
 	}
 
     private static String asString(ChangeSize changeSize) {
-        return changeSize.timedOut ? "≈" + changeSize.value : String.valueOf(changeSize.value);
+        return changeSize.isApproximate ? "≈" + changeSize.value : String.valueOf(changeSize.value);
     }
 }
