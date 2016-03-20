@@ -32,12 +32,9 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
         <component>
             <implementation-class>limitedwip.components.TimerEventsSource</implementation-class>
         </component>
-<!--
-TODO
         <component>
             <implementation-class>limitedwip.components.DisableLargeCommitsAppComponent</implementation-class>
         </component>
--->
     </application-components>
 
     <project-components>
@@ -58,6 +55,6 @@ TODO
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceInterface="limitedwip.ui.settings.LimitedWIPSettings" serviceImplementation="limitedwip.ui.settings.LimitedWIPSettings"/>
-        <vcsCheckinHandlerFactory implementation="limitedwip.components.CheckinHandlerFactory"/>
+        <checkinHandlerFactory implementation="limitedwip.components.LimitedWipCheckinHandlerFactory"/>
     </extensions>
 </idea-plugin>

@@ -26,7 +26,6 @@ import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
-import limitedwip.components.VcsIdeUtil.CheckinListener;
 import limitedwip.ui.settings.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +42,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 	private boolean allowCommitOnceWithoutCheck = false;
 
 	@Override public void initComponent() {
-		registerBeforeCheckInListener(new CheckinListener() {
+		registerBeforeCheckInListener(new VcsIdeUtil.CheckinListener() {
 			@Override public boolean allowCheckIn(@NotNull Project project, @NotNull List<Change> changes) {
 				if (allowCommitOnceWithoutCheck) {
 					allowCommitOnceWithoutCheck = false;
