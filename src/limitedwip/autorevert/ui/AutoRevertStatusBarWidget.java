@@ -1,4 +1,4 @@
-package limitedwip.ui;
+package limitedwip.autorevert.ui;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -13,8 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class WatchdogStatusBarWidget implements StatusBarWidget {
-    private static final String textPrefix = "Change size: ";
+public class AutoRevertStatusBarWidget implements StatusBarWidget {
+    private static final String timeTillRevertText = "Auto-revert in ";
+    private static final String startedText = "Auto-revert started";
+    private static final String stoppedText = "Auto-revert stopped";
 
     private String text = "";
 
@@ -24,12 +26,16 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
     @Override public void dispose() {
     }
 
-    public void showChangeSize(String linesInChange, int maxLinesInChange) {
-        text = textPrefix + linesInChange + "/" + maxLinesInChange;
+    public void showTime(String timeLeft) {
+        text = timeTillRevertText + timeLeft;
     }
 
-    public void showInitialText(int maxLinesInChange) {
-        text = textPrefix + "-/" + maxLinesInChange;
+    public void showStartedText() {
+        text = startedText;
+    }
+
+    public void showStoppedText() {
+        text = stoppedText;
     }
 
     @Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
@@ -38,12 +44,12 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
                 return text;
             }
 
-            @NotNull @Deprecated public String getMaxPossibleText() {
+            @Deprecated @NotNull @Override public String getMaxPossibleText() {
                 return "";
             }
 
             @Override public String getTooltipText() {
-                return "Shows amount of changed lines in current change list vs change size limit.";
+                return "Click to start/stop auto-revert";
             }
 
             @Override public Consumer<MouseEvent> getClickConsumer() {
@@ -54,7 +60,11 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
                         if (project == null) return;
 
                         LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-                        limitedWIPProjectComponent.toggleSkipNotificationsUntilCommit();
+                        if (limitedWIPProjectComponent.isAutoRevertStarted()) {
+                            limitedWIPProjectComponent.stopAutoRevert();
+                        } else {
+                            limitedWIPProjectComponent.startAutoRevert();
+                        }
                     }
                 };
             }

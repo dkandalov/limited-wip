@@ -1,5 +1,7 @@
-package limitedwip;
+package limitedwip.watchdog;
 
+import limitedwip.IdeActions;
+import limitedwip.IdeNotifications;
 import limitedwip.components.ChangeSize;
 
 public class ChangeSizeWatchdog {

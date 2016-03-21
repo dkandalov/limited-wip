@@ -23,9 +23,9 @@ import com.intellij.openapi.wm.WindowManager;
 import limitedwip.components.LimitedWIPAppComponent;
 import limitedwip.components.LimitedWIPProjectComponent;
 import limitedwip.components.ChangeSize;
-import limitedwip.ui.AutoRevertStatusBarWidget;
-import limitedwip.ui.WatchdogStatusBarWidget;
-import limitedwip.ui.settings.LimitedWIPSettings;
+import limitedwip.autorevert.ui.AutoRevertStatusBarWidget;
+import limitedwip.watchdog.ui.WatchdogStatusBarWidget;
+import limitedwip.common.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;

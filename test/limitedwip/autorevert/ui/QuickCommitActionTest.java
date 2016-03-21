@@ -11,11 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.ui;
+package limitedwip.autorevert.ui;
 
 import org.junit.Test;
 
-import static limitedwip.ui.QuickCommitAction.nextCommitMessage;
+import static limitedwip.autorevert.ui.QuickCommitAction.nextCommitMessage;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 

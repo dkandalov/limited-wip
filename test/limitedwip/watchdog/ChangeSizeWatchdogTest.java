@@ -1,7 +1,9 @@
-package limitedwip;
+package limitedwip.watchdog;
 
-import limitedwip.ChangeSizeWatchdog.Settings;
+import limitedwip.IdeActions;
+import limitedwip.IdeNotifications;
 import limitedwip.components.ChangeSize;
+import limitedwip.watchdog.ChangeSizeWatchdog.Settings;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

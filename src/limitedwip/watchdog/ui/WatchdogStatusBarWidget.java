@@ -1,4 +1,4 @@
-package limitedwip.ui;
+package limitedwip.watchdog.ui;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -13,10 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class AutoRevertStatusBarWidget implements StatusBarWidget {
-    private static final String timeTillRevertText = "Auto-revert in ";
-    private static final String startedText = "Auto-revert started";
-    private static final String stoppedText = "Auto-revert stopped";
+public class WatchdogStatusBarWidget implements StatusBarWidget {
+    private static final String textPrefix = "Change size: ";
 
     private String text = "";
 
@@ -26,16 +24,12 @@ public class AutoRevertStatusBarWidget implements StatusBarWidget {
     @Override public void dispose() {
     }
 
-    public void showTime(String timeLeft) {
-        text = timeTillRevertText + timeLeft;
+    public void showChangeSize(String linesInChange, int maxLinesInChange) {
+        text = textPrefix + linesInChange + "/" + maxLinesInChange;
     }
 
-    public void showStartedText() {
-        text = startedText;
-    }
-
-    public void showStoppedText() {
-        text = stoppedText;
+    public void showInitialText(int maxLinesInChange) {
+        text = textPrefix + "-/" + maxLinesInChange;
     }
 
     @Override public WidgetPresentation getPresentation(@NotNull PlatformType type) {
@@ -44,12 +38,12 @@ public class AutoRevertStatusBarWidget implements StatusBarWidget {
                 return text;
             }
 
-            @Deprecated @NotNull @Override public String getMaxPossibleText() {
+            @NotNull @Deprecated public String getMaxPossibleText() {
                 return "";
             }
 
             @Override public String getTooltipText() {
-                return "Click to start/stop auto-revert";
+                return "Shows amount of changed lines in current change list vs change size limit.";
             }
 
             @Override public Consumer<MouseEvent> getClickConsumer() {
@@ -60,11 +54,7 @@ public class AutoRevertStatusBarWidget implements StatusBarWidget {
                         if (project == null) return;
 
                         LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-                        if (limitedWIPProjectComponent.isAutoRevertStarted()) {
-                            limitedWIPProjectComponent.stopAutoRevert();
-                        } else {
-                            limitedWIPProjectComponent.startAutoRevert();
-                        }
+                        limitedWIPProjectComponent.toggleSkipNotificationsUntilCommit();
                     }
                 };
             }

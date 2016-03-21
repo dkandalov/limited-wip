@@ -1,4 +1,4 @@
-package limitedwip.components;
+package limitedwip.watchdog.components;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public class VcsIdeUtil {
+class VcsIdeUtil {
     private static final Logger log = Logger.getInstance(VcsIdeUtil.class);
 
 	@SuppressWarnings("unchecked")

@@ -17,11 +17,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import limitedwip.AutoRevert;
-import limitedwip.ChangeSizeWatchdog;
+import limitedwip.autorevert.AutoRevert;
+import limitedwip.common.TimerEventsSource;
+import limitedwip.watchdog.ChangeSizeWatchdog;
 import limitedwip.IdeActions;
 import limitedwip.IdeNotifications;
-import limitedwip.ui.settings.LimitedWIPSettings;
+import limitedwip.common.LimitedWIPSettings;
 
 public class LimitedWIPProjectComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener {
 	private ChangeSizeWatchdog changeSizeWatchdog;

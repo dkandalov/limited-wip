@@ -11,9 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip;
+package limitedwip.autorevert;
 
-import limitedwip.AutoRevert.Settings;
+import limitedwip.IdeActions;
+import limitedwip.IdeNotifications;
+import limitedwip.autorevert.AutoRevert;
+import limitedwip.autorevert.AutoRevert.Settings;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

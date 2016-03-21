@@ -1,4 +1,4 @@
-package limitedwip.ui.settings;
+package limitedwip.common;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -6,9 +6,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import limitedwip.components.DisableLargeCommitsAppComponent;
+import limitedwip.common.ui.SettingsForm;
 import limitedwip.components.LimitedWIPAppComponent;
 import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.watchdog.components.DisableLargeCommitsAppComponent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

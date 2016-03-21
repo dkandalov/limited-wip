@@ -11,8 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.ui.settings;
+package limitedwip.common.ui;
 
+import limitedwip.common.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

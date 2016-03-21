@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.components;
+package limitedwip.common;
 
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TimerEventsSource implements ApplicationComponent {
 	private static final Logger log = Logger.getInstance(TimerEventsSource.class);
-	private static final int twoSecondsMs = 2000; // TODO make configurable
+	private static final int oneSecond = 1000;
 
 	private final Timer timer = new Timer("LimitedWIP-TimeEvents");
 	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
@@ -45,7 +45,7 @@ public class TimerEventsSource implements ApplicationComponent {
 					log.error(e);
 				}
 			}
-		}, 0, twoSecondsMs);
+		}, 0, oneSecond);
 	}
 
 	@Override public void disposeComponent() {

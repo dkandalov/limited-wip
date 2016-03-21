@@ -11,8 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip;
+package limitedwip.autorevert;
 
+
+import limitedwip.IdeActions;
+import limitedwip.IdeNotifications;
 
 public class AutoRevert {
 	private final IdeNotifications ideNotifications;

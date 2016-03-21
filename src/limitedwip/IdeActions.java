@@ -21,12 +21,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import limitedwip.components.ChangeSize;
-import limitedwip.components.ChangeSizeProjectComponent;
+import limitedwip.watchdog.components.ChangeSizeProjectComponent;
 
 import java.util.Collection;
 
@@ -50,7 +49,6 @@ public class IdeActions {
         }
         ChangeSize changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
             @Override public ChangeSize compute() {
-                LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
                 return ChangeSizeProjectComponent.getInstance(project).currentChangeListSizeInLines();
             }
         });

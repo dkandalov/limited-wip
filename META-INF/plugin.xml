@@ -27,10 +27,10 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
 
     <application-components>
         <component>
-            <implementation-class>limitedwip.components.TimerEventsSource</implementation-class>
+            <implementation-class>limitedwip.common.TimerEventsSource</implementation-class>
         </component>
         <component>
-            <implementation-class>limitedwip.components.DisableLargeCommitsAppComponent</implementation-class>
+            <implementation-class>limitedwip.watchdog.components.DisableLargeCommitsAppComponent</implementation-class>
         </component>
     </application-components>
 
@@ -39,23 +39,23 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
             <implementation-class>limitedwip.components.LimitedWIPProjectComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>limitedwip.components.ChangeSizeProjectComponent</implementation-class>
+            <implementation-class>limitedwip.watchdog.components.ChangeSizeProjectComponent</implementation-class>
         </component>
     </project-components>
 
     <actions>
-        <action id="StartAutoRevert" class="limitedwip.ui.StartOrStopAutoRevertAction"
+        <action id="StartAutoRevert" class="limitedwip.autorevert.ui.StartOrStopAutoRevertAction"
                 text="Start auto-revert" icon="/limitedwip/icons/rollback.png">
             <keyboard-shortcut keymap="$default" first-keystroke="alt shift a"/>
         </action>
-        <action id="QuickCommitAction" class="limitedwip.ui.QuickCommitAction"
+        <action id="QuickCommitAction" class="limitedwip.autorevert.ui.QuickCommitAction"
                 text="Quick commit" icon="/limitedwip/icons/commit.png">
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable instance="limitedwip.ui.settings.LimitedWipConfigurable"/>
-        <applicationService serviceInterface="limitedwip.ui.settings.LimitedWIPSettings" serviceImplementation="limitedwip.ui.settings.LimitedWIPSettings"/>
+        <applicationConfigurable instance="limitedwip.common.LimitedWipConfigurable"/>
+        <applicationService serviceInterface="limitedwip.common.LimitedWIPSettings" serviceImplementation="limitedwip.common.LimitedWIPSettings"/>
         <checkinHandlerFactory implementation="limitedwip.components.LimitedWipCheckinHandlerFactory"/>
     </extensions>
 </idea-plugin>

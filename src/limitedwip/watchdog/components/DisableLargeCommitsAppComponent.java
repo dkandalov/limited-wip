@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.components;
+package limitedwip.watchdog.components;
 
 import com.intellij.ide.DataManager;
 import com.intellij.notification.Notification;
@@ -23,13 +23,14 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
-import limitedwip.ui.settings.LimitedWIPSettings;
+import limitedwip.components.LimitedWIPAppComponent;
+import limitedwip.common.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.List;
 
-import static limitedwip.components.VcsIdeUtil.registerBeforeCheckInListener;
+import static limitedwip.watchdog.components.VcsIdeUtil.registerBeforeCheckInListener;
 
 public class DisableLargeCommitsAppComponent implements ApplicationComponent, LimitedWIPSettings.Listener {
 	private static final int maxShowCommitDialogAttempts = 3;
@@ -91,7 +92,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 	 *  at com.intellij.openapi.util.ActionCallback.waitFor(ActionCallback.java:269)
 	 *  at com.intellij.openapi.util.AsyncResult.getResultSync(AsyncResult.java:147)
 	 *  at com.intellij.openapi.util.AsyncResult.getResultSync(AsyncResult.java:142)
-	 *  at limitedwip.components.DisableLargeCommitsAppComponent$2.hyperlinkUpdate(DisableLargeCommitsAppComponent.java:65)
+	 *  at limitedwip.watchdog.components.DisableLargeCommitsAppComponent$2.hyperlinkUpdate(DisableLargeCommitsAppComponent.java:65)
 	 *  at com.intellij.notification.impl.ui.NotificationsUtil$1.hyperlinkUpdate(NotificationsUtil.java:75)
 	 */
 	private static boolean showCommitDialog(int showCommitDialogAttempts) {

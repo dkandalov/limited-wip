@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.ui.settings;
+package limitedwip.common;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -19,7 +19,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.Range;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 
-// TODO doesn't show up in UI
 @State(
 	name = "LimitedWIPSettings",
 	storages = @Storage(id = "other", file = "$APP_CONFIG$/limitedwip.ui.settings.xml")
