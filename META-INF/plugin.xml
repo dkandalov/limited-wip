@@ -27,9 +27,6 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
 
     <application-components>
         <component>
-            <implementation-class>limitedwip.components.LimitedWIPAppComponent</implementation-class>
-        </component>
-        <component>
             <implementation-class>limitedwip.components.TimerEventsSource</implementation-class>
         </component>
         <component>
@@ -57,6 +54,7 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable instance="limitedwip.ui.settings.LimitedWipConfigurable"/>
         <applicationService serviceInterface="limitedwip.ui.settings.LimitedWIPSettings" serviceImplementation="limitedwip.ui.settings.LimitedWIPSettings"/>
         <checkinHandlerFactory implementation="limitedwip.components.LimitedWipCheckinHandlerFactory"/>
     </extensions>

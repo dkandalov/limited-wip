@@ -19,7 +19,6 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
@@ -56,7 +55,6 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 				return true;
 			}
 		});
-		ApplicationManager.getApplication().getComponent(LimitedWIPAppComponent.class).addSettingsListener(this);
 	}
 
 	private void notifyThatCommitWasCancelled(Project project) {

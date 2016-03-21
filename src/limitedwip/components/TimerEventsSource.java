@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TimerEventsSource implements ApplicationComponent {
 	private static final Logger log = Logger.getInstance(TimerEventsSource.class);
-	private static final int oneSecond = 1000;
+	private static final int twoSecondsMs = 2000; // TODO make configurable
 
 	private final Timer timer = new Timer("LimitedWIP-TimeEvents");
 	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
@@ -45,7 +45,7 @@ public class TimerEventsSource implements ApplicationComponent {
 					log.error(e);
 				}
 			}
-		}, 0, oneSecond);
+		}, 0, twoSecondsMs);
 	}
 
 	@Override public void disposeComponent() {

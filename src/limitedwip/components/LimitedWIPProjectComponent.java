@@ -58,15 +58,13 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 			}
 		};
 
-		onSettingsUpdate(settings); // TODO the line below will also make onSettingsUpdate() call
-		ApplicationManager.getApplication().getComponent(LimitedWIPAppComponent.class).addSettingsListener(this);
+		onSettingsUpdate(settings);
 		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).addListener(timerListener);
 	}
 
 	@Override public void projectClosed() {
 		super.projectClosed();
 		ideNotifications.onProjectClosed();
-		ApplicationManager.getApplication().getComponent(LimitedWIPAppComponent.class).removeSettingsListener(this);
 		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).removeListener(timerListener);
 	}
 
