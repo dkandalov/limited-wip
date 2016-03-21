@@ -64,9 +64,9 @@ public class TimerEventsSource implements ApplicationComponent {
 		listeners.add(listener);
 	}
 
-	public void addListener(final Listener listener, Disposable disposable) {
+	public void addListener(final Listener listener, Disposable parentDisposable) {
 		listeners.add(listener);
-		Disposer.register(disposable, new Disposable() {
+		Disposer.register(parentDisposable, new Disposable() {
 			@Override public void dispose() {
 				listeners.remove(listener);
 			}

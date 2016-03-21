@@ -29,7 +29,7 @@ public class AutoRevertTest {
 	private final IdeNotifications2 ideNotifications = mock(IdeNotifications2.class);
 	private final IdeActions2 ideActions = mock(IdeActions2.class);
 	private final Settings settings = new Settings(true, secondsTillRevert, true);
-	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions, settings);
+	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions).init(settings);
 	private int secondsSinceStart;
 
 
@@ -137,10 +137,13 @@ public class AutoRevertTest {
 	}
 
 	@Test public void doesNotSendUIStartupNotification_WhenDisabled() {
-		autoRevert.onSettings(new Settings(false, secondsTillRevert, false));
+		Settings disabledSettings = new Settings(false, secondsTillRevert, false);
+		autoRevert.onSettings(disabledSettings);
 		autoRevert.start();
 
-		verifyZeroInteractions(ideNotifications);
+		verify(ideNotifications).onSettingsUpdate(settings);
+		verify(ideNotifications).onSettingsUpdate(disabledSettings);
+		verifyNoMoreInteractions(ideNotifications);
 		verifyZeroInteractions(ideActions);
 	}
 

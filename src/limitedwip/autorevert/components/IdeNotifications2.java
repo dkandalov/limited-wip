@@ -3,33 +3,33 @@ package limitedwip.autorevert.components;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
+import limitedwip.autorevert.AutoRevert;
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget;
-import limitedwip.common.LimitedWIPSettings;
 import limitedwip.common.components.LimitedWIPAppComponent;
 
 public class IdeNotifications2 {
 	private final AutoRevertStatusBarWidget autoRevertWidget = new AutoRevertStatusBarWidget();
 	private final Project project;
-	private LimitedWIPSettings settings;
+	private AutoRevert.Settings settings;
 
 
-	public IdeNotifications2(Project project, LimitedWIPSettings settings) {
+	public IdeNotifications2(final Project project) {
 		this.project = project;
-		this.settings = settings;
-
-		onSettingsUpdate(settings);
-	}
-
-	public void onProjectClosed() {
-		StatusBar statusBar = statusBarFor(project);
-		if (statusBar != null) {
-			autoRevertWidget.showStoppedText();
-			statusBar.removeWidget(autoRevertWidget.ID());
-			statusBar.updateWidget(autoRevertWidget.ID());
-		}
+		Disposer.register(project, new Disposable() {
+			@Override public void dispose() {
+				StatusBar statusBar = statusBarFor(project);
+				if (statusBar != null) {
+					autoRevertWidget.showStoppedText();
+					statusBar.removeWidget(autoRevertWidget.ID());
+					statusBar.updateWidget(autoRevertWidget.ID());
+				}
+			}
+		});
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
@@ -74,7 +74,7 @@ public class IdeNotifications2 {
 		updateStatusBar();
 	}
 
-	public void onSettingsUpdate(LimitedWIPSettings settings) {
+	public void onSettingsUpdate(AutoRevert.Settings settings) {
 		this.settings = settings;
 		updateStatusBar();
 	}

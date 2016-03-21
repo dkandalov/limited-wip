@@ -27,14 +27,18 @@ public class AutoRevert {
 	private int remainingSeconds;
 
 
-	public AutoRevert(IdeNotifications2 ideNotifications, IdeActions2 ideActions, Settings settings) {
+	public AutoRevert(IdeNotifications2 ideNotifications, IdeActions2 ideActions) {
 		this.ideNotifications = ideNotifications;
 		this.ideActions = ideActions;
-		this.settings = settings;
+	}
+
+	public AutoRevert init(Settings settings) {
+		onSettings(settings);
+		return this;
 	}
 
 	public synchronized void start() {
-		if (!settings.enabled) return;
+		if (!settings.autoRevertEnabled) return;
 
 		started = true;
 		startSeconds = -1;
@@ -81,8 +85,9 @@ public class AutoRevert {
 	}
 
 	public synchronized void onSettings(Settings settings) {
+		ideNotifications.onSettingsUpdate(settings);
 		this.settings = settings;
-		if (started && !settings.enabled) {
+		if (started && !settings.autoRevertEnabled) {
 			stop();
 		}
 	}
@@ -94,18 +99,24 @@ public class AutoRevert {
 	}
 
 	public static class Settings {
-		private final boolean enabled;
-		private final int secondsTillRevert;
-		private final boolean notifyOnRevert;
+		public final boolean autoRevertEnabled;
+		public final int secondsTillRevert;
+		public final boolean notifyOnRevert;
+		public final boolean showTimerInToolbar;
 
 		public Settings(int secondsTillRevert) {
 			this(true, secondsTillRevert, true);
 		}
 
-		public Settings(boolean enabled, int secondsTillRevert, boolean notifyOnRevert) {
-			this.enabled = enabled;
+		public Settings(boolean autoRevertEnabled, int secondsTillRevert, boolean notifyOnRevert) {
+			this(autoRevertEnabled, secondsTillRevert, notifyOnRevert, true);
+		}
+
+		public Settings(boolean autoRevertEnabled, int secondsTillRevert, boolean notifyOnRevert, boolean showTimerInToolbar) {
+			this.autoRevertEnabled = autoRevertEnabled;
 			this.secondsTillRevert = secondsTillRevert;
 			this.notifyOnRevert = notifyOnRevert;
+			this.showTimerInToolbar = showTimerInToolbar;
 		}
 	}
 }
