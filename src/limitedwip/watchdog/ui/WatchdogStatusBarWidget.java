@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
-import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.watchdog.components.WatchdogComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -53,8 +53,8 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
                         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
                         if (project == null) return;
 
-                        LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-                        limitedWIPProjectComponent.toggleSkipNotificationsUntilCommit();
+                        WatchdogComponent watchdogComponent = project.getComponent(WatchdogComponent.class);
+                        watchdogComponent.toggleSkipNotificationsUntilCommit();
                     }
                 };
             }

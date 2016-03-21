@@ -1,8 +1,8 @@
 package limitedwip.watchdog;
 
-import limitedwip.IdeActions;
-import limitedwip.IdeNotifications;
-import limitedwip.components.ChangeSize;
+import limitedwip.watchdog.components.IdeActions;
+import limitedwip.watchdog.components.IdeNotifications;
+import limitedwip.watchdog.components.ChangeSize;
 
 public class ChangeSizeWatchdog {
     private final IdeNotifications ideNotifications;

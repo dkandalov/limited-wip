@@ -6,9 +6,10 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import limitedwip.autorevert.components.AutoRevertComponent;
 import limitedwip.common.ui.SettingsForm;
-import limitedwip.components.LimitedWIPAppComponent;
-import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.common.components.LimitedWIPAppComponent;
+import limitedwip.watchdog.components.WatchdogComponent;
 import limitedwip.watchdog.components.DisableLargeCommitsAppComponent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,8 @@ public class LimitedWipConfigurable implements SearchableConfigurable {
 
 	private void notifySettingsListeners(LimitedWIPSettings settings) {
 		for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-			project.getComponent(LimitedWIPProjectComponent.class).onSettingsUpdate(settings);
+			project.getComponent(WatchdogComponent.class).onSettingsUpdate(settings);
+			project.getComponent(AutoRevertComponent.class).onSettingsUpdate(settings);
 		}
 
 		ApplicationManager.getApplication()

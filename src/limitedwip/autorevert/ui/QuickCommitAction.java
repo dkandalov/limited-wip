@@ -30,7 +30,6 @@ import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager;
 import com.intellij.util.FunctionUtil;
-import limitedwip.components.LimitedWIPProjectComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,8 +80,6 @@ public class QuickCommitAction extends AnAction {
 				boolean committed = commitHelper.doCommit();
 				if (committed) {
 					VcsConfiguration.getInstance(project).saveCommitMessage(commitMessage);
-					LimitedWIPProjectComponent projectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-					projectComponent.onQuickCommit();
 				}
 			}
 		};

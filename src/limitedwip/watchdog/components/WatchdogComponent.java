@@ -11,28 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.components;
+package limitedwip.watchdog.components;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import limitedwip.autorevert.AutoRevert;
+import limitedwip.common.LimitedWIPSettings;
 import limitedwip.common.TimerEventsSource;
 import limitedwip.watchdog.ChangeSizeWatchdog;
-import limitedwip.IdeActions;
-import limitedwip.IdeNotifications;
-import limitedwip.common.LimitedWIPSettings;
 
-public class LimitedWIPProjectComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener {
+public class WatchdogComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener {
 	private ChangeSizeWatchdog changeSizeWatchdog;
-	private AutoRevert autoRevert;
 	private IdeNotifications ideNotifications;
 
 	private TimerEventsSource.Listener timerListener;
 
 
-	public LimitedWIPProjectComponent(Project project) {
+	public WatchdogComponent(Project project) {
 		super(project);
 	}
 
@@ -42,11 +38,6 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
 		ideNotifications = new IdeNotifications(myProject, settings);
 		IdeActions ideActions = new IdeActions(myProject);
-		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
-				settings.autoRevertEnabled,
-				settings.secondsTillRevert(),
-				settings.notifyOnRevert
-		));
 		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, ideActions, new ChangeSizeWatchdog.Settings(
 				settings.watchdogEnabled,
 				settings.maxLinesInChange,
@@ -54,7 +45,6 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 		));
 		timerListener = new TimerEventsSource.Listener() {
 			@Override public void onTimerUpdate(int seconds) {
-				autoRevert.onTimer(seconds);
 				changeSizeWatchdog.onTimer(seconds);
 			}
 		};
@@ -65,39 +55,16 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
 
 	@Override public void projectClosed() {
 		super.projectClosed();
-		ideNotifications.onProjectClosed();
 		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).removeListener(timerListener);
-	}
-
-	public void startAutoRevert() {
-		autoRevert.start();
-	}
-
-	public boolean isAutoRevertStarted() {
-		return autoRevert.isStarted();
-	}
-
-	public void stopAutoRevert() {
-		autoRevert.stop();
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
 		ideNotifications.onSettingsUpdate(settings);
-		autoRevert.onSettings(new AutoRevert.Settings(
-				settings.autoRevertEnabled,
-				settings.secondsTillRevert(),
-				settings.notifyOnRevert
-		));
 		changeSizeWatchdog.onSettings(new ChangeSizeWatchdog.Settings(
 				settings.watchdogEnabled,
 				settings.maxLinesInChange,
 				settings.notificationIntervalInSeconds()
 		));
-	}
-
-	public void onQuickCommit() {
-		autoRevert.onAllFilesCommitted();
-		changeSizeWatchdog.onCommit();
 	}
 
     public void toggleSkipNotificationsUntilCommit() {
@@ -110,10 +77,7 @@ public class LimitedWIPProjectComponent extends AbstractProjectComponent impleme
         ideNotifications.onSkipNotificationUntilCommit(value);
 	}
 
-    public void onVcsCommit(int uncommittedFilesSize) {
-        if (uncommittedFilesSize == 0) {
-            autoRevert.onAllFilesCommitted();
-        }
+    public void onVcsCommit() {
         changeSizeWatchdog.onCommit();
     }
 }

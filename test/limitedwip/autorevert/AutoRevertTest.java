@@ -13,10 +13,9 @@
  */
 package limitedwip.autorevert;
 
-import limitedwip.IdeActions;
-import limitedwip.IdeNotifications;
-import limitedwip.autorevert.AutoRevert;
 import limitedwip.autorevert.AutoRevert.Settings;
+import limitedwip.autorevert.components.IdeActions2;
+import limitedwip.autorevert.components.IdeNotifications2;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -27,8 +26,8 @@ import static org.mockito.Mockito.*;
 public class AutoRevertTest {
 	private static final int secondsTillRevert = 2;
 
-	private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
-	private final IdeActions ideActions = mock(IdeActions.class);
+	private final IdeNotifications2 ideNotifications = mock(IdeNotifications2.class);
+	private final IdeActions2 ideActions = mock(IdeActions2.class);
 	private final Settings settings = new Settings(true, secondsTillRevert, true);
 	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions, settings);
 	private int secondsSinceStart;

@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
-import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.autorevert.components.AutoRevertComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -59,11 +59,11 @@ public class AutoRevertStatusBarWidget implements StatusBarWidget {
                         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
                         if (project == null) return;
 
-                        LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-                        if (limitedWIPProjectComponent.isAutoRevertStarted()) {
-                            limitedWIPProjectComponent.stopAutoRevert();
+	                    AutoRevertComponent autoRevertComponent = project.getComponent(AutoRevertComponent.class);
+                        if (autoRevertComponent.isAutoRevertStarted()) {
+                            autoRevertComponent.stopAutoRevert();
                         } else {
-                            limitedWIPProjectComponent.startAutoRevert();
+                            autoRevertComponent.startAutoRevert();
                         }
                     }
                 };

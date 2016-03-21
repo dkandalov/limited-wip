@@ -13,9 +13,11 @@
  */
 package limitedwip.common;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class TimerEventsSource implements ApplicationComponent {
 	private static final Logger log = Logger.getInstance(TimerEventsSource.class);
 	private static final int oneSecond = 1000;
 
+	// TODO use intellij api
 	private final Timer timer = new Timer("LimitedWIP-TimeEvents");
 	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
 	private int secondsSinceStart = 0;
@@ -59,6 +62,15 @@ public class TimerEventsSource implements ApplicationComponent {
 
 	public void addListener(Listener listener) {
 		listeners.add(listener);
+	}
+
+	public void addListener(final Listener listener, Disposable disposable) {
+		listeners.add(listener);
+		Disposer.register(disposable, new Disposable() {
+			@Override public void dispose() {
+				listeners.remove(listener);
+			}
+		});
 	}
 
 	public void removeListener(Listener listener) {

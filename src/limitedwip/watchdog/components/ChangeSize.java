@@ -1,4 +1,4 @@
-package limitedwip.components;
+package limitedwip.watchdog.components;
 
 public class ChangeSize {
     public final int value;

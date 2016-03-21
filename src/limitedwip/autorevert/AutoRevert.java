@@ -14,12 +14,12 @@
 package limitedwip.autorevert;
 
 
-import limitedwip.IdeActions;
-import limitedwip.IdeNotifications;
+import limitedwip.autorevert.components.IdeActions2;
+import limitedwip.autorevert.components.IdeNotifications2;
 
 public class AutoRevert {
-	private final IdeNotifications ideNotifications;
-	private final IdeActions ideActions;
+	private final IdeNotifications2 ideNotifications;
+	private final IdeActions2 ideActions;
 
 	private Settings settings;
 	private boolean started = false;
@@ -27,7 +27,7 @@ public class AutoRevert {
 	private int remainingSeconds;
 
 
-	public AutoRevert(IdeNotifications ideNotifications, IdeActions ideActions, Settings settings) {
+	public AutoRevert(IdeNotifications2 ideNotifications, IdeActions2 ideActions, Settings settings) {
 		this.ideNotifications = ideNotifications;
 		this.ideActions = ideActions;
 		this.settings = settings;

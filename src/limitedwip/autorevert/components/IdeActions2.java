@@ -1,65 +1,29 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package limitedwip;
+package limitedwip.autorevert.components;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
-import limitedwip.components.ChangeSize;
-import limitedwip.watchdog.components.ChangeSizeProjectComponent;
 
 import java.util.Collection;
 
 import static com.intellij.util.containers.ContainerUtil.map;
 import static com.intellij.util.containers.ContainerUtil.toArray;
 
-public class IdeActions {
-	private static final Logger log = Logger.getInstance(IdeActions.class);
+public class IdeActions2 {
+	private static final Logger log = Logger.getInstance(IdeActions2.class);
 	private final Project project;
-    private ChangeSize lastChangeSize = new ChangeSize(0);
-    private int skipChecks;
 
-    public IdeActions(Project project) {
+	public IdeActions2(Project project) {
 		this.project = project;
 	}
 
-	public ChangeSize currentChangeListSizeInLines() {
-        if (skipChecks > 0) {
-            skipChecks--;
-            return lastChangeSize;
-        }
-        ChangeSize changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
-            @Override public ChangeSize compute() {
-                return ChangeSizeProjectComponent.getInstance(project).currentChangeListSizeInLines();
-            }
-        });
-        if (changeSize.isApproximate) {
-            changeSize = new ChangeSize(lastChangeSize.value, true);
-            skipChecks = 10;
-        }
-        lastChangeSize = changeSize;
-        return changeSize;
-	}
-	
 	public void revertCurrentChangeList() {
 		final Application application = ApplicationManager.getApplication();
 		application.invokeLater(new Runnable() {
@@ -89,4 +53,5 @@ public class IdeActions {
 			}
 		});
 	}
+
 }

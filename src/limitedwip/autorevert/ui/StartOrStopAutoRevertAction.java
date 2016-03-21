@@ -16,7 +16,7 @@ package limitedwip.autorevert.ui;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import limitedwip.components.LimitedWIPProjectComponent;
+import limitedwip.autorevert.components.AutoRevertComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class StartOrStopAutoRevertAction extends AnAction {
@@ -24,11 +24,11 @@ public class StartOrStopAutoRevertAction extends AnAction {
 		Project project = event.getProject();
 		if (project == null) return;
 
-		LimitedWIPProjectComponent limitedWIPProjectComponent = project.getComponent(LimitedWIPProjectComponent.class);
-		if (limitedWIPProjectComponent.isAutoRevertStarted()) {
-			limitedWIPProjectComponent.stopAutoRevert();
+		AutoRevertComponent autoRevertComponent = project.getComponent(AutoRevertComponent.class);
+		if (autoRevertComponent.isAutoRevertStarted()) {
+			autoRevertComponent.stopAutoRevert();
 		} else {
-			limitedWIPProjectComponent.startAutoRevert();
+			autoRevertComponent.startAutoRevert();
 		}
 	}
 
@@ -42,7 +42,7 @@ public class StartOrStopAutoRevertAction extends AnAction {
 	private static String textFor(Project project) {
 		if (project == null) return "Start auto-revert";
 
-		if (project.getComponent(LimitedWIPProjectComponent.class).isAutoRevertStarted()) {
+		if (project.getComponent(AutoRevertComponent.class).isAutoRevertStarted()) {
 			return "Stop auto-revert";
 		} else {
 			return "Start auto-revert";

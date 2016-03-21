@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.components;
+package limitedwip.common.components;
 
 public class LimitedWIPAppComponent {
 	public static final String displayName = "Limited WIP";

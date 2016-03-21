@@ -15,7 +15,6 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.diff.FilesTooBigForDiffException;
-import limitedwip.components.ChangeSize;
 
 import java.util.HashMap;
 import java.util.HashSet;

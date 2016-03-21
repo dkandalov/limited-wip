@@ -36,7 +36,10 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
 
     <project-components>
         <component>
-            <implementation-class>limitedwip.components.LimitedWIPProjectComponent</implementation-class>
+            <implementation-class>limitedwip.watchdog.components.WatchdogComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>limitedwip.autorevert.components.AutoRevertComponent</implementation-class>
         </component>
         <component>
             <implementation-class>limitedwip.watchdog.components.ChangeSizeProjectComponent</implementation-class>
@@ -56,6 +59,6 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable instance="limitedwip.common.LimitedWipConfigurable"/>
         <applicationService serviceInterface="limitedwip.common.LimitedWIPSettings" serviceImplementation="limitedwip.common.LimitedWIPSettings"/>
-        <checkinHandlerFactory implementation="limitedwip.components.LimitedWipCheckinHandlerFactory"/>
+        <checkinHandlerFactory implementation="limitedwip.common.components.LimitedWipCheckinHandlerFactory"/>
     </extensions>
 </idea-plugin>
