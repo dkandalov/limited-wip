@@ -5,45 +5,36 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import limitedwip.autorevert.AutoRevert;
-import limitedwip.common.LimitedWIPSettings;
-import limitedwip.common.TimerEventsSource;
+import limitedwip.common.LimitedWipCheckin;
+import limitedwip.common.TimerComponent;
+import limitedwip.common.settings.LimitedWIPSettings;
+import limitedwip.common.settings.LimitedWipConfigurable;
 
-public class AutoRevertComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener  {
-	private final TimerEventsSource timerEventsSource;
+public class AutoRevertComponent extends AbstractProjectComponent implements LimitedWipConfigurable.Listener, LimitedWipCheckin.Listener {
+	private final TimerComponent timer;
 	private AutoRevert autoRevert;
-	private IdeNotifications2 ideNotifications;
 
 	protected AutoRevertComponent(Project project) {
 		super(project);
-		timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
+		timer = ApplicationManager.getApplication().getComponent(TimerComponent.class);
 	}
 
 	@Override public void projectOpened() {
 		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
-		ideNotifications = new IdeNotifications2(myProject, settings);
-		IdeActions2 ideActions = new IdeActions2(myProject);
-		autoRevert = new AutoRevert(ideNotifications, ideActions, new AutoRevert.Settings(
-				settings.autoRevertEnabled,
-				settings.secondsTillRevert(),
-				settings.notifyOnRevert
-		));
-		TimerEventsSource.Listener timerListener = new TimerEventsSource.Listener() {
-			@Override public void onTimerUpdate(int seconds) {
+		autoRevert = new AutoRevert(new IdeAdapter(myProject)).init(convert(settings));
+
+		timer.addListener(new TimerComponent.Listener() {
+			@Override public void onUpdate(int seconds) {
 				autoRevert.onTimer(seconds);
 			}
-		};
+		}, myProject);
 
-		onSettingsUpdate(settings);
-		timerEventsSource.addListener(timerListener, myProject);
+		LimitedWipConfigurable.registerSettingsListener(myProject, this);
+		LimitedWipCheckin.registerListener(myProject, this);
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
-		ideNotifications.onSettingsUpdate(settings);
-		autoRevert.onSettings(new AutoRevert.Settings(
-				settings.autoRevertEnabled,
-				settings.secondsTillRevert(),
-				settings.notifyOnRevert
-		));
+		autoRevert.onSettings(convert(settings));
 	}
 
 	public void startAutoRevert() {
@@ -58,14 +49,17 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 		autoRevert.stop();
 	}
 
-	public void onVcsCommit(int uncommittedFilesSize) {
-		if (uncommittedFilesSize == 0) {
+	public void onSuccessfulCheckin(boolean allFileAreCommitted) {
+		if (allFileAreCommitted) {
 			autoRevert.onAllFilesCommitted();
 		}
 	}
 
-	@Override public void projectClosed() {
-		super.projectClosed();
-		ideNotifications.onProjectClosed();
+	private static AutoRevert.Settings convert(LimitedWIPSettings settings) {
+		return new AutoRevert.Settings(
+				settings.autoRevertEnabled,
+				settings.secondsTillRevert(),
+				settings.notifyOnRevert
+		);
 	}
 }

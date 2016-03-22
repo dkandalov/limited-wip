@@ -14,8 +14,7 @@
 package limitedwip.autorevert;
 
 import limitedwip.autorevert.AutoRevert.Settings;
-import limitedwip.autorevert.ui.IdeActions2;
-import limitedwip.autorevert.ui.IdeNotifications2;
+import limitedwip.autorevert.components.IdeAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -26,26 +25,23 @@ import static org.mockito.Mockito.*;
 public class AutoRevertTest {
 	private static final int secondsTillRevert = 2;
 
-	private final IdeNotifications2 ideNotifications = mock(IdeNotifications2.class);
-	private final IdeActions2 ideActions = mock(IdeActions2.class);
+	private final IdeAdapter ideAdapter = mock(IdeAdapter.class);
 	private final Settings settings = new Settings(true, secondsTillRevert, true);
-	private final AutoRevert autoRevert = new AutoRevert(ideNotifications, ideActions).init(settings);
+	private final AutoRevert autoRevert = new AutoRevert(ideAdapter).init(settings);
 	private int secondsSinceStart;
 
 
 	@Test public void sendsUIStartupNotification() {
 		autoRevert.start();
-
-		verify(ideNotifications).onAutoRevertStarted(eq(secondsTillRevert));
-		verifyZeroInteractions(ideActions);
+		verify(ideAdapter).onAutoRevertStarted(eq(secondsTillRevert));
 	}
 
 	@Test public void sendsUINotificationOnTimer_OnlyWhenStarted() {
-		InOrder inOrder = inOrder(ideNotifications);
+		InOrder inOrder = inOrder(ideAdapter);
 
-		autoRevert.onTimer(next()); inOrder.verify(ideNotifications, times(0)).onTimeTillRevert(anyInt());
+		autoRevert.onTimer(next()); inOrder.verify(ideAdapter, times(0)).onTimeTillRevert(anyInt());
 		autoRevert.start();
-		autoRevert.onTimer(next()); inOrder.verify(ideNotifications).onTimeTillRevert(anyInt());
+		autoRevert.onTimer(next()); inOrder.verify(ideAdapter).onTimeTillRevert(anyInt());
 	}
 
 	@Test public void revertsChanges_WhenReceivedEnoughTimeUpdates() {
@@ -56,9 +52,8 @@ public class AutoRevertTest {
 		autoRevert.onTimer(next());
 		autoRevert.onTimer(next());
 
-		verify(ideActions, times(2)).revertCurrentChangeList();
-		verifyNoMoreInteractions(ideActions);
-		verify(ideNotifications, times(2)).onChangesRevert();
+		verify(ideAdapter, times(2)).revertCurrentChangeList();
+		verify(ideAdapter, times(2)).onChangesRevert();
 	}
 
 	@Test public void doesNotRevertChanges_WhenStopped() {
@@ -67,38 +62,38 @@ public class AutoRevertTest {
 		autoRevert.stop();
 		autoRevert.onTimer(next());
 
-		verify(ideNotifications).onAutoRevertStarted(anyInt());
-		verify(ideNotifications).onAutoRevertStopped();
-		verifyZeroInteractions(ideActions);
+		verify(ideAdapter).onAutoRevertStarted(anyInt());
+		verify(ideAdapter).onAutoRevertStopped();
+		verify(ideAdapter, never()).revertCurrentChangeList();
 	}
 
 	@Test public void resetsTimeTillRevert_WhenStopped() {
-		InOrder inOrder = inOrder(ideNotifications);
+		InOrder inOrder = inOrder(ideAdapter);
 
 		autoRevert.start();
-		autoRevert.onTimer(next()); inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
+		autoRevert.onTimer(next()); inOrder.verify(ideAdapter).onTimeTillRevert(eq(2));
 		autoRevert.stop();
 		autoRevert.start();
-		autoRevert.onTimer(next()); inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
-		autoRevert.onTimer(next()); inOrder.verify(ideNotifications).onTimeTillRevert(eq(1));
+		autoRevert.onTimer(next()); inOrder.verify(ideAdapter).onTimeTillRevert(eq(2));
+		autoRevert.onTimer(next()); inOrder.verify(ideAdapter).onTimeTillRevert(eq(1));
 	}
 
 	@Test public void resetsTimeTillRevert_WhenCommitted() {
-		InOrder inOrder = inOrder(ideNotifications);
+		InOrder inOrder = inOrder(ideAdapter);
 
 		autoRevert.start();
-		autoRevert.onTimer(next());  inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
-		autoRevert.onAllFilesCommitted(); inOrder.verify(ideNotifications).onCommit(secondsTillRevert);
-		autoRevert.onTimer(next());  inOrder.verify(ideNotifications).onTimeTillRevert(eq(2));
-		autoRevert.onTimer(next());  inOrder.verify(ideNotifications).onTimeTillRevert(eq(1));
+		autoRevert.onTimer(next());  inOrder.verify(ideAdapter).onTimeTillRevert(eq(2));
+		autoRevert.onAllFilesCommitted(); inOrder.verify(ideAdapter).onCommit(secondsTillRevert);
+		autoRevert.onTimer(next());  inOrder.verify(ideAdapter).onTimeTillRevert(eq(2));
+		autoRevert.onTimer(next());  inOrder.verify(ideAdapter).onTimeTillRevert(eq(1));
 	}
 
 	@Test public void sendsUINotificationOnCommit_OnlyWhenStarted() {
-		InOrder inOrder = inOrder(ideNotifications);
+		InOrder inOrder = inOrder(ideAdapter);
 
-		autoRevert.onAllFilesCommitted(); inOrder.verify(ideNotifications, times(0)).onCommit(anyInt());
+		autoRevert.onAllFilesCommitted(); inOrder.verify(ideAdapter, times(0)).onCommit(anyInt());
 		autoRevert.start();
-		autoRevert.onAllFilesCommitted(); inOrder.verify(ideNotifications).onCommit(anyInt());
+		autoRevert.onAllFilesCommitted(); inOrder.verify(ideAdapter).onCommit(anyInt());
 	}
 
 	@Test public void appliesRevertTimeOutChange_AfterStart() {
@@ -107,8 +102,8 @@ public class AutoRevertTest {
 		autoRevert.onTimer(next());
 		autoRevert.onTimer(next());
 
-		verify(ideActions, times(2)).revertCurrentChangeList();
-		verify(ideNotifications, times(2)).onChangesRevert();
+		verify(ideAdapter, times(2)).revertCurrentChangeList();
+		verify(ideAdapter, times(2)).onChangesRevert();
 	}
 
 	@Test public void appliesRevertTimeoutChange_AfterEndOfCurrentTimeOut() {
@@ -119,8 +114,8 @@ public class AutoRevertTest {
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
 
-		verify(ideActions, times(3)).revertCurrentChangeList();
-		verify(ideNotifications, times(3)).onChangesRevert();
+		verify(ideAdapter, times(3)).revertCurrentChangeList();
+		verify(ideAdapter, times(3)).onChangesRevert();
 	}
 
 	@Test public void appliesRevertTimeoutChange_AfterCommit() {
@@ -132,8 +127,8 @@ public class AutoRevertTest {
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
 		autoRevert.onTimer(next()); // reverts changes after 1st time event
 
-		verify(ideActions, times(3)).revertCurrentChangeList();
-		verify(ideNotifications, times(3)).onChangesRevert();
+		verify(ideAdapter, times(3)).revertCurrentChangeList();
+		verify(ideAdapter, times(3)).onChangesRevert();
 	}
 
 	@Test public void doesNotSendUIStartupNotification_WhenDisabled() {
@@ -141,10 +136,9 @@ public class AutoRevertTest {
 		autoRevert.onSettings(disabledSettings);
 		autoRevert.start();
 
-		verify(ideNotifications).onSettingsUpdate(settings);
-		verify(ideNotifications).onSettingsUpdate(disabledSettings);
-		verifyNoMoreInteractions(ideNotifications);
-		verifyZeroInteractions(ideActions);
+		verify(ideAdapter).onSettingsUpdate(settings);
+		verify(ideAdapter).onSettingsUpdate(disabledSettings);
+		verifyNoMoreInteractions(ideAdapter);
 	}
 
 	@Test public void doesNotRevertChanges_WhenDisabled() {
@@ -153,7 +147,7 @@ public class AutoRevertTest {
 		autoRevert.onSettings(new Settings(false, 2, false));
 		autoRevert.onTimer(next());
 
-		verifyZeroInteractions(ideActions);
+		verify(ideAdapter, never()).revertCurrentChangeList();
 	}
 
 	@Before public void setUp() throws Exception {

@@ -1,24 +1,40 @@
-package limitedwip.autorevert.ui;
+package limitedwip.autorevert.components;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ui.RollbackWorker;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.util.Function;
 import limitedwip.autorevert.AutoRevert;
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget;
 import limitedwip.common.LimitedWIPAppComponent;
 
-public class IdeNotifications2 {
+import java.util.Collection;
+
+import static com.intellij.util.containers.ContainerUtil.map;
+import static com.intellij.util.containers.ContainerUtil.toArray;
+
+public class IdeAdapter {
+	private static final Logger logger = Logger.getInstance(IdeAdapter.class);
+
 	private final AutoRevertStatusBarWidget autoRevertWidget = new AutoRevertStatusBarWidget();
 	private final Project project;
 	private AutoRevert.Settings settings;
 
 
-	public IdeNotifications2(final Project project) {
+	public IdeAdapter(final Project project) {
 		this.project = project;
 		Disposer.register(project, new Disposable() {
 			@Override public void dispose() {
@@ -28,6 +44,36 @@ public class IdeNotifications2 {
 					statusBar.removeWidget(autoRevertWidget.ID());
 					statusBar.updateWidget(autoRevertWidget.ID());
 				}
+			}
+		});
+	}
+
+	public void revertCurrentChangeList() {
+		final Application application = ApplicationManager.getApplication();
+		application.invokeLater(new Runnable() {
+			@Override public void run() {
+				application.runWriteAction(new Runnable() {
+					@Override public void run() {
+						try {
+
+							Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
+							if (changes.isEmpty()) return;
+
+							new RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null);
+
+							VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
+								@Override public VirtualFile fun(Change change) {
+									return change.getVirtualFile();
+								}
+							}), new VirtualFile[changes.size()]);
+							FileDocumentManager.getInstance().reloadFiles(changedFiles);
+
+						} catch (Exception e) {
+							// observed exception while reloading project at the time of auto-revert
+							logger.error("Error while doing revert", e);
+						}
+					}
+				});
 			}
 		});
 	}
