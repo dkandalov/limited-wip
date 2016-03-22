@@ -34,7 +34,7 @@ public class AutoRevert {
 		return this;
 	}
 
-	public synchronized void start() {
+	public void start() {
 		if (!settings.autoRevertEnabled) return;
 
 		started = true;
@@ -44,16 +44,16 @@ public class AutoRevert {
 		ideNotifications.onAutoRevertStarted(remainingSeconds);
 	}
 
-	public synchronized void stop() {
+	public void stop() {
 		started = false;
 		ideNotifications.onAutoRevertStopped();
 	}
 
-	public synchronized boolean isStarted() {
+	public boolean isStarted() {
 		return started;
 	}
 
-	public synchronized void onTimer(int seconds) {
+	public void onTimer(int seconds) {
 		if (!started) return;
 
 		if (startSeconds == -1) {
@@ -73,7 +73,7 @@ public class AutoRevert {
 		}
 	}
 
-	public synchronized void onAllFilesCommitted() {
+	public void onAllFilesCommitted() {
 		if (!started) return;
 
 		startSeconds = -1;
@@ -81,7 +81,7 @@ public class AutoRevert {
 		ideNotifications.onCommit(remainingSeconds);
 	}
 
-	public synchronized void onSettings(Settings settings) {
+	public void onSettings(Settings settings) {
 		ideNotifications.onSettingsUpdate(settings);
 		this.settings = settings;
 		if (started && !settings.autoRevertEnabled) {

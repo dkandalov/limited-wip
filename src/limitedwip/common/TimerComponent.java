@@ -18,46 +18,49 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 public class TimerComponent implements ApplicationComponent {
 	private static final Logger log = Logger.getInstance(TimerComponent.class);
-	private static final int oneSecond = 1000;
 
-	// TODO use intellij api
-	private final Timer timer = new Timer("LimitedWIP-TimeEvents");
 	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
-	private int secondsSinceStart = 0;
+	private ScheduledFuture<?> future;
+	private long startTime;
+
 
 	@Override public void initComponent() {
-		timer.schedule(new TimerTask() {
+		startTime = System.currentTimeMillis();
+		Runnable runnable = new Runnable() {
 			@Override public void run() {
 				try {
-					secondsSinceStart++;
+					long secondsSinceStart = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime);
 					for (Listener listener : listeners) {
-                        listener.onUpdate(secondsSinceStart);
-                    }
+						listener.onUpdate((int) secondsSinceStart);
+					}
 				} catch (ProcessCanceledException ignored) {
 				} catch (Exception e) {
 					log.error(e);
 				}
 			}
-		}, 0, oneSecond);
+		};
+		ScheduledExecutorService executorService = AppExecutorUtil.getAppScheduledExecutorService();
+		future = executorService.scheduleWithFixedDelay(runnable, 0, 1, TimeUnit.SECONDS);
 	}
 
 	@Override public void disposeComponent() {
-		timer.cancel();
-		timer.purge();
+		future.cancel(true);
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "LimitedWIP-TimeEventsSource";
+		return "LimitedWIP-" + TimerComponent.class.getSimpleName();
 	}
 
 	public void addListener(final Listener listener, Disposable parentDisposable) {
