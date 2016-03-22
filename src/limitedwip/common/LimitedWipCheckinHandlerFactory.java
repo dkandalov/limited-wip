@@ -1,4 +1,4 @@
-package limitedwip.common.components;
+package limitedwip.common;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;

@@ -23,7 +23,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
-import limitedwip.common.components.LimitedWIPAppComponent;
+import limitedwip.common.LimitedWIPAppComponent;
 import limitedwip.common.LimitedWIPSettings;
 import org.jetbrains.annotations.NotNull;
 

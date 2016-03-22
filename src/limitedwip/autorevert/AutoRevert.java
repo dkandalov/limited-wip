@@ -98,6 +98,7 @@ public class AutoRevert {
 		}
 	}
 
+
 	public static class Settings {
 		public final boolean autoRevertEnabled;
 		public final int secondsTillRevert;

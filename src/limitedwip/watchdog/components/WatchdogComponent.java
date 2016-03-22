@@ -18,18 +18,18 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import limitedwip.common.LimitedWIPSettings;
-import limitedwip.common.TimerEventsSource;
+import limitedwip.common.TimerComponent;
 import limitedwip.watchdog.ChangeSizeWatchdog;
 
 public class WatchdogComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener {
 	private ChangeSizeWatchdog changeSizeWatchdog;
 	private IdeNotifications ideNotifications;
-
-	private TimerEventsSource.Listener timerListener;
+	private TimerComponent timer;
 
 
 	public WatchdogComponent(Project project) {
 		super(project);
+		timer = ApplicationManager.getApplication().getComponent(TimerComponent.class);
 	}
 
 	@Override public void projectOpened() {
@@ -43,19 +43,14 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
 				settings.maxLinesInChange,
 				settings.notificationIntervalInSeconds()
 		));
-		timerListener = new TimerEventsSource.Listener() {
-			@Override public void onTimerUpdate(int seconds) {
-				changeSizeWatchdog.onTimer(seconds);
-			}
-		};
 
 		onSettingsUpdate(settings);
-		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).addListener(timerListener);
-	}
 
-	@Override public void projectClosed() {
-		super.projectClosed();
-		ApplicationManager.getApplication().getComponent(TimerEventsSource.class).removeListener(timerListener);
+		timer.addListener(new TimerComponent.Listener() {
+			@Override public void onUpdate(int seconds) {
+				changeSizeWatchdog.onTimer(seconds);
+			}
+		}, myProject);
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {

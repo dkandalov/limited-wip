@@ -10,7 +10,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import limitedwip.autorevert.AutoRevert;
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget;
-import limitedwip.common.components.LimitedWIPAppComponent;
+import limitedwip.common.LimitedWIPAppComponent;
 
 public class IdeNotifications2 {
 	private final AutoRevertStatusBarWidget autoRevertWidget = new AutoRevertStatusBarWidget();

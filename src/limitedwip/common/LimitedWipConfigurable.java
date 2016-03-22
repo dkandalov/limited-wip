@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import limitedwip.autorevert.components.AutoRevertComponent;
 import limitedwip.common.ui.SettingsForm;
-import limitedwip.common.components.LimitedWIPAppComponent;
 import limitedwip.watchdog.components.WatchdogComponent;
 import limitedwip.watchdog.components.DisableLargeCommitsAppComponent;
 import org.jetbrains.annotations.Nls;

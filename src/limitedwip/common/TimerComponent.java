@@ -26,8 +26,8 @@ import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public class TimerEventsSource implements ApplicationComponent {
-	private static final Logger log = Logger.getInstance(TimerEventsSource.class);
+public class TimerComponent implements ApplicationComponent {
+	private static final Logger log = Logger.getInstance(TimerComponent.class);
 	private static final int oneSecond = 1000;
 
 	// TODO use intellij api
@@ -41,7 +41,7 @@ public class TimerEventsSource implements ApplicationComponent {
 				try {
 					secondsSinceStart++;
 					for (Listener listener : listeners) {
-                        listener.onTimerUpdate(secondsSinceStart);
+                        listener.onUpdate(secondsSinceStart);
                     }
 				} catch (ProcessCanceledException ignored) {
 				} catch (Exception e) {
@@ -60,10 +60,6 @@ public class TimerEventsSource implements ApplicationComponent {
 		return "LimitedWIP-TimeEventsSource";
 	}
 
-	public void addListener(Listener listener) {
-		listeners.add(listener);
-	}
-
 	public void addListener(final Listener listener, Disposable parentDisposable) {
 		listeners.add(listener);
 		Disposer.register(parentDisposable, new Disposable() {
@@ -73,11 +69,7 @@ public class TimerEventsSource implements ApplicationComponent {
 		});
 	}
 
-	public void removeListener(Listener listener) {
-		listeners.remove(listener);
-	}
-
 	public interface Listener {
-		void onTimerUpdate(int seconds);
+		void onUpdate(int seconds);
 	}
 }

@@ -6,15 +6,15 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import limitedwip.autorevert.AutoRevert;
 import limitedwip.common.LimitedWIPSettings;
-import limitedwip.common.TimerEventsSource;
+import limitedwip.common.TimerComponent;
 
 public class AutoRevertComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener  {
-	private final TimerEventsSource timerEventsSource;
+	private final TimerComponent timer;
 	private AutoRevert autoRevert;
 
 	protected AutoRevertComponent(Project project) {
 		super(project);
-		timerEventsSource = ApplicationManager.getApplication().getComponent(TimerEventsSource.class);
+		timer = ApplicationManager.getApplication().getComponent(TimerComponent.class);
 	}
 
 	@Override public void projectOpened() {
@@ -22,8 +22,8 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 		IdeNotifications2 ideNotifications = new IdeNotifications2(myProject);
 		autoRevert = new AutoRevert(ideNotifications, new IdeActions2(myProject)).init(convert(settings));
 
-		timerEventsSource.addListener(new TimerEventsSource.Listener() {
-			@Override public void onTimerUpdate(int seconds) {
+		timer.addListener(new TimerComponent.Listener() {
+			@Override public void onUpdate(int seconds) {
 				autoRevert.onTimer(seconds);
 			}
 		}, myProject);
