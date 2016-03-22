@@ -14,18 +14,18 @@
 package limitedwip.watchdog.components;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import limitedwip.common.settings.LimitedWIPSettings;
 import limitedwip.common.LimitedWipCheckin;
-import limitedwip.common.settings.LimitedWipConfigurable;
 import limitedwip.common.TimerComponent;
+import limitedwip.common.settings.LimitedWIPSettings;
+import limitedwip.common.settings.LimitedWipConfigurable;
 import limitedwip.watchdog.ChangeSizeWatchdog;
 
 public class WatchdogComponent extends AbstractProjectComponent implements LimitedWipConfigurable.Listener, LimitedWipCheckin.Listener {
 	private ChangeSizeWatchdog changeSizeWatchdog;
-	private IdeNotifications ideNotifications;
 	private TimerComponent timer;
 
 
@@ -35,22 +35,18 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
 	}
 
 	@Override public void projectOpened() {
-		super.projectOpened();
-
 		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
-		ideNotifications = new IdeNotifications(myProject, settings);
+		IdeNotifications ideNotifications = new IdeNotifications(myProject, convert(settings));
 		IdeActions ideActions = new IdeActions(myProject);
-		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, ideActions, new ChangeSizeWatchdog.Settings(
-				settings.watchdogEnabled,
-				settings.maxLinesInChange,
-				settings.notificationIntervalInSeconds()
-		));
-
-		onSettingsUpdate(settings);
+		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, ideActions).init(convert(settings));
 
 		timer.addListener(new TimerComponent.Listener() {
-			@Override public void onUpdate(int seconds) {
-				changeSizeWatchdog.onTimer(seconds);
+			@Override public void onUpdate(final int seconds) {
+				ApplicationManager.getApplication().invokeLater(new Runnable() {
+					@Override public void run() {
+						changeSizeWatchdog.onTimer(seconds);
+					}
+				}, ModalityState.any());
 			}
 		}, myProject);
 
@@ -59,25 +55,27 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
-		ideNotifications.onSettingsUpdate(settings);
-		changeSizeWatchdog.onSettings(new ChangeSizeWatchdog.Settings(
-				settings.watchdogEnabled,
-				settings.maxLinesInChange,
-				settings.notificationIntervalInSeconds()
-		));
+		changeSizeWatchdog.onSettings(convert(settings));
 	}
 
     public void toggleSkipNotificationsUntilCommit() {
-        boolean value = changeSizeWatchdog.toggleSkipNotificationsUntilCommit();
-        ideNotifications.onSkipNotificationUntilCommit(value);
+        changeSizeWatchdog.toggleSkipNotificationsUntilCommit();
     }
 
 	public void skipNotificationsUntilCommit(boolean value) {
 		changeSizeWatchdog.skipNotificationsUntilCommit(value);
-        ideNotifications.onSkipNotificationUntilCommit(value);
 	}
 
 	@Override public void onSuccessfulCheckin(boolean allFileAreCommitted) {
 		changeSizeWatchdog.onCommit();
+	}
+
+	private static ChangeSizeWatchdog.Settings convert(LimitedWIPSettings settings) {
+		return new ChangeSizeWatchdog.Settings(
+				settings.watchdogEnabled,
+				settings.maxLinesInChange,
+				settings.notificationIntervalInSeconds(),
+				settings.showRemainingChangesInToolbar
+		);
 	}
 }

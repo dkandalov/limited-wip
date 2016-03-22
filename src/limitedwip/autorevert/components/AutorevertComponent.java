@@ -1,6 +1,7 @@
 package limitedwip.autorevert.components;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -24,8 +25,12 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 		autoRevert = new AutoRevert(new IdeAdapter(myProject)).init(convert(settings));
 
 		timer.addListener(new TimerComponent.Listener() {
-			@Override public void onUpdate(int seconds) {
-				autoRevert.onTimer(seconds);
+			@Override public void onUpdate(final int seconds) {
+				ApplicationManager.getApplication().invokeLater(new Runnable() {
+					@Override public void run() {
+						autoRevert.onTimer(seconds);
+					}
+				}, ModalityState.any());
 			}
 		}, myProject);
 

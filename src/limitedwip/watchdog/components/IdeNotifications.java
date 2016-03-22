@@ -20,8 +20,8 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
-import limitedwip.common.settings.LimitedWIPSettings;
 import limitedwip.common.LimitedWIPAppComponent;
+import limitedwip.watchdog.ChangeSizeWatchdog;
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,10 +30,10 @@ import javax.swing.event.HyperlinkEvent;
 public class IdeNotifications {
 	private final WatchdogStatusBarWidget watchdogWidget = new WatchdogStatusBarWidget();
 	private final Project project;
-	private LimitedWIPSettings settings;
+	private ChangeSizeWatchdog.Settings settings;
 
 
-	public IdeNotifications(Project project, LimitedWIPSettings settings) {
+	public IdeNotifications(Project project, ChangeSizeWatchdog.Settings settings) {
 		this.project = project;
 		this.settings = settings;
 
@@ -45,7 +45,7 @@ public class IdeNotifications {
 		updateStatusBar();
 	}
 
-	public void onSettingsUpdate(LimitedWIPSettings settings) {
+	public void onSettingsUpdate(ChangeSizeWatchdog.Settings settings) {
 		this.settings = settings;
 		updateStatusBar();
 	}
@@ -66,7 +66,7 @@ public class IdeNotifications {
 		if (statusBar == null) return;
 
 		boolean hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null;
-		boolean shouldShowWatchdog = settings.watchdogEnabled && settings.showRemainingChangesInToolbar;
+		boolean shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar;
 		if (hasWatchdogWidget && shouldShowWatchdog) {
             statusBar.updateWidget(watchdogWidget.ID());
 
@@ -85,7 +85,6 @@ public class IdeNotifications {
 	}
 
 	public void onChangeSizeTooBig(ChangeSize linesChanged, int changedLinesLimit) {
-		// TODO limit number of notifications displayed at the same time
 		NotificationListener listener = new NotificationListener() {
 			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
 				WatchdogComponent watchdogComponent = project.getComponent(WatchdogComponent.class);

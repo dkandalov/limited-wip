@@ -1,9 +1,9 @@
 package limitedwip.watchdog;
 
+import limitedwip.watchdog.ChangeSizeWatchdog.Settings;
+import limitedwip.watchdog.components.ChangeSize;
 import limitedwip.watchdog.components.IdeActions;
 import limitedwip.watchdog.components.IdeNotifications;
-import limitedwip.watchdog.components.ChangeSize;
-import limitedwip.watchdog.ChangeSizeWatchdog.Settings;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -17,8 +17,8 @@ public class ChangeSizeWatchdogTest {
 
     private final IdeNotifications ideNotifications = mock(IdeNotifications.class);
     private final IdeActions ideActions = mock(IdeActions.class);
-    private final Settings settings = new Settings(true, maxLinesInChange, notificationIntervalInSeconds);
-    private final ChangeSizeWatchdog watchdog = new ChangeSizeWatchdog(ideNotifications, ideActions, settings);
+    private final Settings settings = new Settings(true, maxLinesInChange, notificationIntervalInSeconds, true);
+    private final ChangeSizeWatchdog watchdog = new ChangeSizeWatchdog(ideNotifications, ideActions).init(settings);
 
     private int secondsSinceStart;
 
@@ -69,7 +69,8 @@ public class ChangeSizeWatchdogTest {
         watchdog.onTimer(next());
         watchdog.onTimer(next());
 
-        verifyZeroInteractions(ideNotifications);
+	    verify(ideNotifications, times(2)).onSettingsUpdate(Matchers.<Settings>anyObject());
+	    verifyNoMoreInteractions(ideNotifications);
     }
 
     @Test public void canSkipNotificationsUtilNextCommit() {
@@ -105,7 +106,8 @@ public class ChangeSizeWatchdogTest {
         watchdog.onSettings(watchdogDisabledSettings());
         watchdog.onTimer(next());
 
-        verifyZeroInteractions(ideNotifications);
+	    verify(ideNotifications, times(2)).onSettingsUpdate(Matchers.<Settings>anyObject());
+        verifyNoMoreInteractions(ideNotifications);
     }
 
     @Before public void setUp() throws Exception {
@@ -117,10 +119,10 @@ public class ChangeSizeWatchdogTest {
     }
 
     private static Settings watchdogDisabledSettings() {
-        return new Settings(false, 150, 2);
+        return new Settings(false, 150, 2, true);
     }
 
     private static Settings settingsWithChangeSizeThreshold(int maxLinesInChange) {
-        return new Settings(true, maxLinesInChange, 2);
+        return new Settings(true, maxLinesInChange, 2, true);
     }
 }

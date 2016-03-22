@@ -1,8 +1,8 @@
 package limitedwip.watchdog;
 
+import limitedwip.watchdog.components.ChangeSize;
 import limitedwip.watchdog.components.IdeActions;
 import limitedwip.watchdog.components.IdeNotifications;
-import limitedwip.watchdog.components.ChangeSize;
 
 public class ChangeSizeWatchdog {
     private final IdeNotifications ideNotifications;
@@ -13,14 +13,17 @@ public class ChangeSizeWatchdog {
     private boolean skipNotificationsUtilCommit = false;
 
 
-    public ChangeSizeWatchdog(IdeNotifications ideNotifications, IdeActions ideActions, Settings settings) {
+    public ChangeSizeWatchdog(IdeNotifications ideNotifications, IdeActions ideActions) {
         this.ideNotifications = ideNotifications;
         this.ideActions = ideActions;
-        this.settings = settings;
-        onSettings(settings);
     }
 
-    public synchronized void onTimer(int seconds) {
+	public ChangeSizeWatchdog init(Settings settings) {
+		onSettings(settings);
+		return this;
+	}
+
+	public void onTimer(int seconds) {
         if (!settings.enabled) return;
 
         ChangeSize changeListSizeInLines = ideActions.currentChangeListSizeInLines();
@@ -40,35 +43,38 @@ public class ChangeSizeWatchdog {
         ideNotifications.currentChangeListSize(changeListSizeInLines, settings.maxLinesInChange);
     }
 
-    public synchronized void onSettings(Settings settings) {
-        lastNotificationTime = -1;
+    public void onSettings(Settings settings) {
+	    ideNotifications.onSettingsUpdate(settings);
+	    lastNotificationTime = -1;
         this.settings = settings;
     }
 
-    public synchronized void onCommit() {
+    public void onCommit() {
         skipNotificationsUtilCommit = false;
     }
 
-    public synchronized void skipNotificationsUntilCommit(boolean value) {
+    public void skipNotificationsUntilCommit(boolean value) {
         skipNotificationsUtilCommit = value;
         lastNotificationTime = -1;
+	    ideNotifications.onSkipNotificationUntilCommit(value);
     }
 
-    public synchronized boolean toggleSkipNotificationsUntilCommit() {
+    public void toggleSkipNotificationsUntilCommit() {
         skipNotificationsUntilCommit(!skipNotificationsUtilCommit);
-        return skipNotificationsUtilCommit;
     }
 
 
     public static class Settings {
-	    private final boolean enabled;
-	    private final int maxLinesInChange;
-	    private final int notificationIntervalInSeconds;
+	    public final boolean enabled;
+	    public final int maxLinesInChange;
+	    public final int notificationIntervalInSeconds;
+	    public final boolean showRemainingChangesInToolbar;
 
-        public Settings(boolean enabled, int maxLinesInChange, int notificationIntervalInSeconds) {
+        public Settings(boolean enabled, int maxLinesInChange, int notificationIntervalInSeconds, boolean showRemainingChangesInToolbar) {
             this.enabled = enabled;
             this.maxLinesInChange = maxLinesInChange;
             this.notificationIntervalInSeconds = notificationIntervalInSeconds;
+	        this.showRemainingChangesInToolbar = showRemainingChangesInToolbar;
         }
     }
 }
