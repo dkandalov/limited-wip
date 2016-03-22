@@ -66,8 +66,8 @@ public class AutoRevert {
 		if (secondsPassed >= remainingSeconds) {
 			startSeconds = -1;
 			applyNewSettings();
-			ideNotifications.revertCurrentChangeList();
-			if (settings.notifyOnRevert) {
+			int revertedFilesCount = ideNotifications.revertCurrentChangeList();
+			if (revertedFilesCount > 0 && settings.notifyOnRevert) {
 				ideNotifications.onChangesRevert();
 			}
 		}

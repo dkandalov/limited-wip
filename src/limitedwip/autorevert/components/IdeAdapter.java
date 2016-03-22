@@ -4,7 +4,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -22,6 +21,7 @@ import limitedwip.autorevert.ui.AutoRevertStatusBarWidget;
 import limitedwip.common.LimitedWIPAppComponent;
 
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.intellij.util.containers.ContainerUtil.map;
 import static com.intellij.util.containers.ContainerUtil.toArray;
@@ -48,34 +48,32 @@ public class IdeAdapter {
 		});
 	}
 
-	public void revertCurrentChangeList() {
-		final Application application = ApplicationManager.getApplication();
-		application.invokeLater(new Runnable() {
+	public int revertCurrentChangeList() {
+		final AtomicInteger revertedFilesCount = new AtomicInteger(0);
+		ApplicationManager.getApplication().runWriteAction(new Runnable() {
 			@Override public void run() {
-				application.runWriteAction(new Runnable() {
-					@Override public void run() {
-						try {
+				try {
 
-							Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
-							if (changes.isEmpty()) return;
+					Collection<Change> changes = ChangeListManager.getInstance(project).getDefaultChangeList().getChanges();
+					revertedFilesCount.set(changes.size());
+					if (changes.isEmpty()) return;
 
-							new RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null);
+					new RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null);
 
-							VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
-								@Override public VirtualFile fun(Change change) {
-									return change.getVirtualFile();
-								}
-							}), new VirtualFile[changes.size()]);
-							FileDocumentManager.getInstance().reloadFiles(changedFiles);
-
-						} catch (Exception e) {
-							// observed exception while reloading project at the time of auto-revert
-							logger.error("Error while doing revert", e);
+					VirtualFile[] changedFiles = toArray(map(changes, new Function<Change, VirtualFile>() {
+						@Override public VirtualFile fun(Change change) {
+							return change.getVirtualFile();
 						}
-					}
-				});
+					}), new VirtualFile[0]);
+					FileDocumentManager.getInstance().reloadFiles(changedFiles);
+
+				} catch (Exception e) {
+					// observed exception while reloading project at the time of auto-revert
+					logger.error("Error while doing revert", e);
+				}
 			}
 		});
+		return revertedFilesCount.get();
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {

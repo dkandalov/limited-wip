@@ -11,7 +11,7 @@ import limitedwip.common.TimerComponent;
 import limitedwip.common.settings.LimitedWIPSettings;
 import limitedwip.common.settings.LimitedWipConfigurable;
 
-public class AutoRevertComponent extends AbstractProjectComponent implements LimitedWipConfigurable.Listener, LimitedWipCheckin.Listener {
+public class AutoRevertComponent extends AbstractProjectComponent {
 	private final TimerComponent timer;
 	private AutoRevert autoRevert;
 
@@ -34,12 +34,17 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 			}
 		}, myProject);
 
-		LimitedWipConfigurable.registerSettingsListener(myProject, this);
-		LimitedWipCheckin.registerListener(myProject, this);
-	}
+		LimitedWipConfigurable.registerSettingsListener(myProject, new LimitedWipConfigurable.Listener() {
+			@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
+				autoRevert.onSettings(convert(settings));
+			}
+		});
 
-	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
-		autoRevert.onSettings(convert(settings));
+		LimitedWipCheckin.registerListener(myProject, new LimitedWipCheckin.Listener() {
+			@Override public void onSuccessfulCheckin(boolean allFileAreCommitted) {
+				if (allFileAreCommitted) autoRevert.onAllFilesCommitted();
+			}
+		});
 	}
 
 	public void startAutoRevert() {
@@ -52,12 +57,6 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 
 	public void stopAutoRevert() {
 		autoRevert.stop();
-	}
-
-	public void onSuccessfulCheckin(boolean allFileAreCommitted) {
-		if (allFileAreCommitted) {
-			autoRevert.onAllFilesCommitted();
-		}
 	}
 
 	private static AutoRevert.Settings convert(LimitedWIPSettings settings) {
