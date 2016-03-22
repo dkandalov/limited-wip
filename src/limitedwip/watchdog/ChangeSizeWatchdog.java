@@ -1,21 +1,17 @@
 package limitedwip.watchdog;
 
-import limitedwip.watchdog.components.ChangeSize;
-import limitedwip.watchdog.components.IdeActions;
 import limitedwip.watchdog.components.IdeAdapter;
 
 public class ChangeSizeWatchdog {
     private final IdeAdapter ideAdapter;
 
-    private final IdeActions ideActions;
     private Settings settings;
     private int lastNotificationTime = -1;
     private boolean skipNotificationsUtilCommit = false;
 
 
-    public ChangeSizeWatchdog(IdeAdapter ideAdapter, IdeActions ideActions) {
+    public ChangeSizeWatchdog(IdeAdapter ideAdapter) {
         this.ideAdapter = ideAdapter;
-        this.ideActions = ideActions;
     }
 
 	public ChangeSizeWatchdog init(Settings settings) {
@@ -26,7 +22,7 @@ public class ChangeSizeWatchdog {
 	public void onTimer(int seconds) {
         if (!settings.enabled) return;
 
-        ChangeSize changeListSizeInLines = ideActions.currentChangeListSizeInLines();
+        ChangeSize changeListSizeInLines = ideAdapter.currentChangeListSizeInLines();
 
         if (!skipNotificationsUtilCommit) {
             boolean exceededThreshold = changeListSizeInLines.value > settings.maxLinesInChange;

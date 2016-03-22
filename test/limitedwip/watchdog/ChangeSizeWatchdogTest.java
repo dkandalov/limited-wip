@@ -1,8 +1,6 @@
 package limitedwip.watchdog;
 
 import limitedwip.watchdog.ChangeSizeWatchdog.Settings;
-import limitedwip.watchdog.components.ChangeSize;
-import limitedwip.watchdog.components.IdeActions;
 import limitedwip.watchdog.components.IdeAdapter;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,15 +14,14 @@ public class ChangeSizeWatchdogTest {
     private static final int notificationIntervalInSeconds = 2;
 
     private final IdeAdapter ideAdapter = mock(IdeAdapter.class);
-    private final IdeActions ideActions = mock(IdeActions.class);
     private final Settings settings = new Settings(true, maxLinesInChange, notificationIntervalInSeconds, true);
-    private final ChangeSizeWatchdog watchdog = new ChangeSizeWatchdog(ideAdapter, ideActions).init(settings);
+    private final ChangeSizeWatchdog watchdog = new ChangeSizeWatchdog(ideAdapter).init(settings);
 
     private int secondsSinceStart;
 
 
     @Test public void doesNotSendNotification_WhenChangeSizeIsBelowThreshold() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(10));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(10));
 
         watchdog.onTimer(next());
 
@@ -32,7 +29,7 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void sendsNotification_WhenChangeSizeIsAboveThreshold() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
 
         watchdog.onTimer(next());
 
@@ -40,7 +37,7 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void sendsChangeSizeNotification_OnlyOnOneOfSeveralUpdates() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
 
         watchdog.onTimer(next()); // send notification
         watchdog.onTimer(next());
@@ -51,7 +48,7 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void sendsChangeSizeNotification_AfterSettingsChange() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
         InOrder inOrder = inOrder(ideAdapter);
 
         watchdog.onTimer(next());
@@ -63,7 +60,7 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void doesNotSendNotification_WhenDisabled() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
 
         watchdog.onSettings(watchdogDisabledSettings());
         watchdog.onTimer(next());
@@ -74,7 +71,7 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void canSkipNotificationsUtilNextCommit() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
 
         watchdog.skipNotificationsUntilCommit(true);
         watchdog.onTimer(next());
@@ -86,13 +83,13 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void sendsChangeSizeUpdate() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
         watchdog.onTimer(next());
         verify(ideAdapter).currentChangeListSize(new ChangeSize(200), maxLinesInChange);
     }
 
     @Test public void sendsChangeSizeUpdate_WhenSkipNotificationUntilNextCommit() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
 
         watchdog.skipNotificationsUntilCommit(true);
         watchdog.onTimer(next());
@@ -101,7 +98,7 @@ public class ChangeSizeWatchdogTest {
     }
 
     @Test public void doesNotSendChangeSizeUpdate_WhenDisabled() {
-        when(ideActions.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+        when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
 
         watchdog.onSettings(watchdogDisabledSettings());
         watchdog.onTimer(next());

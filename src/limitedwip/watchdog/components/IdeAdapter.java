@@ -17,10 +17,13 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import limitedwip.common.LimitedWIPAppComponent;
+import limitedwip.watchdog.ChangeSize;
 import limitedwip.watchdog.ChangeSizeWatchdog;
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget;
 import org.jetbrains.annotations.NotNull;
@@ -31,10 +34,30 @@ public class IdeAdapter {
 	private final WatchdogStatusBarWidget watchdogWidget = new WatchdogStatusBarWidget();
 	private final Project project;
 	private ChangeSizeWatchdog.Settings settings;
+	private ChangeSize lastChangeSize = new ChangeSize(0);
+	private int skipChecks;
 
 
 	public IdeAdapter(Project project) {
 		this.project = project;
+	}
+
+	public ChangeSize currentChangeListSizeInLines() {
+		if (skipChecks > 0) {
+			skipChecks--;
+			return lastChangeSize;
+		}
+		ChangeSize changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
+			@Override public ChangeSize compute() {
+				return ChangeSizeProjectComponent.getInstance(project).currentChangeListSizeInLines();
+			}
+		});
+		if (changeSize.isApproximate) {
+			changeSize = new ChangeSize(lastChangeSize.value, true);
+			skipChecks = 10;
+		}
+		lastChangeSize = changeSize;
+		return changeSize;
 	}
 
 	public void currentChangeListSize(ChangeSize linesInChange, int maxLinesInChange) {
