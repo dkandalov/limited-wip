@@ -24,7 +24,7 @@ import limitedwip.common.settings.LimitedWIPSettings;
 import limitedwip.common.settings.LimitedWipConfigurable;
 import limitedwip.watchdog.ChangeSizeWatchdog;
 
-public class WatchdogComponent extends AbstractProjectComponent implements LimitedWipConfigurable.Listener, LimitedWipCheckin.Listener {
+public class WatchdogComponent extends AbstractProjectComponent {
 	private ChangeSizeWatchdog changeSizeWatchdog;
 	private TimerComponent timer;
 
@@ -50,12 +50,17 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
 			}
 		}, myProject);
 
-		LimitedWipConfigurable.registerSettingsListener(myProject, this);
-		LimitedWipCheckin.registerListener(myProject, this);
-	}
+		LimitedWipConfigurable.registerSettingsListener(myProject, new LimitedWipConfigurable.Listener() {
+			@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
+				changeSizeWatchdog.onSettings(convert(settings));
+			}
+		});
 
-	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
-		changeSizeWatchdog.onSettings(convert(settings));
+		LimitedWipCheckin.registerListener(myProject, new LimitedWipCheckin.Listener() {
+			@Override public void onSuccessfulCheckin(boolean allFileAreCommitted) {
+				changeSizeWatchdog.onCommit();
+			}
+		});
 	}
 
     public void toggleSkipNotificationsUntilCommit() {
@@ -64,10 +69,6 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
 
 	public void skipNotificationsUntilCommit(boolean value) {
 		changeSizeWatchdog.skipNotificationsUntilCommit(value);
-	}
-
-	@Override public void onSuccessfulCheckin(boolean allFileAreCommitted) {
-		changeSizeWatchdog.onCommit();
 	}
 
 	private static ChangeSizeWatchdog.Settings convert(LimitedWIPSettings settings) {
