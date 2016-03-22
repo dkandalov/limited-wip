@@ -27,17 +27,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 
-public class IdeNotifications {
+public class IdeAdapter {
 	private final WatchdogStatusBarWidget watchdogWidget = new WatchdogStatusBarWidget();
 	private final Project project;
 	private ChangeSizeWatchdog.Settings settings;
 
 
-	public IdeNotifications(Project project, ChangeSizeWatchdog.Settings settings) {
+	public IdeAdapter(Project project) {
 		this.project = project;
-		this.settings = settings;
-
-		onSettingsUpdate(settings);
 	}
 
 	public void currentChangeListSize(ChangeSize linesInChange, int maxLinesInChange) {

@@ -2,10 +2,10 @@ package limitedwip.watchdog;
 
 import limitedwip.watchdog.components.ChangeSize;
 import limitedwip.watchdog.components.IdeActions;
-import limitedwip.watchdog.components.IdeNotifications;
+import limitedwip.watchdog.components.IdeAdapter;
 
 public class ChangeSizeWatchdog {
-    private final IdeNotifications ideNotifications;
+    private final IdeAdapter ideAdapter;
 
     private final IdeActions ideActions;
     private Settings settings;
@@ -13,8 +13,8 @@ public class ChangeSizeWatchdog {
     private boolean skipNotificationsUtilCommit = false;
 
 
-    public ChangeSizeWatchdog(IdeNotifications ideNotifications, IdeActions ideActions) {
-        this.ideNotifications = ideNotifications;
+    public ChangeSizeWatchdog(IdeAdapter ideAdapter, IdeActions ideActions) {
+        this.ideAdapter = ideAdapter;
         this.ideActions = ideActions;
     }
 
@@ -35,16 +35,16 @@ public class ChangeSizeWatchdog {
                             (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
 
             if (exceededThreshold && timeToNotify) {
-                ideNotifications.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
+                ideAdapter.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
                 lastNotificationTime = seconds;
             }
         }
 
-        ideNotifications.currentChangeListSize(changeListSizeInLines, settings.maxLinesInChange);
+        ideAdapter.currentChangeListSize(changeListSizeInLines, settings.maxLinesInChange);
     }
 
     public void onSettings(Settings settings) {
-	    ideNotifications.onSettingsUpdate(settings);
+	    ideAdapter.onSettingsUpdate(settings);
 	    lastNotificationTime = -1;
         this.settings = settings;
     }
@@ -56,7 +56,7 @@ public class ChangeSizeWatchdog {
     public void skipNotificationsUntilCommit(boolean value) {
         skipNotificationsUtilCommit = value;
         lastNotificationTime = -1;
-	    ideNotifications.onSkipNotificationUntilCommit(value);
+	    ideAdapter.onSkipNotificationUntilCommit(value);
     }
 
     public void toggleSkipNotificationsUntilCommit() {

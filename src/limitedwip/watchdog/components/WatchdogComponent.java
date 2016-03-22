@@ -36,9 +36,8 @@ public class WatchdogComponent extends AbstractProjectComponent {
 
 	@Override public void projectOpened() {
 		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
-		IdeNotifications ideNotifications = new IdeNotifications(myProject, convert(settings));
 		IdeActions ideActions = new IdeActions(myProject);
-		changeSizeWatchdog = new ChangeSizeWatchdog(ideNotifications, ideActions).init(convert(settings));
+		changeSizeWatchdog = new ChangeSizeWatchdog(new IdeAdapter(myProject), ideActions).init(convert(settings));
 
 		timer.addListener(new TimerComponent.Listener() {
 			@Override public void onUpdate(final int seconds) {
