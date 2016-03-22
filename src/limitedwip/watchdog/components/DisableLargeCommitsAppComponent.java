@@ -25,8 +25,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
 import limitedwip.common.LimitedWIPAppComponent;
-import limitedwip.common.LimitedWIPSettings;
-import limitedwip.common.LimitedWipConfigurable;
+import limitedwip.common.settings.LimitedWIPSettings;
+import limitedwip.common.settings.LimitedWipConfigurable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
@@ -34,7 +34,7 @@ import java.util.List;
 
 import static limitedwip.watchdog.components.VcsIdeUtil.registerBeforeCheckInListener;
 
-public class DisableLargeCommitsAppComponent implements ApplicationComponent, LimitedWIPSettings.Listener {
+public class DisableLargeCommitsAppComponent implements ApplicationComponent, LimitedWipConfigurable.Listener {
 	private static final int maxShowCommitDialogAttempts = 3;
 
 	private boolean enabled;

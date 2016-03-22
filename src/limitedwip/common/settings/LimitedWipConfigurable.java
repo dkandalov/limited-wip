@@ -1,4 +1,4 @@
-package limitedwip.common;
+package limitedwip.common.settings;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
@@ -7,7 +7,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
-import limitedwip.common.ui.SettingsForm;
+import limitedwip.common.LimitedWIPAppComponent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class LimitedWipConfigurable implements SearchableConfigurable {
-	private static final String EXTENSION_POINT_NAME = "LimitedWIP.wipSettingsListener";
+	private static final String EXTENSION_POINT_NAME = "LimitedWIP.settingsListener";
 	private SettingsForm settingsForm;
 
 
@@ -60,19 +60,23 @@ public class LimitedWipConfigurable implements SearchableConfigurable {
 	}
 
 	private void notifySettingsListeners(LimitedWIPSettings settings) {
-		final ExtensionPoint<LimitedWIPSettings.Listener> extensionPoint = Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME);
-		for (LimitedWIPSettings.Listener listener : extensionPoint.getExtensions()) {
+		final ExtensionPoint<Listener> extensionPoint = Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME);
+		for (Listener listener : extensionPoint.getExtensions()) {
 			listener.onSettingsUpdate(settings);
 		}
 	}
 
-	public static void registerSettingsListener(Disposable disposable, final LimitedWIPSettings.Listener listener) {
-		final ExtensionPoint<LimitedWIPSettings.Listener> extensionPoint = Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME);
+	public static void registerSettingsListener(Disposable disposable, final Listener listener) {
+		final ExtensionPoint<Listener> extensionPoint = Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME);
 		extensionPoint.registerExtension(listener);
 		Disposer.register(disposable, new Disposable() {
 			@Override public void dispose() {
 				extensionPoint.unregisterExtension(listener);
 			}
 		});
+	}
+
+	public interface Listener {
+		void onSettingsUpdate(LimitedWIPSettings settings);
 	}
 }

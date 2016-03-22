@@ -17,12 +17,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import limitedwip.common.LimitedWIPSettings;
-import limitedwip.common.LimitedWipConfigurable;
+import limitedwip.common.settings.LimitedWIPSettings;
+import limitedwip.common.LimitedWipCheckin;
+import limitedwip.common.settings.LimitedWipConfigurable;
 import limitedwip.common.TimerComponent;
 import limitedwip.watchdog.ChangeSizeWatchdog;
 
-public class WatchdogComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener {
+public class WatchdogComponent extends AbstractProjectComponent implements LimitedWipConfigurable.Listener, LimitedWipCheckin.Listener {
 	private ChangeSizeWatchdog changeSizeWatchdog;
 	private IdeNotifications ideNotifications;
 	private TimerComponent timer;
@@ -54,6 +55,7 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
 		}, myProject);
 
 		LimitedWipConfigurable.registerSettingsListener(myProject, this);
+		LimitedWipCheckin.registerListener(myProject, this);
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
@@ -75,7 +77,7 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
         ideNotifications.onSkipNotificationUntilCommit(value);
 	}
 
-    public void onVcsCommit() {
-        changeSizeWatchdog.onCommit();
-    }
+	@Override public void onSuccessfulCheckin(boolean allFileAreCommitted) {
+		changeSizeWatchdog.onCommit();
+	}
 }

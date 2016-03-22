@@ -7,11 +7,12 @@ import com.intellij.openapi.project.Project;
 import limitedwip.autorevert.AutoRevert;
 import limitedwip.autorevert.ui.IdeActions2;
 import limitedwip.autorevert.ui.IdeNotifications2;
-import limitedwip.common.LimitedWIPSettings;
-import limitedwip.common.LimitedWipConfigurable;
+import limitedwip.common.settings.LimitedWIPSettings;
+import limitedwip.common.LimitedWipCheckin;
+import limitedwip.common.settings.LimitedWipConfigurable;
 import limitedwip.common.TimerComponent;
 
-public class AutoRevertComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener  {
+public class AutoRevertComponent extends AbstractProjectComponent implements LimitedWipConfigurable.Listener, LimitedWipCheckin.Listener {
 	private final TimerComponent timer;
 	private AutoRevert autoRevert;
 
@@ -32,6 +33,7 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 		}, myProject);
 
 		LimitedWipConfigurable.registerSettingsListener(myProject, this);
+		LimitedWipCheckin.registerListener(myProject, this);
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
@@ -50,8 +52,8 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 		autoRevert.stop();
 	}
 
-	public void onVcsCommit(int uncommittedFilesSize) {
-		if (uncommittedFilesSize == 0) {
+	public void onSuccessfulCheckin(boolean allFileAreCommitted) {
+		if (allFileAreCommitted) {
 			autoRevert.onAllFilesCommitted();
 		}
 	}

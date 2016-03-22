@@ -20,7 +20,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
-import limitedwip.common.LimitedWIPSettings;
+import limitedwip.common.settings.LimitedWIPSettings;
 import limitedwip.common.LimitedWIPAppComponent;
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget;
 import org.jetbrains.annotations.NotNull;

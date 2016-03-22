@@ -57,12 +57,13 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable instance="limitedwip.common.LimitedWipConfigurable"/>
-        <applicationService serviceInterface="limitedwip.common.LimitedWIPSettings" serviceImplementation="limitedwip.common.LimitedWIPSettings"/>
-        <checkinHandlerFactory implementation="limitedwip.common.LimitedWipCheckinHandlerFactory"/>
+        <applicationConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
+        <applicationService serviceInterface="limitedwip.common.settings.LimitedWIPSettings" serviceImplementation="limitedwip.common.settings.LimitedWIPSettings"/>
+        <checkinHandlerFactory implementation="limitedwip.common.LimitedWipCheckin"/>
     </extensions>
 
     <extensionPoints>
-        <extensionPoint name="wipSettingsListener" interface="limitedwip.common.LimitedWIPSettings$Listener"/>
+        <extensionPoint name="settingsListener" interface="limitedwip.common.settings.LimitedWipConfigurable$Listener"/>
+        <extensionPoint name="checkinListener" interface="limitedwip.common.LimitedWipCheckin$Listener"/>
     </extensionPoints>
 </idea-plugin>
