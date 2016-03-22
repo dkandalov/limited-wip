@@ -19,12 +19,14 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
 import limitedwip.common.LimitedWIPAppComponent;
 import limitedwip.common.LimitedWIPSettings;
+import limitedwip.common.LimitedWipConfigurable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
@@ -56,6 +58,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 				return true;
 			}
 		});
+		LimitedWipConfigurable.registerSettingsListener(ApplicationManager.getApplication(), this);
 	}
 
 	private void notifyThatCommitWasCancelled(Project project) {

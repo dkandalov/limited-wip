@@ -14,8 +14,8 @@
 package limitedwip.autorevert;
 
 import limitedwip.autorevert.AutoRevert.Settings;
-import limitedwip.autorevert.components.IdeActions2;
-import limitedwip.autorevert.components.IdeNotifications2;
+import limitedwip.autorevert.ui.IdeActions2;
+import limitedwip.autorevert.ui.IdeNotifications2;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

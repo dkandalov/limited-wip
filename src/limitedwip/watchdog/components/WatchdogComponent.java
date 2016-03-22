@@ -18,6 +18,7 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import limitedwip.common.LimitedWIPSettings;
+import limitedwip.common.LimitedWipConfigurable;
 import limitedwip.common.TimerComponent;
 import limitedwip.watchdog.ChangeSizeWatchdog;
 
@@ -51,6 +52,8 @@ public class WatchdogComponent extends AbstractProjectComponent implements Limit
 				changeSizeWatchdog.onTimer(seconds);
 			}
 		}, myProject);
+
+		LimitedWipConfigurable.registerSettingsListener(myProject, this);
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {

@@ -5,7 +5,10 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import limitedwip.autorevert.AutoRevert;
+import limitedwip.autorevert.ui.IdeActions2;
+import limitedwip.autorevert.ui.IdeNotifications2;
 import limitedwip.common.LimitedWIPSettings;
+import limitedwip.common.LimitedWipConfigurable;
 import limitedwip.common.TimerComponent;
 
 public class AutoRevertComponent extends AbstractProjectComponent implements LimitedWIPSettings.Listener  {
@@ -27,6 +30,8 @@ public class AutoRevertComponent extends AbstractProjectComponent implements Lim
 				autoRevert.onTimer(seconds);
 			}
 		}, myProject);
+
+		LimitedWipConfigurable.registerSettingsListener(myProject, this);
 	}
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {

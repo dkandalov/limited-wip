@@ -1,4 +1,4 @@
-package limitedwip.autorevert.components;
+package limitedwip.autorevert.ui;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;

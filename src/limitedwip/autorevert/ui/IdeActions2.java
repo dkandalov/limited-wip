@@ -1,4 +1,4 @@
-package limitedwip.autorevert.components;
+package limitedwip.autorevert.ui;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;

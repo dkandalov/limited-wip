@@ -61,4 +61,8 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
         <applicationService serviceInterface="limitedwip.common.LimitedWIPSettings" serviceImplementation="limitedwip.common.LimitedWIPSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.LimitedWipCheckinHandlerFactory"/>
     </extensions>
+
+    <extensionPoints>
+        <extensionPoint name="wipSettingsListener" interface="limitedwip.common.LimitedWIPSettings$Listener"/>
+    </extensionPoints>
 </idea-plugin>

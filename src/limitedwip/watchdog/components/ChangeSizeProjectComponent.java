@@ -38,9 +38,6 @@ public class ChangeSizeProjectComponent extends AbstractProjectComponent {
 		super(project);
 	}
 
-	@Override public void initComponent() {
-	}
-
 	@Override public void disposeComponent() {
 		unchanged.clear();
 		changeSizeByDocument.clear();

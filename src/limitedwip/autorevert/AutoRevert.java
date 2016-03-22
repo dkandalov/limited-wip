@@ -14,8 +14,8 @@
 package limitedwip.autorevert;
 
 
-import limitedwip.autorevert.components.IdeActions2;
-import limitedwip.autorevert.components.IdeNotifications2;
+import limitedwip.autorevert.ui.IdeActions2;
+import limitedwip.autorevert.ui.IdeNotifications2;
 
 public class AutoRevert {
 	private final IdeNotifications2 ideNotifications;
