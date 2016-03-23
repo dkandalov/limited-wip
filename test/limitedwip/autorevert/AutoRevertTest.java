@@ -152,6 +152,7 @@ public class AutoRevertTest {
 
 	@Before public void setUp() throws Exception {
 		secondsSinceStart = 0;
+		stub(ideAdapter.revertCurrentChangeList()).toReturn(10);
 	}
 
 	private int next() {
