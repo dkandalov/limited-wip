@@ -22,10 +22,10 @@ import limitedwip.common.LimitedWipCheckin;
 import limitedwip.common.TimerComponent;
 import limitedwip.common.settings.LimitedWIPSettings;
 import limitedwip.common.settings.LimitedWipConfigurable;
-import limitedwip.watchdog.ChangeSizeWatchdog;
+import limitedwip.watchdog.Watchdog;
 
 public class WatchdogComponent extends AbstractProjectComponent {
-	private ChangeSizeWatchdog changeSizeWatchdog;
+	private Watchdog watchdog;
 	private TimerComponent timer;
 
 
@@ -36,13 +36,13 @@ public class WatchdogComponent extends AbstractProjectComponent {
 
 	@Override public void projectOpened() {
 		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
-		changeSizeWatchdog = new ChangeSizeWatchdog(new IdeAdapter(myProject)).init(convert(settings));
+		watchdog = new Watchdog(new IdeAdapter(myProject)).init(convert(settings));
 
 		timer.addListener(new TimerComponent.Listener() {
 			@Override public void onUpdate(final int seconds) {
 				ApplicationManager.getApplication().invokeLater(new Runnable() {
 					@Override public void run() {
-						changeSizeWatchdog.onTimer(seconds);
+						watchdog.onTimer(seconds);
 					}
 				}, ModalityState.any());
 			}
@@ -50,27 +50,27 @@ public class WatchdogComponent extends AbstractProjectComponent {
 
 		LimitedWipConfigurable.registerSettingsListener(myProject, new LimitedWipConfigurable.Listener() {
 			@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
-				changeSizeWatchdog.onSettings(convert(settings));
+				watchdog.onSettings(convert(settings));
 			}
 		});
 
 		LimitedWipCheckin.registerListener(myProject, new LimitedWipCheckin.Listener() {
 			@Override public void onSuccessfulCheckin(boolean allFileAreCommitted) {
-				changeSizeWatchdog.onCommit();
+				watchdog.onCommit();
 			}
 		});
 	}
 
     public void toggleSkipNotificationsUntilCommit() {
-        changeSizeWatchdog.toggleSkipNotificationsUntilCommit();
+        watchdog.toggleSkipNotificationsUntilCommit();
     }
 
 	public void skipNotificationsUntilCommit(boolean value) {
-		changeSizeWatchdog.skipNotificationsUntilCommit(value);
+		watchdog.skipNotificationsUntilCommit(value);
 	}
 
-	private static ChangeSizeWatchdog.Settings convert(LimitedWIPSettings settings) {
-		return new ChangeSizeWatchdog.Settings(
+	private static Watchdog.Settings convert(LimitedWIPSettings settings) {
+		return new Watchdog.Settings(
 				settings.watchdogEnabled,
 				settings.maxLinesInChange,
 				settings.notificationIntervalInSeconds(),

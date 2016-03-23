@@ -2,7 +2,7 @@ package limitedwip.watchdog;
 
 import limitedwip.watchdog.components.IdeAdapter;
 
-public class ChangeSizeWatchdog {
+public class Watchdog {
     private final IdeAdapter ideAdapter;
 
     private Settings settings;
@@ -10,11 +10,11 @@ public class ChangeSizeWatchdog {
     private boolean skipNotificationsUtilCommit = false;
 
 
-    public ChangeSizeWatchdog(IdeAdapter ideAdapter) {
+    public Watchdog(IdeAdapter ideAdapter) {
         this.ideAdapter = ideAdapter;
     }
 
-	public ChangeSizeWatchdog init(Settings settings) {
+	public Watchdog init(Settings settings) {
 		onSettings(settings);
 		return this;
 	}

@@ -24,7 +24,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import limitedwip.common.LimitedWIPAppComponent;
 import limitedwip.watchdog.ChangeSize;
-import limitedwip.watchdog.ChangeSizeWatchdog;
+import limitedwip.watchdog.Watchdog;
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +33,7 @@ import javax.swing.event.HyperlinkEvent;
 public class IdeAdapter {
 	private final WatchdogStatusBarWidget watchdogWidget = new WatchdogStatusBarWidget();
 	private final Project project;
-	private ChangeSizeWatchdog.Settings settings;
+	private Watchdog.Settings settings;
 	private ChangeSize lastChangeSize = new ChangeSize(0);
 	private int skipChecks;
 
@@ -65,7 +65,7 @@ public class IdeAdapter {
 		updateStatusBar();
 	}
 
-	public void onSettingsUpdate(ChangeSizeWatchdog.Settings settings) {
+	public void onSettingsUpdate(Watchdog.Settings settings) {
 		this.settings = settings;
 		updateStatusBar();
 	}

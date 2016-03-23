@@ -1,6 +1,6 @@
 package limitedwip.watchdog;
 
-import limitedwip.watchdog.ChangeSizeWatchdog.Settings;
+import limitedwip.watchdog.Watchdog.Settings;
 import limitedwip.watchdog.components.IdeAdapter;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,13 +9,13 @@ import org.mockito.Matchers;
 
 import static org.mockito.Mockito.*;
 
-public class ChangeSizeWatchdogTest {
+public class WatchdogTest {
     private static final int maxLinesInChange = 100;
     private static final int notificationIntervalInSeconds = 2;
 
     private final IdeAdapter ideAdapter = mock(IdeAdapter.class);
     private final Settings settings = new Settings(true, maxLinesInChange, notificationIntervalInSeconds, true);
-    private final ChangeSizeWatchdog watchdog = new ChangeSizeWatchdog(ideAdapter).init(settings);
+    private final Watchdog watchdog = new Watchdog(ideAdapter).init(settings);
 
     private int secondsSinceStart;
 
