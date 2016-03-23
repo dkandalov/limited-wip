@@ -36,6 +36,7 @@ public class IdeAdapter {
 	private Watchdog.Settings settings;
 	private ChangeSize lastChangeSize = new ChangeSize(0);
 	private int skipChecks;
+	private Notification lastNotification;
 
 
 	public IdeAdapter(Project project) {
@@ -125,6 +126,11 @@ public class IdeAdapter {
 				listener
 		);
 		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
+
+		if (lastNotification != null && !lastNotification.isExpired()) {
+			lastNotification.expire();
+		}
+		lastNotification = notification;
 	}
 
     private static String asString(ChangeSize changeSize) {
