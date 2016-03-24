@@ -3,10 +3,11 @@ package limitedwip.watchdog;
 import limitedwip.watchdog.components.IdeAdapter;
 
 public class Watchdog {
-    private final IdeAdapter ideAdapter;
+	private static final int undefined = -1;
 
+	private final IdeAdapter ideAdapter;
     private Settings settings;
-    private int lastNotificationTime = -1;
+    private int lastNotificationTime = undefined;
     private boolean skipNotificationsUtilCommit = false;
 
 
@@ -22,36 +23,38 @@ public class Watchdog {
 	public void onTimer(int seconds) {
         if (!settings.enabled) return;
 
-        ChangeSize changeListSizeInLines = ideAdapter.currentChangeListSizeInLines();
+        ChangeSize changeSize = ideAdapter.currentChangeListSizeInLines();
+		boolean exceededThreshold = changeSize.value > settings.maxLinesInChange;
+		boolean timeToNotify =
+		        lastNotificationTime == undefined ||
+		        (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
 
-        if (!skipNotificationsUtilCommit) {
-            boolean exceededThreshold = changeListSizeInLines.value > settings.maxLinesInChange;
-            boolean timeToNotify =
-                    lastNotificationTime == -1 ||
-                            (seconds - lastNotificationTime) >= settings.notificationIntervalInSeconds;
+		if (timeToNotify && exceededThreshold && !skipNotificationsUtilCommit) {
+			ideAdapter.onChangeSizeTooBig(changeSize, settings.maxLinesInChange);
+			lastNotificationTime = seconds;
+		}
+		if (!exceededThreshold){
+			ideAdapter.onChangeSizeWithinLimit();
+		}
 
-            if (exceededThreshold && timeToNotify) {
-                ideAdapter.onChangeSizeTooBig(changeListSizeInLines, settings.maxLinesInChange);
-                lastNotificationTime = seconds;
-            }
-        }
-
-        ideAdapter.currentChangeListSize(changeListSizeInLines, settings.maxLinesInChange);
-    }
+		ideAdapter.showCurrentChangeListSize(changeSize, settings.maxLinesInChange);
+	}
 
     public void onSettings(Settings settings) {
 	    ideAdapter.onSettingsUpdate(settings);
-	    lastNotificationTime = -1;
+	    lastNotificationTime = undefined;
         this.settings = settings;
     }
 
     public void onCommit() {
-        skipNotificationsUtilCommit = false;
+	    // This is a workaround to suppress notifications sent while commit dialog is open.
+	    ideAdapter.onChangeSizeWithinLimit();
+
+	    skipNotificationsUtilCommit = false;
     }
 
     public void skipNotificationsUntilCommit(boolean value) {
         skipNotificationsUtilCommit = value;
-        lastNotificationTime = -1;
 	    ideAdapter.onSkipNotificationUntilCommit(value);
     }
 

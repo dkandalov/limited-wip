@@ -85,16 +85,16 @@ public class WatchdogTest {
     @Test public void sendsChangeSizeUpdate() {
         when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
         watchdog.onTimer(next());
-        verify(ideAdapter).currentChangeListSize(new ChangeSize(200), maxLinesInChange);
+        verify(ideAdapter).showCurrentChangeListSize(new ChangeSize(200), maxLinesInChange);
     }
 
-    @Test public void sendsChangeSizeUpdate_WhenSkipNotificationUntilNextCommit() {
+    @Test public void stillSendsChangeSizeUpdate_WhenNotificationsAreSkippedTillNextCommit() {
         when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
 
         watchdog.skipNotificationsUntilCommit(true);
         watchdog.onTimer(next());
 
-        verify(ideAdapter).currentChangeListSize(new ChangeSize(200), maxLinesInChange);
+        verify(ideAdapter).showCurrentChangeListSize(new ChangeSize(200), maxLinesInChange);
     }
 
     @Test public void doesNotSendChangeSizeUpdate_WhenDisabled() {
@@ -107,7 +107,18 @@ public class WatchdogTest {
         verifyNoMoreInteractions(ideAdapter);
     }
 
-    @Before public void setUp() throws Exception {
+	@Test public void closeNotification_WhenChangeSizeIsBackWithinLimit() {
+		when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(200));
+		watchdog.onTimer(next());
+		when(ideAdapter.currentChangeListSizeInLines()).thenReturn(new ChangeSize(0));
+		watchdog.onTimer(next());
+		watchdog.onTimer(next());
+
+		verify(ideAdapter, times(1)).onChangeSizeTooBig(new ChangeSize(200), maxLinesInChange);
+		verify(ideAdapter, times(2)).onChangeSizeWithinLimit();
+	}
+
+	@Before public void setUp() throws Exception {
         secondsSinceStart = 0;
     }
 

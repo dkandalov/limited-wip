@@ -61,7 +61,7 @@ public class IdeAdapter {
 		return changeSize;
 	}
 
-	public void currentChangeListSize(ChangeSize linesInChange, int maxLinesInChange) {
+	public void showCurrentChangeListSize(ChangeSize linesInChange, int maxLinesInChange) {
 		watchdogWidget.showChangeSize(asString(linesInChange), maxLinesInChange);
 		updateStatusBar();
 	}
@@ -131,6 +131,13 @@ public class IdeAdapter {
 			lastNotification.expire();
 		}
 		lastNotification = notification;
+	}
+
+	public void onChangeSizeWithinLimit() {
+		if (lastNotification != null && !lastNotification.isExpired()) {
+			lastNotification.expire();
+			lastNotification = null;
+		}
 	}
 
     private static String asString(ChangeSize changeSize) {
