@@ -42,6 +42,8 @@ public class WatchdogComponent extends AbstractProjectComponent {
 			@Override public void onUpdate(final int seconds) {
 				ApplicationManager.getApplication().invokeLater(new Runnable() {
 					@Override public void run() {
+						// Project can be closed (disposed) during handover between timer thread and EDT.
+						if (myProject.isDisposed()) return;
 						watchdog.onTimer(seconds);
 					}
 				}, ModalityState.any());
