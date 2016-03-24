@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class LimitedWipConfigurable implements SearchableConfigurable {
-	private static final String EXTENSION_POINT_NAME = "LimitedWIP.settingsListener";
+	private static final String EXTENSION_POINT_NAME = PluginId.value + ".settingsListener";
 	private SettingsForm settingsForm;
 
 

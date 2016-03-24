@@ -18,9 +18,10 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.Range;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import limitedwip.common.PluginId;
 
 @State(
-	name = "LimitedWIPSettings",
+	name = PluginId.value + "Settings",
 	storages = @Storage(id = "other", file = "$APP_CONFIG$/limitedwip.ui.settings.xml")
 )
 public class LimitedWIPSettings implements PersistentStateComponent<LimitedWIPSettings>  {

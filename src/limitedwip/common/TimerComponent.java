@@ -31,7 +31,7 @@ public class TimerComponent implements ApplicationComponent {
 	private static final Logger log = Logger.getInstance(TimerComponent.class);
 	private static final long oneSecondMs = 1000;
 
-	private final Timer timer = new Timer("LimitedWIP-TimeEvents");
+	private final Timer timer = new Timer(PluginId.value + "-TimeEvents");
 	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
 	private final long startTime = System.currentTimeMillis();
 
@@ -58,7 +58,7 @@ public class TimerComponent implements ApplicationComponent {
 	}
 
 	@NotNull @Override public String getComponentName() {
-		return "LimitedWIP-" + TimerComponent.class.getSimpleName();
+		return PluginId.value + "-" + TimerComponent.class.getSimpleName();
 	}
 
 	public void addListener(final Listener listener, Disposable parentDisposable) {

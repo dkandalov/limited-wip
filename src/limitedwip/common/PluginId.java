@@ -15,4 +15,5 @@ package limitedwip.common;
 
 public class PluginId {
 	public static final String displayName = "Limited WIP";
+	public static final String value = "LimitedWIP";
 }

@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.util.Consumer;
 import limitedwip.autorevert.components.AutoRevertComponent;
+import limitedwip.common.PluginId;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -76,6 +77,6 @@ public class AutoRevertStatusBarWidget implements StatusBarWidget {
     }
 
     @NotNull @Override public String ID() {
-        return "LimitedWIP_" + this.getClass().getSimpleName();
+        return PluginId.value + "_" + this.getClass().getSimpleName();
     }
 }
