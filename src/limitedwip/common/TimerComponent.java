@@ -18,27 +18,26 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
 public class TimerComponent implements ApplicationComponent {
 	private static final Logger log = Logger.getInstance(TimerComponent.class);
+	private static final long oneSecondMs = 1000;
 
+	private final Timer timer = new Timer("LimitedWIP-TimeEvents");
 	private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
-	private ScheduledFuture<?> future;
-	private long startTime;
+	private final long startTime = System.currentTimeMillis();
 
 
 	@Override public void initComponent() {
-		startTime = System.currentTimeMillis();
-		Runnable runnable = new Runnable() {
+		timer.schedule(new TimerTask() {
 			@Override public void run() {
 				try {
 					long secondsSinceStart = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime);
@@ -50,13 +49,12 @@ public class TimerComponent implements ApplicationComponent {
 					log.error(e);
 				}
 			}
-		};
-		ScheduledExecutorService executorService = AppExecutorUtil.getAppScheduledExecutorService();
-		future = executorService.scheduleWithFixedDelay(runnable, 0, 1, TimeUnit.SECONDS);
+		}, 0, oneSecondMs);
 	}
 
 	@Override public void disposeComponent() {
-		future.cancel(true);
+		timer.cancel();
+		timer.purge();
 	}
 
 	@NotNull @Override public String getComponentName() {
