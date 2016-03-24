@@ -7,7 +7,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
-import limitedwip.common.LimitedWIPAppComponent;
+import limitedwip.common.PluginId;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,11 +44,11 @@ public class LimitedWipConfigurable implements SearchableConfigurable {
 	}
 
 	@Nls @Override public String getDisplayName() {
-		return LimitedWIPAppComponent.displayName;
+		return PluginId.displayName;
 	}
 
 	@NotNull @Override public String getId() {
-		return LimitedWIPAppComponent.displayName;
+		return PluginId.displayName;
 	}
 
 	@Nullable @Override public Runnable enableSearch(String option) {

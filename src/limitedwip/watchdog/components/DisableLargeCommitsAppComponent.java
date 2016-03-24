@@ -24,7 +24,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction;
 import com.intellij.openapi.vcs.changes.Change;
-import limitedwip.common.LimitedWIPAppComponent;
+import limitedwip.common.PluginId;
 import limitedwip.common.settings.LimitedWIPSettings;
 import limitedwip.common.settings.LimitedWipConfigurable;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 		};
 
 		Notification notification = new Notification(
-				LimitedWIPAppComponent.displayName,
+				PluginId.displayName,
 				"Commit was cancelled because change size is above threshold<br/>",
 				"(<a href=\"\">Click here</a> to force commit anyway)",
 				NotificationType.ERROR,

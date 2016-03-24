@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
-import limitedwip.common.LimitedWIPAppComponent;
+import limitedwip.common.PluginId;
 import limitedwip.watchdog.ChangeSize;
 import limitedwip.watchdog.Watchdog;
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget;
@@ -74,7 +74,7 @@ public class IdeAdapter {
     public void onSkipNotificationUntilCommit(boolean value) {
         String stateDescription = value ? "disabled till next commit" : "enabled";
         Notification notification = new Notification(
-                LimitedWIPAppComponent.displayName,
+                PluginId.displayName,
                 "Change size notifications are " + stateDescription,
                 "(use widget in the bottom toolbar to toggle it)",
                 NotificationType.INFORMATION
@@ -116,7 +116,7 @@ public class IdeAdapter {
 		};
 
 		Notification notification = new Notification(
-				LimitedWIPAppComponent.displayName,
+				PluginId.displayName,
 				"Change Size Exceeded Limit",
 				"Lines changed: " + asString(linesChanged) + "; " +
 					"limit: " + changedLinesLimit + "<br/>" +

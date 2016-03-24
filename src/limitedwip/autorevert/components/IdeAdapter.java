@@ -18,7 +18,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Function;
 import limitedwip.autorevert.AutoRevert;
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget;
-import limitedwip.common.LimitedWIPAppComponent;
+import limitedwip.common.PluginId;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -92,7 +92,7 @@ public class IdeAdapter {
 
 	public void onChangesRevert() {
 		Notification notification = new Notification(
-				LimitedWIPAppComponent.displayName,
+				PluginId.displayName,
 				"Current change list was auto-reverted",
 				"(to disable it use widget in the bottom toolbar)",
 				NotificationType.WARNING

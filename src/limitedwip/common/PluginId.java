@@ -13,6 +13,6 @@
  */
 package limitedwip.common;
 
-public class LimitedWIPAppComponent {
+public class PluginId {
 	public static final String displayName = "Limited WIP";
 }
