@@ -17,9 +17,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import limitedwip.common.PluginId;
@@ -51,11 +49,7 @@ public class IdeAdapter {
 			skipChecks--;
 			return lastChangeSize;
 		}
-		ChangeSize changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
-			@Override public ChangeSize compute() {
-				return changeSizeCalculator.currentChangeListSizeInLines();
-			}
-		});
+		ChangeSize changeSize = changeSizeCalculator.currentChangeListSizeInLines();
 		if (changeSize.isApproximate) {
 			changeSize = new ChangeSize(lastChangeSize.value, true);
 			skipChecks = 10;

@@ -48,6 +48,7 @@ public class WatchdogComponent extends AbstractProjectComponent {
 						// Project can be closed (disposed) during handover between timer thread and EDT.
 						if (myProject.isDisposed()) return;
 						watchdog.onTimer(seconds);
+						changeSizeCalculator.onTimer();
 					}
 				}, ModalityState.any());
 			}

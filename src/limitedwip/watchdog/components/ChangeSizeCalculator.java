@@ -1,5 +1,6 @@
 package limitedwip.watchdog.components;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diff.impl.ComparisonPolicy;
 import com.intellij.openapi.diff.impl.fragments.LineFragment;
 import com.intellij.openapi.diff.impl.processing.DiffPolicy;
@@ -10,6 +11,7 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,6 +28,7 @@ public class ChangeSizeCalculator {
 	private static final long diffDurationThresholdMillis = 200;
 	private final ChangeSizeCache changeSizeCache;
 	private final Project project;
+	private ChangeSize changeSize;
 
 
 	public ChangeSizeCalculator(Project project) {
@@ -33,10 +36,22 @@ public class ChangeSizeCalculator {
 		this.changeSizeCache = new ChangeSizeCache();
 	}
 
+	public void onTimer() {
+		changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
+			@Override public ChangeSize compute() {
+				return calculateCurrentChangeListSizeInLines();
+			}
+		});
+	}
+
+	public ChangeSize currentChangeListSizeInLines() {
+		return changeSize;
+	}
+
 	/**
 	 * Can't use com.intellij.openapi.vcs.impl.LineStatusTrackerManager here because it only tracks changes for open files.
 	 */
-	public ChangeSize currentChangeListSizeInLines() {
+	private ChangeSize calculateCurrentChangeListSizeInLines() {
 		long startTime = System.currentTimeMillis();
 		TextCompareProcessor compareProcessor = new TextCompareProcessor(
 				ComparisonPolicy.TRIM_SPACE,
