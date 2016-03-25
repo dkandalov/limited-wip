@@ -1,6 +1,5 @@
 package limitedwip.watchdog.components;
 
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diff.impl.ComparisonPolicy;
 import com.intellij.openapi.diff.impl.fragments.LineFragment;
 import com.intellij.openapi.diff.impl.processing.DiffPolicy;
@@ -23,23 +22,15 @@ import java.util.Map;
 
 import static com.intellij.openapi.diff.impl.util.TextDiffTypeEnum.*;
 
-public class ChangeSizeProjectComponent extends AbstractProjectComponent {
+public class ChangeSizeCalculator {
 	private static final long diffDurationThresholdMillis = 200;
-
 	private final ChangeSizeCache changeSizeCache;
+	private final Project project;
 
 
-	public static ChangeSizeProjectComponent getInstance(Project project) {
-		return project.getComponent(ChangeSizeProjectComponent.class);
-	}
-
-	protected ChangeSizeProjectComponent(Project project) {
-		super(project);
-		changeSizeCache = new ChangeSizeCache();
-	}
-
-	@Override public void disposeComponent() {
-		changeSizeCache.clear();
+	public ChangeSizeCalculator(Project project) {
+		this.project = project;
+		this.changeSizeCache = new ChangeSizeCache();
 	}
 
 	/**
@@ -52,7 +43,7 @@ public class ChangeSizeProjectComponent extends AbstractProjectComponent {
 				DiffPolicy.LINES_WO_FORMATTING,
 				HighlightMode.BY_LINE
 		);
-		LocalChangeList changeList = ChangeListManager.getInstance(myProject).getDefaultChangeList();
+		LocalChangeList changeList = ChangeListManager.getInstance(project).getDefaultChangeList();
 
 		ChangeSize result = new ChangeSize(0);
 		for (Change change : changeList.getChanges()) {
@@ -147,10 +138,6 @@ public class ChangeSizeProjectComponent extends AbstractProjectComponent {
 		public ChangeSize get(Document document) {
 			if (document == null) return null;
 			return changeSizeByDocument.get(document);
-		}
-
-		public void clear() {
-			changeSizeByDocument.clear();
 		}
 	}
 }

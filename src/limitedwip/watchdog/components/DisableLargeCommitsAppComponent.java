@@ -38,7 +38,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 	private static final int maxShowCommitDialogAttempts = 3;
 
 	private boolean enabled;
-	private int maxLinesInChange;
+	private int maxChangeSizeInLines;
 	private boolean allowCommitOnceWithoutCheck = false;
 
 	@Override public void initComponent() {
@@ -50,8 +50,11 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 				}
 				if (!enabled) return true;
 
-				int changeListSize = ChangeSizeProjectComponent.getInstance(project).currentChangeListSizeInLines().value;
-				if (changeListSize > maxLinesInChange) {
+				WatchdogComponent watchdogComponent = project.getComponent(WatchdogComponent.class);
+				if (watchdogComponent == null) return true;
+
+				int changeSize = watchdogComponent.currentChangeListSize();
+				if (changeSize > maxChangeSizeInLines) {
 					notifyThatCommitWasCancelled(project);
 					return false;
 				}
@@ -130,6 +133,6 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 
 	@Override public void onSettingsUpdate(LimitedWIPSettings settings) {
 		this.enabled = settings.disableCommitsAboveThreshold;
-		this.maxLinesInChange = settings.maxLinesInChange;
+		this.maxChangeSizeInLines = settings.maxLinesInChange;
 	}
 }

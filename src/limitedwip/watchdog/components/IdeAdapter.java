@@ -33,14 +33,17 @@ import javax.swing.event.HyperlinkEvent;
 public class IdeAdapter {
 	private final WatchdogStatusBarWidget watchdogWidget = new WatchdogStatusBarWidget();
 	private final Project project;
+	private final ChangeSizeCalculator changeSizeCalculator;
+
 	private Watchdog.Settings settings;
 	private ChangeSize lastChangeSize = new ChangeSize(0);
 	private int skipChecks;
 	private Notification lastNotification;
 
 
-	public IdeAdapter(Project project) {
+	public IdeAdapter(Project project, ChangeSizeCalculator changeSizeCalculator) {
 		this.project = project;
+		this.changeSizeCalculator = changeSizeCalculator;
 	}
 
 	public ChangeSize currentChangeListSizeInLines() {
@@ -50,7 +53,7 @@ public class IdeAdapter {
 		}
 		ChangeSize changeSize = ApplicationManager.getApplication().runReadAction(new Computable<ChangeSize>() {
 			@Override public ChangeSize compute() {
-				return ChangeSizeProjectComponent.getInstance(project).currentChangeListSizeInLines();
+				return changeSizeCalculator.currentChangeListSizeInLines();
 			}
 		});
 		if (changeSize.isApproximate) {
@@ -109,7 +112,7 @@ public class IdeAdapter {
 		NotificationListener listener = new NotificationListener() {
 			@Override public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
 				WatchdogComponent watchdogComponent = project.getComponent(WatchdogComponent.class);
-                assert watchdogComponent != null;
+                if (watchdogComponent == null) return;
                 watchdogComponent.skipNotificationsUntilCommit(true);
 				notification.expire();
 			}

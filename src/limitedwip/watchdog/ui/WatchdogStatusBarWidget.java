@@ -52,8 +52,9 @@ public class WatchdogStatusBarWidget implements StatusBarWidget {
                         DataContext dataContext = DataManager.getInstance().getDataContext(mouseEvent.getComponent());
                         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
                         if (project == null) return;
-
                         WatchdogComponent watchdogComponent = project.getComponent(WatchdogComponent.class);
+	                    if (watchdogComponent == null) return;
+
                         watchdogComponent.toggleSkipNotificationsUntilCommit();
                     }
                 };

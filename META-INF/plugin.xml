@@ -41,9 +41,6 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
         <component>
             <implementation-class>limitedwip.autorevert.components.AutoRevertComponent</implementation-class>
         </component>
-        <component>
-            <implementation-class>limitedwip.watchdog.components.ChangeSizeProjectComponent</implementation-class>
-        </component>
     </project-components>
 
     <actions>

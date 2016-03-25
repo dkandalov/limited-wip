@@ -23,8 +23,9 @@ public class StartOrStopAutoRevertAction extends AnAction {
 	@Override public void actionPerformed(@NotNull AnActionEvent event) {
 		Project project = event.getProject();
 		if (project == null) return;
-
 		AutoRevertComponent autoRevertComponent = project.getComponent(AutoRevertComponent.class);
+		if (autoRevertComponent == null) return;
+
 		if (autoRevertComponent.isAutoRevertStarted()) {
 			autoRevertComponent.stopAutoRevert();
 		} else {
@@ -41,8 +42,10 @@ public class StartOrStopAutoRevertAction extends AnAction {
 
 	private static String textFor(Project project) {
 		if (project == null) return "Start auto-revert";
+		AutoRevertComponent autoRevertComponent = project.getComponent(AutoRevertComponent.class);
+		if (autoRevertComponent == null) return "Start auto-revert";
 
-		if (project.getComponent(AutoRevertComponent.class).isAutoRevertStarted()) {
+		if (autoRevertComponent.isAutoRevertStarted()) {
 			return "Stop auto-revert";
 		} else {
 			return "Start auto-revert";

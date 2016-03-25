@@ -61,6 +61,8 @@ public class AutoRevertStatusBarWidget implements StatusBarWidget {
                         if (project == null) return;
 
 	                    AutoRevertComponent autoRevertComponent = project.getComponent(AutoRevertComponent.class);
+	                    if (autoRevertComponent == null) return;
+
                         if (autoRevertComponent.isAutoRevertStarted()) {
                             autoRevertComponent.stopAutoRevert();
                         } else {
