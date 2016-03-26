@@ -27,7 +27,7 @@ import limitedwip.watchdog.Watchdog;
 public class WatchdogComponent extends AbstractProjectComponent {
 	private Watchdog watchdog;
 	private TimerComponent timer;
-	private ChangeSizeCalculator changeSizeCalculator;
+	private IdeAdapter ideAdapter;
 
 
 	public WatchdogComponent(Project project) {
@@ -37,8 +37,8 @@ public class WatchdogComponent extends AbstractProjectComponent {
 
 	@Override public void projectOpened() {
 		LimitedWIPSettings settings = ServiceManager.getService(LimitedWIPSettings.class);
-		changeSizeCalculator = new ChangeSizeCalculator(myProject);
-		IdeAdapter ideAdapter = new IdeAdapter(myProject, changeSizeCalculator);
+		final ChangeSizeCalculator changeSizeCalculator = new ChangeSizeCalculator(myProject);
+		ideAdapter = new IdeAdapter(myProject, changeSizeCalculator);
 		watchdog = new Watchdog(ideAdapter).init(convert(settings));
 
 		timer.addListener(new TimerComponent.Listener() {
@@ -68,7 +68,7 @@ public class WatchdogComponent extends AbstractProjectComponent {
 	}
 
 	public int currentChangeListSize() {
-		return changeSizeCalculator.currentChangeListSizeInLines().value;
+		return ideAdapter.currentChangeListSizeInLines().value;
 	}
 
 	public void toggleSkipNotificationsUntilCommit() {

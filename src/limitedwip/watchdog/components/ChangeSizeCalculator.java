@@ -41,12 +41,12 @@ public class ChangeSizeCalculator {
 		this.changeSizeCache = new ChangeSizeCache();
 	}
 
-	public void onTimer() {
-		calculateCurrentChangeListSizeInLines();
-	}
-
 	public ChangeSize currentChangeListSizeInLines() {
 		return changeSize;
+	}
+
+	public void onTimer() {
+		calculateCurrentChangeListSizeInLines();
 	}
 
 	/**
