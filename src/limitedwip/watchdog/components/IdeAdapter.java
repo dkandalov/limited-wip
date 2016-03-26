@@ -34,8 +34,6 @@ public class IdeAdapter {
 	private final ChangeSizeCalculator changeSizeCalculator;
 
 	private Watchdog.Settings settings;
-	private ChangeSize lastChangeSize = new ChangeSize(0);
-	private int skipChecks;
 	private Notification lastNotification;
 
 
@@ -45,17 +43,7 @@ public class IdeAdapter {
 	}
 
 	public ChangeSize currentChangeListSizeInLines() {
-		if (skipChecks > 0) {
-			skipChecks--;
-			return lastChangeSize;
-		}
-		ChangeSize changeSize = changeSizeCalculator.currentChangeListSizeInLines();
-		if (changeSize.isApproximate) {
-			changeSize = new ChangeSize(lastChangeSize.value, true);
-			skipChecks = 10;
-		}
-		lastChangeSize = changeSize;
-		return changeSize;
+		return changeSizeCalculator.currentChangeListSizeInLines();
 	}
 
 	public void showCurrentChangeListSize(ChangeSize linesInChange, int maxLinesInChange) {
