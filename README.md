@@ -1,10 +1,12 @@
 ### Limited WIP
 This is a plugin for IntelliJ IDEs to limit your work-in-progress (WIP).
+
 It has two main features:
  - show notifications when current changelist size exceeds limit
  - automatically revert current changelist after a timeout
 
-Screenshots of preferences/toolbar/notifications:
+
+### Screenshots
 <img src="https://github.com/dkandalov/limited-wip/blob/master/settings.png?raw=true" align="center"/>
 <br/><br/>
 <img src="https://github.com/dkandalov/limited-wip/blob/master/toolbar.png?raw=true" align="center"/>
@@ -14,13 +16,11 @@ Screenshots of preferences/toolbar/notifications:
 
 
 ### Why?
-
  - make smaller cohesive commits
  - stay focused with time or change size constraint
 
 
 ### How to use it?
-
 There are probably many ways to use limited WIP, here are some ideas.
 
 Small commits:
