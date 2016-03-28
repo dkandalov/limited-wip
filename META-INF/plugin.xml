@@ -11,13 +11,13 @@
 
     <description>
         <![CDATA[<html><body>
-Plugin to limit the amount of changes you make at a time. It has two parts:
+Plugin to limit the amount of changes you make at a time. It has two main features:
 <ul>
-    <li>notification when current change list size exceeds limit</li>
-    <li>revert current change list after a timeout (ctrl+shift+A to start/stop)</li>
+    <li>show notifications when current changelist size exceeds limit</li>
+    <li>automatically revert current changelist after a timeout</li>
 </ul>
 <br/>
-See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkandalov/limited-wip</a> for more details.
+See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkandalov/limited-wip</a> for details.
 </body></html>
 		]]>
     </description>
