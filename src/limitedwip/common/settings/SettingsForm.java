@@ -13,7 +13,9 @@
  */
 package limitedwip.common.settings;
 
-import limitedwip.common.settings.LimitedWIPSettings;
+import com.intellij.ide.BrowserUtil;
+import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.ui.components.labels.LinkListener;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -33,6 +35,7 @@ public class SettingsForm {
 	private JComboBox minutesTillRevert;
 	private JCheckBox notifyOnRevert;
 	private JCheckBox showTimerInToolbar;
+	private LinkLabel<Void> openReadme;
 
 	private final LimitedWIPSettings initialState;
 	private LimitedWIPSettings currentState;
@@ -61,6 +64,12 @@ public class SettingsForm {
 		minutesTillRevert.addActionListener(commonActionListener);
 		notifyOnRevert.addActionListener(commonActionListener);
 		showTimerInToolbar.addActionListener(commonActionListener);
+
+		openReadme.setListener(new LinkListener<Void>() {
+			@Override public void linkSelected(LinkLabel aSource, Void aLinkData) {
+				BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md");
+			}
+		}, null);
 	}
 
 	public void updateUIFromState() {
