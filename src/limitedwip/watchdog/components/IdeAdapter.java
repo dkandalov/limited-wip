@@ -61,7 +61,7 @@ public class IdeAdapter {
         Notification notification = new Notification(
                 PluginId.displayName,
                 "Change size notifications are " + stateDescription,
-                "(use widget in the bottom toolbar to toggle it)",
+                "",
                 NotificationType.INFORMATION
         );
         project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
@@ -105,7 +105,7 @@ public class IdeAdapter {
 				"Change Size Exceeded Limit",
 				"Lines changed: " + asString(linesChanged) + "; " +
 					"limit: " + changedLinesLimit + "<br/>" +
-					"Please consider committing, splitting or reverting changes<br/>" +
+					"Please commit, split or revert changes<br/>" +
 					"(<a href=\"\">Click here</a> to skip notifications till next commit)",
 				NotificationType.WARNING,
 				listener

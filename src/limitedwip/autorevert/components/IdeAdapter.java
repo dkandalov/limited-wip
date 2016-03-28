@@ -93,8 +93,8 @@ public class IdeAdapter {
 	public void onChangesRevert() {
 		Notification notification = new Notification(
 				PluginId.displayName,
-				"Current change list was auto-reverted",
-				"(to disable it use widget in the bottom toolbar)",
+				"Current changelist was reverted",
+				"",
 				NotificationType.WARNING
 		);
 		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
