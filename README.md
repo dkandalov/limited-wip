@@ -1,33 +1,29 @@
-## Limited WIP IntelliJ plugin
+### Limited WIP
+This is a plugin for IntelliJ IDEs to limit your work-in-progress (WIP).
+It has two main features:
+ - show notifications when current changelist size exceeds limit
+ - automatically revert current changelist after a timeout
 
-This is a plugin for IntelliJ IDEs to limit the amount of changes you make at a time. It has two main features:
- - notification when current change list size exceeds limit
- - reverting current change list after a timeout (ctrl+shift+A to start/stop)
-
-Here are some screenshots of plugin preferences/toolbar/notifications:
+Screenshots of preferences/toolbar/notifications:
 <img src="https://github.com/dkandalov/limited-wip/blob/master/settings.png?raw=true" align="center"/>
-<br/>
+<br/><br/>
 <img src="https://github.com/dkandalov/limited-wip/blob/master/toolbar.png?raw=true" align="center"/>
 <br/><br/>
 <img src="https://github.com/dkandalov/limited-wip/blob/master/change-size-exceeded.png?raw=true" align="center"/>
 <br/><br/>
-<img src="https://github.com/dkandalov/limited-wip/blob/master/commit-was-cancelled.png?raw=true" align="center"/>
-<br/><br/>
 
 
-## Why?
+### Why?
 
-This plugin is intended as a tool to limit your work-in-progress (and prevent yourself from cheating).
-It's based on the following assumptions:
- - small focused changes are better than changes which go on until "everything is done"
- - people are good at self-deception and not following rules
+ - make smaller cohesive commits
+ - stay focused with time or change size constraint
 
 
-## How to use it?
+### How to use it?
 
-There are probably many ways to make use of limited WIP, here are some ideas.
+There are probably many ways to use limited WIP, here are some ideas.
 
-Smaller commits:
+Small commits:
  - enable notification on change list size exceeding limit
  - make changes
  - if you get change size notification, commit or split you changes into several commits
