@@ -93,8 +93,8 @@ public class IdeAdapter {
 	public void onChangesRevert() {
 		Notification notification = new Notification(
 				PluginId.displayName,
+				PluginId.displayName,
 				"Current changelist was reverted",
-				"",
 				NotificationType.WARNING
 		);
 		project.getMessageBus().syncPublisher(Notifications.TOPIC).notify(notification);
