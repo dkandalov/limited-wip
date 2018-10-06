@@ -22,7 +22,7 @@ import limitedwip.common.PluginId;
 
 @State(
 	name = PluginId.value + "Settings",
-	storages = @Storage(id = "other", file = "$APP_CONFIG$/limitedwip.ui.settings.xml")
+	storages = @Storage(file = "$APP_CONFIG$/limitedwip.ui.settings.xml")
 )
 public class LimitedWIPSettings implements PersistentStateComponent<LimitedWIPSettings>  {
 	public static final Range<Integer> minutesToRevertRange = new Range<Integer>(1, 99);
