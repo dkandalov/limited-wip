@@ -60,7 +60,7 @@ public class IdeAdapter {
         String stateDescription = value ? "disabled till next commit" : "enabled";
         Notification notification = new Notification(
                 PluginId.displayName,
-		        PluginId.displayName,
+                PluginId.displayName,
                 "Change size notifications are " + stateDescription,
                 NotificationType.INFORMATION
         );
@@ -101,7 +101,7 @@ public class IdeAdapter {
 		};
 
 		Notification notification = new Notification(
-				PluginId.displayName,
+                PluginId.displayName,
 				"Change Size Exceeded Limit",
 				"Lines changed: " + asString(linesChanged) + "; " +
 					"limit: " + changedLinesLimit + "<br/>" +

@@ -22,16 +22,20 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         val settings = ServiceManager.getService(LimitedWIPSettings::class.java)
         autoRevert = AutoRevert(IdeAdapter(myProject)).init(convert(settings))
 
-        timer.addListener(TimerComponent.Listener { seconds ->
-            ApplicationManager.getApplication().invokeLater({ autoRevert!!.onTimer(seconds) }, ModalityState.any())
+        timer.addListener(object : TimerComponent.Listener {
+            override fun onUpdate(seconds: Int) {
+                ApplicationManager.getApplication().invokeLater({ autoRevert!!.onTimer(seconds) }, ModalityState.any())
+            }
         }, myProject)
 
         LimitedWipConfigurable.registerSettingsListener(myProject, LimitedWipConfigurable.Listener { settings ->
             autoRevert!!.onSettings(convert(settings))
         })
 
-        LimitedWipCheckin.registerListener(myProject, LimitedWipCheckin.Listener { allFileAreCommitted ->
-            if (allFileAreCommitted) autoRevert!!.onAllFilesCommitted()
+        LimitedWipCheckin.registerListener(myProject, object : LimitedWipCheckin.Listener {
+            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
+                if (allFileAreCommitted) autoRevert!!.onAllFilesCommitted()
+            }
         })
     }
 

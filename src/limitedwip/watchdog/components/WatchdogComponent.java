@@ -60,7 +60,7 @@ public class WatchdogComponent extends AbstractProjectComponent {
 			}
 		});
 
-		LimitedWipCheckin.registerListener(myProject, new LimitedWipCheckin.Listener() {
+		LimitedWipCheckin.Companion.registerListener(myProject, new LimitedWipCheckin.Listener() {
 			@Override public void onSuccessfulCheckin(boolean allFileAreCommitted) {
 				watchdog.onCommit();
 			}

@@ -76,7 +76,7 @@ public class DisableLargeCommitsAppComponent implements ApplicationComponent, Li
 		};
 
 		Notification notification = new Notification(
-				PluginId.displayName,
+                PluginId.displayName,
 				"Commit was cancelled because change size is above threshold<br/>",
 				"(<a href=\"\">Click here</a> to force commit anyway)",
 				NotificationType.ERROR,

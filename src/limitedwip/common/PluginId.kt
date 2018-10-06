@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package limitedwip.common;
+package limitedwip.common
 
-public class PluginId {
-	public static final String displayName = "Limited WIP";
-	public static final String value = "LimitedWIP";
+object PluginId {
+    const val displayName = "Limited WIP"
+    const val value = "LimitedWIP"
 }
