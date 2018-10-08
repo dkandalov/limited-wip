@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dkandalov/limited-wip.svg?branch=master)](https://travis-ci.org/dkandalov/limited-wip)
+
 ### Limited WIP
 This is a plugin for IntelliJ IDEs to limit your work-in-progress (WIP).
 
