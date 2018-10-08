@@ -40,7 +40,7 @@ sourceRoots {
 }
 
 dependencies {
-    testCompile("org.mockito:mockito-all:1.8.4")
+    testCompile("org.mockito:mockito-inline:2.23.0")
 }
 
 tasks.withType<KotlinJvmCompile> {

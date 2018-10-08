@@ -5,6 +5,8 @@ import limitedwip.watchdog.components.IdeAdapter
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
+import org.mockito.internal.matchers.InstanceOf
+import org.mockito.internal.progress.ThreadSafeMockingProgress.mockingProgress
 import org.mockito.Mockito.`when` as whenCalled
 
 class WatchdogTest {
@@ -21,7 +23,7 @@ class WatchdogTest {
 
         watchdog.onTimer(next())
 
-        verify(ideAdapter, times(0)).onChangeSizeTooBig(any(), anyInt())
+        verify(ideAdapter, times(0)).onChangeSizeTooBig(anyChangeSize(), anyInt())
     }
 
     @Test fun sendsNotification_WhenChangeSizeIsAboveThreshold() {
@@ -62,7 +64,7 @@ class WatchdogTest {
         watchdog.onTimer(next())
         watchdog.onTimer(next())
 
-        verify(ideAdapter, times(2)).onSettingsUpdate(anyObject())
+        verify(ideAdapter, times(2)).onSettingsUpdate(anySettings())
         verifyNoMoreInteractions(ideAdapter)
     }
 
@@ -99,7 +101,7 @@ class WatchdogTest {
         watchdog.onSettings(watchdogDisabledSettings())
         watchdog.onTimer(next())
 
-        verify(ideAdapter, times(2)).onSettingsUpdate(anyObject())
+        verify(ideAdapter, times(2)).onSettingsUpdate(anySettings())
         verifyNoMoreInteractions(ideAdapter)
     }
 
@@ -114,8 +116,7 @@ class WatchdogTest {
         verify(ideAdapter, times(2)).onChangeSizeWithinLimit()
     }
 
-    @Before @Throws(Exception::class)
-    fun setUp() {
+    @Before fun setUp() {
         secondsSinceStart = 0
     }
 
@@ -123,16 +124,24 @@ class WatchdogTest {
         return ++secondsSinceStart
     }
 
+    private fun anySettings(): Watchdog.Settings {
+        val type = Watchdog.Settings::class.java
+        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any " + type.canonicalName + ">"))
+        return Watchdog.Settings(false, 0, 0, false)
+    }
+    private fun anyChangeSize(): ChangeSize {
+        val type = ChangeSize::class.java
+        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any " + type.canonicalName + ">"))
+        return ChangeSize(0, false)
+    }
+
     companion object {
         private const val maxLinesInChange = 100
         private const val notificationIntervalInSeconds = 2
 
-        private fun watchdogDisabledSettings(): Settings {
-            return Settings(false, 150, 2, true)
-        }
+        private fun watchdogDisabledSettings() = Settings(false, 150, 2, true)
 
-        private fun settingsWithChangeSizeThreshold(maxLinesInChange: Int): Settings {
-            return Settings(true, maxLinesInChange, 2, true)
-        }
+        private fun settingsWithChangeSizeThreshold(maxLinesInChange: Int) =
+            Settings(true, maxLinesInChange, 2, true)
     }
 }

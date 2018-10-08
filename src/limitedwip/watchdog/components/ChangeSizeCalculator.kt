@@ -23,19 +23,11 @@ import limitedwip.watchdog.ChangeSize
 import java.util.*
 
 class ChangeSizeCalculator(private val project: Project) {
-    private val changeSizeCache: ChangeSizeCache
-    private var changeSize: ChangeSize? = null
+    private val changeSizeCache = ChangeSizeCache()
+    private var changeSize = ChangeSize(0, true)
     @Volatile private var isRunningBackgroundDiff: Boolean = false
 
-
-    init {
-        this.changeSize = ChangeSize(0, true)
-        this.changeSizeCache = ChangeSizeCache()
-    }
-
-    fun currentChangeListSizeInLines(): ChangeSize? {
-        return changeSize
-    }
+    fun currentChangeListSizeInLines() = changeSize
 
     fun onTimer() {
         calculateCurrentChangeListSizeInLines()

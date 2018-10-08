@@ -18,7 +18,10 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.project.Project
@@ -27,9 +30,6 @@ import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.PluginId
 import limitedwip.common.settings.LimitedWIPSettings
 import limitedwip.common.settings.LimitedWipConfigurable
-
-import javax.swing.event.HyperlinkEvent
-
 import limitedwip.watchdog.components.VcsIdeUtil.registerBeforeCheckInListener
 
 class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigurable.Listener {
@@ -39,21 +39,23 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
     private var allowCommitOnceWithoutCheck = false
 
     override fun initComponent() {
-        registerBeforeCheckInListener(VcsIdeUtil.CheckinListener { project, changes ->
-            if (allowCommitOnceWithoutCheck) {
-                allowCommitOnceWithoutCheck = false
-                return@CheckinListener true
-            }
-            if (!enabled) return@CheckinListener true
+        registerBeforeCheckInListener(object : VcsIdeUtil.CheckinListener {
+            override fun allowCheckIn(project: Project, changes: List<Change>): Boolean {
+                if (allowCommitOnceWithoutCheck) {
+                    allowCommitOnceWithoutCheck = false
+                    return true
+                }
+                if (!enabled) return true
 
-            val watchdogComponent = project.getComponent(WatchdogComponent::class.java) ?: return@CheckinListener true
+                val watchdogComponent = project.getComponent(WatchdogComponent::class.java) ?: return true
 
-            val changeSize = watchdogComponent.currentChangeListSize()
-            if (changeSize > maxChangeSizeInLines) {
-                notifyThatCommitWasCancelled(project)
-                return@CheckinListener false
+                val changeSize = watchdogComponent.currentChangeListSize()
+                if (changeSize > maxChangeSizeInLines) {
+                    notifyThatCommitWasCancelled(project)
+                    return false
+                }
+                return true
             }
-            true
         })
         LimitedWipConfigurable.registerSettingsListener(ApplicationManager.getApplication(), this)
     }
@@ -79,9 +81,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
 
     override fun disposeComponent() {}
 
-    override fun getComponentName(): String {
-        return this.javaClass.canonicalName
-    }
+    override fun getComponentName() = this.javaClass.canonicalName
 
     override fun onSettingsUpdate(settings: LimitedWIPSettings) {
         this.enabled = settings.disableCommitsAboveThreshold
@@ -108,9 +108,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
          * at com.intellij.notification.impl.ui.NotificationsUtil$1.hyperlinkUpdate(NotificationsUtil.java:75)
          */
         private fun showCommitDialog(showCommitDialogAttempts: Int): Boolean {
-            if (showCommitDialogAttempts > maxShowCommitDialogAttempts) {
-                return false
-            }
+            if (showCommitDialogAttempts > maxShowCommitDialogAttempts) return false
 
             val dataContext = DataManager.getInstance().dataContextFromFocus.getResultSync(500)
                 ?: return showCommitDialog(showCommitDialogAttempts + 1)

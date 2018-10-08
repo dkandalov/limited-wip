@@ -17,7 +17,6 @@ import limitedwip.autorevert.AutoRevert.Settings
 import limitedwip.autorevert.components.IdeAdapter
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Matchers
 import org.mockito.Mockito.*
 
 
@@ -77,7 +76,7 @@ class AutoRevertTest {
         autoRevert.onTimer(next())
         inOrder.verify(ideAdapter).onTimeTillRevert(eq(2))
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(Matchers.eq(1))
+        inOrder.verify(ideAdapter).onTimeTillRevert(eq(1))
     }
 
     @Test fun resetsTimeTillRevert_WhenCommitted() {
@@ -101,7 +100,7 @@ class AutoRevertTest {
         inOrder.verify(ideAdapter, times(0)).onCommit(anyInt())
         autoRevert.start()
         autoRevert.onAllFilesCommitted()
-        inOrder.verify(ideAdapter).onCommit(Matchers.anyInt())
+        inOrder.verify(ideAdapter).onCommit(anyInt())
     }
 
     @Test fun appliesRevertTimeOutChange_AfterStart() {
@@ -158,10 +157,9 @@ class AutoRevertTest {
         verify(ideAdapter, never()).revertCurrentChangeList()
     }
 
-    @Before @Throws(Exception::class)
-    fun setUp() {
+    @Before fun setUp() {
         secondsSinceStart = 0
-        stub(ideAdapter.revertCurrentChangeList()).toReturn(10)
+        `when`(ideAdapter.revertCurrentChangeList()).thenReturn(10)
     }
 
     private operator fun next(): Int {
@@ -169,6 +167,6 @@ class AutoRevertTest {
     }
 
     companion object {
-        private val secondsTillRevert = 2
+        private const val secondsTillRevert = 2
     }
 }

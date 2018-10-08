@@ -67,9 +67,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
         })
     }
 
-    fun currentChangeListSize(): Int {
-        return ideAdapter.currentChangeListSizeInLines().value
-    }
+    fun currentChangeListSize(): Int = ideAdapter.currentChangeListSizeInLines().value
 
     fun toggleSkipNotificationsUntilCommit() {
         watchdog.toggleSkipNotificationsUntilCommit()
