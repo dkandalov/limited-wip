@@ -126,6 +126,6 @@ public class IdeAdapter {
 	}
 
     private static String asString(ChangeSize changeSize) {
-        return changeSize.isApproximate ? "≈" + changeSize.value : String.valueOf(changeSize.value);
+        return changeSize.isApproximate() ? "≈" + changeSize.getValue() : String.valueOf(changeSize.getValue());
     }
 }

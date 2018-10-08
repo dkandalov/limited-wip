@@ -149,14 +149,10 @@ class ChangeSizeCalculator(private val project: Project) {
             document.addDocumentListener(object : DocumentListener {
                 override fun beforeDocumentChange(event: DocumentEvent) {}
                 override fun documentChanged(event: DocumentEvent) {
-                    remove(document)
+                    changeSizeByDocument.remove(document)
                     document.removeDocumentListener(this)
                 }
             })
-        }
-
-        private fun remove(document: Document?) {
-            changeSizeByDocument.remove(document)
         }
 
         operator fun get(document: Document?): ChangeSize? {
