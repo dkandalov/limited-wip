@@ -77,7 +77,7 @@ public class IdeAdapter {
 	}
 
 	public void onAutoRevertStarted(int timeEventsTillRevert) {
-		if (settings.showTimerInToolbar) {
+		if (settings.getShowTimerInToolbar()) {
 			autoRevertWidget.showTime(formatTime(timeEventsTillRevert));
 		} else {
 			autoRevertWidget.showStartedText();
@@ -101,7 +101,7 @@ public class IdeAdapter {
 	}
 
 	public void onCommit(int timeEventsTillRevert) {
-		if (settings.showTimerInToolbar) {
+		if (settings.getShowTimerInToolbar()) {
 			autoRevertWidget.showTime(formatTime(timeEventsTillRevert));
 		} else {
 			autoRevertWidget.showStartedText();
@@ -110,7 +110,7 @@ public class IdeAdapter {
 	}
 
 	public void onTimeTillRevert(int secondsLeft) {
-		if (settings.showTimerInToolbar) {
+		if (settings.getShowTimerInToolbar()) {
 			autoRevertWidget.showTime(formatTime(secondsLeft));
 		} else {
 			autoRevertWidget.showStartedText();
@@ -128,13 +128,13 @@ public class IdeAdapter {
 		if (statusBar == null) return;
 
 		boolean hasAutoRevertWidget = statusBar.getWidget(autoRevertWidget.ID()) != null;
-		if (hasAutoRevertWidget && settings.autoRevertEnabled) {
+		if (hasAutoRevertWidget && settings.getAutoRevertEnabled()) {
 			statusBar.updateWidget(autoRevertWidget.ID());
 
 		} else if (hasAutoRevertWidget) {
 			statusBar.removeWidget(autoRevertWidget.ID());
 
-		} else if (settings.autoRevertEnabled) {
+		} else if (settings.getAutoRevertEnabled()) {
 			autoRevertWidget.showStoppedText();
 			statusBar.addWidget(autoRevertWidget, "before Position");
 			statusBar.updateWidget(autoRevertWidget.ID());
