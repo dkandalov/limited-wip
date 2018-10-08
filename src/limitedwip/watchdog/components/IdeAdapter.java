@@ -72,7 +72,7 @@ public class IdeAdapter {
 		if (statusBar == null) return;
 
 		boolean hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null;
-		boolean shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar;
+		boolean shouldShowWatchdog = settings.getEnabled() && settings.getShowRemainingChangesInToolbar();
 		if (hasWatchdogWidget && shouldShowWatchdog) {
             statusBar.updateWidget(watchdogWidget.ID());
 
@@ -80,7 +80,7 @@ public class IdeAdapter {
             statusBar.removeWidget(watchdogWidget.ID());
 
         } else if (shouldShowWatchdog) {
-            watchdogWidget.showInitialText(settings.maxLinesInChange);
+            watchdogWidget.showInitialText(settings.getMaxLinesInChange());
             statusBar.addWidget(watchdogWidget, "before Position");
             statusBar.updateWidget(watchdogWidget.ID());
         }

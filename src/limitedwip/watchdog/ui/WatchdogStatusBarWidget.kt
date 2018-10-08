@@ -1,15 +1,12 @@
 package limitedwip.watchdog.ui
 
 import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.util.Consumer
 import limitedwip.watchdog.components.WatchdogComponent
-
-import java.awt.*
+import java.awt.Component
 import java.awt.event.MouseEvent
 
 class WatchdogStatusBarWidget : StatusBarWidget {
