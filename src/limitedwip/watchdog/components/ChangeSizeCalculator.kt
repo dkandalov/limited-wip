@@ -76,7 +76,7 @@ class ChangeSizeCalculator(private val project: Project) {
             ApplicationManager.getApplication().invokeLater {
                 changeSize = pair.first
                 for (it in changeSizeByChange.values) {
-                    changeSize = changeSize!!.add(it)
+                    changeSize = changeSize.add(it)
                 }
                 for ((key, value) in changeSizeByChange) {
                     val document = getDocumentFor(key)

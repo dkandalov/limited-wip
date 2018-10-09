@@ -34,7 +34,8 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
         return object : StatusBarWidget.TextPresentation {
             override fun getText() = this@AutoRevertStatusBarWidget.text
 
-            @Deprecated("") override fun getMaxPossibleText() = ""
+            @Suppress("OverridingDeprecatedMember") // Override to be compatible with older IJ versions.
+            override fun getMaxPossibleText() = ""
 
             override fun getTooltipText() = "Click to start/stop auto-revert"
 

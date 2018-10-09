@@ -29,7 +29,8 @@ class WatchdogStatusBarWidget : StatusBarWidget {
         return object : StatusBarWidget.TextPresentation {
             override fun getText() = this@WatchdogStatusBarWidget.text
 
-            @Deprecated("") override fun getMaxPossibleText() = ""
+            @Suppress("OverridingDeprecatedMember") // Override to be compatible with older IJ versions.
+            override fun getMaxPossibleText() = ""
 
             override fun getTooltipText() = "Shows amount of changed lines in current change list vs change size limit."
 

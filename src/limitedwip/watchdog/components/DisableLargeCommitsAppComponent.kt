@@ -1,16 +1,6 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Because ApplicationComponent was deprecated relatively recently.
+@file:Suppress("DEPRECATION")
+
 package limitedwip.watchdog.components
 
 import com.intellij.ide.DataManager
@@ -61,7 +51,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
     }
 
     private fun notifyThatCommitWasCancelled(project: Project) {
-        val listener = NotificationListener { notification, event ->
+        val listener = NotificationListener { _, _ ->
             allowCommitOnceWithoutCheck = true
             val succeeded = showCommitDialog(0)
             if (!succeeded) {
@@ -81,7 +71,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
 
     override fun disposeComponent() {}
 
-    override fun getComponentName() = this.javaClass.canonicalName
+    override fun getComponentName() = this.javaClass.canonicalName!!
 
     override fun onSettingsUpdate(settings: LimitedWIPSettings) {
         this.enabled = settings.disableCommitsAboveThreshold
@@ -110,7 +100,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
         private fun showCommitDialog(showCommitDialogAttempts: Int): Boolean {
             if (showCommitDialogAttempts > maxShowCommitDialogAttempts) return false
 
-            val dataContext = DataManager.getInstance().dataContextFromFocus.getResultSync(500)
+            val dataContext = DataManager.getInstance().dataContextFromFocusAsync.blockingGet(500)
                 ?: return showCommitDialog(showCommitDialogAttempts + 1)
 
             val actionEvent = AnActionEvent(null,

@@ -44,7 +44,7 @@ class IdeAdapter(private val project: Project) {
 
                 RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null)
 
-                val changedFiles = changes.map { change -> change.virtualFile }.filterNotNull()
+                val changedFiles = changes.mapNotNull { change -> change.virtualFile }
                 FileDocumentManager.getInstance().reloadFiles(*changedFiles.toTypedArray())
 
             } catch (e: Exception) {

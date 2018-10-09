@@ -2,15 +2,12 @@ package limitedwip.common.settings
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.util.Disposer
 import limitedwip.common.PluginId
 import org.jetbrains.annotations.Nls
-
-import javax.swing.*
+import javax.swing.JComponent
 
 class LimitedWipConfigurable : SearchableConfigurable {
     private var settingsForm: SettingsForm? = null

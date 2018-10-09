@@ -1,3 +1,6 @@
+// Because AbstractProjectComponent was deprecated relatively recently.
+@file:Suppress("DEPRECATION")
+
 package limitedwip.autorevert.components
 
 import com.intellij.openapi.application.ApplicationManager
