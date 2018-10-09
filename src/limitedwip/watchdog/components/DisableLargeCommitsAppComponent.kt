@@ -1,4 +1,4 @@
-// Because ApplicationComponent was deprecated relatively recently.
+// Because ApplicationComponent and dataContextFromFocus were deprecated relatively recently.
 @file:Suppress("DEPRECATION")
 
 package limitedwip.watchdog.components
@@ -100,7 +100,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
         private fun showCommitDialog(showCommitDialogAttempts: Int): Boolean {
             if (showCommitDialogAttempts > maxShowCommitDialogAttempts) return false
 
-            val dataContext = DataManager.getInstance().dataContextFromFocusAsync.blockingGet(500)
+            val dataContext = DataManager.getInstance().dataContextFromFocus.getResultSync(500)
                 ?: return showCommitDialog(showCommitDialogAttempts + 1)
 
             val actionEvent = AnActionEvent(null,
