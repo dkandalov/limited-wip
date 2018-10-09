@@ -1,13 +1,13 @@
-<idea-plugin version="2">
+<idea-plugin>
     <id>LimitedWIP</id>
     <name>Limited WIP</name>
     <version>0.2.5</version>
     <vendor email="dmitry.kandalov [at] gmail.com">Dmitry Kandalov</vendor>
     <category>Misc</category>
 
-    <!-- https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges -->
-    <!-- since IJ 15 EAP, 8b5226d commit 'Cleanup (deprecated VCS check-in API dropped)' -->
-    <idea-version since-build="142.1563"/>
+    <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
+    <!-- Since IJ 2017.3 because it supports Kotlin 1.1. -->
+    <idea-version since-build="173"/>
 
     <description>
         <![CDATA[<html><body>

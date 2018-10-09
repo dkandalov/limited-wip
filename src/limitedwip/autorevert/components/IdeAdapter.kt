@@ -125,8 +125,8 @@ class IdeAdapter(private val project: Project) {
         private fun Project.statusBar() = WindowManager.getInstance().getStatusBar(this)
 
         private fun formatTime(seconds: Int): String {
-            val min = seconds / 60
-            val sec = seconds % 60
+            val min: Int = seconds / 60
+            val sec: Int = seconds % 60
             return String.format("%02d", min) + ":" + String.format("%02d", sec)
         }
     }
