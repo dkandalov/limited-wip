@@ -7,7 +7,8 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 
 class QuickCommitActionTest {
-    @Test fun shouldComeUpWithNextCommitMessage() {
+
+    @Test fun `come up with next commit message`() {
         assertThat(nextCommitMessage(null), equalTo(" 0"))
         assertThat(nextCommitMessage(""), equalTo(" 0"))
 

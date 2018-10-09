@@ -2,7 +2,6 @@ package limitedwip.watchdog
 
 import limitedwip.watchdog.Watchdog.Settings
 import limitedwip.watchdog.components.IdeAdapter
-import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 import org.mockito.internal.matchers.InstanceOf
@@ -15,10 +14,10 @@ class WatchdogTest {
     private val settings = Settings(true, maxLinesInChange, notificationIntervalInSeconds, true)
     private val watchdog = Watchdog(ideAdapter).init(settings)
 
-    private var secondsSinceStart: Int = 0
+    private var seconds: Int = 0
 
 
-    @Test fun doesNotSendNotification_WhenChangeSizeIsBelowThreshold() {
+    @Test fun `does not send notification when change size is below threshold`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(10))
 
         watchdog.onTimer(next())
@@ -26,7 +25,7 @@ class WatchdogTest {
         verify(ideAdapter, times(0)).onChangeSizeTooBig(anyChangeSize(), anyInt())
     }
 
-    @Test fun sendsNotification_WhenChangeSizeIsAboveThreshold() {
+    @Test fun `sends notification when change size is above threshold`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onTimer(next())
@@ -34,7 +33,7 @@ class WatchdogTest {
         verify(ideAdapter).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun sendsChangeSizeNotification_OnlyOnOneOfSeveralUpdates() {
+    @Test fun `sends change size notification only on one of several updates`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onTimer(next()) // send notification
@@ -45,7 +44,7 @@ class WatchdogTest {
         verify(ideAdapter, times(2)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun sendsChangeSizeNotification_AfterSettingsChange() {
+    @Test fun `sends change size notification after settings change`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         val inOrder = inOrder(ideAdapter)
 
@@ -57,7 +56,7 @@ class WatchdogTest {
         inOrder.verify(ideAdapter).onChangeSizeTooBig(ChangeSize(200), 150)
     }
 
-    @Test fun doesNotSendNotification_WhenDisabled() {
+    @Test fun `does not send notification when disabled`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onSettings(watchdogDisabledSettings())
@@ -68,7 +67,7 @@ class WatchdogTest {
         verifyNoMoreInteractions(ideAdapter)
     }
 
-    @Test fun canSkipNotificationsUtilNextCommit() {
+    @Test fun `can skip notifications util next commit`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.skipNotificationsUntilCommit(true)
@@ -80,13 +79,13 @@ class WatchdogTest {
         verify(ideAdapter).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun sendsChangeSizeUpdate() {
+    @Test fun `sends change size update`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         watchdog.onTimer(next())
         verify(ideAdapter).showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun stillSendsChangeSizeUpdate_WhenNotificationsAreSkippedTillNextCommit() {
+    @Test fun `still sends change size update when notifications are skipped till next commit`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.skipNotificationsUntilCommit(true)
@@ -95,7 +94,7 @@ class WatchdogTest {
         verify(ideAdapter).showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun doesNotSendChangeSizeUpdate_WhenDisabled() {
+    @Test fun `does not send change size update when disabled`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onSettings(watchdogDisabledSettings())
@@ -105,7 +104,7 @@ class WatchdogTest {
         verifyNoMoreInteractions(ideAdapter)
     }
 
-    @Test fun closeNotification_WhenChangeSizeIsBackWithinLimit() {
+    @Test fun `close notification when change size is back within limit`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         watchdog.onTimer(next())
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(0))
@@ -116,13 +115,7 @@ class WatchdogTest {
         verify(ideAdapter, times(2)).onChangeSizeWithinLimit()
     }
 
-    @Before fun setUp() {
-        secondsSinceStart = 0
-    }
-
-    private operator fun next(): Int {
-        return ++secondsSinceStart
-    }
+    private fun next(): Int = ++seconds
 
     private fun anySettings(): Watchdog.Settings {
         val type = Watchdog.Settings::class.java
