@@ -13,10 +13,10 @@ import limitedwip.common.settings.LimitedWipConfigurable
 
 class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
     private val timer = ApplicationManager.getApplication().getComponent(TimerComponent::class.java)
-    private var autoRevert: AutoRevert? = null
+    private lateinit var autoRevert: AutoRevert
 
     val isAutoRevertStarted: Boolean
-        get() = autoRevert!!.isStarted
+        get() = autoRevert.isStarted
 
     override fun projectOpened() {
         val settings = ServiceManager.getService(LimitedWIPSettings::class.java)
@@ -24,27 +24,29 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
 
         timer.addListener(object : TimerComponent.Listener {
             override fun onUpdate(seconds: Int) {
-                ApplicationManager.getApplication().invokeLater({ autoRevert!!.onTimer(seconds) }, ModalityState.any())
+                ApplicationManager.getApplication().invokeLater({ autoRevert.onTimer(seconds) }, ModalityState.any())
             }
         }, myProject)
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, LimitedWipConfigurable.Listener { settings ->
-            autoRevert!!.onSettings(convert(settings))
+        LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
+            override fun onSettingsUpdate(settings: LimitedWIPSettings) {
+                autoRevert.onSettings(convert(settings))
+            }
         })
 
         LimitedWipCheckin.registerListener(myProject, object : LimitedWipCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
-                if (allFileAreCommitted) autoRevert!!.onAllFilesCommitted()
+                if (allFileAreCommitted) autoRevert.onAllFilesCommitted()
             }
         })
     }
 
     fun startAutoRevert() {
-        autoRevert!!.start()
+        autoRevert.start()
     }
 
     fun stopAutoRevert() {
-        autoRevert!!.stop()
+        autoRevert.stop()
     }
 
     private fun convert(settings: LimitedWIPSettings): AutoRevert.Settings {

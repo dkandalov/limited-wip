@@ -51,13 +51,15 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
             }
         }, myProject)
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, LimitedWipConfigurable.Listener { commonSettings ->
-            watchdog.onSettings(Watchdog.Settings(
-                commonSettings.watchdogEnabled,
-                commonSettings.maxLinesInChange,
-                commonSettings.notificationIntervalInSeconds(),
-                commonSettings.showRemainingChangesInToolbar
-            ))
+        LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
+            override fun onSettingsUpdate(settings: LimitedWIPSettings) {
+                watchdog.onSettings(Watchdog.Settings(
+                    settings.watchdogEnabled,
+                    settings.maxLinesInChange,
+                    settings.notificationIntervalInSeconds(),
+                    settings.showRemainingChangesInToolbar
+                ))
+            }
         })
 
         LimitedWipCheckin.registerListener(myProject, object : LimitedWipCheckin.Listener {
