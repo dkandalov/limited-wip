@@ -47,3 +47,9 @@ Learn your limits:
  - come up with a change you want to make
  - set up auto-revert to the time you think it'll take you to make the change
  - try making the change till you finish it before auto-revert
+
+
+### Credits
+The original version of this plugin called 'Auto-revert' was conceived
+sometime in 2012 at [LSCC meetup](http://www.meetup.com/london-software-craftsmanship/)
+after talking to [Samir Talwar](https://twitter.com/SamirTalwar).
