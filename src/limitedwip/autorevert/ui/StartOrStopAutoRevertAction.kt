@@ -13,12 +13,13 @@
  */
 package limitedwip.autorevert.ui
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import limitedwip.autorevert.components.AutoRevertComponent
 
-class StartOrStopAutoRevertAction : AnAction() {
+class StartOrStopAutoRevertAction : AnAction(AllIcons.Actions.Rollback) {
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project ?: return
         val autoRevertComponent = project.getComponent(AutoRevertComponent::class.java) ?: return

@@ -1,5 +1,6 @@
 package limitedwip.autorevert.ui
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ModalityState
@@ -20,7 +21,7 @@ import java.util.*
 import java.util.regex.Pattern
 
 
-class QuickCommitAction : AnAction() {
+class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = AnAction.getEventProject(event) ?: return
@@ -73,7 +74,7 @@ class QuickCommitAction : AnAction() {
 
     companion object {
 
-        private val MESSAGE_PATTERN = Pattern.compile("^(.*?)(\\d+)$")
+        private val messagePattern = Pattern.compile("^(.*?)(\\d+)$")
 
         /**
          * Couldn't find better way to "reuse" this code but to copy-paste it from
@@ -97,15 +98,15 @@ class QuickCommitAction : AnAction() {
             }
         }
 
-        private fun String.endsWithDigits() = MESSAGE_PATTERN.matcher(this).matches()
+        private fun String.endsWithDigits() = messagePattern.matcher(this).matches()
 
         private fun String.extractTailDigits(): String {
-            val matcher = MESSAGE_PATTERN.matcher(this)
+            val matcher = messagePattern.matcher(this)
             return if (matcher.matches()) matcher.group(2) else throw IllegalStateException()
         }
 
         private fun String.removeTailDigits(): String {
-            val matcher = MESSAGE_PATTERN.matcher(this)
+            val matcher = messagePattern.matcher(this)
             return if (matcher.matches()) matcher.group(1) else throw IllegalStateException()
         }
     }
