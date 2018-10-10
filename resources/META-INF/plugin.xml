@@ -10,7 +10,7 @@
     <idea-version since-build="173"/>
 
     <description>
-        <![CDATA[<html><body>
+        <![CDATA[<html lang="en"><body>
 Plugin to limit the amount of changes you make at a time. It has two main features:
 <ul>
     <li>show notifications when current changelist size exceeds limit</li>

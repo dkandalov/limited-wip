@@ -5,21 +5,18 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.vcs.AbstractVcs
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsBundle
 import com.intellij.openapi.vcs.VcsConfiguration
-import com.intellij.openapi.vcs.changes.*
+import com.intellij.openapi.vcs.changes.ChangeListManager
+import com.intellij.openapi.vcs.changes.CommitResultHandler
+import com.intellij.openapi.vcs.changes.InvokeAfterUpdateMode
 import com.intellij.openapi.vcs.changes.actions.RefreshAction
 import com.intellij.openapi.vcs.changes.ui.CommitHelper
-import com.intellij.openapi.vcs.checkin.BaseCheckinHandlerFactory
-import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.util.FunctionUtil
-
-import java.util.ArrayList
-import java.util.regex.Matcher
+import java.util.*
 import java.util.regex.Pattern
 
 
@@ -38,8 +35,11 @@ class QuickCommitAction : AnAction() {
 
             val defaultChangeList = ChangeListManager.getInstance(project).defaultChangeList
             if (defaultChangeList.changes.isEmpty()) {
-                Messages.showInfoMessage(project, VcsBundle.message("commit.dialog.no.changes.detected.text"),
-                    VcsBundle.message("commit.dialog.no.changes.detected.title"))
+                Messages.showInfoMessage(
+                    project,
+                    VcsBundle.message("commit.dialog.no.changes.detected.text"),
+                    VcsBundle.message("commit.dialog.no.changes.detected.title")
+                )
                 return@Runnable
             }
 
@@ -62,6 +62,7 @@ class QuickCommitAction : AnAction() {
                 VcsConfiguration.getInstance(project).saveCommitMessage(commitMessage)
             }
         }
+
         ChangeListManager.getInstance(project).invokeAfterUpdate(
             runnable,
             InvokeAfterUpdateMode.SYNCHRONOUS_CANCELLABLE,
@@ -87,29 +88,25 @@ class QuickCommitAction : AnAction() {
         }
 
         fun nextCommitMessage(lastCommitMessage: String?): String {
-            var lastCommitMessage = lastCommitMessage
-            if (lastCommitMessage == null) lastCommitMessage = ""
-
-            return if (endsWithDigits(lastCommitMessage)) {
-                val thisCommitNumber = Integer.valueOf(extractTailDigitsFrom(lastCommitMessage)) + 1
-                removeTailDigitsFrom(lastCommitMessage) + thisCommitNumber
+            val message = lastCommitMessage ?: ""
+            return if (message.endsWithDigits()) {
+                val thisCommitNumber = Integer.valueOf(message.extractTailDigits()) + 1
+                message.removeTailDigits() + thisCommitNumber
             } else {
-                "$lastCommitMessage 0"
+                "$message 0"
             }
         }
 
-        private fun endsWithDigits(s: String) = MESSAGE_PATTERN.matcher(s).matches()
+        private fun String.endsWithDigits() = MESSAGE_PATTERN.matcher(this).matches()
 
-        private fun extractTailDigitsFrom(s: String): String {
-            val matcher = MESSAGE_PATTERN.matcher(s)
-            if (!matcher.matches()) throw IllegalStateException()
-            return matcher.group(2)
+        private fun String.extractTailDigits(): String {
+            val matcher = MESSAGE_PATTERN.matcher(this)
+            return if (matcher.matches()) matcher.group(2) else throw IllegalStateException()
         }
 
-        private fun removeTailDigitsFrom(s: String): String {
-            val matcher = MESSAGE_PATTERN.matcher(s)
-            if (!matcher.matches()) throw IllegalStateException()
-            return matcher.group(1)
+        private fun String.removeTailDigits(): String {
+            val matcher = MESSAGE_PATTERN.matcher(this)
+            return if (matcher.matches()) matcher.group(1) else throw IllegalStateException()
         }
     }
 }
