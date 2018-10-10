@@ -55,7 +55,8 @@ tasks.withType<KotlinJvmCompile> {
 }
 
 configure<IntelliJPluginExtension> {
-    val ideVersion = System.getenv().getOrDefault("LIMITED_WIP_PLUGIN_IDEA_VERSION", "IC-172.3757.29")
+    // See https://www.jetbrains.com/intellij-repository/releases for a list of available IDEA builds
+    val ideVersion = System.getenv().getOrDefault("LIMITED_WIP_PLUGIN_IDEA_VERSION", "IC-173.2099.4")
     println("Using ide version: $ideVersion")
     version = ideVersion
     pluginName = "LimitedWIP"
