@@ -1,18 +1,15 @@
 package limitedwip.watchdog.components
 
+import com.intellij.diff.comparison.ComparisonManager
+import com.intellij.diff.comparison.ComparisonPolicy.IGNORE_WHITESPACES
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diff.impl.ComparisonPolicy
-import com.intellij.openapi.diff.impl.processing.DiffPolicy
-import com.intellij.openapi.diff.impl.processing.HighlightMode
-import com.intellij.openapi.diff.impl.processing.TextCompareProcessor
-import com.intellij.openapi.diff.impl.util.TextDiffTypeEnum.*
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
-import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.ChangeListManager
@@ -23,6 +20,7 @@ import limitedwip.watchdog.ChangeSize
 import java.util.*
 
 class ChangeSizeCalculator(private val project: Project) {
+    
     private val changeSizeCache = ChangeSizeCache()
     private var changeSize = ChangeSize(0, true)
     @Volatile private var isRunningBackgroundDiff: Boolean = false
@@ -39,13 +37,13 @@ class ChangeSizeCalculator(private val project: Project) {
     private fun calculateCurrentChangeListSizeInLines() {
         if (isRunningBackgroundDiff) return
 
-        val pair = ApplicationManager.getApplication().runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
+        val (newChangeSize, changesToDiff) = ApplicationManager.getApplication().runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
             val changeList = ChangeListManager.getInstance(project).defaultChangeList
-            val changesToDiff = ArrayList<Change>()
 
+            val changesToDiff = ArrayList<Change>()
             var result = ChangeSize(0)
             for (change in changeList.changes) {
-                val document = getDocumentFor(change)
+                val document = change.document()
                 val changeSize = changeSizeCache[document]
                 if (changeSize == null) {
                     changesToDiff.add(change)
@@ -53,35 +51,32 @@ class ChangeSizeCalculator(private val project: Project) {
                     result = result.add(changeSize)
                 }
             }
-            Pair.create(result, changesToDiff)
+            Pair(result, changesToDiff)
         })
-        if (pair.second.isEmpty()) {
-            changeSize = pair.first
+        if (changesToDiff.isEmpty()) {
+            changeSize = newChangeSize
             return
         }
 
         Thread(Runnable {
             isRunningBackgroundDiff = true
 
-            val compareProcessor = TextCompareProcessor(
-                ComparisonPolicy.TRIM_SPACE,
-                DiffPolicy.LINES_WO_FORMATTING,
-                HighlightMode.BY_LINE
-            )
+
+            val comparisonManager = ComparisonManager.getInstance()
             val changeSizeByChange = HashMap<Change, ChangeSize>()
-            for (change in pair.second) {
-                changeSizeByChange[change] = currentChangeListSizeInLines(change, compareProcessor)
+            for (change in changesToDiff) {
+                changeSizeByChange[change] = currentChangeListSizeInLines(change, comparisonManager)
             }
 
             ApplicationManager.getApplication().invokeLater {
-                changeSize = pair.first
+                changeSize = newChangeSize
                 for (it in changeSizeByChange.values) {
                     changeSize = changeSize.add(it)
                 }
-                for ((key, value) in changeSizeByChange) {
-                    val document = getDocumentFor(key)
-                    if (document != null && !value.isApproximate) {
-                        changeSizeCache.put(document, value)
+                for ((change, changeSize) in changeSizeByChange) {
+                    val document = change.document()
+                    if (document != null && !changeSize.isApproximate) {
+                        changeSizeCache.put(document, changeSize)
                     }
                 }
                 isRunningBackgroundDiff = false
@@ -89,14 +84,14 @@ class ChangeSizeCalculator(private val project: Project) {
         }, PluginId.value + "-DiffThread").start()
     }
 
-    private fun getDocumentFor(change: Change): Document? {
-        val virtualFile = change.virtualFile
+    private fun Change.document(): Document? {
+        val virtualFile = virtualFile
         return if (virtualFile == null) null else FileDocumentManager.getInstance().getDocument(virtualFile)
     }
 
-    private fun currentChangeListSizeInLines(change: Change, compareProcessor: TextCompareProcessor): ChangeSize {
+    private fun currentChangeListSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
         return try {
-            amountOfChangedLinesIn(change, compareProcessor)
+            amountOfChangedLinesIn(change, comparisonManager)
         } catch (ignored: VcsException) {
             ChangeSize(0, true)
         } catch (ignored: FilesTooBigForDiffException) {
@@ -104,30 +99,27 @@ class ChangeSizeCalculator(private val project: Project) {
         }
     }
 
-    private fun amountOfChangedLinesIn(change: Change, compareProcessor: TextCompareProcessor): ChangeSize {
+    private fun amountOfChangedLinesIn(change: Change, comparisonManager: ComparisonManager): ChangeSize {
         val beforeRevision = change.beforeRevision
         val afterRevision = change.afterRevision
         if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
             return ChangeSize(0, true)
         }
 
-        var revision = afterRevision
-        if (revision == null) revision = beforeRevision
+        val revision = afterRevision ?: beforeRevision
         if (revision == null || revision.file.fileType.isBinary) return ChangeSize(0)
 
-        var contentBefore: String? = if (beforeRevision != null) beforeRevision.content else ""
-        var contentAfter: String? = if (afterRevision != null) afterRevision.content else ""
-        if (contentBefore == null) contentBefore = ""
-        if (contentAfter == null) contentAfter = ""
+        val contentBefore = if (beforeRevision != null) beforeRevision.content ?: "" else ""
+        val contentAfter = if (afterRevision != null) afterRevision.content ?: "" else ""
 
-        var result = 0
-        for (fragment in compareProcessor.process(contentBefore, contentAfter)) {
-            if (fragment.type == DELETED) {
-                result += fragment.modifiedLines1
-            } else if (fragment.type == CHANGED || fragment.type == CONFLICT || fragment.type == INSERT) {
-                result += fragment.modifiedLines2
+        val result = comparisonManager
+            .compareWords(contentBefore, contentAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
+            .sumBy { fragment ->
+                val changeSize1 = fragment.endOffset1 - fragment.startOffset1
+                val changeSize2 = fragment.endOffset2 - fragment.startOffset2
+                // Use changeSize2 unless it's deleted code, then use changeSize1.
+                if (changeSize2 != 0) changeSize2 else changeSize1
             }
-        }
         return ChangeSize(result)
     }
 
@@ -138,7 +130,7 @@ class ChangeSizeCalculator(private val project: Project) {
         fun put(document: Document?, changeSize: ChangeSize) {
             if (document == null) return
             changeSizeByDocument[document] = changeSize
-            document.addDocumentListener(object : DocumentListener {
+            document.addDocumentListener(object: DocumentListener {
                 override fun beforeDocumentChange(event: DocumentEvent) {}
                 override fun documentChanged(event: DocumentEvent) {
                     changeSizeByDocument.remove(document)
