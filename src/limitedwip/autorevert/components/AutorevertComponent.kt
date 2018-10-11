@@ -11,8 +11,8 @@ import com.intellij.openapi.project.Project
 import limitedwip.autorevert.AutoRevert
 import limitedwip.common.LimitedWipCheckin
 import limitedwip.common.TimerComponent
-import limitedwip.common.settings.LimitedWIPSettings
 import limitedwip.common.settings.LimitedWipConfigurable
+import limitedwip.common.settings.LimitedWipSettings
 
 class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
     private val timer = ApplicationManager.getApplication().getComponent(TimerComponent::class.java)
@@ -22,7 +22,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         get() = autoRevert.isStarted
 
     override fun projectOpened() {
-        val settings = ServiceManager.getService(LimitedWIPSettings::class.java)
+        val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         autoRevert = AutoRevert(IdeAdapter(myProject)).init(convert(settings))
 
         timer.addListener(object : TimerComponent.Listener {
@@ -32,7 +32,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         }, myProject)
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
-            override fun onSettingsUpdate(settings: LimitedWIPSettings) {
+            override fun onSettingsUpdate(settings: LimitedWipSettings) {
                 autoRevert.onSettings(convert(settings))
             }
         })
@@ -52,7 +52,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         autoRevert.stop()
     }
 
-    private fun convert(settings: LimitedWIPSettings): AutoRevert.Settings {
+    private fun convert(settings: LimitedWipSettings): AutoRevert.Settings {
         return AutoRevert.Settings(
             settings.autoRevertEnabled,
             settings.secondsTillRevert(),

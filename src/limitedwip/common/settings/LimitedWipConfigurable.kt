@@ -13,7 +13,7 @@ class LimitedWipConfigurable : SearchableConfigurable {
     private var settingsForm: SettingsForm? = null
 
     override fun createComponent(): JComponent? {
-        val settings = ServiceManager.getService(LimitedWIPSettings::class.java)
+        val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         settingsForm = SettingsForm(settings)
         return settingsForm!!.root
     }
@@ -42,7 +42,7 @@ class LimitedWipConfigurable : SearchableConfigurable {
 
     override fun getHelpTopic(): String? = null
 
-    private fun notifySettingsListeners(settings: LimitedWIPSettings) {
+    private fun notifySettingsListeners(settings: LimitedWipSettings) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(EXTENSION_POINT_NAME)
         for (listener in extensionPoint.extensions) {
             listener.onSettingsUpdate(settings)
@@ -50,7 +50,7 @@ class LimitedWipConfigurable : SearchableConfigurable {
     }
 
     interface Listener {
-        fun onSettingsUpdate(settings: LimitedWIPSettings)
+        fun onSettingsUpdate(settings: LimitedWipSettings)
     }
 
     companion object {

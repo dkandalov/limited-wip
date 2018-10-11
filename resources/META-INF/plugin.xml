@@ -50,7 +50,7 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
-        <applicationService serviceInterface="limitedwip.common.settings.LimitedWIPSettings" serviceImplementation="limitedwip.common.settings.LimitedWIPSettings"/>
+        <applicationService serviceInterface="limitedwip.common.settings.LimitedWipSettings" serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.LimitedWipCheckin"/>
     </extensions>
 

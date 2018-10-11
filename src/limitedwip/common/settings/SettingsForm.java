@@ -24,13 +24,13 @@ public class SettingsForm {
 	private JCheckBox showTimerInToolbar;
 	private LinkLabel<Void> openReadme;
 
-	private final LimitedWIPSettings initialState;
-	private LimitedWIPSettings currentState;
+	private final LimitedWipSettings initialState;
+	private LimitedWipSettings currentState;
 	private boolean isUpdatingUI;
 
-	public SettingsForm(LimitedWIPSettings initialState) {
+	public SettingsForm(LimitedWipSettings initialState) {
 		this.initialState = initialState;
-		this.currentState = new LimitedWIPSettings();
+		this.currentState = new LimitedWipSettings();
 		currentState.loadState(initialState);
 		updateUIFromState();
 
@@ -63,49 +63,49 @@ public class SettingsForm {
 		if (isUpdatingUI) return;
 		isUpdatingUI = true;
 
-		watchdogEnabled.setSelected(currentState.watchdogEnabled);
-		maxLinesInChange.setSelectedItem(String.valueOf(currentState.maxLinesInChange));
-		notificationInterval.setSelectedItem(String.valueOf(currentState.notificationIntervalInMinutes));
-		showRemainingInToolbar.setSelected(currentState.showRemainingChangesInToolbar);
-		disableCommitsAboveThreshold.setSelected(currentState.disableCommitsAboveThreshold);
+		watchdogEnabled.setSelected(currentState.getWatchdogEnabled());
+		maxLinesInChange.setSelectedItem(String.valueOf(currentState.getMaxLinesInChange()));
+		notificationInterval.setSelectedItem(String.valueOf(currentState.getNotificationIntervalInMinutes()));
+		showRemainingInToolbar.setSelected(currentState.getShowRemainingChangesInToolbar());
+		disableCommitsAboveThreshold.setSelected(currentState.getDisableCommitsAboveThreshold());
 
-		autoRevertEnabled.setSelected(currentState.autoRevertEnabled);
-		minutesTillRevert.setSelectedItem(String.valueOf(currentState.minutesTillRevert));
-		notifyOnRevert.setSelected(currentState.notifyOnRevert);
-		showTimerInToolbar.setSelected(currentState.showTimerInToolbar);
+		autoRevertEnabled.setSelected(currentState.getAutoRevertEnabled());
+		minutesTillRevert.setSelectedItem(String.valueOf(currentState.getMinutesTillRevert()));
+		notifyOnRevert.setSelected(currentState.getNotifyOnRevert());
+		showTimerInToolbar.setSelected(currentState.getShowTimerInToolbar());
 
-		minutesTillRevert.setEnabled(currentState.autoRevertEnabled);
-		notifyOnRevert.setEnabled(currentState.autoRevertEnabled);
-		showTimerInToolbar.setEnabled(currentState.autoRevertEnabled);
-		maxLinesInChange.setEnabled(currentState.watchdogEnabled);
-		notificationInterval.setEnabled(currentState.watchdogEnabled);
-		showRemainingInToolbar.setEnabled(currentState.watchdogEnabled);
-		disableCommitsAboveThreshold.setEnabled(currentState.watchdogEnabled);
+		minutesTillRevert.setEnabled(currentState.getAutoRevertEnabled());
+		notifyOnRevert.setEnabled(currentState.getAutoRevertEnabled());
+		showTimerInToolbar.setEnabled(currentState.getAutoRevertEnabled());
+		maxLinesInChange.setEnabled(currentState.getWatchdogEnabled());
+		notificationInterval.setEnabled(currentState.getWatchdogEnabled());
+		showRemainingInToolbar.setEnabled(currentState.getWatchdogEnabled());
+		disableCommitsAboveThreshold.setEnabled(currentState.getWatchdogEnabled());
 
 		isUpdatingUI = false;
 	}
 
 	private void updateStateFromUI() {
 		try {
-			currentState.watchdogEnabled = watchdogEnabled.isSelected();
+			currentState.setWatchdogEnabled(watchdogEnabled.isSelected());
 			Integer lineCount = Integer.valueOf((String) maxLinesInChange.getSelectedItem());
-			if (LimitedWIPSettings.changedLinesRange.isWithin(lineCount)) {
-				currentState.maxLinesInChange = lineCount;
+			if (LimitedWipSettings.Companion.getChangedLinesRange().isWithin(lineCount)) {
+				currentState.setMaxLinesInChange(lineCount);
 			}
 			Integer minutes = Integer.valueOf((String) notificationInterval.getSelectedItem());
-			if (LimitedWIPSettings.notificationIntervalRange.isWithin(minutes)) {
-				currentState.notificationIntervalInMinutes = minutes;
+			if (LimitedWipSettings.Companion.getNotificationIntervalRange().isWithin(minutes)) {
+				currentState.setNotificationIntervalInMinutes(minutes);
 			}
-			currentState.showRemainingChangesInToolbar = showRemainingInToolbar.isSelected();
-			currentState.disableCommitsAboveThreshold = disableCommitsAboveThreshold.isSelected();
+			currentState.setShowRemainingChangesInToolbar(showRemainingInToolbar.isSelected());
+			currentState.setDisableCommitsAboveThreshold(disableCommitsAboveThreshold.isSelected());
 
-			currentState.autoRevertEnabled = autoRevertEnabled.isSelected();
+			currentState.setAutoRevertEnabled(autoRevertEnabled.isSelected());
 			minutes = Integer.valueOf((String) minutesTillRevert.getSelectedItem());
-			if (LimitedWIPSettings.minutesToRevertRange.isWithin(minutes)) {
-				currentState.minutesTillRevert = minutes;
+			if (LimitedWipSettings.Companion.getMinutesToRevertRange().isWithin(minutes)) {
+				currentState.setMinutesTillRevert(minutes);
 			}
-			currentState.notifyOnRevert = notifyOnRevert.isSelected();
-			currentState.showTimerInToolbar = showTimerInToolbar.isSelected();
+			currentState.setNotifyOnRevert(notifyOnRevert.isSelected());
+			currentState.setShowTimerInToolbar(showTimerInToolbar.isSelected());
 
 		} catch (NumberFormatException ignored) {
 		}
@@ -115,7 +115,7 @@ public class SettingsForm {
 		return !currentState.equals(initialState);
 	}
 
-	public LimitedWIPSettings applyChanges() {
+	public LimitedWipSettings applyChanges() {
 		initialState.loadState(currentState);
 		return initialState;
 	}

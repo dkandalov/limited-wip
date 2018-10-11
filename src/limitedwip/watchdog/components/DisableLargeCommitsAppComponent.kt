@@ -18,8 +18,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.PluginId
-import limitedwip.common.settings.LimitedWIPSettings
 import limitedwip.common.settings.LimitedWipConfigurable
+import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.watchdog.components.VcsIdeUtil.registerBeforeCheckInListener
 
 class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigurable.Listener {
@@ -73,7 +73,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
 
     override fun getComponentName() = this.javaClass.canonicalName!!
 
-    override fun onSettingsUpdate(settings: LimitedWIPSettings) {
+    override fun onSettingsUpdate(settings: LimitedWipSettings) {
         this.enabled = settings.disableCommitsAboveThreshold
         this.maxChangeSizeInLines = settings.maxLinesInChange
     }

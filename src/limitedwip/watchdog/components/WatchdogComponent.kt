@@ -10,8 +10,8 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import limitedwip.common.LimitedWipCheckin
 import limitedwip.common.TimerComponent
-import limitedwip.common.settings.LimitedWIPSettings
 import limitedwip.common.settings.LimitedWipConfigurable
+import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.watchdog.Watchdog
 
 class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
@@ -20,7 +20,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
     private lateinit var ideAdapter: IdeAdapter
 
     override fun projectOpened() {
-        val settings = ServiceManager.getService(LimitedWIPSettings::class.java)
+        val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         val changeSizeCalculator = ChangeSizeCalculator(myProject)
         ideAdapter = IdeAdapter(myProject, changeSizeCalculator)
         watchdog = Watchdog(ideAdapter).init(Watchdog.Settings(
@@ -42,7 +42,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
         }, myProject)
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
-            override fun onSettingsUpdate(settings: LimitedWIPSettings) {
+            override fun onSettingsUpdate(settings: LimitedWipSettings) {
                 watchdog.onSettings(Watchdog.Settings(
                     settings.watchdogEnabled,
                     settings.maxLinesInChange,
