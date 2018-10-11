@@ -54,7 +54,7 @@ public class SettingsForm {
 
 		openReadme.setListener(new LinkListener<Void>() {
 			@Override public void linkSelected(LinkLabel aSource, Void aLinkData) {
-				BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md");
+				BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip");
 			}
 		}, null);
 	}
