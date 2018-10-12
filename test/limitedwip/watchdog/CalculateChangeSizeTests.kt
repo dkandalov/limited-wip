@@ -32,7 +32,7 @@ class CalculateChangeSizeTests : LightPlatformCodeInsightFixtureTestCase() {
         assertThat(changeSizeInLines("text\n\n\ntext\n\n\n", "\n"), equalTo(ChangeSize(2)))
     }
 
-    private fun calculateChangeSize(before: String, after: String): ChangeSize {
+    private fun changeSizeInLines(before: String, after: String): ChangeSize {
         val change = Change(
             SimpleContentRevision(before, LocalFilePath("before.txt", false), "some-revision-before"),
             SimpleContentRevision(after, LocalFilePath("after.txt", false), "some-revision-after")
