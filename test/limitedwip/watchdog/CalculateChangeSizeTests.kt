@@ -14,22 +14,22 @@ class CalculateChangeSizeTests : LightPlatformCodeInsightFixtureTestCase() {
     private val comparisonManager = ComparisonManagerImpl()
 
     @Test fun `test trivial diffs`() {
-        assertThat(calculateChangeSizeInLines("", ""), equalTo(ChangeSize(0)))
-        assertThat(calculateChangeSizeInLines("text", ""), equalTo(ChangeSize(1)))
-        assertThat(calculateChangeSizeInLines("", "text"), equalTo(ChangeSize(1)))
-        assertThat(calculateChangeSizeInLines("text", "text"), equalTo(ChangeSize(0)))
+        assertThat(changeSizeInLines("", ""), equalTo(ChangeSize(0)))
+        assertThat(changeSizeInLines("text", ""), equalTo(ChangeSize(1)))
+        assertThat(changeSizeInLines("", "text"), equalTo(ChangeSize(1)))
+        assertThat(changeSizeInLines("text", "text"), equalTo(ChangeSize(0)))
     }
 
     @Test fun `test change size calculation`() {
-        assertThat(calculateChangeSizeInLines("text\ntext", "text"), equalTo(ChangeSize(1)))
-        assertThat(calculateChangeSizeInLines("text\ntext", ""), equalTo(ChangeSize(2)))
+        assertThat(changeSizeInLines("text\ntext", "text"), equalTo(ChangeSize(1)))
+        assertThat(changeSizeInLines("text\ntext", ""), equalTo(ChangeSize(2)))
     }
 
     @Test fun `test ignore spaces and newlines`() {
-        assertThat(calculateChangeSizeInLines("\n\ntext\n\n", ""), equalTo(ChangeSize(1)))
-        assertThat(calculateChangeSizeInLines("    text    ", ""), equalTo(ChangeSize(1)))
-        assertThat(calculateChangeSizeInLines("text\n\n\ntext\n\n\n", "text"), equalTo(ChangeSize(1)))
-        assertThat(calculateChangeSizeInLines("text\n\n\ntext\n\n\n", "\n"), equalTo(ChangeSize(2)))
+        assertThat(changeSizeInLines("\n\ntext\n\n", ""), equalTo(ChangeSize(1)))
+        assertThat(changeSizeInLines("    text    ", ""), equalTo(ChangeSize(1)))
+        assertThat(changeSizeInLines("text\n\n\ntext\n\n\n", "text"), equalTo(ChangeSize(1)))
+        assertThat(changeSizeInLines("text\n\n\ntext\n\n\n", "\n"), equalTo(ChangeSize(2)))
     }
 
     private fun calculateChangeSize(before: String, after: String): ChangeSize {
