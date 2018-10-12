@@ -8,7 +8,7 @@ import org.mockito.internal.matchers.InstanceOf
 import org.mockito.internal.progress.ThreadSafeMockingProgress.mockingProgress
 import org.mockito.Mockito.`when` as whenCalled
 
-class WatchdogTest {
+class WatchdogTests {
 
     private val ideAdapter = mock(IdeAdapter::class.java)
     private val settings = Settings(true, maxLinesInChange, notificationIntervalInSeconds, true)

@@ -1,12 +1,11 @@
 package limitedwip.autorevert.ui
 
-import org.junit.Test
-
 import limitedwip.autorevert.ui.QuickCommitAction.Companion.nextCommitMessage
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
+import org.junit.Test
 
-class QuickCommitActionTest {
+class QuickCommitActionTests {
 
     @Test fun `come up with next commit message`() {
         assertThat(nextCommitMessage(null), equalTo(" 0"))

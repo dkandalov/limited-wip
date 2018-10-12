@@ -20,7 +20,7 @@ import org.junit.Test
 import org.mockito.Mockito.*
 
 
-class AutoRevertTest {
+class AutoRevertTests {
     private val ideAdapter = mock(IdeAdapter::class.java)
     private val settings = Settings(true, secondsTillRevert, true)
     private val autoRevert = AutoRevert(ideAdapter).init(settings)
