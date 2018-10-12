@@ -23,7 +23,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         val changeSizeWatcher = ChangeSizeWatcher(myProject)
         ideAdapter = IdeAdapter(myProject, changeSizeWatcher)
-        watchdog = Watchdog(ideAdapter).init(Watchdog.Settings(
+        watchdog = Watchdog(ideAdapter, Watchdog.Settings(
             settings.watchdogEnabled,
             settings.maxLinesInChange,
             settings.notificationIntervalInSeconds(),

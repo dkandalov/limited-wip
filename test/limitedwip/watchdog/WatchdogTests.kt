@@ -12,7 +12,7 @@ class WatchdogTests {
 
     private val ideAdapter = mock(IdeAdapter::class.java)
     private val settings = Settings(true, maxLinesInChange, notificationIntervalInSeconds, true)
-    private val watchdog = Watchdog(ideAdapter).init(settings)
+    private val watchdog = Watchdog(ideAdapter, settings)
 
     private var seconds: Int = 0
 

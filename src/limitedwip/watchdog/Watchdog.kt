@@ -2,32 +2,26 @@ package limitedwip.watchdog
 
 import limitedwip.watchdog.components.IdeAdapter
 
-class Watchdog(private val ideAdapter: IdeAdapter) {
-    private var settings: Settings? = null
+class Watchdog(private val ideAdapter: IdeAdapter, private var settings: Settings) {
     private var lastNotificationTime = undefined
     private var skipNotificationsUtilCommit = false
 
-    fun init(settings: Settings): Watchdog {
-        onSettings(settings)
-        return this
-    }
-
     fun onTimer(seconds: Int) {
-        if (!settings!!.enabled) return
+        if (!settings.enabled) return
 
         val changeSize = ideAdapter.currentChangeListSizeInLines()
-        val exceededThreshold = changeSize.value > settings!!.maxLinesInChange
-        val timeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings!!.notificationIntervalInSeconds
+        val exceededThreshold = changeSize.value > settings.maxLinesInChange
+        val timeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings.notificationIntervalInSeconds
 
         if (timeToNotify && exceededThreshold && !skipNotificationsUtilCommit) {
-            ideAdapter.onChangeSizeTooBig(changeSize, settings!!.maxLinesInChange)
+            ideAdapter.onChangeSizeTooBig(changeSize, settings.maxLinesInChange)
             lastNotificationTime = seconds
         }
         if (!exceededThreshold) {
             ideAdapter.onChangeSizeWithinLimit()
         }
 
-        ideAdapter.showCurrentChangeListSize(changeSize, settings!!.maxLinesInChange)
+        ideAdapter.showCurrentChangeListSize(changeSize, settings.maxLinesInChange)
     }
 
     fun onSettings(settings: Settings) {
