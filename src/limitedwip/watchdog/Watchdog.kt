@@ -6,6 +6,10 @@ class Watchdog(private val ideAdapter: IdeAdapter, private var settings: Setting
     private var lastNotificationTime = undefined
     private var skipNotificationsUtilCommit = false
 
+    init {
+        onSettings(settings)
+    }
+
     fun onTimer(seconds: Int) {
         if (!settings.enabled) return
 
