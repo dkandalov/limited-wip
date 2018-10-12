@@ -2,6 +2,7 @@ package limitedwip.watchdog.components
 
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy.IGNORE_WHITESPACES
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -20,7 +21,7 @@ import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
     
-    private val changeSizeCache = ChangeSizeCache()
+    private val changeSizeCache = ChangeSizeCache(project)
     private var changeSize = ChangeSize(0, true)
     @Volatile private var isRunningBackgroundDiff: Boolean = false
 
@@ -91,7 +92,7 @@ class ChangeSizeWatcher(private val project: Project) {
 
     private fun currentChangeListSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
         return try {
-            amountOfChangedLinesIn(change, comparisonManager)
+            calculateChangeSize(change, comparisonManager)
         } catch (ignored: VcsException) {
             ChangeSize(0, true)
         } catch (ignored: FilesTooBigForDiffException) {
@@ -99,7 +100,7 @@ class ChangeSizeWatcher(private val project: Project) {
         }
     }
 
-    private fun amountOfChangedLinesIn(change: Change, comparisonManager: ComparisonManager): ChangeSize {
+    private fun calculateChangeSize(change: Change, comparisonManager: ComparisonManager): ChangeSize {
         val beforeRevision = change.beforeRevision
         val afterRevision = change.afterRevision
         if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
@@ -124,7 +125,7 @@ class ChangeSizeWatcher(private val project: Project) {
     }
 
 
-    private class ChangeSizeCache {
+    private class ChangeSizeCache(private val parentDisposable: Disposable) {
         private val changeSizeByDocument = WeakHashMap<Document, ChangeSize>()
 
         operator fun set(document: Document, changeSize: ChangeSize) {
@@ -135,7 +136,7 @@ class ChangeSizeWatcher(private val project: Project) {
                     changeSizeByDocument.remove(document)
                     document.removeDocumentListener(this)
                 }
-            })
+            }, parentDisposable)
         }
 
         operator fun get(document: Document?): ChangeSize? {
