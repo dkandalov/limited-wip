@@ -15,7 +15,6 @@ import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.FakeRevision
 import com.intellij.util.diff.FilesTooBigForDiffException
-import limitedwip.common.PluginId
 import limitedwip.watchdog.ChangeSize
 import java.util.*
 
@@ -36,8 +35,9 @@ class ChangeSizeCalculator(private val project: Project) {
      */
     private fun calculateCurrentChangeListSizeInLines() {
         if (isRunningBackgroundDiff) return
+        val application = ApplicationManager.getApplication()
 
-        val (newChangeSize, changesToDiff) = ApplicationManager.getApplication().runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
+        val (newChangeSize, changesToDiff) = application.runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
             val changeList = ChangeListManager.getInstance(project).defaultChangeList
 
             val changesToDiff = ArrayList<Change>()
@@ -58,9 +58,8 @@ class ChangeSizeCalculator(private val project: Project) {
             return
         }
 
-        Thread(Runnable {
+        application.executeOnPooledThread {
             isRunningBackgroundDiff = true
-
 
             val comparisonManager = ComparisonManager.getInstance()
             val changeSizeByChange = HashMap<Change, ChangeSize>()
@@ -68,7 +67,7 @@ class ChangeSizeCalculator(private val project: Project) {
                 changeSizeByChange[change] = currentChangeListSizeInLines(change, comparisonManager)
             }
 
-            ApplicationManager.getApplication().invokeLater {
+            application.invokeLater {
                 changeSize = newChangeSize
                 for (it in changeSizeByChange.values) {
                     changeSize = changeSize.add(it)
@@ -76,17 +75,18 @@ class ChangeSizeCalculator(private val project: Project) {
                 for ((change, changeSize) in changeSizeByChange) {
                     val document = change.document()
                     if (document != null && !changeSize.isApproximate) {
-                        changeSizeCache.put(document, changeSize)
+                        changeSizeCache[document] = changeSize
                     }
                 }
                 isRunningBackgroundDiff = false
             }
-        }, PluginId.value + "-DiffThread").start()
+        }
     }
 
     private fun Change.document(): Document? {
         val virtualFile = virtualFile
-        return if (virtualFile == null) null else FileDocumentManager.getInstance().getDocument(virtualFile)
+        return if (virtualFile == null) null
+        else FileDocumentManager.getInstance().getDocument(virtualFile)
     }
 
     private fun currentChangeListSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
@@ -125,10 +125,9 @@ class ChangeSizeCalculator(private val project: Project) {
 
 
     private class ChangeSizeCache {
-        private val changeSizeByDocument = HashMap<Document, ChangeSize>()
+        private val changeSizeByDocument = WeakHashMap<Document, ChangeSize>()
 
-        fun put(document: Document?, changeSize: ChangeSize) {
-            if (document == null) return
+        operator fun set(document: Document, changeSize: ChangeSize) {
             changeSizeByDocument[document] = changeSize
             document.addDocumentListener(object: DocumentListener {
                 override fun beforeDocumentChange(event: DocumentEvent) {}
