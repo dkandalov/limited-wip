@@ -12,13 +12,13 @@ import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class IdeAdapter(private val project: Project, private val changeSizeCalculator: ChangeSizeCalculator) {
+class IdeAdapter(private val project: Project, private val changeSizeWatcher: ChangeSizeWatcher) {
     private val watchdogWidget = WatchdogStatusBarWidget()
 
     private var settings: Watchdog.Settings? = null
     private var lastNotification: Notification? = null
 
-    fun currentChangeListSizeInLines() = changeSizeCalculator.currentChangeListSizeInLines()
+    fun currentChangeListSizeInLines() = changeSizeWatcher.currentChangeListSizeInLines()
 
     fun showCurrentChangeListSize(linesInChange: ChangeSize, maxLinesInChange: Int) {
         watchdogWidget.showChangeSize(asString(linesInChange), maxLinesInChange)

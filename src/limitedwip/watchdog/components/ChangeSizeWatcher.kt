@@ -18,7 +18,7 @@ import com.intellij.util.diff.FilesTooBigForDiffException
 import limitedwip.watchdog.ChangeSize
 import java.util.*
 
-class ChangeSizeCalculator(private val project: Project) {
+class ChangeSizeWatcher(private val project: Project) {
     
     private val changeSizeCache = ChangeSizeCache()
     private var changeSize = ChangeSize(0, true)

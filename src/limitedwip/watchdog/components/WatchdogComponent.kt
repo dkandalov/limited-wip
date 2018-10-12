@@ -21,8 +21,8 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
 
     override fun projectOpened() {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
-        val changeSizeCalculator = ChangeSizeCalculator(myProject)
-        ideAdapter = IdeAdapter(myProject, changeSizeCalculator)
+        val changeSizeWatcher = ChangeSizeWatcher(myProject)
+        ideAdapter = IdeAdapter(myProject, changeSizeWatcher)
         watchdog = Watchdog(ideAdapter).init(Watchdog.Settings(
             settings.watchdogEnabled,
             settings.maxLinesInChange,
@@ -36,7 +36,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
                     // Project can be closed (disposed) during handover between timer thread and EDT.
                     if (myProject.isDisposed) return@Runnable
                     watchdog.onTimer(seconds)
-                    changeSizeCalculator.onTimer()
+                    changeSizeWatcher.onTimer()
                 }, ModalityState.any())
             }
         }, myProject)
