@@ -11,18 +11,20 @@ import limitedwip.common.PluginId
     name = PluginId.value + "Settings",
     storages = arrayOf(Storage(file = "\$APP_CONFIG$/limitedwip.ui.settings.xml"))
 )
-class LimitedWipSettings: PersistentStateComponent<LimitedWipSettings> {
+data class LimitedWipSettings(
+    var autoRevertEnabled: Boolean = false,
+    var minutesTillRevert: Int = 2,
+    var notifyOnRevert: Boolean = true,
+    var showTimerInToolbar: Boolean = true,
 
-    var autoRevertEnabled = false
-    var minutesTillRevert = 2
-    var notifyOnRevert = true
-    var showTimerInToolbar = true
+    var watchdogEnabled: Boolean = true,
+    var maxLinesInChange: Int = 80,
+    var notificationIntervalInMinutes: Int = 1,
+    var disableCommitsAboveThreshold: Boolean = false,
+    var showRemainingChangesInToolbar: Boolean = true,
 
-    var watchdogEnabled = true
-    var maxLinesInChange = 80
-    var notificationIntervalInMinutes = 1
-    var disableCommitsAboveThreshold = false
-    var showRemainingChangesInToolbar = true
+    var limboEnabled: Boolean = false
+): PersistentStateComponent<LimitedWipSettings> {
 
     fun secondsTillRevert(): Int = minutesTillRevert * 60
 

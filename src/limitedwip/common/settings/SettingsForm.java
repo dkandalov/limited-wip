@@ -2,11 +2,8 @@ package limitedwip.common.settings;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ui.components.labels.LinkLabel;
-import com.intellij.ui.components.labels.LinkListener;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SettingsForm {
@@ -24,6 +21,8 @@ public class SettingsForm {
 	private JCheckBox showTimerInToolbar;
 	private LinkLabel<Void> openReadme;
 
+	private JCheckBox limboEnabled;
+
 	private final LimitedWipSettings initialState;
 	private LimitedWipSettings currentState;
 	private boolean isUpdatingUI;
@@ -34,11 +33,9 @@ public class SettingsForm {
 		currentState.loadState(initialState);
 		updateUIFromState();
 
-		ActionListener commonActionListener = new ActionListener() {
-			@Override public void actionPerformed(@NotNull ActionEvent event) {
-				updateStateFromUI();
-				updateUIFromState();
-			}
+		ActionListener commonActionListener = event -> {
+			updateStateFromUI();
+			updateUIFromState();
 		};
 
 		watchdogEnabled.addActionListener(commonActionListener);
@@ -52,11 +49,12 @@ public class SettingsForm {
 		notifyOnRevert.addActionListener(commonActionListener);
 		showTimerInToolbar.addActionListener(commonActionListener);
 
-		openReadme.setListener(new LinkListener<Void>() {
-			@Override public void linkSelected(LinkLabel aSource, Void aLinkData) {
-				BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip");
-			}
-		}, null);
+		limboEnabled.addActionListener(commonActionListener);
+
+		openReadme.setListener(
+			(aSource, aLinkData) -> BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip"),
+			null
+		);
 	}
 
 	public void updateUIFromState() {
@@ -82,6 +80,8 @@ public class SettingsForm {
 		showRemainingInToolbar.setEnabled(currentState.getWatchdogEnabled());
 		disableCommitsAboveThreshold.setEnabled(currentState.getWatchdogEnabled());
 
+		limboEnabled.setSelected(currentState.getLimboEnabled());
+
 		isUpdatingUI = false;
 	}
 
@@ -106,6 +106,8 @@ public class SettingsForm {
 			}
 			currentState.setNotifyOnRevert(notifyOnRevert.isSelected());
 			currentState.setShowTimerInToolbar(showTimerInToolbar.isSelected());
+
+			currentState.setLimboEnabled(limboEnabled.isSelected());
 
 		} catch (NumberFormatException ignored) {
 		}

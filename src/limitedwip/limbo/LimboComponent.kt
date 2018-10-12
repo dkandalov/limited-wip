@@ -17,6 +17,7 @@ class LimboComponent(private val project: Project) : AbstractProjectComponent(pr
 
             override fun onUnitTestFailed() {
                 ideAdapter.revertCurrentChangeList()
+                resetTestsCounter()
             }
         })
     }
