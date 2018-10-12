@@ -20,10 +20,14 @@ import limitedwip.watchdog.ChangeSize
 import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
-    
+
     private val changeSizeCache = ChangeSizeCache(project)
     private var changeSize = ChangeSize(0, true)
-    @Volatile private var isRunningBackgroundDiff: Boolean = false
+    @Volatile
+    private var isRunningBackgroundDiff: Boolean = false
+
+    private val comparisonManager = ComparisonManager.getInstance()
+    private val application = ApplicationManager.getApplication()
 
     fun currentChangeListSizeInLines() = changeSize
 
@@ -36,7 +40,6 @@ class ChangeSizeWatcher(private val project: Project) {
      */
     private fun calculateCurrentChangeListSizeInLines() {
         if (isRunningBackgroundDiff) return
-        val application = ApplicationManager.getApplication()
 
         val (newChangeSize, changesToDiff) = application.runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
             val changeList = ChangeListManager.getInstance(project).defaultChangeList
@@ -62,7 +65,6 @@ class ChangeSizeWatcher(private val project: Project) {
         application.executeOnPooledThread {
             isRunningBackgroundDiff = true
 
-            val comparisonManager = ComparisonManager.getInstance()
             val changeSizeByChange = HashMap<Change, ChangeSize>()
             for (change in changesToDiff) {
                 changeSizeByChange[change] = currentChangeListSizeInLines(change, comparisonManager)
@@ -100,30 +102,6 @@ class ChangeSizeWatcher(private val project: Project) {
         }
     }
 
-    private fun calculateChangeSize(change: Change, comparisonManager: ComparisonManager): ChangeSize {
-        val beforeRevision = change.beforeRevision
-        val afterRevision = change.afterRevision
-        if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
-            return ChangeSize(0, true)
-        }
-
-        val revision = afterRevision ?: beforeRevision
-        if (revision == null || revision.file.fileType.isBinary) return ChangeSize(0)
-
-        val contentBefore = if (beforeRevision != null) beforeRevision.content ?: "" else ""
-        val contentAfter = if (afterRevision != null) afterRevision.content ?: "" else ""
-
-        val result = comparisonManager
-            .compareWords(contentBefore, contentAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
-            .sumBy { fragment ->
-                val changeSize1 = fragment.endOffset1 - fragment.startOffset1
-                val changeSize2 = fragment.endOffset2 - fragment.startOffset2
-                // Use changeSize2 unless it's deleted code, then use changeSize1.
-                if (changeSize2 != 0) changeSize2 else changeSize1
-            }
-        return ChangeSize(result)
-    }
-
 
     private class ChangeSizeCache(private val parentDisposable: Disposable) {
         private val changeSizeByDocument = WeakHashMap<Document, ChangeSize>()
@@ -143,4 +121,29 @@ class ChangeSizeWatcher(private val project: Project) {
             return if (document == null) null else changeSizeByDocument[document]
         }
     }
+}
+
+
+internal fun calculateChangeSize(change: Change, comparisonManager: ComparisonManager): ChangeSize {
+    val beforeRevision = change.beforeRevision
+    val afterRevision = change.afterRevision
+    if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
+        return ChangeSize(0, true)
+    }
+
+    val revision = afterRevision ?: beforeRevision
+    if (revision == null || revision.file.fileType.isBinary) return ChangeSize(0)
+
+    val contentBefore = if (beforeRevision != null) beforeRevision.content ?: "" else ""
+    val contentAfter = if (afterRevision != null) afterRevision.content ?: "" else ""
+
+    val result = comparisonManager
+        .compareWords(contentBefore, contentAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
+        .sumBy { fragment ->
+            val changeSize1 = fragment.endOffset1 - fragment.startOffset1
+            val changeSize2 = fragment.endOffset2 - fragment.startOffset2
+            // Use changeSize2 unless it's deleted code, then use changeSize1.
+            if (changeSize2 != 0) changeSize2 else changeSize1
+        }
+    return ChangeSize(result)
 }
