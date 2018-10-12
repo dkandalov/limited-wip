@@ -17,7 +17,7 @@ class WatchdogTest {
     private var seconds: Int = 0
 
 
-    @Test fun `does not send notification when change size is below threshold`() {
+    @Test fun `don't send notification when change size is below threshold`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(10))
 
         watchdog.onTimer(next())
@@ -25,7 +25,7 @@ class WatchdogTest {
         verify(ideAdapter, times(0)).onChangeSizeTooBig(anyChangeSize(), anyInt())
     }
 
-    @Test fun `sends notification when change size is above threshold`() {
+    @Test fun `send notification when change size is above threshold`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onTimer(next())
@@ -33,7 +33,7 @@ class WatchdogTest {
         verify(ideAdapter).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun `sends change size notification only on one of several updates`() {
+    @Test fun `send change size notification only on one of several updates`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onTimer(next()) // send notification
@@ -44,7 +44,7 @@ class WatchdogTest {
         verify(ideAdapter, times(2)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun `sends change size notification after settings change`() {
+    @Test fun `send change size notification after settings change`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         val inOrder = inOrder(ideAdapter)
 
@@ -56,7 +56,7 @@ class WatchdogTest {
         inOrder.verify(ideAdapter).onChangeSizeTooBig(ChangeSize(200), 150)
     }
 
-    @Test fun `does not send notification when disabled`() {
+    @Test fun `don't send notification when disabled`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onSettings(watchdogDisabledSettings())
@@ -67,7 +67,7 @@ class WatchdogTest {
         verifyNoMoreInteractions(ideAdapter)
     }
 
-    @Test fun `can skip notifications util next commit`() {
+    @Test fun `skip notifications util next commit`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.skipNotificationsUntilCommit(true)
@@ -79,13 +79,13 @@ class WatchdogTest {
         verify(ideAdapter).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun `sends change size update`() {
+    @Test fun `send change size update`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         watchdog.onTimer(next())
         verify(ideAdapter).showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun `still sends change size update when notifications are skipped till next commit`() {
+    @Test fun `still send change size update when notifications are skipped till next commit`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.skipNotificationsUntilCommit(true)
@@ -94,7 +94,7 @@ class WatchdogTest {
         verify(ideAdapter).showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
-    @Test fun `does not send change size update when disabled`() {
+    @Test fun `don't send change size update when disabled`() {
         whenCalled(ideAdapter.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
         watchdog.onSettings(watchdogDisabledSettings())
