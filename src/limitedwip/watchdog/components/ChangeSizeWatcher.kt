@@ -23,8 +23,7 @@ class ChangeSizeWatcher(private val project: Project) {
 
     private val changeSizeCache = ChangeSizeCache(project)
     private var changeSize = ChangeSize(0, true)
-    @Volatile
-    private var isRunningBackgroundDiff: Boolean = false
+    @Volatile private var isRunningBackgroundDiff: Boolean = false
 
     private val comparisonManager = ComparisonManager.getInstance()
     private val application = ApplicationManager.getApplication()
@@ -67,7 +66,7 @@ class ChangeSizeWatcher(private val project: Project) {
 
             val changeSizeByChange = HashMap<Change, ChangeSize>()
             for (change in changesToDiff) {
-                changeSizeByChange[change] = currentChangeListSizeInLines(change, comparisonManager)
+                changeSizeByChange[change] = calculateChangeSizeInLines(change, comparisonManager)
             }
 
             application.invokeLater {
@@ -92,17 +91,6 @@ class ChangeSizeWatcher(private val project: Project) {
         else FileDocumentManager.getInstance().getDocument(virtualFile)
     }
 
-    private fun currentChangeListSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
-        return try {
-            calculateChangeSize(change, comparisonManager)
-        } catch (ignored: VcsException) {
-            ChangeSize(0, true)
-        } catch (ignored: FilesTooBigForDiffException) {
-            ChangeSize(0, true)
-        }
-    }
-
-
     private class ChangeSizeCache(private val parentDisposable: Disposable) {
         private val changeSizeByDocument = WeakHashMap<Document, ChangeSize>()
 
@@ -124,7 +112,17 @@ class ChangeSizeWatcher(private val project: Project) {
 }
 
 
-fun calculateChangeSize(change: Change, comparisonManager: ComparisonManager): ChangeSize {
+fun calculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
+    return try {
+        doCalculateChangeSizeInLines(change, comparisonManager)
+    } catch (ignored: VcsException) {
+        ChangeSize(0, true)
+    } catch (ignored: FilesTooBigForDiffException) {
+        ChangeSize(0, true)
+    }
+}
+
+private fun doCalculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
     val beforeRevision = change.beforeRevision
     val afterRevision = change.afterRevision
     if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
@@ -140,8 +138,12 @@ fun calculateChangeSize(change: Change, comparisonManager: ComparisonManager): C
     val result = comparisonManager
         .compareWords(contentBefore, contentAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
         .sumBy { fragment ->
-            val changeSize1 = fragment.endOffset1 - fragment.startOffset1
-            val changeSize2 = fragment.endOffset2 - fragment.startOffset2
+            val subSequence1 = contentBefore.subSequence(IntRange(fragment.startOffset1, fragment.endOffset1 - 1)).replace(Regex("\n+"), "\n")
+            val subSequence2 = contentAfter.subSequence(IntRange(fragment.startOffset2, fragment.endOffset2 - 1)).replace(Regex("\n+"), "\n")
+
+            val changeSize1 = subSequence1.count { it == '\n' } + (if (subSequence1.isEmpty()) 0 else 1)
+            val changeSize2 = subSequence2.count { it == '\n' } + (if (subSequence2.isEmpty()) 0 else 1)
+
             // Use changeSize2 unless it's deleted code, then use changeSize1.
             if (changeSize2 != 0) changeSize2 else changeSize1
         }
