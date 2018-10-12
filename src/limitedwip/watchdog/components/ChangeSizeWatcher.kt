@@ -124,7 +124,7 @@ class ChangeSizeWatcher(private val project: Project) {
 }
 
 
-internal fun calculateChangeSize(change: Change, comparisonManager: ComparisonManager): ChangeSize {
+fun calculateChangeSize(change: Change, comparisonManager: ComparisonManager): ChangeSize {
     val beforeRevision = change.beforeRevision
     val afterRevision = change.afterRevision
     if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
