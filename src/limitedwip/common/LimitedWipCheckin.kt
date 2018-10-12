@@ -26,7 +26,7 @@ class LimitedWipCheckin : CheckinHandlerFactory() {
     }
 
     private fun notifySettingsListeners(allFileAreCommitted: Boolean) {
-        val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(EXTENSION_POINT_NAME)
+        val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName)
         for (listener in extensionPoint.extensions) {
             listener.onSuccessfulCheckin(allFileAreCommitted)
         }
@@ -37,10 +37,10 @@ class LimitedWipCheckin : CheckinHandlerFactory() {
     }
 
     companion object {
-        private val EXTENSION_POINT_NAME = "LimitedWIP.checkinListener"
+        private const val extensionPointName = "LimitedWIP.checkinListener"
 
         fun registerListener(disposable: Disposable, listener: Listener) {
-            val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(EXTENSION_POINT_NAME)
+            val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName)
             extensionPoint.registerExtension(listener)
             Disposer.register(disposable, Disposable { extensionPoint.unregisterExtension(listener) })
         }
