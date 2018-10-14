@@ -9,9 +9,15 @@ import org.mockito.internal.progress.ThreadSafeMockingProgress.mockingProgress
 import org.mockito.Mockito.`when` as whenCalled
 
 class WatchdogTests {
-
+    private val maxLinesInChange = 100
     private val ide = mock(Ide::class.java)
-    private val settings = Settings(true, maxLinesInChange, notificationIntervalInSeconds, true)
+    private val settings = Settings(
+        enabled = true,
+        maxLinesInChange = maxLinesInChange,
+        notificationIntervalInSeconds = 2,
+        showRemainingChangesInToolbar = true
+    )
+    private val disabledSettings = Settings(false, 150, 2, true)
     private val watchdog = Watchdog(ide, settings)
 
     private var seconds: Int = 0
@@ -51,7 +57,7 @@ class WatchdogTests {
         watchdog.onTimer(next())
         inOrder.verify(ide).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
 
-        watchdog.onSettings(settingsWithChangeSizeThreshold(150))
+        watchdog.onSettings(settings.copy(maxLinesInChange = 150))
         watchdog.onTimer(next())
         inOrder.verify(ide).onChangeSizeTooBig(ChangeSize(200), 150)
     }
@@ -59,7 +65,7 @@ class WatchdogTests {
     @Test fun `don't send notification when disabled`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
-        watchdog.onSettings(watchdogDisabledSettings())
+        watchdog.onSettings(disabledSettings)
         watchdog.onTimer(next())
         watchdog.onTimer(next())
 
@@ -97,7 +103,7 @@ class WatchdogTests {
     @Test fun `don't send change size update when disabled`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
-        watchdog.onSettings(watchdogDisabledSettings())
+        watchdog.onSettings(disabledSettings)
         watchdog.onTimer(next())
 
         verify(ide, times(2)).onSettingsUpdate(anySettings())
@@ -122,19 +128,10 @@ class WatchdogTests {
         mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any " + type.canonicalName + ">"))
         return Watchdog.Settings(false, 0, 0, false)
     }
+
     private fun anyChangeSize(): ChangeSize {
         val type = ChangeSize::class.java
         mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any " + type.canonicalName + ">"))
         return ChangeSize(0, false)
-    }
-
-    companion object {
-        private const val maxLinesInChange = 100
-        private const val notificationIntervalInSeconds = 2
-
-        private fun watchdogDisabledSettings() = Settings(false, 150, 2, true)
-
-        private fun settingsWithChangeSizeThreshold(maxLinesInChange: Int) =
-            Settings(true, maxLinesInChange, 2, true)
     }
 }
