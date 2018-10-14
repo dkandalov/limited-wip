@@ -3,6 +3,7 @@
 package limitedwip.limbo
 
 import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import limitedwip.autorevert.components.IdeAdapter
 import limitedwip.common.LimitedWipCheckin
@@ -34,7 +35,8 @@ class LimboComponent(project: Project) : AbstractProjectComponent(project) {
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) {
-                // TODO
+                val appComponent = ServiceManager.getService(DisableCommitWithoutRunningTestAppComponent::class.java)
+                appComponent.enabled = settings.limboEnabled
             }
         })
     }

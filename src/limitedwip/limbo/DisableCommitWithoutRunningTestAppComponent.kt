@@ -22,7 +22,7 @@ import limitedwip.watchdog.components.VcsIdeUtil.registerBeforeCheckInListener
 
 class DisableCommitWithoutRunningTestAppComponent : ApplicationComponent {
 
-    private var enabled: Boolean = true
+    var enabled: Boolean = true
     private var allowCommitOnceWithoutCheck = false
 
     override fun initComponent() {
@@ -61,7 +61,7 @@ class DisableCommitWithoutRunningTestAppComponent : ApplicationComponent {
 
         val notification = Notification(
             pluginDisplayName,
-            "",
+            pluginDisplayName,
             "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.ERROR,
             listener
