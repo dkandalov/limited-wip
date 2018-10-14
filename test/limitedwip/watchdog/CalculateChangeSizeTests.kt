@@ -5,31 +5,30 @@ import com.intellij.openapi.vcs.LocalFilePath
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.SimpleContentRevision
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import limitedwip.shouldEqual
 import limitedwip.watchdog.components.calculateChangeSizeInLines
-import org.hamcrest.core.IsEqual.equalTo
-import org.junit.Assert.assertThat
 import org.junit.Test
 
 class CalculateChangeSizeTests : LightPlatformCodeInsightFixtureTestCase() {
     private val comparisonManager = ComparisonManagerImpl()
 
     @Test fun `test trivial diffs`() {
-        assertThat(changeSizeInLines("", ""), equalTo(ChangeSize(0)))
-        assertThat(changeSizeInLines("text", ""), equalTo(ChangeSize(1)))
-        assertThat(changeSizeInLines("", "text"), equalTo(ChangeSize(1)))
-        assertThat(changeSizeInLines("text", "text"), equalTo(ChangeSize(0)))
+        changeSizeInLines("", "") shouldEqual ChangeSize(0)
+        changeSizeInLines("text", "") shouldEqual ChangeSize(1)
+        changeSizeInLines("", "text") shouldEqual ChangeSize(1)
+        changeSizeInLines("text", "text") shouldEqual ChangeSize(0)
     }
 
     @Test fun `test change size calculation`() {
-        assertThat(changeSizeInLines("text\ntext", "text"), equalTo(ChangeSize(1)))
-        assertThat(changeSizeInLines("text\ntext", ""), equalTo(ChangeSize(2)))
+        changeSizeInLines("text\ntext", "text") shouldEqual ChangeSize(1)
+        changeSizeInLines("text\ntext", "") shouldEqual ChangeSize(2)
     }
 
     @Test fun `test ignore spaces and newlines`() {
-        assertThat(changeSizeInLines("\n\ntext\n\n", ""), equalTo(ChangeSize(1)))
-        assertThat(changeSizeInLines("    text    ", ""), equalTo(ChangeSize(1)))
-        assertThat(changeSizeInLines("text\n\n\ntext\n\n\n", "text"), equalTo(ChangeSize(1)))
-        assertThat(changeSizeInLines("text\n\n\ntext\n\n\n", "\n"), equalTo(ChangeSize(2)))
+        changeSizeInLines("\n\ntext\n\n", "") shouldEqual ChangeSize(1)
+        changeSizeInLines("    text    ", "") shouldEqual ChangeSize(1)
+        changeSizeInLines("text\n\n\ntext\n\n\n", "text") shouldEqual ChangeSize(1)
+        changeSizeInLines("text\n\n\ntext\n\n\n", "\n") shouldEqual ChangeSize(2)
     }
 
     private fun changeSizeInLines(before: String, after: String): ChangeSize {
