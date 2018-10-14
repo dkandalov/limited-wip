@@ -9,12 +9,12 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import limitedwip.autorevert.components.Ide as IdeFromAutoRevert
 import limitedwip.common.LimitedWipCheckin
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.limbo.Limbo.Amount.Companion.zero
+import limitedwip.autorevert.components.Ide as IdeFromAutoRevert
 
 class Ide(
     private val project: Project,
@@ -49,7 +49,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onUnitTestSucceeded() {
-        amountOfTestsRun = amountOfTestsRun++
+        amountOfTestsRun += 1
     }
 
     fun onUnitTestFailed() {
@@ -86,9 +86,8 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
 
     data class Settings(val enabled: Boolean)
 
-    @Suppress("unused")
-    private data class Amount(val n: Int) {
-        operator fun inc() = Amount(n + 1)
+    data class Amount(val n: Int) {
+        operator fun plus(n: Int) = Amount(this.n + n)
         companion object {
             val zero = Amount(0)
         }
