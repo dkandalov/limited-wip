@@ -11,7 +11,7 @@ class UnitTestsWatcher(project: Project) {
     private val busConnection = project.messageBus.connect(project)
 
     fun start(listener: Listener) {
-        busConnection.subscribe(Notifications.TOPIC, object: NotificationsAdapter() {
+        busConnection.subscribe(Notifications.TOPIC, object : NotificationsAdapter() {
             override fun notify(notification: Notification) {
                 if (notification.groupId == TestsUIUtil.NOTIFICATION_GROUP.displayId) {
                     val testsFailed = notification.type == NotificationType.ERROR
@@ -24,7 +24,6 @@ class UnitTestsWatcher(project: Project) {
 
     interface Listener {
         fun onUnitTestSucceeded()
-
         fun onUnitTestFailed()
     }
 }
