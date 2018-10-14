@@ -12,7 +12,7 @@ import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class IdeAdapter(private val project: Project, private val changeSizeWatcher: ChangeSizeWatcher) {
+class Ide(private val project: Project, private val changeSizeWatcher: ChangeSizeWatcher) {
     private val watchdogWidget = WatchdogStatusBarWidget()
 
     private var settings: Watchdog.Settings? = null

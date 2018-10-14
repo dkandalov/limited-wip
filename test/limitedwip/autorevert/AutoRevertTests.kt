@@ -14,32 +14,33 @@
 package limitedwip.autorevert
 
 import limitedwip.autorevert.AutoRevert.Settings
-import limitedwip.autorevert.components.IdeAdapter
+import limitedwip.autorevert.components.Ide
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 
 
 class AutoRevertTests {
-    private val ideAdapter = mock(IdeAdapter::class.java)
+    private val secondsTillRevert = 2
+    private val ide = mock(Ide::class.java)
     private val settings = Settings(true, secondsTillRevert, true)
-    private val autoRevert = AutoRevert(ideAdapter).init(settings)
+    private val autoRevert = AutoRevert(ide).init(settings)
     private var seconds: Int = 0
 
 
     @Test fun `send UI startup notification`() {
         autoRevert.start()
-        verify(ideAdapter).onAutoRevertStarted(eq(secondsTillRevert))
+        verify(ide).onAutoRevertStarted(eq(secondsTillRevert))
     }
 
     @Test fun `send UI notification on timer only when started`() {
-        val inOrder = inOrder(ideAdapter)
+        val inOrder = inOrder(ide)
 
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter, times(0)).onTimeTillRevert(anyInt())
+        inOrder.verify(ide, times(0)).onTimeTillRevert(anyInt())
         autoRevert.start()
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(anyInt())
+        inOrder.verify(ide).onTimeTillRevert(anyInt())
     }
 
     @Test fun `revert changes when received enough time updates`() {
@@ -50,8 +51,8 @@ class AutoRevertTests {
         autoRevert.onTimer(next())
         autoRevert.onTimer(next())
 
-        verify(ideAdapter, times(2)).revertCurrentChangeList()
-        verify(ideAdapter, times(2)).onChangesRevert()
+        verify(ide, times(2)).revertCurrentChangeList()
+        verify(ide, times(2)).onChangesRevert()
     }
 
     @Test fun `don't revert changes when stopped`() {
@@ -60,47 +61,47 @@ class AutoRevertTests {
         autoRevert.stop()
         autoRevert.onTimer(next())
 
-        verify(ideAdapter).onAutoRevertStarted(anyInt())
-        verify(ideAdapter).onAutoRevertStopped()
-        verify(ideAdapter, never()).revertCurrentChangeList()
+        verify(ide).onAutoRevertStarted(anyInt())
+        verify(ide).onAutoRevertStopped()
+        verify(ide, never()).revertCurrentChangeList()
     }
 
     @Test fun `reset time till revert when stopped`() {
-        val inOrder = inOrder(ideAdapter)
+        val inOrder = inOrder(ide)
 
         autoRevert.start()
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(eq(2))
+        inOrder.verify(ide).onTimeTillRevert(eq(2))
         autoRevert.stop()
         autoRevert.start()
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(eq(2))
+        inOrder.verify(ide).onTimeTillRevert(eq(2))
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(eq(1))
+        inOrder.verify(ide).onTimeTillRevert(eq(1))
     }
 
     @Test fun `reset time till revert when committed`() {
-        val inOrder = inOrder(ideAdapter)
+        val inOrder = inOrder(ide)
 
         autoRevert.start()
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(eq(2))
+        inOrder.verify(ide).onTimeTillRevert(eq(2))
         autoRevert.onAllFilesCommitted()
-        inOrder.verify(ideAdapter).onCommit(secondsTillRevert)
+        inOrder.verify(ide).onCommit(secondsTillRevert)
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(eq(2))
+        inOrder.verify(ide).onTimeTillRevert(eq(2))
         autoRevert.onTimer(next())
-        inOrder.verify(ideAdapter).onTimeTillRevert(eq(1))
+        inOrder.verify(ide).onTimeTillRevert(eq(1))
     }
 
     @Test fun `send UI notification on commit only when started`() {
-        val inOrder = inOrder(ideAdapter)
+        val inOrder = inOrder(ide)
 
         autoRevert.onAllFilesCommitted()
-        inOrder.verify(ideAdapter, times(0)).onCommit(anyInt())
+        inOrder.verify(ide, times(0)).onCommit(anyInt())
         autoRevert.start()
         autoRevert.onAllFilesCommitted()
-        inOrder.verify(ideAdapter).onCommit(anyInt())
+        inOrder.verify(ide).onCommit(anyInt())
     }
 
     @Test fun `apply revert time out change after start`() {
@@ -109,8 +110,8 @@ class AutoRevertTests {
         autoRevert.onTimer(next())
         autoRevert.onTimer(next())
 
-        verify(ideAdapter, times(2)).revertCurrentChangeList()
-        verify(ideAdapter, times(2)).onChangesRevert()
+        verify(ide, times(2)).revertCurrentChangeList()
+        verify(ide, times(2)).onChangesRevert()
     }
 
     @Test fun `apply revert timeout change after end of current time out`() {
@@ -121,8 +122,8 @@ class AutoRevertTests {
         autoRevert.onTimer(next()) // reverts changes after 1st time event
         autoRevert.onTimer(next()) // reverts changes after 1st time event
 
-        verify(ideAdapter, times(3)).revertCurrentChangeList()
-        verify(ideAdapter, times(3)).onChangesRevert()
+        verify(ide, times(3)).revertCurrentChangeList()
+        verify(ide, times(3)).onChangesRevert()
     }
 
     @Test fun `apply revert timeout change after commit`() {
@@ -134,8 +135,8 @@ class AutoRevertTests {
         autoRevert.onTimer(next()) // reverts changes after 1st time event
         autoRevert.onTimer(next()) // reverts changes after 1st time event
 
-        verify(ideAdapter, times(3)).revertCurrentChangeList()
-        verify(ideAdapter, times(3)).onChangesRevert()
+        verify(ide, times(3)).revertCurrentChangeList()
+        verify(ide, times(3)).onChangesRevert()
     }
 
     @Test fun `don't send UI startup notification when disabled`() {
@@ -143,9 +144,9 @@ class AutoRevertTests {
         autoRevert.onSettings(disabledSettings)
         autoRevert.start()
 
-        verify(ideAdapter).onSettingsUpdate(settings)
-        verify(ideAdapter).onSettingsUpdate(disabledSettings)
-        verifyNoMoreInteractions(ideAdapter)
+        verify(ide).onSettingsUpdate(settings)
+        verify(ide).onSettingsUpdate(disabledSettings)
+        verifyNoMoreInteractions(ide)
     }
 
     @Test fun `don't revert changes when disabled`() {
@@ -154,18 +155,12 @@ class AutoRevertTests {
         autoRevert.onSettings(Settings(false, 2, false))
         autoRevert.onTimer(next())
 
-        verify(ideAdapter, never()).revertCurrentChangeList()
+        verify(ide, never()).revertCurrentChangeList()
     }
 
     @Before fun setUp() {
-        `when`(ideAdapter.revertCurrentChangeList()).thenReturn(10)
+        `when`(ide.revertCurrentChangeList()).thenReturn(10)
     }
 
-    private fun next(): Int {
-        return ++seconds
-    }
-
-    companion object {
-        private const val secondsTillRevert = 2
-    }
+    private fun next(): Int = ++seconds
 }

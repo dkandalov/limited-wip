@@ -5,14 +5,14 @@ package limitedwip.limbo
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import limitedwip.autorevert.components.IdeAdapter
+import limitedwip.autorevert.components.Ide
 import limitedwip.common.LimitedWipCheckin
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 
 class LimboComponent(project: Project) : AbstractProjectComponent(project) {
     private val unitTestsWatcher = UnitTestsWatcher(myProject)
-    private val ideAdapter = IdeAdapter(myProject)
+    private val ide = Ide(myProject)
     private var amountOfTestsRun = 0
 
     override fun projectOpened() {
@@ -22,7 +22,7 @@ class LimboComponent(project: Project) : AbstractProjectComponent(project) {
             }
 
             override fun onUnitTestFailed() {
-                ideAdapter.revertCurrentChangeList()
+                ide.revertCurrentChangeList()
                 resetTestsCounter()
             }
         })

@@ -17,13 +17,13 @@ import limitedwip.watchdog.Watchdog
 class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
     private lateinit var watchdog: Watchdog
     private val timer = ApplicationManager.getApplication().getComponent(TimerComponent::class.java)
-    private lateinit var ideAdapter: IdeAdapter
+    private lateinit var ide: Ide
 
     override fun projectOpened() {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         val changeSizeWatcher = ChangeSizeWatcher(myProject)
-        ideAdapter = IdeAdapter(myProject, changeSizeWatcher)
-        watchdog = Watchdog(ideAdapter, Watchdog.Settings(
+        ide = Ide(myProject, changeSizeWatcher)
+        watchdog = Watchdog(ide, Watchdog.Settings(
             settings.watchdogEnabled,
             settings.maxLinesInChange,
             settings.notificationIntervalInSeconds(),
@@ -59,7 +59,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
         })
     }
 
-    fun currentChangeListSize(): Int = ideAdapter.currentChangeListSizeInLines().value
+    fun currentChangeListSize(): Int = ide.currentChangeListSizeInLines().value
 
     fun toggleSkipNotificationsUntilCommit() {
         watchdog.toggleSkipNotificationsUntilCommit()

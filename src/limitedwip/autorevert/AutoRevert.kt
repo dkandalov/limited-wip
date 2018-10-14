@@ -1,9 +1,9 @@
 package limitedwip.autorevert
 
 
-import limitedwip.autorevert.components.IdeAdapter
+import limitedwip.autorevert.components.Ide
 
-class AutoRevert(private val ideNotifications: IdeAdapter) {
+class AutoRevert(private val ide: Ide) {
 
     private var settings: Settings? = null
     var isStarted = false
@@ -23,12 +23,12 @@ class AutoRevert(private val ideNotifications: IdeAdapter) {
         startSeconds = -1
         applyNewSettings()
 
-        ideNotifications.onAutoRevertStarted(remainingSeconds)
+        ide.onAutoRevertStarted(remainingSeconds)
     }
 
     fun stop() {
         isStarted = false
-        ideNotifications.onAutoRevertStopped()
+        ide.onAutoRevertStopped()
     }
 
     fun onTimer(seconds: Int) {
@@ -39,14 +39,14 @@ class AutoRevert(private val ideNotifications: IdeAdapter) {
         }
         val secondsPassed = seconds - startSeconds
 
-        ideNotifications.onTimeTillRevert(remainingSeconds - secondsPassed + 1)
+        ide.onTimeTillRevert(remainingSeconds - secondsPassed + 1)
 
         if (secondsPassed >= remainingSeconds) {
             startSeconds = -1
             applyNewSettings()
-            val revertedFilesCount = ideNotifications.revertCurrentChangeList()
+            val revertedFilesCount = ide.revertCurrentChangeList()
             if (revertedFilesCount > 0 && settings!!.notifyOnRevert) {
-                ideNotifications.onChangesRevert()
+                ide.onChangesRevert()
             }
         }
     }
@@ -56,11 +56,11 @@ class AutoRevert(private val ideNotifications: IdeAdapter) {
 
         startSeconds = -1
         applyNewSettings()
-        ideNotifications.onCommit(remainingSeconds)
+        ide.onCommit(remainingSeconds)
     }
 
     fun onSettings(settings: Settings) {
-        ideNotifications.onSettingsUpdate(settings)
+        ide.onSettingsUpdate(settings)
         this.settings = settings
         if (isStarted && !settings.autoRevertEnabled) {
             stop()

@@ -17,7 +17,7 @@ import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.pluginDisplayName
 import java.util.concurrent.atomic.AtomicInteger
 
-class IdeAdapter(private val project: Project) {
+class Ide(private val project: Project) {
 
     private val autoRevertWidget = AutoRevertStatusBarWidget()
     private var settings: AutoRevert.Settings? = null
@@ -120,7 +120,7 @@ class IdeAdapter(private val project: Project) {
     }
 
     companion object {
-        private val logger = Logger.getInstance(IdeAdapter::class.java)
+        private val logger = Logger.getInstance(Ide::class.java)
 
         private fun Project.statusBar() = WindowManager.getInstance().getStatusBar(this)
 
