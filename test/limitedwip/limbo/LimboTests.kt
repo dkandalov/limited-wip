@@ -1,10 +1,9 @@
 package limitedwip.limbo
 
+import limitedwip.expect
 import limitedwip.shouldEqual
-import limitedwip.verify
 import org.junit.Test
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
 
 class LimboTests {
     private val ide = mock(Ide::class.java)
@@ -12,7 +11,7 @@ class LimboTests {
 
     @Test fun `allow commits only after running a unit test`() {
         limbo.isCommitAllowed() shouldEqual false
-        ide.verify(times(1)).notifyThatCommitWasCancelled()
+        ide.expect().notifyThatCommitWasCancelled()
         limbo.onUnitTestSucceeded()
         limbo.isCommitAllowed() shouldEqual true
     }
@@ -30,7 +29,7 @@ class LimboTests {
 
     @Test fun `revert changes on failed unit test`() {
         limbo.onUnitTestFailed()
-        ide.verify(times(1)).revertCurrentChangeList()
+        ide.expect().revertCurrentChangeList()
     }
 
     @Test fun `can do one-off commit without running a unit test`() {

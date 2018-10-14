@@ -1,7 +1,7 @@
 package limitedwip.watchdog
 
-import limitedwip.verify
-import limitedwip.verifyNoMoreInteractions
+import limitedwip.expect
+import limitedwip.expectNoMoreInteractions
 import limitedwip.watchdog.Watchdog.Settings
 import limitedwip.watchdog.components.Ide
 import org.junit.Test
@@ -30,7 +30,7 @@ class WatchdogTests {
 
         watchdog.onTimer(next())
 
-        ide.verify(times(0)).onChangeSizeTooBig(anyChangeSize(), anyInt())
+        ide.expect(times(0)).onChangeSizeTooBig(anyChangeSize(), anyInt())
     }
 
     @Test fun `send notification when change size is above threshold`() {
@@ -38,7 +38,7 @@ class WatchdogTests {
 
         watchdog.onTimer(next())
 
-        ide.verify().onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect().onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send change size notification only on one of several updates`() {
@@ -49,7 +49,7 @@ class WatchdogTests {
         watchdog.onTimer(next()) // send notification
         watchdog.onTimer(next())
 
-        ide.verify(times(2)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect(times(2)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send change size notification after settings change`() {
@@ -57,11 +57,11 @@ class WatchdogTests {
         val inOrder = inOrder(ide)
 
         watchdog.onTimer(next())
-        ide.verify(inOrder).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect(inOrder).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
 
         watchdog.onSettings(settings.copy(maxLinesInChange = 150))
         watchdog.onTimer(next())
-        ide.verify(inOrder).onChangeSizeTooBig(ChangeSize(200), 150)
+        ide.expect(inOrder).onChangeSizeTooBig(ChangeSize(200), 150)
     }
 
     @Test fun `don't send notification when disabled`() {
@@ -71,8 +71,8 @@ class WatchdogTests {
         watchdog.onTimer(next())
         watchdog.onTimer(next())
 
-        ide.verify(times(2)).onSettingsUpdate(anySettings())
-        ide.verifyNoMoreInteractions()
+        ide.expect(times(2)).onSettingsUpdate(anySettings())
+        ide.expectNoMoreInteractions()
     }
 
     @Test fun `skip notifications util next commit`() {
@@ -84,13 +84,13 @@ class WatchdogTests {
         watchdog.onCommit()
         watchdog.onTimer(next())
 
-        ide.verify().onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect().onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send change size update`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         watchdog.onTimer(next())
-        ide.verify().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
+        ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `still send change size update when notifications are skipped till next commit`() {
@@ -99,7 +99,7 @@ class WatchdogTests {
         watchdog.skipNotificationsUntilCommit(true)
         watchdog.onTimer(next())
 
-        ide.verify().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
+        ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `don't send change size update when disabled`() {
@@ -108,8 +108,8 @@ class WatchdogTests {
         watchdog.onSettings(disabledSettings)
         watchdog.onTimer(next())
 
-        ide.verify(times(2)).onSettingsUpdate(anySettings())
-        ide.verifyNoMoreInteractions()
+        ide.expect(times(2)).onSettingsUpdate(anySettings())
+        ide.expectNoMoreInteractions()
     }
 
     @Test fun `close notification when change size is back within limit`() {
@@ -119,8 +119,8 @@ class WatchdogTests {
         watchdog.onTimer(next())
         watchdog.onTimer(next())
 
-        ide.verify(times(1)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
-        ide.verify(times(2)).onChangeSizeWithinLimit()
+        ide.expect(times(1)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect(times(2)).onChangeSizeWithinLimit()
     }
 
     private fun next(): Int = ++seconds
