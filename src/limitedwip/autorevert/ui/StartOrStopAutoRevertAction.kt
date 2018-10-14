@@ -7,6 +7,9 @@ import com.intellij.openapi.project.Project
 import limitedwip.autorevert.components.AutoRevertComponent
 
 class StartOrStopAutoRevertAction : AnAction(AllIcons.Actions.Rollback) {
+    private val startText = "Start auto-revert"
+    private val stopText = "Stop auto-revert"
+
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project ?: return
         val autoRevertComponent = project.getComponent(AutoRevertComponent::class.java) ?: return
@@ -19,20 +22,16 @@ class StartOrStopAutoRevertAction : AnAction(AllIcons.Actions.Rollback) {
     }
 
     override fun update(event: AnActionEvent) {
-        val text = textFor(event.project)
+        val text = actionTextFor(event.project)
         event.presentation.text = text
         event.presentation.description = text
         event.presentation.isEnabled = event.project != null
     }
 
-    private fun textFor(project: Project?): String {
-        if (project == null) return "Start auto-revert"
-        val autoRevertComponent = project.getComponent(AutoRevertComponent::class.java) ?: return "Start auto-revert"
+    private fun actionTextFor(project: Project?): String {
+        if (project == null) return startText
+        val autoRevertComponent = project.getComponent(AutoRevertComponent::class.java) ?: return startText
 
-        return if (autoRevertComponent.isAutoRevertStarted) {
-            "Stop auto-revert"
-        } else {
-            "Start auto-revert"
-        }
+        return if (autoRevertComponent.isAutoRevertStarted) stopText else startText
     }
 }
