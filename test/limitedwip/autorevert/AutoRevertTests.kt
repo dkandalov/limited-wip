@@ -24,7 +24,7 @@ class AutoRevertTests {
     private val secondsTillRevert = 2
     private val ide = mock(Ide::class.java)
     private val settings = Settings(true, secondsTillRevert, true)
-    private val autoRevert = AutoRevert(ide).init(settings)
+    private val autoRevert = AutoRevert(ide, settings)
     private var seconds: Int = 0
 
 

@@ -3,21 +3,18 @@ package limitedwip.autorevert
 
 import limitedwip.autorevert.components.Ide
 
-class AutoRevert(private val ide: Ide) {
-
-    private var settings: Settings? = null
+class AutoRevert(private val ide: Ide, private var settings: Settings) {
     var isStarted = false
         private set
     private var startSeconds: Int = 0
     private var remainingSeconds: Int = 0
 
-    fun init(settings: Settings): AutoRevert {
+    init {
         onSettings(settings)
-        return this
     }
 
     fun start() {
-        if (!settings!!.autoRevertEnabled) return
+        if (!settings.autoRevertEnabled) return
 
         isStarted = true
         startSeconds = -1
@@ -45,7 +42,7 @@ class AutoRevert(private val ide: Ide) {
             startSeconds = -1
             applyNewSettings()
             val revertedFilesCount = ide.revertCurrentChangeList()
-            if (revertedFilesCount > 0 && settings!!.notifyOnRevert) {
+            if (revertedFilesCount > 0 && settings.notifyOnRevert) {
                 ide.showNotificationThatChangesWereReverted()
             }
         }
@@ -68,9 +65,7 @@ class AutoRevert(private val ide: Ide) {
     }
 
     private fun applyNewSettings() {
-        if (remainingSeconds != settings!!.secondsTillRevert) {
-            remainingSeconds = settings!!.secondsTillRevert
-        }
+        remainingSeconds = settings.secondsTillRevert
     }
 
 
