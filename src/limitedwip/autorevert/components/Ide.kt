@@ -69,7 +69,7 @@ class Ide(private val project: Project) {
         updateStatusBar()
     }
 
-    fun onChangesRevert() {
+    fun showNotificationThatChangesWereReverted() {
         val notification = Notification(
             pluginDisplayName,
             pluginDisplayName,

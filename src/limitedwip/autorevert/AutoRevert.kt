@@ -46,7 +46,7 @@ class AutoRevert(private val ide: Ide) {
             applyNewSettings()
             val revertedFilesCount = ide.revertCurrentChangeList()
             if (revertedFilesCount > 0 && settings!!.notifyOnRevert) {
-                ide.onChangesRevert()
+                ide.showNotificationThatChangesWereReverted()
             }
         }
     }
@@ -79,7 +79,5 @@ class AutoRevert(private val ide: Ide) {
         val secondsTillRevert: Int,
         val notifyOnRevert: Boolean,
         val showTimerInToolbar: Boolean = true
-    ) {
-        constructor(secondsTillRevert: Int) : this(true, secondsTillRevert, true)
-    }
+    )
 }

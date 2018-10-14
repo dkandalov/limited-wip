@@ -52,7 +52,7 @@ class AutoRevertTests {
         autoRevert.onTimer(next())
 
         verify(ide, times(2)).revertCurrentChangeList()
-        verify(ide, times(2)).onChangesRevert()
+        verify(ide, times(2)).showNotificationThatChangesWereReverted()
     }
 
     @Test fun `don't revert changes when stopped`() {
@@ -105,30 +105,30 @@ class AutoRevertTests {
     }
 
     @Test fun `apply revert time out change after start`() {
-        autoRevert.onSettings(Settings(1))
+        autoRevert.onSettings(settings.copy(secondsTillRevert = 1))
         autoRevert.start()
         autoRevert.onTimer(next())
         autoRevert.onTimer(next())
 
         verify(ide, times(2)).revertCurrentChangeList()
-        verify(ide, times(2)).onChangesRevert()
+        verify(ide, times(2)).showNotificationThatChangesWereReverted()
     }
 
     @Test fun `apply revert timeout change after end of current time out`() {
         autoRevert.start()
-        autoRevert.onSettings(Settings(1))
+        autoRevert.onSettings(settings.copy(secondsTillRevert = 1))
         autoRevert.onTimer(next())
         autoRevert.onTimer(next()) // reverts changes after 2nd time event
         autoRevert.onTimer(next()) // reverts changes after 1st time event
         autoRevert.onTimer(next()) // reverts changes after 1st time event
 
         verify(ide, times(3)).revertCurrentChangeList()
-        verify(ide, times(3)).onChangesRevert()
+        verify(ide, times(3)).showNotificationThatChangesWereReverted()
     }
 
     @Test fun `apply revert timeout change after commit`() {
         autoRevert.start()
-        autoRevert.onSettings(Settings(1))
+        autoRevert.onSettings(settings.copy(secondsTillRevert = 1))
         autoRevert.onTimer(next())
         autoRevert.onAllFilesCommitted()
         autoRevert.onTimer(next()) // reverts changes after 1st time event
@@ -136,7 +136,7 @@ class AutoRevertTests {
         autoRevert.onTimer(next()) // reverts changes after 1st time event
 
         verify(ide, times(3)).revertCurrentChangeList()
-        verify(ide, times(3)).onChangesRevert()
+        verify(ide, times(3)).showNotificationThatChangesWereReverted()
     }
 
     @Test fun `don't send UI startup notification when disabled`() {
