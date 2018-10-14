@@ -28,13 +28,12 @@ class DisableCommitWithoutRunningTestAppComponent : ApplicationComponent {
     override fun initComponent() {
         registerBeforeCheckInListener(object : VcsIdeUtil.CheckinListener {
             override fun allowCheckIn(project: Project, changes: List<Change>): Boolean {
-                val limboComponent = project.getComponent(LimboComponent::class.java) ?: return true
-                val allowed = isCheckinAllowed(project, limboComponent)
-                if (allowed) limboComponent.resetTestsCounter()
-                return allowed
+                return isCheckinAllowed(project)
             }
 
-            private fun isCheckinAllowed(project: Project, limboComponent: LimboComponent): Boolean {
+            private fun isCheckinAllowed(project: Project): Boolean {
+                val limboComponent = project.getComponent(LimboComponent::class.java) ?: return true
+
                 if (allowCommitOnceWithoutCheck) {
                     allowCommitOnceWithoutCheck = false
                     return true

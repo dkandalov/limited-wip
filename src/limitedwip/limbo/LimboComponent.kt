@@ -3,10 +3,11 @@ package limitedwip.limbo
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
 import limitedwip.autorevert.components.IdeAdapter
+import limitedwip.common.LimitedWipCheckin
 
-class LimboComponent(private val project: Project) : AbstractProjectComponent(project) {
-    private val unitTestsWatcher = UnitTestsWatcher(project)
-    private val ideAdapter = IdeAdapter(project)
+class LimboComponent(project: Project) : AbstractProjectComponent(project) {
+    private val unitTestsWatcher = UnitTestsWatcher(myProject)
+    private val ideAdapter = IdeAdapter(myProject)
     private var amountOfTestsRun = 0
 
     override fun projectOpened() {
@@ -17,6 +18,12 @@ class LimboComponent(private val project: Project) : AbstractProjectComponent(pr
 
             override fun onUnitTestFailed() {
                 ideAdapter.revertCurrentChangeList()
+                resetTestsCounter()
+            }
+        })
+
+        LimitedWipCheckin.registerListener(myProject, object : LimitedWipCheckin.Listener {
+            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
                 resetTestsCounter()
             }
         })
