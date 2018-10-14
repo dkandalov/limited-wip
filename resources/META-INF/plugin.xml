@@ -28,13 +28,13 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
     <application-components>
         <component><implementation-class>limitedwip.common.TimerComponent</implementation-class></component>
         <component><implementation-class>limitedwip.watchdog.components.DisableLargeCommitsAppComponent</implementation-class></component>
-        <component><implementation-class>limitedwip.limbo.DisableCommitWithoutRunningTestAppComponent</implementation-class></component>
+        <component><implementation-class>limitedwip.limbo.components.DisableCommitWithoutRunningTestAppComponent</implementation-class></component>
     </application-components>
 
     <project-components>
         <component><implementation-class>limitedwip.watchdog.components.WatchdogComponent</implementation-class></component>
         <component><implementation-class>limitedwip.autorevert.components.AutoRevertComponent</implementation-class></component>
-        <component><implementation-class>limitedwip.limbo.LimboComponent</implementation-class></component>
+        <component><implementation-class>limitedwip.limbo.components.LimboComponent</implementation-class></component>
     </project-components>
 
     <actions>

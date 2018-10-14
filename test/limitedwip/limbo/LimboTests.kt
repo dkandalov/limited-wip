@@ -1,6 +1,7 @@
 package limitedwip.limbo
 
 import limitedwip.expect
+import limitedwip.limbo.components.Ide
 import limitedwip.shouldEqual
 import org.junit.Test
 import org.mockito.Mockito.mock
