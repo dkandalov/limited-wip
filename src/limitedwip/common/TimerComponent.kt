@@ -14,10 +14,9 @@ import java.util.concurrent.TimeUnit
 
 class TimerComponent : ApplicationComponent {
 
-    private val timer = Timer(PluginId.value + "-TimeEvents")
+    private val timer = Timer("$pluginId-TimeEvents")
     private val listeners = CopyOnWriteArrayList<Listener>()
     private val startTime = System.currentTimeMillis()
-
 
     override fun initComponent() {
         timer.schedule(object : TimerTask() {
@@ -41,9 +40,7 @@ class TimerComponent : ApplicationComponent {
         timer.purge()
     }
 
-    override fun getComponentName(): String {
-        return PluginId.value + "-" + TimerComponent::class.java.simpleName
-    }
+    override fun getComponentName(): String = pluginId + "-" + TimerComponent::class.java.simpleName
 
     fun addListener(listener: Listener, parentDisposable: Disposable) {
         listeners.add(listener)

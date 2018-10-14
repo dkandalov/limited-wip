@@ -26,8 +26,7 @@ class LimitedWipCheckin : CheckinHandlerFactory() {
     }
 
     private fun notifySettingsListeners(allFileAreCommitted: Boolean) {
-        val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName)
-        for (listener in extensionPoint.extensions) {
+        Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName).extensions.forEach { listener ->
             listener.onSuccessfulCheckin(allFileAreCommitted)
         }
     }

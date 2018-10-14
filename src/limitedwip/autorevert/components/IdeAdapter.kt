@@ -14,7 +14,7 @@ import com.intellij.openapi.vcs.changes.ui.RollbackWorker
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
-import limitedwip.common.PluginId
+import limitedwip.common.pluginDisplayName
 import java.util.concurrent.atomic.AtomicInteger
 
 class IdeAdapter(private val project: Project) {
@@ -71,8 +71,8 @@ class IdeAdapter(private val project: Project) {
 
     fun onChangesRevert() {
         val notification = Notification(
-            PluginId.displayName,
-            PluginId.displayName,
+            pluginDisplayName,
+            pluginDisplayName,
             "Current changelist was reverted",
             NotificationType.WARNING
         )

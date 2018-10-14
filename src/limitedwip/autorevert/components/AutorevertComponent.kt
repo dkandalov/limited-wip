@@ -23,7 +23,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
 
     override fun projectOpened() {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
-        autoRevert = AutoRevert(IdeAdapter(myProject)).init(convert(settings))
+        autoRevert = AutoRevert(IdeAdapter(myProject)).init(settings.toAutoRevertSettings())
 
         timer.addListener(object : TimerComponent.Listener {
             override fun onUpdate(seconds: Int) {
@@ -33,7 +33,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) {
-                autoRevert.onSettings(convert(settings))
+                autoRevert.onSettings(settings.toAutoRevertSettings())
             }
         })
 
@@ -52,11 +52,10 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         autoRevert.stop()
     }
 
-    private fun convert(settings: LimitedWipSettings): AutoRevert.Settings {
-        return AutoRevert.Settings(
-            settings.autoRevertEnabled,
-            settings.secondsTillRevert(),
-            settings.notifyOnRevert
+    private fun LimitedWipSettings.toAutoRevertSettings() =
+        AutoRevert.Settings(
+            autoRevertEnabled,
+            secondsTillRevert(),
+            notifyOnRevert
         )
-    }
 }

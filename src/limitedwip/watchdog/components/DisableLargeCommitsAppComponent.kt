@@ -17,7 +17,7 @@ import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
-import limitedwip.common.PluginId
+import limitedwip.common.pluginDisplayName
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.watchdog.components.VcsIdeUtil.registerBeforeCheckInListener
@@ -60,9 +60,9 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
         }
 
         val notification = Notification(
-            PluginId.displayName,
-            "Commit was cancelled because change size is above threshold<br/>",
-            "(<a href=\"\">Click here</a> to force commit anyway)",
+            pluginDisplayName,
+            pluginDisplayName,
+            "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.ERROR,
             listener
         )

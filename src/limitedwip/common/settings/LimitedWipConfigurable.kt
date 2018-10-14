@@ -5,7 +5,8 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.util.Disposer
-import limitedwip.common.PluginId
+import limitedwip.common.pluginDisplayName
+import limitedwip.common.pluginId
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
@@ -20,7 +21,9 @@ class LimitedWipConfigurable : SearchableConfigurable {
 
     override fun apply() {
         val newSettings = settingsForm!!.applyChanges()
-        notifySettingsListeners(newSettings)
+        Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName).extensions.forEach { listener ->
+            listener.onSettingsUpdate(newSettings)
+        }
     }
 
     override fun reset() {
@@ -34,30 +37,23 @@ class LimitedWipConfigurable : SearchableConfigurable {
 
     override fun isModified() = settingsForm != null && settingsForm!!.isModified
 
-    @Nls override fun getDisplayName() = PluginId.displayName
+    @Nls override fun getDisplayName() = pluginDisplayName
 
-    override fun getId(): String = PluginId.displayName
+    override fun getId(): String = pluginDisplayName
 
     override fun enableSearch(option: String?): Runnable? = null
 
     override fun getHelpTopic(): String? = null
-
-    private fun notifySettingsListeners(settings: LimitedWipSettings) {
-        val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(EXTENSION_POINT_NAME)
-        for (listener in extensionPoint.extensions) {
-            listener.onSettingsUpdate(settings)
-        }
-    }
 
     interface Listener {
         fun onSettingsUpdate(settings: LimitedWipSettings)
     }
 
     companion object {
-        private const val EXTENSION_POINT_NAME = PluginId.value + ".settingsListener"
+        private const val extensionPointName = "$pluginId.settingsListener"
 
         fun registerSettingsListener(disposable: Disposable, listener: Listener) {
-            val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(EXTENSION_POINT_NAME)
+            val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName)
             extensionPoint.registerExtension(listener)
             Disposer.register(disposable, Disposable { extensionPoint.unregisterExtension(listener) })
         }

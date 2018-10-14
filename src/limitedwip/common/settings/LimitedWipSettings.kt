@@ -5,10 +5,10 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
-import limitedwip.common.PluginId
+import limitedwip.common.pluginId
 
 @State(
-    name = PluginId.value + "Settings",
+    name = "${pluginId}Settings",
     storages = arrayOf(Storage(file = "\$APP_CONFIG$/limitedwip.ui.settings.xml"))
 )
 data class LimitedWipSettings(

@@ -1,6 +1,4 @@
 package limitedwip.common
 
-object PluginId {
-    const val displayName = "Limited WIP"
-    const val value = "LimitedWIP"
-}
+const val pluginDisplayName = "Limited WIP"
+const val pluginId = "LimitedWIP"

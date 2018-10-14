@@ -7,7 +7,7 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.WindowManager
-import limitedwip.common.PluginId
+import limitedwip.common.pluginDisplayName
 import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -33,8 +33,8 @@ class IdeAdapter(private val project: Project, private val changeSizeWatcher: Ch
     fun onSkipNotificationUntilCommit(value: Boolean) {
         val stateDescription = if (value) "disabled till next commit" else "enabled"
         val notification = Notification(
-            PluginId.displayName,
-            PluginId.displayName,
+            pluginDisplayName,
+            pluginDisplayName,
             "Change size notifications are $stateDescription",
             NotificationType.INFORMATION
         )
@@ -71,7 +71,7 @@ class IdeAdapter(private val project: Project, private val changeSizeWatcher: Ch
         }
 
         val notification = Notification(
-            PluginId.displayName,
+            pluginDisplayName,
             "Change Size Exceeded Limit",
             "Lines changed: " + asString(linesChanged) + "; " +
                 "limit: " + changedLinesLimit + "<br/>" +

@@ -1,9 +1,13 @@
+// Because AbstractProjectComponent was deprecated relatively recently.
+@file:Suppress("DEPRECATION")
 package limitedwip.limbo
 
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
 import limitedwip.autorevert.components.IdeAdapter
 import limitedwip.common.LimitedWipCheckin
+import limitedwip.common.settings.LimitedWipConfigurable
+import limitedwip.common.settings.LimitedWipSettings
 
 class LimboComponent(project: Project) : AbstractProjectComponent(project) {
     private val unitTestsWatcher = UnitTestsWatcher(myProject)
@@ -27,13 +31,19 @@ class LimboComponent(project: Project) : AbstractProjectComponent(project) {
                 resetTestsCounter()
             }
         })
+
+        LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
+            override fun onSettingsUpdate(settings: LimitedWipSettings) {
+                // TODO
+            }
+        })
     }
 
     fun amountOfTestsRun(): Int {
         return amountOfTestsRun
     }
 
-    fun resetTestsCounter() {
+    private fun resetTestsCounter() {
         amountOfTestsRun = 0
     }
 }

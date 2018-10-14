@@ -6,7 +6,7 @@ import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.util.Consumer
 import limitedwip.autorevert.components.AutoRevertComponent
-import limitedwip.common.PluginId
+import limitedwip.common.pluginId
 import java.awt.Component
 import java.awt.event.MouseEvent
 
@@ -58,7 +58,7 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
         }
     }
 
-    override fun ID() = PluginId.value + "_" + this.javaClass.simpleName
+    override fun ID() = pluginId + "_" + this.javaClass.simpleName
 
     companion object {
         private const val timeTillRevertText = "Auto-revert in "
