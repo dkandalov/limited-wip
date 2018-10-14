@@ -10,12 +10,12 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import limitedwip.autorevert.AutoRevert
 import limitedwip.common.LimitedWipCheckin
-import limitedwip.common.TimerComponent
+import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 
 class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
-    private val timer = ApplicationManager.getApplication().getComponent(TimerComponent::class.java)
+    private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
     private lateinit var autoRevert: AutoRevert
 
     val isAutoRevertStarted: Boolean
@@ -25,7 +25,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         autoRevert = AutoRevert(Ide(myProject), settings.toAutoRevertSettings())
 
-        timer.addListener(object : TimerComponent.Listener {
+        timer.addListener(object : TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater({ autoRevert.onTimer(seconds) }, ModalityState.any())
             }

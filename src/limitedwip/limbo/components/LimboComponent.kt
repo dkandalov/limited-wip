@@ -17,7 +17,7 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
     private lateinit var limbo: Limbo
 
     override fun projectOpened() {
-        val ide = Ide(myProject, IdeFromAutoRevert(myProject))
+        val ide = Ide(myProject)
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         limbo = Limbo(ide, settings.toLimboSettings())
         ide.limbo = limbo

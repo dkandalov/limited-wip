@@ -5,15 +5,14 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
-import limitedwip.autorevert.components.Ide
 import limitedwip.common.pluginDisplayName
 import limitedwip.limbo.Limbo
 
-class Ide(private val project: Project, private val ideFromAutoRevert: Ide) {
+class Ide(private val project: Project) {
     lateinit var limbo: Limbo
 
     fun revertCurrentChangeList() {
-        ideFromAutoRevert.revertCurrentChangeList()
+        limitedwip.common.revertCurrentChangeList(project)
     }
 
     fun notifyThatCommitWasCancelled() {

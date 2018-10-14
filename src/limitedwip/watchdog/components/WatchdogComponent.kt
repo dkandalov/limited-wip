@@ -9,14 +9,14 @@ import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import limitedwip.common.LimitedWipCheckin
-import limitedwip.common.TimerComponent
+import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.watchdog.Watchdog
 
 class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
     private lateinit var watchdog: Watchdog
-    private val timer = ApplicationManager.getApplication().getComponent(TimerComponent::class.java)
+    private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
     private lateinit var ide: Ide
 
     override fun projectOpened() {
@@ -30,7 +30,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
             settings.showRemainingChangesInToolbar
         ))
 
-        timer.addListener(object : TimerComponent.Listener {
+        timer.addListener(object : TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater(Runnable {
                     // Project can be closed (disposed) during handover between timer thread and EDT.

@@ -12,8 +12,7 @@ import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 
-class TimerComponent : ApplicationComponent {
-
+class TimerAppComponent : ApplicationComponent {
     private val timer = Timer("$pluginId-TimeEvents")
     private val listeners = CopyOnWriteArrayList<Listener>()
     private val startTime = System.currentTimeMillis()
@@ -40,7 +39,7 @@ class TimerComponent : ApplicationComponent {
         timer.purge()
     }
 
-    override fun getComponentName(): String = pluginId + "-" + TimerComponent::class.java.simpleName
+    override fun getComponentName(): String = pluginId + "-" + TimerAppComponent::class.java.simpleName
 
     fun addListener(listener: Listener, parentDisposable: Disposable) {
         listeners.add(listener)
@@ -52,7 +51,7 @@ class TimerComponent : ApplicationComponent {
     }
 
     companion object {
-        private val log = Logger.getInstance(TimerComponent::class.java)
+        private val log = Logger.getInstance(TimerAppComponent::class.java)
         private const val oneSecondMs: Long = 1000
     }
 }

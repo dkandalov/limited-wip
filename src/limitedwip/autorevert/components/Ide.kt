@@ -4,18 +4,12 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vcs.changes.ChangeListManager
-import com.intellij.openapi.vcs.changes.ui.RollbackWorker
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.pluginDisplayName
-import java.util.concurrent.atomic.AtomicInteger
 
 class Ide(private val project: Project) {
 
@@ -34,25 +28,7 @@ class Ide(private val project: Project) {
     }
 
     fun revertCurrentChangeList(): Int {
-        val revertedFilesCount = AtomicInteger(0)
-        ApplicationManager.getApplication().runWriteAction(Runnable {
-            try {
-
-                val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
-                revertedFilesCount.set(changes.size)
-                if (changes.isEmpty()) return@Runnable
-
-                RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null)
-
-                val changedFiles = changes.mapNotNull { change -> change.virtualFile }
-                FileDocumentManager.getInstance().reloadFiles(*changedFiles.toTypedArray())
-
-            } catch (e: Exception) {
-                // observed exception while reloading project at the time of auto-revert
-                logger.error("Error while doing revert", e)
-            }
-        })
-        return revertedFilesCount.get()
+        return limitedwip.common.revertCurrentChangeList(project)
     }
 
     fun onAutoRevertStarted(timeEventsTillRevert: Int) {
@@ -119,16 +95,12 @@ class Ide(private val project: Project) {
         }
     }
 
-    companion object {
-        private val logger = Logger.getInstance(Ide::class.java)
+    private fun Project.statusBar() = WindowManager.getInstance().getStatusBar(this)
 
-        private fun Project.statusBar() = WindowManager.getInstance().getStatusBar(this)
-
-        private fun formatTime(seconds: Int): String {
-            val min: Int = seconds / 60
-            val sec: Int = seconds % 60
-            return String.format("%02d", min) + ":" + String.format("%02d", sec)
-        }
+    private fun formatTime(seconds: Int): String {
+        val min: Int = seconds / 60
+        val sec: Int = seconds % 60
+        return String.format("%02d", min) + ":" + String.format("%02d", sec)
     }
 }
 
