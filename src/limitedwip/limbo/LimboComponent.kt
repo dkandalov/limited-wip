@@ -1,5 +1,6 @@
 // Because AbstractProjectComponent was deprecated relatively recently.
 @file:Suppress("DEPRECATION")
+
 package limitedwip.limbo
 
 import com.intellij.notification.Notification
@@ -62,11 +63,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     }
 
     fun isCommitAllowed(): Boolean {
-        if (allowOneCommitWithoutChecks) {
-            allowOneCommitWithoutChecks = false
-            return true
-        }
-        if (!settings.enabled) return true
+        if (allowOneCommitWithoutChecks || !settings.enabled) return true
 
         return if (amountOfTestsRun == zero) {
             ide.notifyThatCommitWasCancelled()
@@ -76,8 +73,9 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         }
     }
 
-    fun onSuccessfulCheckin() {
+    fun onSuccessfulCommit() {
         amountOfTestsRun = zero
+        allowOneCommitWithoutChecks = false
     }
 
     fun onSettings(settings: Settings) {
@@ -88,13 +86,14 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
 
     data class Amount(val n: Int) {
         operator fun plus(n: Int) = Amount(this.n + n)
+
         companion object {
             val zero = Amount(0)
         }
     }
 }
 
-class LimboComponent(project: Project) : AbstractProjectComponent(project) {
+class LimboComponent(project: Project): AbstractProjectComponent(project) {
     private val unitTestsWatcher = UnitTestsWatcher(myProject)
     private lateinit var limbo: Limbo
 
@@ -104,16 +103,16 @@ class LimboComponent(project: Project) : AbstractProjectComponent(project) {
         limbo = Limbo(ide, settings.toLimboSettings())
         ide.limbo = limbo
 
-        unitTestsWatcher.start(object : UnitTestsWatcher.Listener {
+        unitTestsWatcher.start(object: UnitTestsWatcher.Listener {
             override fun onUnitTestSucceeded() = limbo.onUnitTestSucceeded()
             override fun onUnitTestFailed() = limbo.onUnitTestFailed()
         })
 
-        LimitedWipCheckin.registerListener(myProject, object : LimitedWipCheckin.Listener {
-            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = limbo.onSuccessfulCheckin()
+        LimitedWipCheckin.registerListener(myProject, object: LimitedWipCheckin.Listener {
+            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = limbo.onSuccessfulCommit()
         })
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
+        LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) {
                 limbo.onSettings(settings.toLimboSettings())
             }
