@@ -1,8 +1,8 @@
 package limitedwip.common
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker
@@ -13,22 +13,25 @@ private val logger = Logger.getInstance(Ide::class.java)
 
 fun revertCurrentChangeList(project: Project): Int {
     val revertedFilesCount = AtomicInteger(0)
-    ApplicationManager.getApplication().runWriteAction(Runnable {
-        try {
-
-            val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
-            revertedFilesCount.set(changes.size)
-            if (changes.isEmpty()) return@Runnable
-
-            RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null)
-
-            val changedFiles = changes.mapNotNull { change -> change.virtualFile }
-            FileDocumentManager.getInstance().reloadFiles(*changedFiles.toTypedArray())
-
-        } catch (e: Exception) {
-            // observed exception while reloading project at the time of auto-revert
-            logger.error("Error while doing revert", e)
+    val application = ApplicationManager.getApplication()
+    application.invokeAndWait({
+        application.runWriteAction {
+            revertedFilesCount.set(doRevert(project))
         }
-    })
+    }, ModalityState.NON_MODAL)
     return revertedFilesCount.get()
+}
+
+private fun doRevert(project: Project): Int {
+    return try {
+        val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
+        if (changes.isNotEmpty()) {
+            RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null)
+        }
+        changes.size
+    } catch (e: Exception) {
+        // observed exception while reloading project at the time of auto-revert
+        logger.error("Error while doing revert", e)
+        0
+    }
 }
