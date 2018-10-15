@@ -40,5 +40,9 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
 
     fun isCommitAllowed(): Boolean = limbo.isCommitAllowed()
 
-    private fun LimitedWipSettings.toLimboSettings() = Limbo.Settings(enabled = this.limboEnabled)
+    private fun LimitedWipSettings.toLimboSettings() =
+        Limbo.Settings(
+            enabled = limboEnabled,
+            notifyOnRevert = notifyOnLimboRevert
+        )
 }

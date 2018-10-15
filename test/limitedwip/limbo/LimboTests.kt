@@ -8,7 +8,7 @@ import org.mockito.Mockito.mock
 
 class LimboTests {
     private val ide = mock(Ide::class.java)
-    private val limbo = Limbo(ide, Limbo.Settings(enabled = true))
+    private val limbo = Limbo(ide, Limbo.Settings(enabled = true, notifyOnRevert = true))
 
     @Test fun `allow commits only after running a unit test`() {
         limbo.isCommitAllowed() shouldEqual false
@@ -31,6 +31,7 @@ class LimboTests {
     @Test fun `revert changes on failed unit test`() {
         limbo.onUnitTestFailed()
         ide.expect().revertCurrentChangeList()
+        ide.expect().notifyThatChangesWereReverted()
     }
 
     @Test fun `can do one-off commit without running a unit test`() {

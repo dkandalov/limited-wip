@@ -22,6 +22,7 @@ public class SettingsForm {
 	private LinkLabel<Void> openReadme;
 
 	private JCheckBox limboEnabled;
+	private JCheckBox notifyOnLimboRevert;
 
 	private final LimitedWipSettings initialState;
 	private LimitedWipSettings currentState;
@@ -50,6 +51,7 @@ public class SettingsForm {
 		showTimerInToolbar.addActionListener(commonActionListener);
 
 		limboEnabled.addActionListener(commonActionListener);
+		notifyOnLimboRevert.addActionListener(commonActionListener);
 
 		openReadme.setListener(
 			(aSource, aLinkData) -> BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip"),
@@ -81,6 +83,7 @@ public class SettingsForm {
 		disableCommitsAboveThreshold.setEnabled(currentState.getWatchdogEnabled());
 
 		limboEnabled.setSelected(currentState.getLimboEnabled());
+		notifyOnLimboRevert.setSelected(currentState.getNotifyOnLimboRevert());
 
 		isUpdatingUI = false;
 	}
@@ -108,6 +111,7 @@ public class SettingsForm {
 			currentState.setShowTimerInToolbar(showTimerInToolbar.isSelected());
 
 			currentState.setLimboEnabled(limboEnabled.isSelected());
+			currentState.setNotifyOnLimboRevert(notifyOnLimboRevert.isSelected());
 
 		} catch (NumberFormatException ignored) {
 		}

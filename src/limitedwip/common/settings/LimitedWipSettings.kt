@@ -23,7 +23,8 @@ data class LimitedWipSettings(
     var disableCommitsAboveThreshold: Boolean = false,
     var showRemainingChangesInToolbar: Boolean = true,
 
-    var limboEnabled: Boolean = false
+    var limboEnabled: Boolean = false,
+    var notifyOnLimboRevert: Boolean = true
 ): PersistentStateComponent<LimitedWipSettings> {
 
     fun secondsTillRevert(): Int = minutesTillRevert * 60

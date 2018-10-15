@@ -27,4 +27,14 @@ class Ide(private val project: Project) {
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
+
+    fun notifyThatChangesWereReverted() {
+        val notification = Notification(
+            pluginDisplayName,
+            pluginDisplayName,
+            "Current changelist was reverted",
+            NotificationType.WARNING
+        )
+        project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
+    }
 }
