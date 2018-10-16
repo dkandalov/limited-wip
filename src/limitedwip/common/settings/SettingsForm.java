@@ -74,6 +74,9 @@ public class SettingsForm {
 		notifyOnRevert.setSelected(currentState.getNotifyOnRevert());
 		showTimerInToolbar.setSelected(currentState.getShowTimerInToolbar());
 
+		limboEnabled.setSelected(currentState.getLimboEnabled());
+		notifyOnLimboRevert.setSelected(currentState.getNotifyOnLimboRevert());
+
 		minutesTillRevert.setEnabled(currentState.getAutoRevertEnabled());
 		notifyOnRevert.setEnabled(currentState.getAutoRevertEnabled());
 		showTimerInToolbar.setEnabled(currentState.getAutoRevertEnabled());
@@ -81,9 +84,7 @@ public class SettingsForm {
 		notificationInterval.setEnabled(currentState.getWatchdogEnabled());
 		showRemainingInToolbar.setEnabled(currentState.getWatchdogEnabled());
 		disableCommitsAboveThreshold.setEnabled(currentState.getWatchdogEnabled());
-
-		limboEnabled.setSelected(currentState.getLimboEnabled());
-		notifyOnLimboRevert.setSelected(currentState.getLimboEnabled());
+		notifyOnLimboRevert.setEnabled(currentState.getLimboEnabled());
 
 		isUpdatingUI = false;
 	}
