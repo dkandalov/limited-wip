@@ -83,7 +83,7 @@ public class SettingsForm {
 		disableCommitsAboveThreshold.setEnabled(currentState.getWatchdogEnabled());
 
 		limboEnabled.setSelected(currentState.getLimboEnabled());
-		notifyOnLimboRevert.setSelected(currentState.getNotifyOnLimboRevert());
+		notifyOnLimboRevert.setSelected(currentState.getLimboEnabled());
 
 		isUpdatingUI = false;
 	}
