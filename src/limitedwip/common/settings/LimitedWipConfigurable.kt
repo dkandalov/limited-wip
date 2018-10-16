@@ -30,7 +30,7 @@ class LimitedWipConfigurable : SearchableConfigurable {
         settingsForm.updateUIFromState()
     }
 
-    override fun isModified() = settingsForm.isModified
+    override fun isModified() = settingsForm.isModified()
 
     override fun getDisplayName() = pluginDisplayName
 
