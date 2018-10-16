@@ -11,10 +11,9 @@ import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.pluginDisplayName
 
-class Ide(private val project: Project) {
+class Ide(private val project: Project, private var settings: AutoRevert.Settings) {
 
     private val autoRevertWidget = AutoRevertStatusBarWidget()
-    private var settings: AutoRevert.Settings? = null
 
     init {
         Disposer.register(project, Disposable {
@@ -32,7 +31,7 @@ class Ide(private val project: Project) {
     }
 
     fun onAutoRevertStarted(timeEventsTillRevert: Int) {
-        if (settings!!.showTimerInToolbar) {
+        if (settings.showTimerInToolbar) {
             autoRevertWidget.showTime(formatTime(timeEventsTillRevert))
         } else {
             autoRevertWidget.showStartedText()
@@ -56,7 +55,7 @@ class Ide(private val project: Project) {
     }
 
     fun onCommit(timeEventsTillRevert: Int) {
-        if (settings!!.showTimerInToolbar) {
+        if (settings.showTimerInToolbar) {
             autoRevertWidget.showTime(formatTime(timeEventsTillRevert))
         } else {
             autoRevertWidget.showStartedText()
@@ -65,7 +64,7 @@ class Ide(private val project: Project) {
     }
 
     fun onTimeTillRevert(secondsLeft: Int) {
-        if (settings!!.showTimerInToolbar) {
+        if (settings.showTimerInToolbar) {
             autoRevertWidget.showTime(formatTime(secondsLeft))
         } else {
             autoRevertWidget.showStartedText()
@@ -82,13 +81,13 @@ class Ide(private val project: Project) {
         val statusBar = project.statusBar() ?: return
 
         val hasAutoRevertWidget = statusBar.getWidget(autoRevertWidget.ID()) != null
-        if (hasAutoRevertWidget && settings!!.autoRevertEnabled) {
+        if (hasAutoRevertWidget && settings.autoRevertEnabled) {
             statusBar.updateWidget(autoRevertWidget.ID())
 
         } else if (hasAutoRevertWidget) {
             statusBar.removeWidget(autoRevertWidget.ID())
 
-        } else if (settings!!.autoRevertEnabled) {
+        } else if (settings.autoRevertEnabled) {
             autoRevertWidget.showStoppedText()
             statusBar.addWidget(autoRevertWidget, "before Position")
             statusBar.updateWidget(autoRevertWidget.ID())

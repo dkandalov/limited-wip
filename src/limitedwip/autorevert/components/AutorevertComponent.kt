@@ -22,8 +22,8 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         get() = autoRevert.isStarted
 
     override fun projectOpened() {
-        val settings = ServiceManager.getService(LimitedWipSettings::class.java)
-        autoRevert = AutoRevert(Ide(myProject), settings.toAutoRevertSettings())
+        val settings = ServiceManager.getService(LimitedWipSettings::class.java).toAutoRevertSettings()
+        autoRevert = AutoRevert(Ide(myProject, settings), settings)
 
         timer.addListener(object : TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
