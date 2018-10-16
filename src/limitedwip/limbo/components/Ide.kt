@@ -12,7 +12,7 @@ class Ide(private val project: Project) {
     lateinit var limbo: Limbo
 
     fun revertCurrentChangeList() {
-        limitedwip.common.revertCurrentChangeList(project)
+        limitedwip.common.vcs.revertCurrentChangeList(project)
     }
 
     fun notifyThatCommitWasCancelled() {

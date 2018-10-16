@@ -1,4 +1,4 @@
-package limitedwip.common
+package limitedwip.common.vcs
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.Extensions
@@ -9,7 +9,7 @@ import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
 
-class LimitedWipCheckin : CheckinHandlerFactory() {
+class SuccessfulCheckin : CheckinHandlerFactory() {
 
     override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
         return object : CheckinHandler() {

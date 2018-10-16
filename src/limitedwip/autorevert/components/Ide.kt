@@ -28,7 +28,7 @@ class Ide(private val project: Project) {
     }
 
     fun revertCurrentChangeList(): Int {
-        return limitedwip.common.revertCurrentChangeList(project)
+        return limitedwip.common.vcs.revertCurrentChangeList(project)
     }
 
     fun onAutoRevertStarted(timeEventsTillRevert: Int) {

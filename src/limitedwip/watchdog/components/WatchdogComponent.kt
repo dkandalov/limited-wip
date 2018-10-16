@@ -8,10 +8,10 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import limitedwip.common.LimitedWipCheckin
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
+import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.watchdog.Watchdog
 
 class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
@@ -52,7 +52,7 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
             }
         })
 
-        LimitedWipCheckin.registerListener(myProject, object : LimitedWipCheckin.Listener {
+        SuccessfulCheckin.registerListener(myProject, object : SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
                 watchdog.onCommit()
             }

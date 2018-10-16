@@ -9,10 +9,10 @@ import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import limitedwip.autorevert.AutoRevert
-import limitedwip.common.LimitedWipCheckin
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
+import limitedwip.common.vcs.SuccessfulCheckin
 
 class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
     private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
@@ -37,7 +37,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
             }
         })
 
-        LimitedWipCheckin.registerListener(myProject, object : LimitedWipCheckin.Listener {
+        SuccessfulCheckin.registerListener(myProject, object : SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
                 if (allFileAreCommitted) autoRevert.onAllFilesCommitted()
             }

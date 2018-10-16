@@ -1,4 +1,4 @@
-package limitedwip.common
+package limitedwip.common.vcs
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -6,10 +6,10 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker
-import limitedwip.autorevert.components.Ide
+import limitedwip.common.pluginId
 import java.util.concurrent.atomic.AtomicInteger
 
-private val logger = Logger.getInstance(Ide::class.java)
+private val logger = Logger.getInstance(pluginId)
 
 fun revertCurrentChangeList(project: Project): Int {
     val revertedFilesCount = AtomicInteger(0)

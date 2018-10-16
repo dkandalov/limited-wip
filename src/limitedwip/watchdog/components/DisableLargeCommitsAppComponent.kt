@@ -20,7 +20,8 @@ import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
-import limitedwip.watchdog.components.VcsIdeUtil.registerBeforeCheckInListener
+import limitedwip.common.vcs.AllowCheckinListener
+import limitedwip.common.vcs.registerBeforeCheckInListener
 
 class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigurable.Listener {
 
@@ -29,7 +30,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
     private var allowCommitOnceWithoutCheck = false
 
     override fun initComponent() {
-        registerBeforeCheckInListener(object : VcsIdeUtil.CheckinListener {
+        registerBeforeCheckInListener(object: AllowCheckinListener {
             override fun allowCheckIn(project: Project, changes: List<Change>): Boolean {
                 if (allowCommitOnceWithoutCheck) {
                     allowCommitOnceWithoutCheck = false

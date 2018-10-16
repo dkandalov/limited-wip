@@ -6,9 +6,9 @@ package limitedwip.limbo.components
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import limitedwip.common.LimitedWipCheckin
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
+import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.limbo.Limbo
 import limitedwip.autorevert.components.Ide as IdeFromAutoRevert
 
@@ -27,7 +27,7 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
             override fun onUnitTestFailed() = limbo.onUnitTestFailed()
         })
 
-        LimitedWipCheckin.registerListener(myProject, object: LimitedWipCheckin.Listener {
+        SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = limbo.onSuccessfulCommit()
         })
 
