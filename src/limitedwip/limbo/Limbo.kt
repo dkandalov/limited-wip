@@ -7,15 +7,12 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     private var amountOfTestsRun = zero
     private var allowOneCommitWithoutChecks = false
 
-    init {
-        onSettings(settings)
-    }
-
     fun onUnitTestSucceeded() {
         amountOfTestsRun += 1
     }
 
     fun onUnitTestFailed() {
+        if (!settings.enabled) return
         ide.revertCurrentChangeList()
         ide.notifyThatChangesWereReverted()
         amountOfTestsRun = zero

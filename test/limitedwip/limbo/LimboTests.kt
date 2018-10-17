@@ -5,10 +5,12 @@ import limitedwip.limbo.components.Ide
 import limitedwip.shouldEqual
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 
 class LimboTests {
     private val ide = mock(Ide::class.java)
-    private val limbo = Limbo(ide, Limbo.Settings(enabled = true, notifyOnRevert = true))
+    private val settings = Limbo.Settings(enabled = true, notifyOnRevert = true)
+    private val limbo = Limbo(ide, settings)
 
     @Test fun `allow commits only after running a unit test`() {
         limbo.isCommitAllowed() shouldEqual false
@@ -40,5 +42,17 @@ class LimboTests {
         limbo.isCommitAllowed() shouldEqual true
         limbo.onSuccessfulCommit()
         limbo.isCommitAllowed() shouldEqual false
+    }
+
+    @Test fun `if disabled, always allow commits`() {
+        limbo.onSettings(settings.copy(enabled = false))
+        limbo.isCommitAllowed() shouldEqual true
+    }
+
+    @Test fun `if disabled, don't revert changes on failed unit test`() {
+        limbo.onSettings(settings.copy(enabled = false))
+        limbo.onUnitTestFailed()
+        ide.expect(never()).revertCurrentChangeList()
+        ide.expect(never()).notifyThatChangesWereReverted()
     }
 }
