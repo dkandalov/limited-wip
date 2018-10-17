@@ -13,11 +13,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import limitedwip.common.pluginDisplayName
-import limitedwip.limbo.Limbo
 
 
 class Ide(private val project: Project) {
-    lateinit var limbo: Limbo
+    lateinit var listener: Listener
 
     fun revertCurrentChangeList() {
         limitedwip.common.vcs.revertCurrentChangeList(project)
@@ -27,10 +26,11 @@ class Ide(private val project: Project) {
         val notification = Notification(
             pluginDisplayName,
             pluginDisplayName,
-            "Commit was cancelled because no tests were run<br/> (<a href=\"\">Click here</a> to force commit anyway)",
+            "Commit was cancelled because no tests were run<br/> " +
+            "(<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.WARNING,
             NotificationListener { _, _ ->
-                limbo.allowOneCommitWithoutChecks()
+                listener.onForceCommit()
             }
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
@@ -56,5 +56,9 @@ class Ide(private val project: Project) {
                 actionManager.getAction("CheckinProject").actionPerformed(anActionEvent)
             }
         }
+    }
+
+    interface Listener {
+        fun onForceCommit()
     }
 }
