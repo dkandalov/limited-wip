@@ -44,7 +44,11 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         this.settings = settings
     }
 
-    data class Settings(val enabled: Boolean, val notifyOnRevert: Boolean) {
+    data class Settings(
+        val enabled: Boolean,
+        val notifyOnRevert: Boolean,
+        val openCommitDialogOnPassedTest: Boolean
+    ) {
         val disabled = !enabled
     }
 

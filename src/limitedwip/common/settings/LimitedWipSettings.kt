@@ -24,7 +24,8 @@ data class LimitedWipSettings(
     var showRemainingChangesInToolbar: Boolean = true,
 
     var limboEnabled: Boolean = false,
-    var notifyOnLimboRevert: Boolean = true
+    var notifyOnLimboRevert: Boolean = true,
+    var openCommitDialogOnPassedTest: Boolean = true
 ): PersistentStateComponent<LimitedWipSettings> {
 
     fun secondsTillRevert(): Int = minutesTillRevert * 60

@@ -24,6 +24,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
     private lateinit var limboEnabled: JCheckBox
     private lateinit var notifyOnLimboRevert: JCheckBox
+    private lateinit var openCommitDialogOnPassedTest: JCheckBox
     private val currentState = LimitedWipSettings()
     private var isUpdatingUI: Boolean = false
 
@@ -50,6 +51,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
         limboEnabled.addActionListener(commonActionListener)
         notifyOnLimboRevert.addActionListener(commonActionListener)
+        openCommitDialogOnPassedTest.addActionListener(commonActionListener)
 
         openReadme.setListener(
             { _, _ -> BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip") },
@@ -74,6 +76,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
         limboEnabled.isSelected = currentState.limboEnabled
         notifyOnLimboRevert.isSelected = currentState.notifyOnLimboRevert
+        openCommitDialogOnPassedTest.isSelected = currentState.openCommitDialogOnPassedTest
 
         minutesTillRevert.isEnabled = currentState.autoRevertEnabled
         notifyOnRevert.isEnabled = currentState.autoRevertEnabled
@@ -83,6 +86,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         showRemainingInToolbar.isEnabled = currentState.watchdogEnabled
         disableCommitsAboveThreshold.isEnabled = currentState.watchdogEnabled
         notifyOnLimboRevert.isEnabled = currentState.limboEnabled
+        openCommitDialogOnPassedTest.isEnabled = currentState.limboEnabled
 
         isUpdatingUI = false
     }
@@ -111,6 +115,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
             currentState.limboEnabled = limboEnabled.isSelected
             currentState.notifyOnLimboRevert = notifyOnLimboRevert.isSelected
+            currentState.openCommitDialogOnPassedTest = openCommitDialogOnPassedTest.isSelected
 
         } catch (ignored: NumberFormatException) {
         }

@@ -9,7 +9,11 @@ import org.mockito.Mockito.never
 
 class LimboTests {
     private val ide = mock(Ide::class.java)
-    private val settings = Limbo.Settings(enabled = true, notifyOnRevert = true)
+    private val settings = Limbo.Settings(
+        enabled = true,
+        notifyOnRevert = true,
+        openCommitDialogOnPassedTest = true
+    )
     private val limbo = Limbo(ide, settings)
 
     @Test fun `allow commits only after running a unit test`() {

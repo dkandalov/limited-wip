@@ -45,6 +45,7 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
     private fun LimitedWipSettings.toLimboSettings() =
         Limbo.Settings(
             enabled = limboEnabled,
-            notifyOnRevert = notifyOnLimboRevert
+            notifyOnRevert = notifyOnLimboRevert,
+            openCommitDialogOnPassedTest = openCommitDialogOnPassedTest
         )
 }
