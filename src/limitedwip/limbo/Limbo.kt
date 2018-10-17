@@ -1,9 +1,9 @@
 package limitedwip.limbo
 
-import limitedwip.limbo.Limbo.Amount.Companion.zero
 import limitedwip.limbo.components.Ide
 
 class Limbo(private val ide: Ide, private var settings: Settings) {
+    private val zero = Amount(0)
     private var amountOfTestsRun = zero
     private var allowOneCommitWithoutChecks = false
 
@@ -47,12 +47,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         val disabled = !enabled
     }
 
-    @Suppress("unused") // IDE is wrong
     private data class Amount(val n: Int) {
         operator fun plus(n: Int) = Amount(this.n + n)
-
-        companion object {
-            val zero = Amount(0)
-        }
     }
 }
