@@ -17,12 +17,12 @@ class LimboTests {
         ide.expect().notifyThatCommitWasCancelled()
         limbo.onUnitTestSucceeded()
         limbo.isCommitAllowed() shouldEqual true
+        ide.expect().openCommitDialog()
     }
 
     @Test fun `after commit need to run a unit test to be able to commit again`() {
         limbo.onUnitTestSucceeded()
         limbo.isCommitAllowed() shouldEqual true
-
         limbo.onSuccessfulCommit()
         limbo.isCommitAllowed() shouldEqual false
 
@@ -56,12 +56,12 @@ class LimboTests {
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 
-    @Test fun `if disabled, don't count successful test runs`() {
+    @Test fun `if disabled, don't show commit dialog and don't count successful test runs`() {
         limbo.onSettings(settings.copy(enabled = false))
         limbo.onUnitTestSucceeded()
+        ide.expect(never()).openCommitDialog()
+
         limbo.onSettings(settings.copy(enabled = true))
         limbo.isCommitAllowed() shouldEqual false
     }
-    
-    // TODO open commit dialog after running a test
 }

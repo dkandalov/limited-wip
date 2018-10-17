@@ -10,6 +10,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     fun onUnitTestSucceeded() {
         if (settings.disabled) return
         amountOfTestsRun += 1
+        ide.openCommitDialog()
     }
 
     fun onUnitTestFailed() {
