@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import limitedwip.common.pluginDisplayName
@@ -48,14 +49,14 @@ class Ide(private val project: Project) {
 
     fun openCommitDialog() {
         val application = ApplicationManager.getApplication()
-        application.invokeAndWait {
+        application.invokeLater({
             application.runWriteAction {
                 val actionManager = ActionManager.getInstance()
                 val dataContext = DataManager.getInstance().getDataContext(IdeFocusManager.getGlobalInstance().focusOwner)
                 val anActionEvent = AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, Presentation(), actionManager, 0)
                 actionManager.getAction("CheckinProject").actionPerformed(anActionEvent)
             }
-        }
+        }, ModalityState.NON_MODAL)
     }
 
     interface Listener {
