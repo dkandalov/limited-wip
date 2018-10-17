@@ -55,4 +55,13 @@ class LimboTests {
         ide.expect(never()).revertCurrentChangeList()
         ide.expect(never()).notifyThatChangesWereReverted()
     }
+
+    @Test fun `if disabled, don't count successful test runs`() {
+        limbo.onSettings(settings.copy(enabled = false))
+        limbo.onUnitTestSucceeded()
+        limbo.onSettings(settings.copy(enabled = true))
+        limbo.isCommitAllowed() shouldEqual false
+    }
+    
+    // TODO open commit dialog after running a test
 }
