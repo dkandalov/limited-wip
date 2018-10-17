@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import limitedwip.common.pluginDisplayName
@@ -27,7 +28,7 @@ class Ide(private val project: Project) {
             pluginDisplayName,
             pluginDisplayName,
             "Commit was cancelled because no tests were run<br/> (<a href=\"\">Click here</a> to force commit anyway)",
-            NotificationType.ERROR,
+            NotificationType.WARNING,
             NotificationListener { _, _ ->
                 limbo.allowOneCommitWithoutChecks()
             }
@@ -46,9 +47,14 @@ class Ide(private val project: Project) {
     }
 
     fun openCommitDialog() {
-        val actionManager = ActionManager.getInstance()
-        val dataContext = DataManager.getInstance().getDataContext(IdeFocusManager.getGlobalInstance().focusOwner)
-        val anActionEvent = AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, Presentation(), actionManager, 0)
-        actionManager.getAction("CheckinProject").actionPerformed(anActionEvent)
+        val application = ApplicationManager.getApplication()
+        application.invokeAndWait {
+            application.runWriteAction {
+                val actionManager = ActionManager.getInstance()
+                val dataContext = DataManager.getInstance().getDataContext(IdeFocusManager.getGlobalInstance().focusOwner)
+                val anActionEvent = AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, Presentation(), actionManager, 0)
+                actionManager.getAction("CheckinProject").actionPerformed(anActionEvent)
+            }
+        }
     }
 }
