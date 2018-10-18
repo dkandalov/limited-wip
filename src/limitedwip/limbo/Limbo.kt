@@ -26,13 +26,8 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
 
     fun isCommitAllowed(): Boolean {
         if (allowOneCommitWithoutChecks || settings.disabled) return true
-
-        return if (!allowedToCommit) {
-            ide.notifyThatCommitWasCancelled()
-            false
-        } else {
-            true
-        }
+        if (!allowedToCommit) ide.notifyThatCommitWasCancelled()
+        return allowedToCommit
     }
 
     fun onSuccessfulCommit() {
