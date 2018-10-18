@@ -3,13 +3,12 @@ package limitedwip.limbo
 import limitedwip.limbo.components.Ide
 
 class Limbo(private val ide: Ide, private var settings: Settings) {
-    private val zero = Amount(0)
-    private var amountOfTestsRun = zero
+    private var allowedToCommit = false
     private var allowOneCommitWithoutChecks = false
 
     fun onUnitTestSucceeded() {
         if (settings.disabled) return
-        amountOfTestsRun += 1
+        allowedToCommit = true
         ide.openCommitDialog()
     }
 
@@ -17,7 +16,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         if (settings.disabled) return
         ide.revertCurrentChangeList()
         ide.notifyThatChangesWereReverted()
-        amountOfTestsRun = zero
+        allowedToCommit = false
     }
 
     fun forceOneCommit() {
@@ -28,7 +27,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     fun isCommitAllowed(): Boolean {
         if (allowOneCommitWithoutChecks || settings.disabled) return true
 
-        return if (amountOfTestsRun == zero) {
+        return if (!allowedToCommit) {
             ide.notifyThatCommitWasCancelled()
             false
         } else {
@@ -37,7 +36,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onSuccessfulCommit() {
-        amountOfTestsRun = zero
+        allowedToCommit = false
         allowOneCommitWithoutChecks = false
     }
 
@@ -46,7 +45,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onFileChange() {
-        amountOfTestsRun = zero
+        allowedToCommit = false
     }
 
     data class Settings(
@@ -55,9 +54,5 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         val openCommitDialogOnPassedTest: Boolean
     ) {
         val disabled = !enabled
-    }
-
-    private data class Amount(val n: Int) {
-        operator fun plus(n: Int) = Amount(this.n + n)
     }
 }
