@@ -27,8 +27,7 @@ class Ide(private val project: Project) {
         val notification = Notification(
             pluginDisplayName,
             pluginDisplayName,
-            "Commit was cancelled because no tests were run<br/> " +
-            "(<a href=\"\">Click here</a> to force commit anyway)",
+            "Commit was cancelled because no tests were run<br/> (<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.WARNING,
             NotificationListener { _, _ ->
                 listener.onForceCommit()
@@ -49,14 +48,14 @@ class Ide(private val project: Project) {
 
     fun openCommitDialog() {
         val application = ApplicationManager.getApplication()
-        application.invokeLater({
-            application.runWriteAction {
-                val actionManager = ActionManager.getInstance()
-                val dataContext = DataManager.getInstance().getDataContext(IdeFocusManager.getGlobalInstance().focusOwner)
-                val anActionEvent = AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, Presentation(), actionManager, 0)
-                actionManager.getAction("CheckinProject").actionPerformed(anActionEvent)
-            }
-        }, ModalityState.NON_MODAL)
+        val function = { ActionManager.getInstance().getAction("CheckinProject").actionPerformed(anActionEvent()) }
+        application.invokeLater(function, ModalityState.NON_MODAL)
+    }
+
+    private fun anActionEvent(): AnActionEvent {
+        val actionManager = ActionManager.getInstance()
+        val dataContext = DataManager.getInstance().getDataContext(IdeFocusManager.getGlobalInstance().focusOwner)
+        return AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, Presentation(), actionManager, 0)
     }
 
     interface Listener {
