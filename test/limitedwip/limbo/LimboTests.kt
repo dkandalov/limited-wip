@@ -51,7 +51,17 @@ class LimboTests {
     @Test fun `revert changes on failed unit test`() {
         limbo.onUnitTestFailed()
         ide.expect().revertCurrentChangeList()
+    }
+
+    @Test fun `notify user on revert`() {
+        `revert changes on failed unit test`()
         ide.expect().notifyThatChangesWereReverted()
+    }
+
+    @Test fun `don't notify user on revert if notification is disabled in settings`() {
+        limbo.onSettings(settings.copy(notifyOnRevert = false))
+        `revert changes on failed unit test`()
+        ide.expect(never()).notifyThatChangesWereReverted()
     }
 
     @Test fun `can do one-off commit without running a unit test`() {

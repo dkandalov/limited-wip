@@ -15,7 +15,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     fun onUnitTestFailed() {
         if (settings.disabled) return
         ide.revertCurrentChangeList()
-        ide.notifyThatChangesWereReverted()
+        if (settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
         allowedToCommit = false
     }
 
