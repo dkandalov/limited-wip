@@ -46,7 +46,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onFileChange() {
-        // TODO
+        amountOfTestsRun = zero
     }
 
     data class Settings(

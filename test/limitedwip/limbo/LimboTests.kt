@@ -40,6 +40,14 @@ class LimboTests {
         limbo.isCommitAllowed() shouldEqual true
     }
 
+    @Test fun `don't allow commits if files were changed after running a unit test`() {
+        limbo.onUnitTestSucceeded()
+        limbo.isCommitAllowed() shouldEqual true
+
+        limbo.onFileChange()
+        limbo.isCommitAllowed() shouldEqual false
+    }
+
     @Test fun `revert changes on failed unit test`() {
         limbo.onUnitTestFailed()
         ide.expect().revertCurrentChangeList()
