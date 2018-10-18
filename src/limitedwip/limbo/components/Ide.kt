@@ -29,7 +29,8 @@ class Ide(private val project: Project) {
             pluginDisplayName,
             "Commit was cancelled because no tests were run<br/> (<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.WARNING,
-            NotificationListener { _, _ ->
+            NotificationListener { notification, _ ->
+                notification.expire()
                 listener.onForceCommit()
             }
         )
