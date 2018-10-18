@@ -45,6 +45,10 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         this.settings = settings
     }
 
+    fun onFileChange() {
+        // TODO
+    }
+
     data class Settings(
         val enabled: Boolean,
         val notifyOnRevert: Boolean,

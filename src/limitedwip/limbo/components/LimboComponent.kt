@@ -6,6 +6,7 @@ package limitedwip.limbo.components
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.*
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.vcs.SuccessfulCheckin
@@ -13,7 +14,6 @@ import limitedwip.limbo.Limbo
 import limitedwip.autorevert.components.Ide as IdeFromAutoRevert
 
 class LimboComponent(project: Project): AbstractProjectComponent(project) {
-    private val unitTestsWatcher = UnitTestsWatcher(myProject)
     private lateinit var limbo: Limbo
 
     override fun projectOpened() {
@@ -24,7 +24,15 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
             override fun onForceCommit() = limbo.forceOneCommit()
         }
 
-        unitTestsWatcher.start(object: UnitTestsWatcher.Listener {
+        VirtualFileManager.getInstance().addVirtualFileListener(object : VirtualFileListener {
+            override fun fileDeleted(event: VirtualFileEvent) = limbo.onFileChange()
+            override fun fileMoved(event: VirtualFileMoveEvent) = limbo.onFileChange()
+            override fun contentsChanged(event: VirtualFileEvent) = limbo.onFileChange()
+            override fun fileCreated(event: VirtualFileEvent) = limbo.onFileChange()
+            override fun fileCopied(event: VirtualFileCopyEvent) = limbo.onFileChange()
+        }, myProject)
+
+        UnitTestsWatcher(myProject).start(object: UnitTestsWatcher.Listener {
             override fun onUnitTestSucceeded() = limbo.onUnitTestSucceeded()
             override fun onUnitTestFailed() = limbo.onUnitTestFailed()
         })
