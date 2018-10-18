@@ -21,7 +21,7 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         limbo = Limbo(ide, settings.toLimboSettings())
         ide.listener = object : Ide.Listener {
-            override fun onForceCommit() = limbo.allowOneCommitWithoutChecks()
+            override fun onForceCommit() = limbo.forceOneCommit()
         }
 
         unitTestsWatcher.start(object: UnitTestsWatcher.Listener {

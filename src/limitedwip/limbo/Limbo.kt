@@ -20,8 +20,9 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         amountOfTestsRun = zero
     }
 
-    fun allowOneCommitWithoutChecks() {
+    fun forceOneCommit() {
         allowOneCommitWithoutChecks = true
+        ide.openCommitDialog()
     }
 
     fun isCommitAllowed(): Boolean {

@@ -48,8 +48,9 @@ class LimboTests {
 
     @Test fun `can do one-off commit without running a unit test`() {
         limbo.isCommitAllowed() shouldEqual false
-        limbo.allowOneCommitWithoutChecks()
+        limbo.forceOneCommit()
         limbo.isCommitAllowed() shouldEqual true
+        ide.expect().openCommitDialog()
 
         limbo.onSuccessfulCommit()
         limbo.isCommitAllowed() shouldEqual false
