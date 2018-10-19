@@ -5,7 +5,6 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.common.pluginDisplayName
 import limitedwip.watchdog.ChangeSize
@@ -23,7 +22,7 @@ class Ide(
     fun currentChangeListSizeInLines() = changeSizeWatcher.currentChangeListSizeInLines()
 
     fun showCurrentChangeListSize(linesInChange: ChangeSize, maxLinesInChange: Int) {
-        watchdogWidget.showChangeSize(asString(linesInChange), maxLinesInChange)
+        watchdogWidget.showChangeSize(linesInChange.toPrintableString(), maxLinesInChange)
         updateStatusBar()
     }
 
@@ -44,7 +43,7 @@ class Ide(
     }
 
     private fun updateStatusBar() {
-        val statusBar = statusBarFor(project) ?: return
+        val statusBar = WindowManager.getInstance().getStatusBar(project) ?: return
 
         val hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null
         val shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar
@@ -61,10 +60,6 @@ class Ide(
         }
     }
 
-    private fun statusBarFor(project: Project): StatusBar? {
-        return WindowManager.getInstance().getStatusBar(project)
-    }
-
     fun onChangeSizeTooBig(linesChanged: ChangeSize, changedLinesLimit: Int) {
         val listener = NotificationListener { notification, _ ->
             val watchdogComponent = project.getComponent(WatchdogComponent::class.java) ?: return@NotificationListener
@@ -75,7 +70,7 @@ class Ide(
         val notification = Notification(
             pluginDisplayName,
             "Change Size Exceeded Limit",
-            "Lines changed: " + asString(linesChanged) + "; " +
+            "Lines changed: " + linesChanged.toPrintableString() + "; " +
                 "limit: " + changedLinesLimit + "<br/>" +
                 "Please commit, split or revert changes<br/>" +
                 "(<a href=\"\">Click here</a> to skip notifications till next commit)",
@@ -97,7 +92,6 @@ class Ide(
         }
     }
 
-    private fun asString(changeSize: ChangeSize): String {
-        return if (changeSize.isApproximate) "≈" + changeSize.value else changeSize.value.toString()
-    }
+    private fun ChangeSize.toPrintableString() =
+        if (isApproximate) "≈$value" else value.toString()
 }
