@@ -46,12 +46,11 @@ class ChangeSizeWatcher(private val project: Project) {
             val changesToDiff = ArrayList<Change>()
             var result = ChangeSize(0)
             for (change in changeList.changes) {
-                val document = change.document()
-                val changeSize = changeSizeCache[document]
+                val changeSize = changeSizeCache[change.document()]
                 if (changeSize == null) {
                     changesToDiff.add(change)
                 } else {
-                    result = result.add(changeSize)
+                    result = result.plus(changeSize)
                 }
             }
             Pair(result, changesToDiff)
@@ -72,7 +71,7 @@ class ChangeSizeWatcher(private val project: Project) {
             application.invokeLater {
                 changeSize = newChangeSize
                 for (it in changeSizeByChange.values) {
-                    changeSize = changeSize.add(it)
+                    changeSize += it
                 }
                 for ((change, changeSize) in changeSizeByChange) {
                     val document = change.document()
@@ -105,9 +104,8 @@ class ChangeSizeWatcher(private val project: Project) {
             }, parentDisposable)
         }
 
-        operator fun get(document: Document?): ChangeSize? {
-            return if (document == null) null else changeSizeByDocument[document]
-        }
+        operator fun get(document: Document?): ChangeSize? =
+            if (document == null) null else changeSizeByDocument[document]
     }
 }
 
