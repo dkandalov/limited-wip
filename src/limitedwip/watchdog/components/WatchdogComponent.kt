@@ -13,24 +13,20 @@ import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.watchdog.Watchdog
+import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
+class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     private lateinit var watchdog: Watchdog
     private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
     private lateinit var ide: Ide
 
     override fun projectOpened() {
-        val settings = ServiceManager.getService(LimitedWipSettings::class.java)
+        val settings = ServiceManager.getService(LimitedWipSettings::class.java).toWatchdogSettings()
         val changeSizeWatcher = ChangeSizeWatcher(myProject)
-        ide = Ide(myProject, changeSizeWatcher)
-        watchdog = Watchdog(ide, Watchdog.Settings(
-            settings.watchdogEnabled,
-            settings.maxLinesInChange,
-            settings.notificationIntervalInSeconds(),
-            settings.showRemainingChangesInToolbar
-        ))
+        ide = Ide(myProject, changeSizeWatcher, WatchdogStatusBarWidget(), settings)
+        watchdog = Watchdog(ide, settings)
 
-        timer.addListener(object : TimerAppComponent.Listener {
+        timer.addListener(object: TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater(Runnable {
                     // Project can be closed (disposed) during handover between timer thread and EDT.
@@ -41,23 +37,26 @@ class WatchdogComponent(project: Project) : AbstractProjectComponent(project) {
             }
         }, myProject)
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
+        LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) {
-                watchdog.onSettings(Watchdog.Settings(
-                    settings.watchdogEnabled,
-                    settings.maxLinesInChange,
-                    settings.notificationIntervalInSeconds(),
-                    settings.showRemainingChangesInToolbar
-                ))
+                watchdog.onSettings(settings.toWatchdogSettings())
             }
         })
 
-        SuccessfulCheckin.registerListener(myProject, object : SuccessfulCheckin.Listener {
+        SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
                 watchdog.onCommit()
             }
         })
     }
+
+    private fun LimitedWipSettings.toWatchdogSettings() =
+        Watchdog.Settings(
+            watchdogEnabled,
+            maxLinesInChange,
+            notificationIntervalInSeconds(),
+            showRemainingChangesInToolbar
+        )
 
     fun currentChangeListSize(): Int = ide.currentChangeListSizeInLines().value
 

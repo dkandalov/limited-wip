@@ -12,10 +12,12 @@ import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class Ide(private val project: Project, private val changeSizeWatcher: ChangeSizeWatcher) {
-    private val watchdogWidget = WatchdogStatusBarWidget()
-
-    private var settings: Watchdog.Settings? = null
+class Ide(
+    private val project: Project,
+    private val changeSizeWatcher: ChangeSizeWatcher,
+    private val watchdogWidget: WatchdogStatusBarWidget,
+    private var settings: Watchdog.Settings
+) {
     private var lastNotification: Notification? = null
 
     fun currentChangeListSizeInLines() = changeSizeWatcher.currentChangeListSizeInLines()
@@ -45,7 +47,7 @@ class Ide(private val project: Project, private val changeSizeWatcher: ChangeSiz
         val statusBar = statusBarFor(project) ?: return
 
         val hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null
-        val shouldShowWatchdog = settings!!.enabled && settings!!.showRemainingChangesInToolbar
+        val shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar
         if (hasWatchdogWidget && shouldShowWatchdog) {
             statusBar.updateWidget(watchdogWidget.ID())
 
@@ -53,7 +55,7 @@ class Ide(private val project: Project, private val changeSizeWatcher: ChangeSiz
             statusBar.removeWidget(watchdogWidget.ID())
 
         } else if (shouldShowWatchdog) {
-            watchdogWidget.showInitialText(settings!!.maxLinesInChange)
+            watchdogWidget.showInitialText(settings.maxLinesInChange)
             statusBar.addWidget(watchdogWidget, "before Position")
             statusBar.updateWidget(watchdogWidget.ID())
         }

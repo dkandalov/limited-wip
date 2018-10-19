@@ -24,6 +24,7 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
             override fun onForceCommit() = limbo.forceOneCommit()
         }
 
+//        ProjectLevelVcsManager.getInstance(myProject).
         VirtualFileManager.getInstance().addVirtualFileListener(object : VirtualFileListener {
             override fun fileDeleted(event: VirtualFileEvent) = limbo.onFileChange()
             override fun fileMoved(event: VirtualFileMoveEvent) = limbo.onFileChange()
