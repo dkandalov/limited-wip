@@ -32,15 +32,15 @@ class AutoRevertTests {
 
     @Test fun `send UI startup notification`() {
         autoRevert.start()
-        ide.expect().onAutoRevertStarted(eq(secondsTillRevert))
+        ide.expect().showInUIThatAutoRevertStopped(eq(secondsTillRevert))
     }
 
     @Test fun `send UI notification on timer only when started`() {
         autoRevert.onTimer(next())
-        ide.expect(inOrder, times(0)).onTimeTillRevert(anyInt())
+        ide.expect(inOrder, times(0)).showInUITimeTillRevert(anyInt())
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).onTimeTillRevert(anyInt())
+        ide.expect(inOrder).showInUITimeTillRevert(anyInt())
     }
 
     @Test fun `revert changes when received enough time updates`() {
@@ -61,33 +61,33 @@ class AutoRevertTests {
         autoRevert.stop()
         autoRevert.onTimer(next())
 
-        ide.expect().onAutoRevertStarted(anyInt())
-        ide.expect().onAutoRevertStopped()
+        ide.expect().showInUIThatAutoRevertStopped(anyInt())
+        ide.expect().showInUIThatAutoRevertStopped()
         ide.expect(never()).revertCurrentChangeList()
     }
 
     @Test fun `reset time till revert when stopped`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).onTimeTillRevert(eq(2))
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.stop()
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).onTimeTillRevert(eq(2))
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onTimer(next())
-        ide.expect(inOrder).onTimeTillRevert(eq(1))
+        ide.expect(inOrder).showInUITimeTillRevert(eq(1))
     }
 
     @Test fun `reset time till revert when committed`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).onTimeTillRevert(eq(2))
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onAllFilesCommitted()
         ide.expect(inOrder).onCommit(secondsTillRevert)
         autoRevert.onTimer(next())
-        ide.expect(inOrder).onTimeTillRevert(eq(2))
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onTimer(next())
-        ide.expect(inOrder).onTimeTillRevert(eq(1))
+        ide.expect(inOrder).showInUITimeTillRevert(eq(1))
     }
 
     @Test fun `send UI notification on commit only when started`() {

@@ -31,7 +31,7 @@ class Ide(
         return limitedwip.common.vcs.revertCurrentChangeList(project)
     }
 
-    fun onAutoRevertStarted(timeEventsTillRevert: Int) {
+    fun showInUIThatAutoRevertStopped(timeEventsTillRevert: Int) {
         if (settings.showTimerInToolbar) {
             autoRevertWidget.showTime(formatTime(timeEventsTillRevert))
         } else {
@@ -40,7 +40,7 @@ class Ide(
         updateStatusBar()
     }
 
-    fun onAutoRevertStopped() {
+    fun showInUIThatAutoRevertStopped() {
         autoRevertWidget.showStoppedText()
         updateStatusBar()
     }
@@ -64,7 +64,7 @@ class Ide(
         updateStatusBar()
     }
 
-    fun onTimeTillRevert(secondsLeft: Int) {
+    fun showInUITimeTillRevert(secondsLeft: Int) {
         if (settings.showTimerInToolbar) {
             autoRevertWidget.showTime(formatTime(secondsLeft))
         } else {

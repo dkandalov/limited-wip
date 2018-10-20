@@ -20,12 +20,12 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         startSeconds = -1
         applyNewSettings()
 
-        ide.onAutoRevertStarted(remainingSeconds)
+        ide.showInUIThatAutoRevertStopped(remainingSeconds)
     }
 
     fun stop() {
         isStarted = false
-        ide.onAutoRevertStopped()
+        ide.showInUIThatAutoRevertStopped()
     }
 
     fun onTimer(seconds: Int) {
@@ -36,7 +36,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         }
         val secondsPassed = seconds - startSeconds
 
-        ide.onTimeTillRevert(remainingSeconds - secondsPassed + 1)
+        ide.showInUITimeTillRevert(remainingSeconds - secondsPassed + 1)
 
         if (secondsPassed >= remainingSeconds) {
             startSeconds = -1
