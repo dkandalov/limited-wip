@@ -53,7 +53,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
         startSeconds = -1
         applyNewSettings()
-        ide.onCommit(remainingSeconds)
+        ide.showInUITimeTillRevert(remainingSeconds)
     }
 
     fun onSettings(settings: Settings) {

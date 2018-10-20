@@ -83,7 +83,7 @@ class AutoRevertTests {
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onAllFilesCommitted()
-        ide.expect(inOrder).onCommit(secondsTillRevert)
+        ide.expect(inOrder).showInUITimeTillRevert(secondsTillRevert)
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onTimer(next())
@@ -92,10 +92,10 @@ class AutoRevertTests {
 
     @Test fun `send UI notification on commit only when started`() {
         autoRevert.onAllFilesCommitted()
-        ide.expect(inOrder, times(0)).onCommit(anyInt())
+        ide.expect(inOrder, times(0)).showInUITimeTillRevert(anyInt())
         autoRevert.start()
         autoRevert.onAllFilesCommitted()
-        ide.expect(inOrder).onCommit(anyInt())
+        ide.expect(inOrder).showInUITimeTillRevert(anyInt())
     }
 
     @Test fun `apply revert time out change after start`() {

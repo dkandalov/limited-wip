@@ -55,15 +55,6 @@ class Ide(
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
-    fun onCommit(timeEventsTillRevert: Int) {
-        if (settings.showTimerInToolbar) {
-            autoRevertWidget.showTime(formatTime(timeEventsTillRevert))
-        } else {
-            autoRevertWidget.showStartedText()
-        }
-        updateStatusBar()
-    }
-
     fun showInUITimeTillRevert(secondsLeft: Int) {
         if (settings.showTimerInToolbar) {
             autoRevertWidget.showTime(formatTime(secondsLeft))
