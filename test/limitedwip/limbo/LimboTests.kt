@@ -31,6 +31,12 @@ class LimboTests {
         ide.expect().openCommitDialog()
     }
 
+    @Test fun `don't show commit dialog is it's disabled in settings`() {
+        limbo.onSettings(settings.copy(openCommitDialogOnPassedTest = false))
+        limbo.onUnitTestSucceeded(someModifications)
+        ide.expect(never()).openCommitDialog()
+    }
+
     @Test fun `after commit need to run a unit test to be able to commit again`() {
         limbo.onUnitTestSucceeded(someModifications)
         limbo.isCommitAllowed(someModifications) shouldEqual true
