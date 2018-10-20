@@ -24,7 +24,6 @@ class WatchdogTests {
 
     private var seconds: Int = 0
 
-
     @Test fun `don't send notification when change size is below threshold`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(10))
 

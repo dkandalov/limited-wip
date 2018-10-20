@@ -196,7 +196,7 @@
             </constraints>
             <properties>
               <enabled value="true"/>
-              <text value="Disable commits above threshold"/>
+              <text value="No commits above threshold"/>
             </properties>
           </component>
           <component id="4e590" class="javax.swing.JCheckBox" binding="disableCommitsAboveThreshold">

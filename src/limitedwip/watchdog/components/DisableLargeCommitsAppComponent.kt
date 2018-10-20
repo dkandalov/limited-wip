@@ -75,7 +75,7 @@ class DisableLargeCommitsAppComponent : ApplicationComponent, LimitedWipConfigur
     override fun getComponentName() = this.javaClass.canonicalName!!
 
     override fun onSettingsUpdate(settings: LimitedWipSettings) {
-        this.enabled = settings.disableCommitsAboveThreshold
+        this.enabled = settings.noCommitsAboveThreshold
         this.maxChangeSizeInLines = settings.maxLinesInChange
     }
 

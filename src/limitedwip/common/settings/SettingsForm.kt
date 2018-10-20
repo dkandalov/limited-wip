@@ -14,7 +14,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var maxLinesInChange: JComboBox<*>
     private lateinit var notificationInterval: JComboBox<*>
     private lateinit var showRemainingInToolbar: JCheckBox
-    private lateinit var disableCommitsAboveThreshold: JCheckBox
+    private lateinit var noCommitsAboveThreshold: JCheckBox
 
     private lateinit var autoRevertEnabled: JCheckBox
     private lateinit var minutesTillRevert: JComboBox<*>
@@ -42,7 +42,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         maxLinesInChange.addActionListener(commonActionListener)
         notificationInterval.addActionListener(commonActionListener)
         showRemainingInToolbar.addActionListener(commonActionListener)
-        disableCommitsAboveThreshold.addActionListener(commonActionListener)
+        noCommitsAboveThreshold.addActionListener(commonActionListener)
 
         autoRevertEnabled.addActionListener(commonActionListener)
         minutesTillRevert.addActionListener(commonActionListener)
@@ -67,7 +67,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         maxLinesInChange.selectedItem = currentState.maxLinesInChange.toString()
         notificationInterval.selectedItem = currentState.notificationIntervalInMinutes.toString()
         showRemainingInToolbar.isSelected = currentState.showRemainingChangesInToolbar
-        disableCommitsAboveThreshold.isSelected = currentState.disableCommitsAboveThreshold
+        noCommitsAboveThreshold.isSelected = currentState.noCommitsAboveThreshold
 
         autoRevertEnabled.isSelected = currentState.autoRevertEnabled
         minutesTillRevert.selectedItem = currentState.minutesTillRevert.toString()
@@ -84,7 +84,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         maxLinesInChange.isEnabled = currentState.watchdogEnabled
         notificationInterval.isEnabled = currentState.watchdogEnabled
         showRemainingInToolbar.isEnabled = currentState.watchdogEnabled
-        disableCommitsAboveThreshold.isEnabled = currentState.watchdogEnabled
+        noCommitsAboveThreshold.isEnabled = currentState.watchdogEnabled
         notifyOnLimboRevert.isEnabled = currentState.limboEnabled
         openCommitDialogOnPassedTest.isEnabled = currentState.limboEnabled
 
@@ -103,7 +103,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
                 currentState.notificationIntervalInMinutes = minutes
             }
             currentState.showRemainingChangesInToolbar = showRemainingInToolbar.isSelected
-            currentState.disableCommitsAboveThreshold = disableCommitsAboveThreshold.isSelected
+            currentState.noCommitsAboveThreshold = noCommitsAboveThreshold.isSelected
 
             currentState.autoRevertEnabled = autoRevertEnabled.isSelected
             minutes = Integer.valueOf(minutesTillRevert.selectedItem as String)
