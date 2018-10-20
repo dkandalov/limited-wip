@@ -83,7 +83,7 @@ class AutoRevertTests {
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onAllFilesCommitted()
-        ide.expect(inOrder).showInUITimeTillRevert(secondsTillRevert)
+        ide.expect(inOrder).showInUITimeTillRevert(eq(secondsTillRevert))
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onTimer(next())
