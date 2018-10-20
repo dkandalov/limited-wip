@@ -5,10 +5,12 @@ import limitedwip.limbo.components.Ide
 class Limbo(private val ide: Ide, private var settings: Settings) {
     private var allowedToCommit = false
     private var allowOneCommitWithoutChecks = false
+    private var testedModifications: ChangeListModifications? = null
 
-    fun onUnitTestSucceeded() {
+    fun onUnitTestSucceeded(modifications: ChangeListModifications) {
         if (settings.disabled) return
         allowedToCommit = true
+        testedModifications = modifications
         ide.openCommitDialog()
     }
 
@@ -24,8 +26,9 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         ide.openCommitDialog()
     }
 
-    fun isCommitAllowed(): Boolean {
+    fun isCommitAllowed(modifications: ChangeListModifications): Boolean {
         if (allowOneCommitWithoutChecks || settings.disabled) return true
+        if (testedModifications != modifications) allowedToCommit = false
         if (!allowedToCommit) ide.notifyThatCommitWasCancelled()
         return allowedToCommit
     }
@@ -39,10 +42,6 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         this.settings = settings
     }
 
-    fun onFileChange() {
-        allowedToCommit = false
-    }
-
     data class Settings(
         val enabled: Boolean,
         val notifyOnRevert: Boolean,
@@ -50,4 +49,6 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
     ) {
         val disabled = !enabled
     }
+
+    data class ChangeListModifications(val value: Map<String, Long>)
 }

@@ -1,6 +1,7 @@
 package limitedwip.limbo
 
 import limitedwip.expect
+import limitedwip.limbo.Limbo.ChangeListModifications
 import limitedwip.limbo.components.Ide
 import limitedwip.shouldEqual
 import org.junit.Test
@@ -15,37 +16,41 @@ class LimboTests {
         openCommitDialogOnPassedTest = true
     )
     private val limbo = Limbo(ide, settings)
+    private val someModifications = ChangeListModifications(mapOf("foo" to 1L))
 
     @Test fun `allow commits only after running a unit test`() {
-        limbo.isCommitAllowed() shouldEqual false
+        limbo.isCommitAllowed(someModifications) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
 
-        limbo.onUnitTestSucceeded()
-        limbo.isCommitAllowed() shouldEqual true
+        limbo.onUnitTestSucceeded(someModifications)
+        limbo.isCommitAllowed(someModifications) shouldEqual true
     }
 
     @Test fun `show commit dialog after successful test run`() {
-        limbo.onUnitTestSucceeded()
+        limbo.onUnitTestSucceeded(someModifications)
         ide.expect().openCommitDialog()
     }
 
     @Test fun `after commit need to run a unit test to be able to commit again`() {
-        limbo.onUnitTestSucceeded()
-        limbo.isCommitAllowed() shouldEqual true
+        limbo.onUnitTestSucceeded(someModifications)
+        limbo.isCommitAllowed(someModifications) shouldEqual true
 
         limbo.onSuccessfulCommit()
-        limbo.isCommitAllowed() shouldEqual false
+        limbo.isCommitAllowed(someModifications) shouldEqual false
 
-        limbo.onUnitTestSucceeded()
-        limbo.isCommitAllowed() shouldEqual true
+        limbo.onUnitTestSucceeded(someModifications)
+        limbo.isCommitAllowed(someModifications) shouldEqual true
     }
 
     @Test fun `don't allow commits if files were changed after running a unit test`() {
-        limbo.onUnitTestSucceeded()
-        limbo.isCommitAllowed() shouldEqual true
+        limbo.onUnitTestSucceeded(someModifications)
+        limbo.isCommitAllowed(someModifications) shouldEqual true
 
-        limbo.onFileChange()
-        limbo.isCommitAllowed() shouldEqual false
+        val moreModifications = ChangeListModifications(someModifications.value + Pair("foo", 2L))
+        limbo.isCommitAllowed(moreModifications) shouldEqual false
+
+        limbo.onUnitTestSucceeded(moreModifications)
+        limbo.isCommitAllowed(moreModifications) shouldEqual true
     }
 
     @Test fun `revert changes on failed unit test`() {
@@ -65,18 +70,18 @@ class LimboTests {
     }
 
     @Test fun `can do one-off commit without running a unit test`() {
-        limbo.isCommitAllowed() shouldEqual false
+        limbo.isCommitAllowed(someModifications) shouldEqual false
         limbo.forceOneCommit()
-        limbo.isCommitAllowed() shouldEqual true
+        limbo.isCommitAllowed(someModifications) shouldEqual true
         ide.expect().openCommitDialog()
 
         limbo.onSuccessfulCommit()
-        limbo.isCommitAllowed() shouldEqual false
+        limbo.isCommitAllowed(someModifications) shouldEqual false
     }
 
     @Test fun `if disabled, always allow commits`() {
         limbo.onSettings(settings.copy(enabled = false))
-        limbo.isCommitAllowed() shouldEqual true
+        limbo.isCommitAllowed(someModifications) shouldEqual true
     }
 
     @Test fun `if disabled, don't revert changes on failed unit test`() {
@@ -88,10 +93,10 @@ class LimboTests {
 
     @Test fun `if disabled, don't show commit dialog and don't count successful test runs`() {
         limbo.onSettings(settings.copy(enabled = false))
-        limbo.onUnitTestSucceeded()
+        limbo.onUnitTestSucceeded(someModifications)
         ide.expect(never()).openCommitDialog()
 
         limbo.onSettings(settings.copy(enabled = true))
-        limbo.isCommitAllowed() shouldEqual false
+        limbo.isCommitAllowed(someModifications) shouldEqual false
     }
 }

@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.wm.IdeFocusManager
 import limitedwip.common.pluginDisplayName
 
@@ -45,6 +46,14 @@ class Ide(private val project: Project) {
             NotificationType.WARNING
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
+    }
+
+    fun defaultChangeListModificationCount(): Map<String, Long> {
+        val result = HashMap<String, Long>()
+        ChangeListManager.getInstance(project).defaultChangeList.changes
+            .mapNotNull { it.virtualFile }
+            .forEach { result[it.path] = it.modificationCount }
+        return result
     }
 
     fun openCommitDialog() {
