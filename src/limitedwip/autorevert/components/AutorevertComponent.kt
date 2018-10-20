@@ -9,6 +9,7 @@ import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import limitedwip.autorevert.AutoRevert
+import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
@@ -23,7 +24,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
 
     override fun projectOpened() {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java).toAutoRevertSettings()
-        autoRevert = AutoRevert(Ide(myProject, settings), settings)
+        autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
 
         timer.addListener(object : TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {

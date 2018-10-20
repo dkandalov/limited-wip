@@ -48,13 +48,10 @@ class Ide(private val project: Project) {
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
-    fun defaultChangeListModificationCount(): Map<String, Long> {
-        val result = HashMap<String, Long>()
-        ChangeListManager.getInstance(project).defaultChangeList.changes
-            .mapNotNull { it.virtualFile }
-            .forEach { result[it.path] = it.modificationCount }
-        return result
-    }
+    fun defaultChangeListModificationCount(): Map<String, Long> =
+        ChangeListManager.getInstance(project)
+            .defaultChangeList.changes.mapNotNull { it.virtualFile }
+            .associate { Pair(it.path, it.modificationCount) }
 
     fun openCommitDialog() {
         val application = ApplicationManager.getApplication()

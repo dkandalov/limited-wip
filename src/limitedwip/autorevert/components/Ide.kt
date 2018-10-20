@@ -11,10 +11,11 @@ import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.pluginDisplayName
 
-class Ide(private val project: Project, private var settings: AutoRevert.Settings) {
-
-    private val autoRevertWidget = AutoRevertStatusBarWidget()
-
+class Ide(
+    private val project: Project,
+    private var settings: AutoRevert.Settings,
+    private val autoRevertWidget: AutoRevertStatusBarWidget
+) {
     init {
         Disposer.register(project, Disposable {
             val statusBar = project.statusBar()
