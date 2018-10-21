@@ -29,7 +29,7 @@ class WatchdogTests {
 
         watchdog.onTimer(next())
 
-        ide.expect(times(0)).onChangeSizeTooBig(anyChangeSize(), anyInt())
+        ide.expect(times(0)).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
     }
 
     @Test fun `send notification when change size is above threshold`() {
@@ -37,7 +37,7 @@ class WatchdogTests {
 
         watchdog.onTimer(next())
 
-        ide.expect().onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect().showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send change size notification only on one of several updates`() {
@@ -48,7 +48,7 @@ class WatchdogTests {
         watchdog.onTimer(next()) // send notification
         watchdog.onTimer(next())
 
-        ide.expect(times(2)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect(times(2)).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send change size notification after settings change`() {
@@ -56,11 +56,11 @@ class WatchdogTests {
         val inOrder = inOrder(ide)
 
         watchdog.onTimer(next())
-        ide.expect(inOrder).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
 
         watchdog.onSettings(settings.copy(maxLinesInChange = 150))
         watchdog.onTimer(next())
-        ide.expect(inOrder).onChangeSizeTooBig(ChangeSize(200), 150)
+        ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), 150)
     }
 
     @Test fun `don't send notification when disabled`() {
@@ -83,7 +83,7 @@ class WatchdogTests {
         watchdog.onCommit()
         watchdog.onTimer(next())
 
-        ide.expect().onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect().showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send change size update`() {
@@ -118,8 +118,8 @@ class WatchdogTests {
         watchdog.onTimer(next())
         watchdog.onTimer(next())
 
-        ide.expect(times(1)).onChangeSizeTooBig(ChangeSize(200), maxLinesInChange)
-        ide.expect(times(2)).onChangeSizeWithinLimit()
+        ide.expect(times(1)).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
+        ide.expect(times(2)).hideNotificationThatChangeSizeIsTooBig()
     }
 
     private fun next(): Int = ++seconds

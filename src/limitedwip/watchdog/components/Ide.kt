@@ -31,7 +31,7 @@ class Ide(
         updateStatusBar()
     }
 
-    fun onSkipNotificationUntilCommit(value: Boolean) {
+    fun showNotificationThatWatchdogIsDisableUntilNextCommit(value: Boolean) {
         val stateDescription = if (value) "disabled till next commit" else "enabled"
         val notification = Notification(
             pluginDisplayName,
@@ -40,6 +40,34 @@ class Ide(
             NotificationType.INFORMATION
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
+    }
+
+    fun showNotificationThatChangeSizeIsTooBig(linesChanged: ChangeSize, changedLinesLimit: Int) {
+        val listener = NotificationListener { notification, _ ->
+            val watchdogComponent = project.getComponent(WatchdogComponent::class.java) ?: return@NotificationListener
+            watchdogComponent.skipNotificationsUntilCommit(true)
+            notification.expire()
+        }
+
+        val notification = Notification(
+            pluginDisplayName,
+            "Change Size Exceeded Limit",
+            "Lines changed: " + linesChanged.toPrintableString() + "; " +
+                "limit: " + changedLinesLimit + "<br/>" +
+                "Please commit, split or revert changes<br/>" +
+                "(<a href=\"\">Click here</a> to skip notifications till next commit)",
+            NotificationType.WARNING,
+            listener
+        )
+        project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
+
+        lastNotification.ifNotNull { it.expire() }
+        lastNotification = notification
+    }
+
+    fun hideNotificationThatChangeSizeIsTooBig() {
+        lastNotification.ifNotNull { it.expire() }
+        lastNotification = null
     }
 
     private fun updateStatusBar() {
@@ -60,38 +88,10 @@ class Ide(
         }
     }
 
-    fun onChangeSizeTooBig(linesChanged: ChangeSize, changedLinesLimit: Int) {
-        val listener = NotificationListener { notification, _ ->
-            val watchdogComponent = project.getComponent(WatchdogComponent::class.java) ?: return@NotificationListener
-            watchdogComponent.skipNotificationsUntilCommit(true)
-            notification.expire()
-        }
-
-        val notification = Notification(
-            pluginDisplayName,
-            "Change Size Exceeded Limit",
-            "Lines changed: " + linesChanged.toPrintableString() + "; " +
-                "limit: " + changedLinesLimit + "<br/>" +
-                "Please commit, split or revert changes<br/>" +
-                "(<a href=\"\">Click here</a> to skip notifications till next commit)",
-            NotificationType.WARNING,
-            listener
-        )
-        project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
-
-        if (lastNotification != null && !lastNotification!!.isExpired) {
-            lastNotification!!.expire()
-        }
-        lastNotification = notification
-    }
-
-    fun onChangeSizeWithinLimit() {
-        if (lastNotification != null && !lastNotification!!.isExpired) {
-            lastNotification!!.expire()
-            lastNotification = null
-        }
-    }
-
     private fun ChangeSize.toPrintableString() =
         if (isApproximate) "≈$value" else value.toString()
+
+    private fun <T> T?.ifNotNull(f: (T) -> Unit) {
+        if (this != null) f(this)
+    }
 }
