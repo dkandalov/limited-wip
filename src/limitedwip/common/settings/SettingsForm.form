@@ -10,13 +10,13 @@
     </properties>
     <border type="none"/>
     <children>
-      <grid id="c9a3e" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="1" bottom="0" right="0"/>
+      <grid id="c9a3e" binding="autoRevertPanel" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="etched" title="Auto-revert"/>
+        <border type="none"/>
         <children>
           <hspacer id="aa57b">
             <constraints>
@@ -121,13 +121,15 @@
           </component>
         </children>
       </grid>
-      <grid id="c8867" layout-manager="GridLayoutManager" row-count="5" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="1" bottom="0" right="0"/>
+      <grid id="c8867" binding="watchdogPanel" layout-manager="GridLayoutManager" row-count="5" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="etched" title="Change size notification"/>
+        <border type="none">
+          <title-color color="-16777216"/>
+        </border>
         <children>
           <hspacer id="dd144">
             <constraints>
@@ -287,13 +289,15 @@
           </grid>
         </constraints>
       </vspacer>
-      <grid id="b7027" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="b7027" binding="limboPanel" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="1" bottom="0" right="0"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="etched" title="Limbo mode"/>
+        <border type="none">
+          <font/>
+        </border>
         <children>
           <hspacer id="1c068">
             <constraints>

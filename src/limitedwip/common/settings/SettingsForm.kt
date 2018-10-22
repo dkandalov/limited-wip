@@ -1,6 +1,7 @@
 package limitedwip.common.settings
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.labels.LinkLabel
 import java.awt.event.ActionEvent
 import javax.swing.JCheckBox
@@ -10,18 +11,21 @@ import javax.swing.JPanel
 class SettingsForm(private val initialState: LimitedWipSettings) {
     var root: JPanel? = null
 
+    private lateinit var watchdogPanel: JPanel
     private lateinit var watchdogEnabled: JCheckBox
     private lateinit var maxLinesInChange: JComboBox<*>
     private lateinit var notificationInterval: JComboBox<*>
     private lateinit var showRemainingInToolbar: JCheckBox
     private lateinit var noCommitsAboveThreshold: JCheckBox
 
+    private lateinit var autoRevertPanel: JPanel
     private lateinit var autoRevertEnabled: JCheckBox
     private lateinit var minutesTillRevert: JComboBox<*>
     private lateinit var notifyOnRevert: JCheckBox
     private lateinit var showTimerInToolbar: JCheckBox
     private lateinit var openReadme: LinkLabel<Void>
 
+    private lateinit var limboPanel: JPanel
     private lateinit var limboEnabled: JCheckBox
     private lateinit var notifyOnLimboRevert: JCheckBox
     private lateinit var openCommitDialogOnPassedTest: JCheckBox
@@ -29,6 +33,10 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private var isUpdatingUI: Boolean = false
 
     init {
+        watchdogPanel.border = IdeBorderFactory.createTitledBorder("Change size watchdog")
+        autoRevertPanel.border = IdeBorderFactory.createTitledBorder("Auto-revert")
+        limboPanel.border = IdeBorderFactory.createTitledBorder("Limbo mode")
+
         currentState.loadState(initialState)
         updateUIFromState()
 
@@ -126,9 +134,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         return initialState
     }
 
-    fun resetChanges() {
-        currentState.loadState(initialState)
-    }
+    fun resetChanges() = currentState.loadState(initialState)
 
     fun isModified() = currentState != initialState
 }
