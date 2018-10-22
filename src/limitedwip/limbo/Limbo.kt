@@ -11,7 +11,9 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         if (settings.disabled) return
         allowedToCommit = true
         testedModifications = modifications
-        if (settings.openCommitDialogOnPassedTest) ide.openCommitDialog()
+        if (settings.openCommitDialogOnPassedTest && modifications.value.isNotEmpty()) {
+            ide.openCommitDialog()
+        }
     }
 
     fun onUnitTestFailed() {

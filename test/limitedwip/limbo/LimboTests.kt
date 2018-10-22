@@ -31,7 +31,13 @@ class LimboTests {
         ide.expect().openCommitDialog()
     }
 
-    @Test fun `don't show commit dialog is it's disabled in settings`() {
+    @Test fun `don't show commit dialog if there are no modifications`() {
+        val noModifications = ChangeListModifications(emptyMap())
+        limbo.onUnitTestSucceeded(noModifications)
+        ide.expect(never()).openCommitDialog()
+    }
+
+    @Test fun `don't show commit dialog if it's disabled in settings`() {
         limbo.onSettings(settings.copy(openCommitDialogOnPassedTest = false))
         limbo.onUnitTestSucceeded(someModifications)
         ide.expect(never()).openCommitDialog()
