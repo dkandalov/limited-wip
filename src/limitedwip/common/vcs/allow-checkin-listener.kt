@@ -14,7 +14,7 @@ import com.intellij.util.containers.MultiMap
 import limitedwip.common.pluginId
 import java.util.Arrays.asList
 
-private val log = Logger.getInstance(pluginId)
+private val logger = Logger.getInstance(pluginId)
 
 fun registerBeforeCheckInListener(listener: AllowCheckinListener) {
     // This is a hack caused by limitations of IntelliJ API.
@@ -46,7 +46,7 @@ private inline fun <reified T> accessField(anObject: Any, possibleFieldNames: Li
             }
         }
     }
-    log.warn("Failed to access fields: $possibleFieldNames on '$anObject'")
+    logger.warn("Failed to access fields: $possibleFieldNames on '$anObject'")
 }
 
 

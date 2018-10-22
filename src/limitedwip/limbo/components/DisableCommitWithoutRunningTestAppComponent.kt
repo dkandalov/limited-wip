@@ -1,4 +1,4 @@
-// Because ApplicationComponent and dataContextFromFocus were deprecated relatively recently.
+// Because ApplicationComponent was deprecated relatively recently.
 @file:Suppress("DEPRECATION")
 
 package limitedwip.limbo.components
