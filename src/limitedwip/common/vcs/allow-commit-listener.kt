@@ -22,9 +22,9 @@ import java.util.concurrent.CopyOnWriteArraySet
 private val logger = Logger.getInstance(pluginId)
 
 class AllowCommitAppComponent : ApplicationComponent {
-    private val listeners = CopyOnWriteArraySet<AllowCheckinListener>()
+    private val listeners = CopyOnWriteArraySet<AllowCommitListener>()
 
-    fun addListener(parentDisposable: Disposable, listener: AllowCheckinListener) {
+    fun addListener(parentDisposable: Disposable, listener: AllowCommitListener) {
         Disposer.register(parentDisposable, Disposable {
             listeners.remove(listener)
         })
@@ -32,9 +32,9 @@ class AllowCommitAppComponent : ApplicationComponent {
     }
 
     override fun initComponent() {
-        registerBeforeCheckInListener(object: AllowCheckinListener {
-            override fun allowCheckIn(project: Project, changes: List<Change>): Boolean {
-                return listeners.all { it.allowCheckIn(project, changes) }
+        registerBeforeCommitListener(object: AllowCommitListener {
+            override fun allowCommit(project: Project, changes: List<Change>): Boolean {
+                return listeners.all { it.allowCommit(project, changes) }
             }
         })
     }
@@ -49,7 +49,7 @@ class AllowCommitAppComponent : ApplicationComponent {
     }
 }
 
-fun registerBeforeCheckInListener(listener: AllowCheckinListener) {
+fun registerBeforeCommitListener(listener: AllowCommitListener) {
     // This is a hack caused by limitations of IntelliJ API.
     //  - cannot use CheckinHandlerFactory because:
     //		- CheckinHandler is used just before commit (and after displaying commit dialog)
@@ -83,16 +83,16 @@ private inline fun <reified T> accessField(anObject: Any, possibleFieldNames: Li
 }
 
 
-interface AllowCheckinListener {
-    fun allowCheckIn(project: Project, changes: List<Change>): Boolean
+interface AllowCommitListener {
+    fun allowCommit(project: Project, changes: List<Change>): Boolean
 }
 
 
-private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener: AllowCheckinListener): VcsCheckinHandlerFactory(key) {
+private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener: AllowCommitListener): VcsCheckinHandlerFactory(key) {
     override fun createSystemReadyHandler(project: Project): BeforeCheckinDialogHandler? {
         return object: BeforeCheckinDialogHandler() {
             override fun beforeCommitDialogShown(project: Project, changes: List<Change>, executors: Iterable<CommitExecutor>, showVcsCommit: Boolean): Boolean {
-                return listener.allowCheckIn(project, changes)
+                return listener.allowCommit(project, changes)
             }
         }
     }

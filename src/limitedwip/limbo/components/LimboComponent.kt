@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
-import limitedwip.common.vcs.AllowCheckinListener
 import limitedwip.common.vcs.AllowCommitAppComponent
+import limitedwip.common.vcs.AllowCommitListener
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.limbo.Limbo
 import limitedwip.limbo.Limbo.ChangeListModifications
@@ -43,8 +43,8 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
                 limbo.onSettings(settings.toLimboSettings())
             }
         })
-        AllowCommitAppComponent.getInstance().addListener(myProject, object : AllowCheckinListener {
-            override fun allowCheckIn(project: Project, changes: List<Change>): Boolean {
+        AllowCommitAppComponent.getInstance().addListener(myProject, object : AllowCommitListener {
+            override fun allowCommit(project: Project, changes: List<Change>): Boolean {
                 return limbo.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
             }
         })
