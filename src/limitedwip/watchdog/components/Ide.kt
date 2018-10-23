@@ -20,6 +20,12 @@ class Ide(
     var listener: Listener? = null
     private var lastNotification: Notification? = null
 
+    init {
+        watchdogWidget.listener = object: WatchdogStatusBarWidget.Listener {
+            override fun onClick() = listener?.onWidgetClick() ?: Unit
+        }
+    }
+
     fun currentChangeListSizeInLines() = changeSizeWatcher.getChangeListSizeInLines()
 
     fun calculateCurrentChangeListSizeInLines() = changeSizeWatcher.calculateCurrentChangeListSizeInLines()
@@ -113,5 +119,6 @@ class Ide(
     interface Listener {
         fun onForceCommit()
         fun onSkipNotificationsUntilCommit()
+        fun onWidgetClick()
     }
 }

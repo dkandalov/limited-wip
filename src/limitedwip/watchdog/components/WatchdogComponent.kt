@@ -34,6 +34,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         ide.listener = object: Ide.Listener {
             override fun onForceCommit() = watchdog.onForceCommit()
             override fun onSkipNotificationsUntilCommit() = watchdog.onSkipNotificationsUntilCommit()
+            override fun onWidgetClick() = watchdog.toggleSkipNotificationsUntilCommit()
         }
 
         timer.addListener(object: TimerAppComponent.Listener {
@@ -59,8 +60,6 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
                 project != myProject || watchdog.isCommitAllowed(ide.currentChangeListSizeInLines())
         })
     }
-
-    fun toggleSkipNotificationsUntilCommit() = watchdog.toggleSkipNotificationsUntilCommit()
 
     private fun LimitedWipSettings.toWatchdogSettings() =
         Watchdog.Settings(
