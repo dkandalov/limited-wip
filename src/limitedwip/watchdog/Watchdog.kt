@@ -55,7 +55,8 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         val enabled: Boolean,
         val maxLinesInChange: Int,
         val notificationIntervalInSeconds: Int,
-        val showRemainingChangesInToolbar: Boolean
+        val showRemainingChangesInToolbar: Boolean,
+        val noCommitsAboveThreshold: Boolean
     )
 
     companion object {

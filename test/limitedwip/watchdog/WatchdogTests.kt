@@ -16,7 +16,8 @@ class WatchdogTests {
         enabled = true,
         maxLinesInChange = maxLinesInChange,
         notificationIntervalInSeconds = 2,
-        showRemainingChangesInToolbar = true
+        showRemainingChangesInToolbar = true,
+        noCommitsAboveThreshold = false
     )
     private val disabledSettings = settings.copy(enabled = false)
     private var timer: Int = 0
@@ -127,7 +128,7 @@ class WatchdogTests {
     private fun anySettings(): Watchdog.Settings {
         val type = Watchdog.Settings::class.java
         mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any ${type.canonicalName}>"))
-        return Watchdog.Settings(false, 0, 0, false)
+        return Watchdog.Settings(false, 0, 0, false, false)
     }
 
     private fun anyChangeSize(): ChangeSize {
