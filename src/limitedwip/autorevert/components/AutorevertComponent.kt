@@ -17,7 +17,7 @@ import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
 
 class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
-    private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
+    private val timer = TimerAppComponent.getInstance()
     private lateinit var autoRevert: AutoRevert
 
     val isAutoRevertStarted: Boolean

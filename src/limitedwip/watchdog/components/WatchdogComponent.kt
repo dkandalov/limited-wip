@@ -20,7 +20,7 @@ import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
 class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
-    private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
+    private val timer = TimerAppComponent.getInstance()
     private val ide: Ide
     private val watchdog: Watchdog
     private val changeSizeWatcher = ChangeSizeWatcher(myProject)
@@ -40,10 +40,9 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         timer.addListener(object: TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater(Runnable {
-                    // Project can be closed (disposed) during handover between timer thread and EDT.
-                    if (myProject.isDisposed) return@Runnable
-                    watchdog.onTimer(seconds)
+                    if (myProject.isDisposed) return@Runnable // Project can be closed (disposed) during handover between timer thread and EDT.
                     changeSizeWatcher.calculateCurrentChangeListSizeInLines()
+                    watchdog.onTimer(seconds)
                 }, ModalityState.any())
             }
         }, myProject)

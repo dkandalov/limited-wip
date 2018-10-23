@@ -4,24 +4,27 @@
 package limitedwip.common
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Disposer
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.SECONDS
 
 class TimerAppComponent : ApplicationComponent {
+    private val log = Logger.getInstance(TimerAppComponent::class.java)
     private val timer = Timer("$pluginId-TimeEvents")
     private val listeners = CopyOnWriteArrayList<Listener>()
-    private val startTime = System.currentTimeMillis()
 
     override fun initComponent() {
-        timer.schedule(object : TimerTask() {
+        val startTime = System.currentTimeMillis()
+        val task = object: TimerTask() {
             override fun run() {
                 try {
-                    val secondsSinceStart = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime)
+                    val secondsSinceStart = MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime)
                     for (listener in listeners) {
                         listener.onUpdate(secondsSinceStart.toInt())
                     }
@@ -29,9 +32,9 @@ class TimerAppComponent : ApplicationComponent {
                 } catch (e: Exception) {
                     log.error(e)
                 }
-
             }
-        }, 0, oneSecondMs)
+        }
+        timer.schedule(task, 0, SECONDS.toMillis(1))
     }
 
     override fun disposeComponent() {
@@ -51,7 +54,7 @@ class TimerAppComponent : ApplicationComponent {
     }
 
     companion object {
-        private val log = Logger.getInstance(TimerAppComponent::class.java)
-        private const val oneSecondMs: Long = 1000
+        fun getInstance(): TimerAppComponent =
+            ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
     }
 }
