@@ -82,7 +82,7 @@ class WatchdogTests {
         watchdog.skipNotificationsUntilCommit(true)
         watchdog.onTimer(next())
         watchdog.onTimer(next())
-        watchdog.onCommit()
+        watchdog.onSuccessfulCommit()
         watchdog.onTimer(next())
 
         ide.expect().showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)

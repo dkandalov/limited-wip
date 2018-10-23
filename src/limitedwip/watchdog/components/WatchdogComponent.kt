@@ -46,7 +46,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
-                watchdog.onCommit()
+                watchdog.onSuccessfulCommit()
             }
         })
     }

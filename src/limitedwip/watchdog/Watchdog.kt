@@ -34,7 +34,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         this.settings = settings
     }
 
-    fun onCommit() {
+    fun onSuccessfulCommit() {
         // This is a workaround to suppress notifications sent while commit dialog is open.
         ide.hideNotificationThatChangeSizeIsTooBig()
 
