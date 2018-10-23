@@ -12,17 +12,17 @@ import org.mockito.Mockito.`when` as whenCalled
 
 class WatchdogTests {
     private val maxLinesInChange = 100
-    private val ide = mock(Ide::class.java)
     private val settings = Settings(
         enabled = true,
         maxLinesInChange = maxLinesInChange,
         notificationIntervalInSeconds = 2,
         showRemainingChangesInToolbar = true
     )
-    private val disabledSettings = Settings(false, 150, 2, true)
-    private val watchdog = Watchdog(ide, settings)
+    private val disabledSettings = settings.copy(enabled = false)
+    private var timer: Int = 0
 
-    private var seconds: Int = 0
+    private val ide = mock(Ide::class.java)
+    private val watchdog = Watchdog(ide, settings)
 
     @Test fun `don't send notification when change size is below threshold`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(10))
@@ -122,17 +122,17 @@ class WatchdogTests {
         ide.expect(times(2)).hideNotificationThatChangeSizeIsTooBig()
     }
 
-    private fun next(): Int = ++seconds
+    private fun next(): Int = ++timer
 
     private fun anySettings(): Watchdog.Settings {
         val type = Watchdog.Settings::class.java
-        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any " + type.canonicalName + ">"))
+        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any ${type.canonicalName}>"))
         return Watchdog.Settings(false, 0, 0, false)
     }
 
     private fun anyChangeSize(): ChangeSize {
         val type = ChangeSize::class.java
-        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any " + type.canonicalName + ">"))
+        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any ${type.canonicalName}>"))
         return ChangeSize(0, false)
     }
 }
