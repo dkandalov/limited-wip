@@ -11,7 +11,6 @@ import java.awt.Component
 import java.awt.event.MouseEvent
 
 class AutoRevertStatusBarWidget : StatusBarWidget {
-
     private var text = ""
 
     override fun install(statusBar: StatusBar) {}
@@ -19,15 +18,15 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
     override fun dispose() {}
 
     fun showTime(timeLeft: String) {
-        text = timeTillRevertText + timeLeft
+        text = "Auto-revert in $timeLeft"
     }
 
     fun showStartedText() {
-        text = startedText
+        text = "Auto-revert started"
     }
 
     fun showStoppedText() {
-        text = stoppedText
+        text = "Auto-revert stopped"
     }
 
     override fun getPresentation(type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? {
@@ -59,10 +58,4 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
     }
 
     override fun ID() = pluginId + "_" + this.javaClass.simpleName
-
-    companion object {
-        private const val timeTillRevertText = "Auto-revert in "
-        private const val startedText = "Auto-revert started"
-        private const val stoppedText = "Auto-revert stopped"
-    }
 }

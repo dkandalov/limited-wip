@@ -16,7 +16,7 @@ import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
 
-class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
+class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
     private val timer = TimerAppComponent.getInstance()
     private lateinit var autoRevert: AutoRevert
 
@@ -27,19 +27,19 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         val settings = ServiceManager.getService(LimitedWipSettings::class.java).toAutoRevertSettings()
         autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
 
-        timer.addListener(object : TimerAppComponent.Listener {
+        timer.addListener(object: TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater({ autoRevert.onTimer(seconds) }, ModalityState.any())
             }
         }, myProject)
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
+        LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) {
                 autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
             }
         })
 
-        SuccessfulCheckin.registerListener(myProject, object : SuccessfulCheckin.Listener {
+        SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
                 if (allFileAreCommitted) autoRevert.onAllFilesCommitted()
             }
