@@ -8,6 +8,7 @@ import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
+import limitedwip.common.pluginId
 
 class SuccessfulCheckin : CheckinHandlerFactory() {
 
@@ -36,7 +37,7 @@ class SuccessfulCheckin : CheckinHandlerFactory() {
     }
 
     companion object {
-        private const val extensionPointName = "LimitedWIP.checkinListener"
+        private const val extensionPointName = "$pluginId.checkinListener"
 
         fun registerListener(disposable: Disposable, listener: Listener) {
             val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName)

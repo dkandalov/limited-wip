@@ -39,7 +39,7 @@ class TimerAppComponent : ApplicationComponent {
         timer.purge()
     }
 
-    override fun getComponentName(): String = pluginId + "-" + TimerAppComponent::class.java.simpleName
+    override fun getComponentName(): String = "$pluginId-${this.javaClass.simpleName}"
 
     fun addListener(listener: Listener, parentDisposable: Disposable) {
         listeners.add(listener)

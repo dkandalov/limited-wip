@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.util.Consumer
+import limitedwip.common.pluginId
 import limitedwip.watchdog.components.WatchdogComponent
 import java.awt.Component
 import java.awt.event.MouseEvent
@@ -48,7 +49,7 @@ class WatchdogStatusBarWidget : StatusBarWidget {
         }
     }
 
-    override fun ID() = "LimitedWIP_" + this.javaClass.simpleName
+    override fun ID() = pluginId + "_" + this.javaClass.simpleName
 
     companion object {
         private const val textPrefix = "Change size: "
