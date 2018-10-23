@@ -31,7 +31,7 @@ class WatchdogTests {
 
         watchdog.onTimer(next())
 
-        ide.expect(times(0)).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
+        ide.expect(never()).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
     }
 
     @Test fun `send notification when change size is above threshold`() {

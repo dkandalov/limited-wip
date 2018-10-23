@@ -22,6 +22,8 @@ class Ide(
 
     fun currentChangeListSizeInLines() = changeSizeWatcher.getChangeListSizeInLines()
 
+    fun calculateCurrentChangeListSizeInLines() = changeSizeWatcher.calculateCurrentChangeListSizeInLines()
+
     fun showCurrentChangeListSize(linesInChange: ChangeSize, maxLinesInChange: Int) {
         watchdogWidget.showChangeSize(linesInChange.toPrintableString(), maxLinesInChange)
         updateStatusBar()

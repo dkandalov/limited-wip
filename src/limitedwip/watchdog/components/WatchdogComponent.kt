@@ -23,11 +23,10 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     private val timer = TimerAppComponent.getInstance()
     private val ide: Ide
     private val watchdog: Watchdog
-    private val changeSizeWatcher = ChangeSizeWatcher(myProject)
 
     init {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java).toWatchdogSettings()
-        ide = Ide(myProject, changeSizeWatcher, WatchdogStatusBarWidget(), settings)
+        ide = Ide(myProject, ChangeSizeWatcher(myProject), WatchdogStatusBarWidget(), settings)
         watchdog = Watchdog(ide, settings)
     }
 
@@ -39,10 +38,10 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
 
         timer.addListener(object: TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
-                ApplicationManager.getApplication().invokeLater(Runnable {
-                    if (myProject.isDisposed) return@Runnable // Project can be closed (disposed) during handover between timer thread and EDT.
-                    changeSizeWatcher.calculateCurrentChangeListSizeInLines()
-                    watchdog.onTimer(seconds)
+                ApplicationManager.getApplication().invokeLater({
+                    if (myProject.isDisposed) { // Project can be closed (disposed) during handover between timer thread and EDT.
+                        watchdog.onTimer(seconds)
+                    }
                 }, ModalityState.any())
             }
         }, myProject)
@@ -57,7 +56,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         })
         AllowCommitAppComponent.getInstance().addListener(myProject, object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>) =
-                project != myProject || watchdog.isCommitAllowed(changeSizeWatcher.getChangeListSizeInLines())
+                project != myProject || watchdog.isCommitAllowed(ide.currentChangeListSizeInLines())
         })
     }
 

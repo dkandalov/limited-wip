@@ -14,6 +14,8 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     fun onTimer(seconds: Int) {
         if (!settings.enabled) return
 
+        ide.calculateCurrentChangeListSizeInLines()
+
         val changeSize = ide.currentChangeListSizeInLines()
         val exceededThreshold = changeSize.value > settings.maxLinesInChange
         val timeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings.notificationIntervalInSeconds
