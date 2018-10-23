@@ -12,12 +12,12 @@ class WatchdogStatusBarWidget: StatusBarWidget {
     private var text = ""
     var listener: Listener? = null
 
-    fun showChangeSize(linesInChange: String, maxLinesInChange: Int) {
-        text = "$textPrefix$linesInChange/$maxLinesInChange"
-    }
-
     fun showInitialText(maxLinesInChange: Int) {
         text = "$textPrefix-/$maxLinesInChange"
+    }
+
+    fun showChangeSize(linesInChange: String, maxLinesInChange: Int) {
+        text = "$textPrefix$linesInChange/$maxLinesInChange"
     }
 
     override fun install(statusBar: StatusBar) {}

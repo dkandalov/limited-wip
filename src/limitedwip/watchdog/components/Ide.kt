@@ -99,10 +99,10 @@ class Ide(
         if (hasWatchdogWidget && shouldShowWatchdog) {
             statusBar.updateWidget(watchdogWidget.ID())
 
-        } else if (hasWatchdogWidget) {
+        } else if (hasWatchdogWidget && !shouldShowWatchdog) {
             statusBar.removeWidget(watchdogWidget.ID())
 
-        } else if (shouldShowWatchdog) {
+        } else if (!hasWatchdogWidget && shouldShowWatchdog) {
             watchdogWidget.showInitialText(settings.maxLinesInChange)
             statusBar.addWidget(watchdogWidget, "before Position")
             statusBar.updateWidget(watchdogWidget.ID())
