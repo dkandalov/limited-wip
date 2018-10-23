@@ -28,9 +28,6 @@ data class LimitedWipSettings(
     var openCommitDialogOnPassedTest: Boolean = true
 ): PersistentStateComponent<LimitedWipSettings> {
 
-    fun secondsTillRevert(): Int = minutesTillRevert * 60
-    fun notificationIntervalInSeconds(): Int = notificationIntervalInMinutes * 60
-
     override fun getState(): LimitedWipSettings? = this
 
     override fun loadState(state: LimitedWipSettings) = XmlSerializerUtil.copyBean(state, this)
@@ -41,3 +38,5 @@ data class LimitedWipSettings(
         val notificationIntervalRange = Range(1, 99)
     }
 }
+
+fun Int.toSeconds(): Int = this * 60

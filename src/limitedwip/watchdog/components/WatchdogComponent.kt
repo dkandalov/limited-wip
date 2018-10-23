@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
+import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -60,7 +61,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         Watchdog.Settings(
             watchdogEnabled,
             maxLinesInChange,
-            notificationIntervalInSeconds(),
+            notificationIntervalInMinutes.toSeconds(),
             showRemainingChangesInToolbar
         )
 }
