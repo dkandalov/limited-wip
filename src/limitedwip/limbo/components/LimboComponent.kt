@@ -39,14 +39,11 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
         })
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
-            override fun onSettingsUpdate(settings: LimitedWipSettings) {
-                limbo.onSettings(settings.toLimboSettings())
-            }
+            override fun onSettingsUpdate(settings: LimitedWipSettings) = limbo.onSettings(settings.toLimboSettings())
         })
         AllowCommitAppComponent.getInstance().addListener(myProject, object : AllowCommitListener {
-            override fun allowCommit(project: Project, changes: List<Change>): Boolean {
-                return limbo.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
-            }
+            override fun allowCommit(project: Project, changes: List<Change>) =
+                limbo.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
         })
     }
 

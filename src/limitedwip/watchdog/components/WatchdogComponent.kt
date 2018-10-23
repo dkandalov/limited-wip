@@ -8,10 +8,13 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
+import limitedwip.common.vcs.AllowCommitAppComponent
+import limitedwip.common.vcs.AllowCommitListener
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -42,21 +45,19 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         }, myProject)
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
-            override fun onSettingsUpdate(settings: LimitedWipSettings) {
+            override fun onSettingsUpdate(settings: LimitedWipSettings) =
                 watchdog.onSettings(settings.toWatchdogSettings())
-            }
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
-            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
-                watchdog.onSuccessfulCommit()
-            }
+            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = watchdog.onSuccessfulCommit()
+        })
+        AllowCommitAppComponent.getInstance().addListener(myProject, object : AllowCommitListener {
+            override fun allowCommit(project: Project, changes: List<Change>) = watchdog.isCommitAllowed()
         })
     }
 
     fun toggleSkipNotificationsUntilCommit() = watchdog.toggleSkipNotificationsUntilCommit()
-
-    fun isCommitAllowed(): Boolean = watchdog.isCommitAllowed()
 
     private fun LimitedWipSettings.toWatchdogSettings() =
         Watchdog.Settings(
