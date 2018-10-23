@@ -26,6 +26,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         val changeSizeWatcher = ChangeSizeWatcher(myProject)
         ide = Ide(myProject, changeSizeWatcher, WatchdogStatusBarWidget(), settings)
         watchdog = Watchdog(ide, settings)
+        ide.listener = watchdog
 
         timer.addListener(object: TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {

@@ -2,7 +2,7 @@ package limitedwip.watchdog
 
 import limitedwip.watchdog.components.Ide
 
-class Watchdog(private val ide: Ide, private var settings: Settings) {
+class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listener {
     private var lastNotificationTime = undefined
     private var skipNotificationsUtilCommit = false
 
@@ -59,6 +59,9 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         return true
     }
 
+    override fun onForceCommit() {
+        TODO("not implemented")
+    }
 
     data class Settings(
         val enabled: Boolean,

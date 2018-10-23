@@ -17,6 +17,7 @@ class Ide(
     private val watchdogWidget: WatchdogStatusBarWidget,
     private var settings: Watchdog.Settings
 ) {
+    lateinit var listener: Listener
     private var lastNotification: Notification? = null
 
     fun currentChangeListSizeInLines() = changeSizeWatcher.currentChangeListSizeInLines()
@@ -71,7 +72,14 @@ class Ide(
     }
 
     fun notifyThatCommitWasCancelled() {
-        TODO("not implemented")
+        val notification = Notification(
+            pluginDisplayName,
+            pluginDisplayName,
+            "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
+            NotificationType.ERROR,
+            NotificationListener { _, _ -> listener.onForceCommit() }
+        )
+        project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
     private fun updateStatusBar() {
@@ -97,5 +105,9 @@ class Ide(
 
     private fun <T> T?.ifNotNull(f: (T) -> Unit) {
         if (this != null) f(this)
+    }
+
+    interface Listener {
+        fun onForceCommit()
     }
 }
