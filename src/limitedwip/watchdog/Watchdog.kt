@@ -50,6 +50,15 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         skipNotificationsUntilCommit(!skipNotificationsUtilCommit)
     }
 
+    fun isCommitAllowed(): Boolean {
+        val changeSize = ide.currentChangeListSizeInLines()
+        if (changeSize.value > settings.maxLinesInChange) {
+            ide.notifyThatCommitWasCancelled()
+            return false
+        }
+        return true
+    }
+
 
     data class Settings(
         val enabled: Boolean,

@@ -2,6 +2,7 @@ package limitedwip.watchdog
 
 import limitedwip.expect
 import limitedwip.expectNoMoreInteractions
+import limitedwip.shouldEqual
 import limitedwip.watchdog.Watchdog.Settings
 import limitedwip.watchdog.components.Ide
 import org.junit.Test
@@ -121,6 +122,12 @@ class WatchdogTests {
 
         ide.expect(times(1)).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
         ide.expect(times(2)).hideNotificationThatChangeSizeIsTooBig()
+    }
+
+    @Test fun `don't allow commits above threshold`() {
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        watchdog.isCommitAllowed() shouldEqual false
+        ide.expect().notifyThatCommitWasCancelled()
     }
 
     private fun next(): Int = ++timer

@@ -70,6 +70,10 @@ class Ide(
         lastNotification = null
     }
 
+    fun notifyThatCommitWasCancelled() {
+        TODO("not implemented")
+    }
+
     private fun updateStatusBar() {
         val statusBar = WindowManager.getInstance().getStatusBar(project) ?: return
 
