@@ -15,6 +15,7 @@ import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.AllowCommitAppComponent
 import limitedwip.common.vcs.AllowCommitListener
+import limitedwip.common.vcs.ChangeSizeWatcher
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -43,7 +44,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
                     // Project can be closed (disposed) during handover between timer thread and EDT.
                     if (myProject.isDisposed) return@Runnable
                     watchdog.onTimer(seconds)
-                    changeSizeWatcher.onTimer()
+                    changeSizeWatcher.calculateCurrentChangeListSizeInLines()
                 }, ModalityState.any())
             }
         }, myProject)

@@ -1,4 +1,4 @@
-package limitedwip.watchdog.components
+package limitedwip.common.vcs
 
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy.IGNORE_WHITESPACES
@@ -20,7 +20,6 @@ import limitedwip.watchdog.ChangeSize
 import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
-
     private val changeSizeCache = ChangeSizeCache(project)
     private var changeSize = ChangeSize(0, true)
     @Volatile private var isRunningBackgroundDiff: Boolean = false
@@ -28,16 +27,12 @@ class ChangeSizeWatcher(private val project: Project) {
     private val comparisonManager = ComparisonManager.getInstance()
     private val application = ApplicationManager.getApplication()
 
-    fun currentChangeListSizeInLines() = changeSize
-
-    fun onTimer() {
-        calculateCurrentChangeListSizeInLines()
-    }
+    fun getChangeListSizeInLines() = changeSize
 
     /**
      * Can't use com.intellij.openapi.vcs.impl.LineStatusTrackerManager here because it only tracks changes for open files.
      */
-    private fun calculateCurrentChangeListSizeInLines() {
+    fun calculateCurrentChangeListSizeInLines() {
         if (isRunningBackgroundDiff) return
 
         val (newChangeSize, changesToDiff) = application.runReadAction(Computable<Pair<ChangeSize, List<Change>>> {

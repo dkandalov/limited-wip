@@ -7,6 +7,7 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.common.pluginDisplayName
+import limitedwip.common.vcs.ChangeSizeWatcher
 import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -20,7 +21,7 @@ class Ide(
     var listener: Listener? = null
     private var lastNotification: Notification? = null
 
-    fun currentChangeListSizeInLines() = changeSizeWatcher.currentChangeListSizeInLines()
+    fun currentChangeListSizeInLines() = changeSizeWatcher.getChangeListSizeInLines()
 
     fun showCurrentChangeListSize(linesInChange: ChangeSize, maxLinesInChange: Int) {
         watchdogWidget.showChangeSize(linesInChange.toPrintableString(), maxLinesInChange)
