@@ -1,4 +1,4 @@
-package limitedwip.common.vcs
+package limitedwip.watchdog.components
 
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy.IGNORE_WHITESPACES

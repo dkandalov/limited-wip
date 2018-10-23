@@ -5,8 +5,8 @@ import com.intellij.openapi.vcs.LocalFilePath
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.SimpleContentRevision
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import limitedwip.common.vcs.calculateChangeSizeInLines
 import limitedwip.shouldEqual
+import limitedwip.watchdog.components.calculateChangeSizeInLines
 import org.junit.Test
 
 class CalculateChangeSizeTests : LightPlatformCodeInsightFixtureTestCase() {

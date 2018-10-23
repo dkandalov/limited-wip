@@ -15,7 +15,6 @@ import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.AllowCommitAppComponent
 import limitedwip.common.vcs.AllowCommitListener
-import limitedwip.common.vcs.ChangeSizeWatcher
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
