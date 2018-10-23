@@ -52,11 +52,11 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         })
     }
 
-    fun currentChangeListSize(): Int = ide.currentChangeListSizeInLines().value
-
     fun toggleSkipNotificationsUntilCommit() = watchdog.toggleSkipNotificationsUntilCommit()
 
     fun skipNotificationsUntilCommit(value: Boolean) = watchdog.skipNotificationsUntilCommit(value)
+
+    fun isCommitAllowed(): Boolean = watchdog.isCommitAllowed()
 
     private fun LimitedWipSettings.toWatchdogSettings() =
         Watchdog.Settings(
