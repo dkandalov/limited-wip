@@ -43,9 +43,8 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         allowOneCommitWithoutChecks = false
     }
 
-    fun isCommitAllowed(): Boolean {
+    fun isCommitAllowed(changeSize: ChangeSize): Boolean {
         if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold) return true
-        val changeSize = ide.currentChangeListSizeInLines()
         if (changeSize.value > settings.maxLinesInChange) {
             ide.notifyThatCommitWasCancelled()
             return false

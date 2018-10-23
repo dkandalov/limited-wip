@@ -125,22 +125,20 @@ class WatchdogTests {
     }
 
     @Test fun `don't allow commits above threshold`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         watchdog.onSettings(settings.copy(noCommitsAboveThreshold = true))
 
-        watchdog.isCommitAllowed() shouldEqual false
+        watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
     }
 
     @Test fun `allow one commit above threshold when forced`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
         watchdog.onSettings(settings.copy(noCommitsAboveThreshold = true))
 
-        watchdog.isCommitAllowed() shouldEqual false
+        watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
 
         watchdog.onForceCommit()
-        watchdog.isCommitAllowed() shouldEqual true
+        watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual true
     }
 
     private fun next(): Int = ++timer

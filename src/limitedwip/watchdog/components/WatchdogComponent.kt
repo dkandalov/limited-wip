@@ -57,7 +57,8 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = watchdog.onSuccessfulCommit()
         })
         AllowCommitAppComponent.getInstance().addListener(myProject, object : AllowCommitListener {
-            override fun allowCommit(project: Project, changes: List<Change>) = watchdog.isCommitAllowed()
+            override fun allowCommit(project: Project, changes: List<Change>) =
+                watchdog.isCommitAllowed(changeSizeWatcher.getChangeListSizeInLines())
         })
     }
 
