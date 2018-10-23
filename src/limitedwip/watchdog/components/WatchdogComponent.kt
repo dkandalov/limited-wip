@@ -49,7 +49,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) =
-                watchdog.onSettings(settings.toWatchdogSettings())
+                watchdog.onSettingsUpdate(settings.toWatchdogSettings())
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {

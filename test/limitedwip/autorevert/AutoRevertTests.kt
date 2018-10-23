@@ -99,7 +99,7 @@ class AutoRevertTests {
     }
 
     @Test fun `apply revert time out change after start`() {
-        autoRevert.onSettings(settings.copy(secondsTillRevert = 1))
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
         autoRevert.start()
         autoRevert.onTimer(next())
         autoRevert.onTimer(next())
@@ -110,7 +110,7 @@ class AutoRevertTests {
 
     @Test fun `apply revert timeout change after end of current time out`() {
         autoRevert.start()
-        autoRevert.onSettings(settings.copy(secondsTillRevert = 1))
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
         autoRevert.onTimer(next())
         autoRevert.onTimer(next()) // reverts changes after 2nd time event
         autoRevert.onTimer(next()) // reverts changes after 1st time event
@@ -122,7 +122,7 @@ class AutoRevertTests {
 
     @Test fun `apply revert timeout change after commit`() {
         autoRevert.start()
-        autoRevert.onSettings(settings.copy(secondsTillRevert = 1))
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
         autoRevert.onTimer(next())
         autoRevert.onAllFilesCommitted()
         autoRevert.onTimer(next()) // reverts changes after 1st time event
@@ -135,7 +135,7 @@ class AutoRevertTests {
 
     @Test fun `don't send UI startup notification when disabled`() {
         val disabledSettings = Settings(false, secondsTillRevert, false)
-        autoRevert.onSettings(disabledSettings)
+        autoRevert.onSettingsUpdate(disabledSettings)
         autoRevert.start()
 
         ide.expect().onSettingsUpdate(settings)
@@ -146,7 +146,7 @@ class AutoRevertTests {
     @Test fun `don't revert changes when disabled`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        autoRevert.onSettings(Settings(false, 2, false))
+        autoRevert.onSettingsUpdate(Settings(false, 2, false))
         autoRevert.onTimer(next())
 
         ide.expect(never()).revertCurrentChangeList()

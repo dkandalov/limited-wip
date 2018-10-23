@@ -10,7 +10,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     private var remainingSeconds: Int = 0
 
     init {
-        onSettings(settings)
+        onSettingsUpdate(settings)
     }
 
     fun start() {
@@ -56,7 +56,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         ide.showInUITimeTillRevert(remainingSeconds)
     }
 
-    fun onSettings(settings: Settings) {
+    fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
         this.settings = settings
         if (isStarted && !settings.autoRevertEnabled) {

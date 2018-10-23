@@ -38,7 +38,7 @@ class LimboTests {
     }
 
     @Test fun `don't show commit dialog if it's disabled in settings`() {
-        limbo.onSettings(settings.copy(openCommitDialogOnPassedTest = false))
+        limbo.onSettingsUpdate(settings.copy(openCommitDialogOnPassedTest = false))
         limbo.onUnitTestSucceeded(someModifications)
         ide.expect(never()).openCommitDialog()
     }
@@ -76,7 +76,7 @@ class LimboTests {
     }
 
     @Test fun `don't notify user on revert if notification is disabled in settings`() {
-        limbo.onSettings(settings.copy(notifyOnRevert = false))
+        limbo.onSettingsUpdate(settings.copy(notifyOnRevert = false))
         `revert changes on failed unit test`()
         ide.expect(never()).notifyThatChangesWereReverted()
     }
@@ -92,23 +92,23 @@ class LimboTests {
     }
 
     @Test fun `if disabled, always allow commits`() {
-        limbo.onSettings(settings.copy(enabled = false))
+        limbo.onSettingsUpdate(settings.copy(enabled = false))
         limbo.isCommitAllowed(someModifications) shouldEqual true
     }
 
     @Test fun `if disabled, don't revert changes on failed unit test`() {
-        limbo.onSettings(settings.copy(enabled = false))
+        limbo.onSettingsUpdate(settings.copy(enabled = false))
         limbo.onUnitTestFailed()
         ide.expect(never()).revertCurrentChangeList()
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 
     @Test fun `if disabled, don't show commit dialog and don't count successful test runs`() {
-        limbo.onSettings(settings.copy(enabled = false))
+        limbo.onSettingsUpdate(settings.copy(enabled = false))
         limbo.onUnitTestSucceeded(someModifications)
         ide.expect(never()).openCommitDialog()
 
-        limbo.onSettings(settings.copy(enabled = true))
+        limbo.onSettingsUpdate(settings.copy(enabled = true))
         limbo.isCommitAllowed(someModifications) shouldEqual false
     }
 }

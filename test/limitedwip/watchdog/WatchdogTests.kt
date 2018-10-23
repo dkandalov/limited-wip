@@ -60,7 +60,7 @@ class WatchdogTests {
         watchdog.onTimer(next())
         ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
 
-        watchdog.onSettings(settings.copy(maxLinesInChange = 150))
+        watchdog.onSettingsUpdate(settings.copy(maxLinesInChange = 150))
         watchdog.onTimer(next())
         ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), 150)
     }
@@ -68,7 +68,7 @@ class WatchdogTests {
     @Test fun `don't send notification when disabled`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
-        watchdog.onSettings(disabledSettings)
+        watchdog.onSettingsUpdate(disabledSettings)
         watchdog.onTimer(next())
         watchdog.onTimer(next())
 
@@ -106,7 +106,7 @@ class WatchdogTests {
     @Test fun `don't send change size update when disabled`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
-        watchdog.onSettings(disabledSettings)
+        watchdog.onSettingsUpdate(disabledSettings)
         watchdog.onTimer(next())
 
         ide.expect(times(2)).onSettingsUpdate(anySettings())
@@ -125,14 +125,14 @@ class WatchdogTests {
     }
 
     @Test fun `don't allow commits above threshold`() {
-        watchdog.onSettings(settings.copy(noCommitsAboveThreshold = true))
+        watchdog.onSettingsUpdate(settings.copy(noCommitsAboveThreshold = true))
 
         watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
     }
 
     @Test fun `allow one commit above threshold when forced`() {
-        watchdog.onSettings(settings.copy(noCommitsAboveThreshold = true))
+        watchdog.onSettingsUpdate(settings.copy(noCommitsAboveThreshold = true))
 
         watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()

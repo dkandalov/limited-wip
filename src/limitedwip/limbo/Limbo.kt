@@ -40,7 +40,7 @@ class Limbo(private val ide: Ide, private var settings: Settings) {
         allowOneCommitWithoutChecks = false
     }
 
-    fun onSettings(settings: Settings) {
+    fun onSettingsUpdate(settings: Settings) {
         this.settings = settings
     }
 

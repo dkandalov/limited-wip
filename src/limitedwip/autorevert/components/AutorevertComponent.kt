@@ -35,7 +35,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
 
         LimitedWipConfigurable.registerSettingsListener(myProject, object : LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) {
-                autoRevert.onSettings(settings.toAutoRevertSettings())
+                autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
             }
         })
 

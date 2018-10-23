@@ -8,7 +8,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     private var allowOneCommitWithoutChecks = false
 
     init {
-        onSettings(settings)
+        onSettingsUpdate(settings)
     }
 
     fun onTimer(seconds: Int) {
@@ -31,7 +31,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         ide.showCurrentChangeListSize(changeSize, settings.maxLinesInChange)
     }
 
-    fun onSettings(settings: Settings) {
+    fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
         lastNotificationTime = undefined
         this.settings = settings
