@@ -18,16 +18,18 @@ import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
 class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
-    private lateinit var watchdog: Watchdog
-    private lateinit var ide: Ide
+    private val ide: Ide
+    private val watchdog: Watchdog
+    private val changeSizeWatcher = ChangeSizeWatcher(myProject)
 
-    override fun projectOpened() {
+    init {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java).toWatchdogSettings()
-        val changeSizeWatcher = ChangeSizeWatcher(myProject)
         ide = Ide(myProject, changeSizeWatcher, WatchdogStatusBarWidget(), settings)
         watchdog = Watchdog(ide, settings)
         ide.listener = watchdog
+    }
 
+    override fun projectOpened() {
         timer.addListener(object: TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater(Runnable {
