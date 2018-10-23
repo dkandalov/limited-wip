@@ -44,12 +44,6 @@ class Ide(
     }
 
     fun showNotificationThatChangeSizeIsTooBig(linesChanged: ChangeSize, changedLinesLimit: Int) {
-        val listener = NotificationListener { notification, _ ->
-            val watchdogComponent = project.getComponent(WatchdogComponent::class.java) ?: return@NotificationListener
-            watchdogComponent.skipNotificationsUntilCommit(true)
-            notification.expire()
-        }
-
         val notification = Notification(
             pluginDisplayName,
             "Change Size Exceeded Limit",
@@ -58,7 +52,10 @@ class Ide(
                 "Please commit, split or revert changes<br/>" +
                 "(<a href=\"\">Click here</a> to skip notifications till next commit)",
             NotificationType.WARNING,
-            listener
+            NotificationListener { notification, _ ->
+                listener.onSkipNotificationsUntilCommit()
+                notification.expire()
+            }
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
 
@@ -113,5 +110,6 @@ class Ide(
 
     interface Listener {
         fun onForceCommit()
+        fun onSkipNotificationsUntilCommit()
     }
 }

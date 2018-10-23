@@ -43,15 +43,6 @@ class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listen
         allowOneCommitWithoutChecks = false
     }
 
-    fun skipNotificationsUntilCommit(value: Boolean) {
-        skipNotificationsUtilCommit = value
-        ide.showNotificationThatWatchdogIsDisableUntilNextCommit(value)
-    }
-
-    fun toggleSkipNotificationsUntilCommit() {
-        skipNotificationsUntilCommit(!skipNotificationsUtilCommit)
-    }
-
     fun isCommitAllowed(): Boolean {
         if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold) return true
         val changeSize = ide.currentChangeListSizeInLines()
@@ -62,9 +53,22 @@ class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listen
         return true
     }
 
+    fun toggleSkipNotificationsUntilCommit() {
+        skipNotificationsUntilCommit(!skipNotificationsUtilCommit)
+    }
+
+    override fun onSkipNotificationsUntilCommit() {
+        skipNotificationsUntilCommit(true)
+    }
+
     override fun onForceCommit() {
         allowOneCommitWithoutChecks = true
         ide.openCommitDialog()
+    }
+
+    private fun skipNotificationsUntilCommit(value: Boolean) {
+        skipNotificationsUtilCommit = value
+        ide.showNotificationThatWatchdogIsDisableUntilNextCommit(value)
     }
 
     data class Settings(

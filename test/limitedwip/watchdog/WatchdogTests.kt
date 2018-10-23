@@ -79,7 +79,7 @@ class WatchdogTests {
     @Test fun `skip notifications util next commit`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
-        watchdog.skipNotificationsUntilCommit(true)
+        watchdog.onSkipNotificationsUntilCommit()
         watchdog.onTimer(next())
         watchdog.onTimer(next())
         watchdog.onSuccessfulCommit()
@@ -97,7 +97,7 @@ class WatchdogTests {
     @Test fun `still send change size update when notifications are skipped till next commit`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
 
-        watchdog.skipNotificationsUntilCommit(true)
+        watchdog.onSkipNotificationsUntilCommit()
         watchdog.onTimer(next())
 
         ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)

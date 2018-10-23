@@ -17,8 +17,8 @@ import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
 class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
-    private lateinit var watchdog: Watchdog
     private val timer = ApplicationManager.getApplication().getComponent(TimerAppComponent::class.java)
+    private lateinit var watchdog: Watchdog
     private lateinit var ide: Ide
 
     override fun projectOpened() {
@@ -53,8 +53,6 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     }
 
     fun toggleSkipNotificationsUntilCommit() = watchdog.toggleSkipNotificationsUntilCommit()
-
-    fun skipNotificationsUntilCommit(value: Boolean) = watchdog.skipNotificationsUntilCommit(value)
 
     fun isCommitAllowed(): Boolean = watchdog.isCommitAllowed()
 
