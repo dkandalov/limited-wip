@@ -28,7 +28,7 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
     <application-components>
         <component><implementation-class>limitedwip.common.TimerAppComponent</implementation-class></component>
         <component><implementation-class>limitedwip.watchdog.components.DisableLargeCommitsAppComponent</implementation-class></component>
-        <component><implementation-class>limitedwip.limbo.components.DisableCommitWithoutRunningTestAppComponent</implementation-class></component>
+        <component><implementation-class>limitedwip.common.vcs.AllowCommitAppComponent</implementation-class></component>
     </application-components>
 
     <project-components>
