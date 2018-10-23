@@ -5,6 +5,7 @@ import limitedwip.watchdog.components.Ide
 class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listener {
     private var lastNotificationTime = undefined
     private var skipNotificationsUtilCommit = false
+    private var allowOneCommitWithoutChecks = false
 
     init {
         onSettings(settings)
@@ -39,6 +40,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listen
         ide.hideNotificationThatChangeSizeIsTooBig()
 
         skipNotificationsUtilCommit = false
+        allowOneCommitWithoutChecks = false
     }
 
     fun skipNotificationsUntilCommit(value: Boolean) {
@@ -51,6 +53,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listen
     }
 
     fun isCommitAllowed(): Boolean {
+        if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold) return true
         val changeSize = ide.currentChangeListSizeInLines()
         if (changeSize.value > settings.maxLinesInChange) {
             ide.notifyThatCommitWasCancelled()
@@ -60,7 +63,8 @@ class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listen
     }
 
     override fun onForceCommit() {
-        TODO("not implemented")
+        allowOneCommitWithoutChecks = true
+        ide.openCommitDialog()
     }
 
     data class Settings(

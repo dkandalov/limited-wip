@@ -82,6 +82,10 @@ class Ide(
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
+    fun openCommitDialog() {
+        limitedwip.common.vcs.openCommitDialog()
+    }
+
     private fun updateStatusBar() {
         val statusBar = WindowManager.getInstance().getStatusBar(project) ?: return
 
