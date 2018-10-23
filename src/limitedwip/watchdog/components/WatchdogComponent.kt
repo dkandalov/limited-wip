@@ -32,7 +32,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     }
 
     override fun projectOpened() {
-        ide.listener = object : Ide.Listener {
+        ide.listener = object: Ide.Listener {
             override fun onForceCommit() = watchdog.onForceCommit()
             override fun onSkipNotificationsUntilCommit() = watchdog.onSkipNotificationsUntilCommit()
         }
@@ -55,9 +55,9 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = watchdog.onSuccessfulCommit()
         })
-        AllowCommitAppComponent.getInstance().addListener(myProject, object : AllowCommitListener {
+        AllowCommitAppComponent.getInstance().addListener(myProject, object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>) =
-                watchdog.isCommitAllowed(changeSizeWatcher.getChangeListSizeInLines())
+                project != myProject || watchdog.isCommitAllowed(changeSizeWatcher.getChangeListSizeInLines())
         })
     }
 

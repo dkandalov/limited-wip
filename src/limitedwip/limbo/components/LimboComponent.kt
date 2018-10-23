@@ -25,7 +25,7 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
         ide = Ide(myProject)
         val settings = ServiceManager.getService(LimitedWipSettings::class.java)
         limbo = Limbo(ide, settings.toLimboSettings())
-        ide.listener = object : Ide.Listener {
+        ide.listener = object: Ide.Listener {
             override fun onForceCommit() = limbo.forceOneCommit()
         }
 
@@ -41,9 +41,9 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
         LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
             override fun onSettingsUpdate(settings: LimitedWipSettings) = limbo.onSettings(settings.toLimboSettings())
         })
-        AllowCommitAppComponent.getInstance().addListener(myProject, object : AllowCommitListener {
+        AllowCommitAppComponent.getInstance().addListener(myProject, object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>) =
-                limbo.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
+                project != myProject || limbo.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
         })
     }
 
