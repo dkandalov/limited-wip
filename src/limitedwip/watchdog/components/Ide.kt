@@ -17,7 +17,7 @@ class Ide(
     private val watchdogWidget: WatchdogStatusBarWidget,
     private var settings: Watchdog.Settings
 ) {
-    lateinit var listener: Listener
+    var listener: Listener? = null
     private var lastNotification: Notification? = null
 
     fun currentChangeListSizeInLines() = changeSizeWatcher.currentChangeListSizeInLines()
@@ -53,7 +53,7 @@ class Ide(
                 "(<a href=\"\">Click here</a> to skip notifications till next commit)",
             NotificationType.WARNING,
             NotificationListener { notification, _ ->
-                listener.onSkipNotificationsUntilCommit()
+                listener?.onSkipNotificationsUntilCommit()
                 notification.expire()
             }
         )
@@ -74,7 +74,7 @@ class Ide(
             pluginDisplayName,
             "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.ERROR,
-            NotificationListener { _, _ -> listener.onForceCommit() }
+            NotificationListener { _, _ -> listener?.onForceCommit() }
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }

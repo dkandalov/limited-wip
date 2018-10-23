@@ -29,10 +29,14 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         val settings = ServiceManager.getService(LimitedWipSettings::class.java).toWatchdogSettings()
         ide = Ide(myProject, changeSizeWatcher, WatchdogStatusBarWidget(), settings)
         watchdog = Watchdog(ide, settings)
-        ide.listener = watchdog
     }
 
     override fun projectOpened() {
+        ide.listener = object : Ide.Listener {
+            override fun onForceCommit() = watchdog.onForceCommit()
+            override fun onSkipNotificationsUntilCommit() = watchdog.onSkipNotificationsUntilCommit()
+        }
+
         timer.addListener(object: TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater(Runnable {

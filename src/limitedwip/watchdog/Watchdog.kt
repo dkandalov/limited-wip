@@ -2,7 +2,7 @@ package limitedwip.watchdog
 
 import limitedwip.watchdog.components.Ide
 
-class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listener {
+class Watchdog(private val ide: Ide, private var settings: Settings) {
     private var lastNotificationTime = undefined
     private var skipNotificationsUtilCommit = false
     private var allowOneCommitWithoutChecks = false
@@ -57,11 +57,11 @@ class Watchdog(private val ide: Ide, private var settings: Settings): Ide.Listen
         skipNotificationsUntilCommit(!skipNotificationsUtilCommit)
     }
 
-    override fun onSkipNotificationsUntilCommit() {
+    fun onSkipNotificationsUntilCommit() {
         skipNotificationsUntilCommit(true)
     }
 
-    override fun onForceCommit() {
+    fun onForceCommit() {
         allowOneCommitWithoutChecks = true
         ide.openCommitDialog()
     }
