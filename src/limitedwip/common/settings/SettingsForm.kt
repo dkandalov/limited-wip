@@ -9,7 +9,7 @@ import javax.swing.JComboBox
 import javax.swing.JPanel
 
 class SettingsForm(private val initialState: LimitedWipSettings) {
-    var root: JPanel? = null
+    lateinit var root: JPanel
 
     private lateinit var watchdogPanel: JPanel
     private lateinit var watchdogEnabled: JCheckBox
