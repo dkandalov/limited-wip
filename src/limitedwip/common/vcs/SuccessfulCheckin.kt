@@ -10,10 +10,10 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
 import limitedwip.common.pluginId
 
-class SuccessfulCheckin : CheckinHandlerFactory() {
+class SuccessfulCheckin: CheckinHandlerFactory() {
 
     override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
-        return object : CheckinHandler() {
+        return object: CheckinHandler() {
             override fun checkinSuccessful() {
                 val project = panel.project
 
