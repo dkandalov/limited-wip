@@ -25,7 +25,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     private val watchdog: Watchdog
 
     init {
-        val settings = ServiceManager.getService(LimitedWipSettings::class.java).toWatchdogSettings()
+        val settings = LimitedWipSettings.getInstance().toWatchdogSettings()
         ide = Ide(myProject, ChangeSizeWatcher(myProject), WatchdogStatusBarWidget(), settings)
         watchdog = Watchdog(ide, settings)
     }

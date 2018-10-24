@@ -4,7 +4,6 @@
 package limitedwip.limbo.components
 
 import com.intellij.openapi.components.AbstractProjectComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.settings.LimitedWipConfigurable
@@ -23,8 +22,7 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
 
     override fun projectOpened() {
         ide = Ide(myProject)
-        val settings = ServiceManager.getService(LimitedWipSettings::class.java)
-        limbo = Limbo(ide, settings.toLimboSettings())
+        limbo = Limbo(ide, LimitedWipSettings.getInstance().toLimboSettings())
         ide.listener = object: Ide.Listener {
             override fun onForceCommit() = limbo.forceOneCommit()
         }

@@ -1,7 +1,6 @@
 package limitedwip.common.settings
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.util.Disposer
@@ -13,8 +12,7 @@ class LimitedWipConfigurable : SearchableConfigurable {
     private lateinit var settingsForm: SettingsForm
 
     override fun createComponent(): JComponent? {
-        val settings = ServiceManager.getService(LimitedWipSettings::class.java)
-        settingsForm = SettingsForm(settings)
+        settingsForm = SettingsForm(LimitedWipSettings.getInstance())
         return settingsForm.root
     }
 

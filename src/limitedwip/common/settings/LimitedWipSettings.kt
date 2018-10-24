@@ -1,6 +1,7 @@
 package limitedwip.common.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.Range
@@ -36,6 +37,8 @@ data class LimitedWipSettings(
         val minutesToRevertRange = Range(1, 99)
         val changedLinesRange = Range(1, 999)
         val notificationIntervalRange = Range(1, 99)
+
+        fun getInstance(): LimitedWipSettings = ServiceManager.getService(LimitedWipSettings::class.java)
     }
 }
 
