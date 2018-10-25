@@ -2,6 +2,7 @@ package limitedwip.common.settings
 
 import com.intellij.openapi.options.SearchableConfigurable
 import limitedwip.common.pluginDisplayName
+import limitedwip.common.pluginId
 import javax.swing.JComponent
 
 class LimitedWipConfigurable : SearchableConfigurable {
@@ -25,5 +26,5 @@ class LimitedWipConfigurable : SearchableConfigurable {
 
     override fun getDisplayName() = pluginDisplayName
 
-    override fun getId(): String = pluginDisplayName
+    override fun getId(): String = pluginId
 }
