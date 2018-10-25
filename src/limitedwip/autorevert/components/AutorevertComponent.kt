@@ -32,9 +32,7 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
         }, myProject)
 
         LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
-            override fun onUpdate(settings: LimitedWipSettings) {
-                autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
-            }
+            override fun onUpdate(settings: LimitedWipSettings) = autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
