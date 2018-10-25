@@ -26,7 +26,8 @@ private fun doRevert(project: Project): Int {
     return try {
         val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
         if (changes.isNotEmpty()) {
-            RollbackWorker(project, "auto-revert", false).doRollback(changes, true, null, null)
+            val operationName = "$pluginId auto-revert"
+            RollbackWorker(project, operationName, false).doRollback(changes, true, null, operationName)
         }
         changes.size
     } catch (e: Exception) {
