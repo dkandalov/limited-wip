@@ -34,6 +34,9 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
         lastNotificationTime = undefined
+        if (this.settings.maxLinesInChange != settings.maxLinesInChange) {
+            ide.showCurrentChangeListSize(ide.currentChangeListSizeInLines(), settings.maxLinesInChange)
+        }
         this.settings = settings
     }
 

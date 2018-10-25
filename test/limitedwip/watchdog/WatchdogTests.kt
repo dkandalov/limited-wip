@@ -61,6 +61,8 @@ class WatchdogTests {
         ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
 
         watchdog.onSettingsUpdate(settings.copy(maxLinesInChange = 150))
+        ide.expect(inOrder).showCurrentChangeListSize(ChangeSize(200), 150)
+
         watchdog.onTimer(next())
         ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), 150)
     }
