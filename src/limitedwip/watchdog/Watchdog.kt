@@ -3,6 +3,9 @@ package limitedwip.watchdog
 import limitedwip.watchdog.components.Ide
 
 class Watchdog(private val ide: Ide, private var settings: Settings) {
+    companion object {
+        private const val undefined = -1
+    }
     private var lastNotificationTime = undefined
     private var skipNotificationsUtilCommit = false
     private var allowOneCommitWithoutChecks = false
@@ -82,8 +85,4 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         val showRemainingChangesInToolbar: Boolean,
         val noCommitsAboveThreshold: Boolean
     )
-
-    companion object {
-        private const val undefined = -1
-    }
 }

@@ -11,7 +11,6 @@ import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipSettings
-import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
 
 class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
@@ -53,7 +52,7 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
     private fun LimitedWipSettings.toAutoRevertSettings() =
         AutoRevert.Settings(
             autoRevertEnabled,
-            minutesTillRevert.toSeconds(),
+            2,
             notifyOnRevert
         )
 }

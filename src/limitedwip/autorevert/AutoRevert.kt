@@ -4,6 +4,9 @@ package limitedwip.autorevert
 import limitedwip.autorevert.components.Ide
 
 class AutoRevert(private val ide: Ide, private var settings: Settings) {
+    companion object {
+        private const val undefined = -1
+    }
     var isStarted = false
         private set
     private var startSeconds: Int = 0
@@ -17,7 +20,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         if (!settings.autoRevertEnabled) return
 
         isStarted = true
-        startSeconds = -1
+        startSeconds = undefined
         applyNewSettings()
 
         ide.showInUIThatAutoRevertStopped(remainingSeconds)
@@ -31,7 +34,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     fun onTimer(seconds: Int) {
         if (!isStarted) return
 
-        if (startSeconds == -1) {
+        if (startSeconds == undefined) {
             startSeconds = seconds - 1
         }
         val secondsPassed = seconds - startSeconds
@@ -39,7 +42,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         ide.showInUITimeTillRevert(remainingSeconds - secondsPassed + 1)
 
         if (secondsPassed >= remainingSeconds) {
-            startSeconds = -1
+            startSeconds = undefined
             applyNewSettings()
             val revertedFilesCount = ide.revertCurrentChangeList()
             if (revertedFilesCount > 0 && settings.notifyOnRevert) {
@@ -51,17 +54,17 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     fun onAllFilesCommitted() {
         if (!isStarted) return
 
-        startSeconds = -1
+        startSeconds = undefined
         applyNewSettings()
         ide.showInUITimeTillRevert(remainingSeconds)
     }
 
     fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
-        this.settings = settings
         if (isStarted && !settings.autoRevertEnabled) {
             stop()
         }
+        this.settings = settings
     }
 
     private fun applyNewSettings() {
