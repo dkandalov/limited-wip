@@ -6,11 +6,9 @@ package limitedwip.watchdog.components
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.AbstractProjectComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.TimerAppComponent
-import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.AllowCommitAppComponent
@@ -47,9 +45,8 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
             }
         }, myProject)
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
-            override fun onSettingsUpdate(settings: LimitedWipSettings) =
-                watchdog.onSettingsUpdate(settings.toWatchdogSettings())
+        LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
+            override fun onUpdate(settings: LimitedWipSettings) = watchdog.onSettingsUpdate(settings.toWatchdogSettings())
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {

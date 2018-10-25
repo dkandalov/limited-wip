@@ -6,7 +6,6 @@ package limitedwip.limbo.components
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
-import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.vcs.AllowCommitAppComponent
 import limitedwip.common.vcs.AllowCommitListener
@@ -36,8 +35,8 @@ class LimboComponent(project: Project): AbstractProjectComponent(project) {
             override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = limbo.onSuccessfulCommit()
         })
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
-            override fun onSettingsUpdate(settings: LimitedWipSettings) = limbo.onSettingsUpdate(settings.toLimboSettings())
+        LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
+            override fun onUpdate(settings: LimitedWipSettings) = limbo.onSettingsUpdate(settings.toLimboSettings())
         })
         AllowCommitAppComponent.getInstance().addListener(myProject, object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>) =

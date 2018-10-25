@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.TimerAppComponent
-import limitedwip.common.settings.LimitedWipConfigurable
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
@@ -32,8 +31,8 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
             }
         }, myProject)
 
-        LimitedWipConfigurable.registerSettingsListener(myProject, object: LimitedWipConfigurable.Listener {
-            override fun onSettingsUpdate(settings: LimitedWipSettings) {
+        LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
+            override fun onUpdate(settings: LimitedWipSettings) {
                 autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
             }
         })

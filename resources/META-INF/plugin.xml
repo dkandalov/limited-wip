@@ -48,7 +48,6 @@ See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkanda
     </extensions>
 
     <extensionPoints>
-        <extensionPoint name="settingsListener" interface="limitedwip.common.settings.LimitedWipConfigurable$Listener"/>
         <extensionPoint name="checkinListener" interface="limitedwip.common.vcs.SuccessfulCheckin$Listener"/>
     </extensionPoints>
 </idea-plugin>

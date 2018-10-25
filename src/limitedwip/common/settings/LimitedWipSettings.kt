@@ -1,9 +1,11 @@
 package limitedwip.common.settings
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.util.Disposer
 import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
@@ -28,10 +30,23 @@ data class LimitedWipSettings(
     var notifyOnLimboRevert: Boolean = true,
     var openCommitDialogOnPassedTest: Boolean = true
 ): PersistentStateComponent<LimitedWipSettings> {
+    private val listeners = ArrayList<Listener>()
 
     override fun getState(): LimitedWipSettings? = this
 
-    override fun loadState(state: LimitedWipSettings) = XmlSerializerUtil.copyBean(state, this)
+    override fun loadState(state: LimitedWipSettings) {
+        XmlSerializerUtil.copyBean(state, this)
+        listeners.forEach { it.onUpdate(this) }
+    }
+
+    fun addListener(parentDisposable: Disposable, listener: Listener) {
+        listeners.add(listener)
+        Disposer.register(parentDisposable, Disposable { listeners.remove(listener) })
+    }
+
+    interface Listener {
+        fun onUpdate(settings: LimitedWipSettings)
+    }
 
     companion object {
         val minutesToRevertRange = Range(1, 99)
