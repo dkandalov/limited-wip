@@ -91,8 +91,7 @@ class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
         fun nextCommitMessage(lastCommitMessage: String?): String {
             val message = lastCommitMessage ?: ""
             return if (message.endsWithDigits()) {
-                val thisCommitNumber = Integer.valueOf(message.extractTailDigits()) + 1
-                message.removeTailDigits() + thisCommitNumber
+                message.removeTailDigits() + (message.extractTailDigits().toInt() + 1)
             } else {
                 "$message 0"
             }
