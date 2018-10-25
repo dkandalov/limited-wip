@@ -18,9 +18,9 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
 
         val changeSize = ide.currentChangeListSizeInLines()
         val exceededThreshold = changeSize.value > settings.maxLinesInChange
-        val timeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings.notificationIntervalInSeconds
+        val isTimeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings.notificationIntervalInSeconds
 
-        if (timeToNotify && exceededThreshold && !skipNotificationsUtilCommit) {
+        if (exceededThreshold && isTimeToNotify && !skipNotificationsUtilCommit) {
             ide.showNotificationThatChangeSizeIsTooBig(changeSize, settings.maxLinesInChange)
             lastNotificationTime = seconds
         }
