@@ -81,7 +81,7 @@ class Ide(
             pluginDisplayName,
             pluginDisplayName,
             "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
-            NotificationType.ERROR,
+            NotificationType.WARNING,
             NotificationListener { _, _ -> listener?.onForceCommit() }
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
