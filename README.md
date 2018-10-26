@@ -21,7 +21,8 @@ Whenever size of the current change list exceeds specified threshold,
 watchdog will show notification popup reminding to reduce amount of changes.
 This is the least extreme constraint. It has been used on large scale enterprise projects.
 
-You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can configure:
+You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
+ - enable/disable component
  - change size threshold which is measured as the amount of lines changed ignoring empty lines
    (if file was deleted, then the amount of lines in the file). 
    There are no particular reasons for the predefined thresholds of 40, 80, 100, 120. These numbers are just a guess.
@@ -37,13 +38,15 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
 ### Auto-revert
 Every `N` minutes all changes in the current change list are automatically reverted.
 You should make all necessary changes and commit before the timeout. Timer is reset on each commit.
+Initially, auto-revert is stopped. To start/stop countdown until revert click on 
+auto-revert widget in the statusbar or run `Start/stop auto-revert` action. 
 
 This constraint has been used at [code retreats](https://twitter.com/coderetreat) with 5 minute timeout 
 for quite a few years. It has been also useful on large scale enterprise projects with longer timeout 
-(e.g. 30, 60, 120 minutes). Auto-revert is disabled by default. You can enabled it in IDE settings.
-To start/stop countdown until revert click on auto-revert widget in the statusbar or run `Start/stop auto-revert` action. 
+(e.g. 30, 60, 120 minutes).
 
-You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can configure:
+You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
+ - enable/disable component (it is disabled by default)
  - timeout until revert in minutes
  - enable/disable notification on auto-revert (to make it clear why current changes disappeared)
  - enable/disable displaying timer in auto-revert widget. 
@@ -51,19 +54,20 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
    In other cases, you might prefer not to see time left and just focus on making smallest change possible.
 
 
-### Limbo mode (aka test-commit-revert, TCR)
+### Limbo mode (aka test-commit-revert or TCR)
 On a failing test revert current change list. On a passing test open commit dialog.
 This is the most recent constraint so there isn't a lot of experience using it.
-However, it's much more useful and enjoyable than it might seem initially. Give it a try.
+However, it's much more useful and enjoyable than it might seem initially.
 
 You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
+ - enable/disable component (it is disabled by default)
  - enable/disable notification on auto-revert (to make it clear why current changes disappeared)
  - enable/disable opening commit dialog on passed test 
 
 I heard about the idea from [Kent Beck](https://twitter.com/KentBeck) mentioning Limbo and his
 ["test && commit || revert" blog post](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864) in particular.
-Originally, the idea comes from (Oddmund Strømme)[https://twitter.com/jraregris] and should
-probably be named "TCR mode" (test-commit-revert). Too late now, unless there are lots of complaints.
+Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris), 
+Ole Tjensvoll Johannessen and [Lars Barlindhaug](https://twitter.com/barlindh).
 
 
 ### Screenshots
@@ -87,3 +91,6 @@ which simply notify myself that there are too many changes already.
 At [FFS tech conf 2018](https://ffstechconf.org) Limbo was mentioned 
 and [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864)
 sounded like a great fit for the plugin so I had to implement it.
+
+I hope there will be more components in the future.
+If you have an idea, please feel free to great github issue or tweet to [me](https://twitter.com/dmitrykandalov).
