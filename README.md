@@ -1,22 +1,22 @@
 [![Build Status](https://travis-ci.org/dkandalov/limited-wip.svg?branch=master)](https://travis-ci.org/dkandalov/limited-wip)
 
-### Limited WIP
+## Limited WIP
 This is a plugin for IntelliJ IDEs to help you limit work-in-progress (WIP) by imposing constraints on your workflow.
 
 It has three main components:
- - *Change size watchdog*: it shows notifications when current changelist size exceeds threshold
- - *Auto-revert*: it automatically reverts current changelist after a timeout (the timer resets on each commit)
- - *Test-commit-revert mode*: it reverts current changelist on failed test and opens commit dialog on passed test
+ - **Change size watchdog**: it shows notifications when current changelist size exceeds threshold
+ - **Auto-revert**: it automatically reverts current changelist after a timeout (the timer resets on each commit)
+ - **Test-commit-revert mode**: it reverts current changelist on failed test and opens commit dialog on passed test
 
 
-### Why?
+## Why?
  - to make *really* small steps, focus on one thing at a time and commit as soon as it’s done
  - to learn from various constraints like reverting changes every 5 minutes as it's practiced at [code retreats](https://twitter.com/coderetreat)
  - to help you use particular constraints, not to impose them 
    (all components can be disabled and there are workarounds anyway, e.g. get reverted code from IDE local history)
 
 
-### Change size watchdog
+## Change size watchdog
 Whenever size of the current change list exceeds specified threshold, 
 watchdog will show notification popup reminding to reduce amount of changes.
 This is the least extreme constraint. It has been used on large scale enterprise projects.
@@ -35,7 +35,7 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
    and will see notification popup instead (although you can still force commit by clicking on the link in the popup).
 
 
-### Auto-revert
+## Auto-revert
 Every `N` minutes all changes in the current change list are automatically reverted.
 You should make all necessary changes and commit before the timeout. Timer is reset on each commit.
 Initially, auto-revert is stopped. To start/stop countdown until revert click on 
@@ -54,7 +54,7 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
    In other cases, you might prefer not to see time left and just focus on making smallest change possible.
 
 
-### TCR mode (test && commit || revert)
+## TCR mode (test && commit || revert)
 On a failing test revert current change list. On a passing test open commit dialog.
 This is the most recent constraint so there isn't a lot of experience using it.
 However, it's much more useful and enjoyable than it might seem initially.
@@ -67,10 +67,10 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
 I heard about the idea from [Kent Beck](https://twitter.com/KentBeck) mentioning Limbo and his
 ["test && commit || revert" blog post](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864) in particular.
 Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris), 
-Ole Tjensvoll Johannessen and [Lars Barlindhaug](https://twitter.com/barlindh).
+[Lars Barlindhaug](https://twitter.com/barlindh) and Ole Tjensvoll Johannessen.
 
 
-### Screenshots
+## Screenshots
 <img src="https://github.com/dkandalov/limited-wip/blob/master/settings.png?raw=true" align="center"/>
 <br/><br/>
 <img src="https://github.com/dkandalov/limited-wip/blob/master/toolbar.png?raw=true" align="center"/>
@@ -79,18 +79,20 @@ Ole Tjensvoll Johannessen and [Lars Barlindhaug](https://twitter.com/barlindh).
 <br/><br/>
 
 
-### History
+## History
 The original version of the plugin called "Auto-revert" was conceived
-in 2012 at [LSCC meetup](http://www.meetup.com/london-software-craftsmanship/)
-after having a chat with [Samir Talwar](https://twitter.com/SamirTalwar).
+at [LSCC meetup](http://www.meetup.com/london-software-craftsmanship/) in 2012
+after having a chat with [Samir Talwar](https://twitter.com/SamirTalwar)
+(it's easy to implement a basic version of auto-revert in bash but there are problems
+like resetting timer after each commit and IntelliJ asking on revert from command line if you really want to load changes from file system).
 
-After trying auto-revert on large legacy code bases I felt that it's a bit too harsh sometimes 
-and I end up watching timer to stop it before auto-revert. As a workaround I added watchdog component
-which simply notify myself that there are too many changes already.
+Some time later (in 2015) after trying auto-revert on large legacy code bases I felt that it's a bit too harsh sometimes 
+and I end up watching timer to stop it before auto-revert. 
+To solve the problem watchdog component was created which doesn't revert but just notifies that there are too many changes.
 
-At [FFS tech conf 2018](https://ffstechconf.org) Limbo was mentioned 
-and [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864)
-sounded like a great fit for the plugin so I had to implement it.
+At [FFS tech conf 2018](https://ffstechconf.org) [Limbo](https://medium.com/@kentbeck_7670/limbo-scaling-software-collaboration-afd4f00db4b) 
+was mentioned and [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864)
+looked like a great fit for the plugin so I had to implement it.
 
 I hope there will be more components in the future.
-If you have an idea, please feel free to great github issue or tweet to [me](https://twitter.com/dmitrykandalov).
+If you have an idea, feel free to create github issue or [tweet it to me](https://twitter.com/dmitrykandalov).
