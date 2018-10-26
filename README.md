@@ -6,7 +6,7 @@ This is a plugin for IntelliJ IDEs to help you limit work-in-progress (WIP) by i
 It has three main components:
  - *Change size watchdog*: it shows notifications when current changelist size exceeds threshold
  - *Auto-revert*: it automatically reverts current changelist after a timeout (the timer resets on each commit)
- - *Limbo mode*: it reverts current changelist on failed test and opens commit dialog on passed test
+ - *Test-commit-revert mode*: it reverts current changelist on failed test and opens commit dialog on passed test
 
 
 ### Why?
@@ -54,7 +54,7 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
    In other cases, you might prefer not to see time left and just focus on making smallest change possible.
 
 
-### Limbo mode (aka test-commit-revert or TCR)
+### TCR mode (test && commit || revert)
 On a failing test revert current change list. On a passing test open commit dialog.
 This is the most recent constraint so there isn't a lot of experience using it.
 However, it's much more useful and enjoyable than it might seem initially.

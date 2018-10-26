@@ -26,8 +26,8 @@ data class LimitedWipSettings(
     var notifyOnRevert: Boolean = true,
     var showTimerInToolbar: Boolean = true,
 
-    var limboEnabled: Boolean = false,
-    var notifyOnLimboRevert: Boolean = true,
+    var tcrEnabled: Boolean = false,
+    var notifyOnTcrRevert: Boolean = true,
     var openCommitDialogOnPassedTest: Boolean = true
 ): PersistentStateComponent<LimitedWipSettings> {
     private val listeners = ArrayList<Listener>()

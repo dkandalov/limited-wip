@@ -1,72 +1,72 @@
-package limitedwip.limbo
+package limitedwip.tcr
 
 import limitedwip.expect
-import limitedwip.limbo.Limbo.ChangeListModifications
-import limitedwip.limbo.components.Ide
 import limitedwip.shouldEqual
+import limitedwip.tcr.Tcr.ChangeListModifications
+import limitedwip.tcr.components.Ide
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 
-class LimboTests {
+class TcrTests {
     private val ide = mock(Ide::class.java)
-    private val settings = Limbo.Settings(
+    private val settings = Tcr.Settings(
         enabled = true,
         notifyOnRevert = true,
         openCommitDialogOnPassedTest = true
     )
-    private val limbo = Limbo(ide, settings)
+    private val tcr = Tcr(ide, settings)
     private val someModifications = ChangeListModifications(mapOf("foo" to 1L))
 
     @Test fun `allow commits only after running a unit test`() {
-        limbo.isCommitAllowed(someModifications) shouldEqual false
+        tcr.isCommitAllowed(someModifications) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
 
-        limbo.onUnitTestSucceeded(someModifications)
-        limbo.isCommitAllowed(someModifications) shouldEqual true
+        tcr.onUnitTestSucceeded(someModifications)
+        tcr.isCommitAllowed(someModifications) shouldEqual true
     }
 
     @Test fun `show commit dialog after successful test run`() {
-        limbo.onUnitTestSucceeded(someModifications)
+        tcr.onUnitTestSucceeded(someModifications)
         ide.expect().openCommitDialog()
     }
 
     @Test fun `don't show commit dialog if there are no modifications`() {
         val noModifications = ChangeListModifications(emptyMap())
-        limbo.onUnitTestSucceeded(noModifications)
+        tcr.onUnitTestSucceeded(noModifications)
         ide.expect(never()).openCommitDialog()
     }
 
     @Test fun `don't show commit dialog if it's disabled in settings`() {
-        limbo.onSettingsUpdate(settings.copy(openCommitDialogOnPassedTest = false))
-        limbo.onUnitTestSucceeded(someModifications)
+        tcr.onSettingsUpdate(settings.copy(openCommitDialogOnPassedTest = false))
+        tcr.onUnitTestSucceeded(someModifications)
         ide.expect(never()).openCommitDialog()
     }
 
     @Test fun `after commit need to run a unit test to be able to commit again`() {
-        limbo.onUnitTestSucceeded(someModifications)
-        limbo.isCommitAllowed(someModifications) shouldEqual true
+        tcr.onUnitTestSucceeded(someModifications)
+        tcr.isCommitAllowed(someModifications) shouldEqual true
 
-        limbo.onSuccessfulCommit()
-        limbo.isCommitAllowed(someModifications) shouldEqual false
+        tcr.onSuccessfulCommit()
+        tcr.isCommitAllowed(someModifications) shouldEqual false
 
-        limbo.onUnitTestSucceeded(someModifications)
-        limbo.isCommitAllowed(someModifications) shouldEqual true
+        tcr.onUnitTestSucceeded(someModifications)
+        tcr.isCommitAllowed(someModifications) shouldEqual true
     }
 
     @Test fun `don't allow commits if files were changed after running a unit test`() {
-        limbo.onUnitTestSucceeded(someModifications)
-        limbo.isCommitAllowed(someModifications) shouldEqual true
+        tcr.onUnitTestSucceeded(someModifications)
+        tcr.isCommitAllowed(someModifications) shouldEqual true
 
         val moreModifications = ChangeListModifications(someModifications.value + Pair("foo", 2L))
-        limbo.isCommitAllowed(moreModifications) shouldEqual false
+        tcr.isCommitAllowed(moreModifications) shouldEqual false
 
-        limbo.onUnitTestSucceeded(moreModifications)
-        limbo.isCommitAllowed(moreModifications) shouldEqual true
+        tcr.onUnitTestSucceeded(moreModifications)
+        tcr.isCommitAllowed(moreModifications) shouldEqual true
     }
 
     @Test fun `revert changes on failed unit test`() {
-        limbo.onUnitTestFailed()
+        tcr.onUnitTestFailed()
         ide.expect().revertCurrentChangeList()
     }
 
@@ -76,39 +76,39 @@ class LimboTests {
     }
 
     @Test fun `don't notify user on revert if notification is disabled in settings`() {
-        limbo.onSettingsUpdate(settings.copy(notifyOnRevert = false))
+        tcr.onSettingsUpdate(settings.copy(notifyOnRevert = false))
         `revert changes on failed unit test`()
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 
     @Test fun `can do one-off commit without running a unit test`() {
-        limbo.isCommitAllowed(someModifications) shouldEqual false
-        limbo.forceOneCommit()
-        limbo.isCommitAllowed(someModifications) shouldEqual true
+        tcr.isCommitAllowed(someModifications) shouldEqual false
+        tcr.forceOneCommit()
+        tcr.isCommitAllowed(someModifications) shouldEqual true
         ide.expect().openCommitDialog()
 
-        limbo.onSuccessfulCommit()
-        limbo.isCommitAllowed(someModifications) shouldEqual false
+        tcr.onSuccessfulCommit()
+        tcr.isCommitAllowed(someModifications) shouldEqual false
     }
 
     @Test fun `if disabled, always allow commits`() {
-        limbo.onSettingsUpdate(settings.copy(enabled = false))
-        limbo.isCommitAllowed(someModifications) shouldEqual true
+        tcr.onSettingsUpdate(settings.copy(enabled = false))
+        tcr.isCommitAllowed(someModifications) shouldEqual true
     }
 
     @Test fun `if disabled, don't revert changes on failed unit test`() {
-        limbo.onSettingsUpdate(settings.copy(enabled = false))
-        limbo.onUnitTestFailed()
+        tcr.onSettingsUpdate(settings.copy(enabled = false))
+        tcr.onUnitTestFailed()
         ide.expect(never()).revertCurrentChangeList()
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 
     @Test fun `if disabled, don't show commit dialog and don't count successful test runs`() {
-        limbo.onSettingsUpdate(settings.copy(enabled = false))
-        limbo.onUnitTestSucceeded(someModifications)
+        tcr.onSettingsUpdate(settings.copy(enabled = false))
+        tcr.onUnitTestSucceeded(someModifications)
         ide.expect(never()).openCommitDialog()
 
-        limbo.onSettingsUpdate(settings.copy(enabled = true))
-        limbo.isCommitAllowed(someModifications) shouldEqual false
+        tcr.onSettingsUpdate(settings.copy(enabled = true))
+        tcr.isCommitAllowed(someModifications) shouldEqual false
     }
 }

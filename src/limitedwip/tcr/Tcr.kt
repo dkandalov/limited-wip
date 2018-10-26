@@ -1,8 +1,8 @@
-package limitedwip.limbo
+package limitedwip.tcr
 
-import limitedwip.limbo.components.Ide
+import limitedwip.tcr.components.Ide
 
-class Limbo(private val ide: Ide, private var settings: Settings) {
+class Tcr(private val ide: Ide, private var settings: Settings) {
     private var allowedToCommit = false
     private var allowOneCommitWithoutChecks = false
     private var testedModifications: ChangeListModifications? = null

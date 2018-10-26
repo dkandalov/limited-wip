@@ -1,4 +1,4 @@
-package limitedwip.limbo.components
+package limitedwip.tcr.components
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener

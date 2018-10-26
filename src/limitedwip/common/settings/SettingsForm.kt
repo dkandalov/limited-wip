@@ -25,9 +25,9 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var showTimerInToolbar: JCheckBox
     private lateinit var openReadme: LinkLabel<Void>
 
-    private lateinit var limboPanel: JPanel
-    private lateinit var limboEnabled: JCheckBox
-    private lateinit var notifyOnLimboRevert: JCheckBox
+    private lateinit var tcrPanel: JPanel
+    private lateinit var tcrEnabled: JCheckBox
+    private lateinit var notifyOnTcrRevert: JCheckBox
     private lateinit var openCommitDialogOnPassedTest: JCheckBox
     private val currentState = LimitedWipSettings()
     private var isUpdatingUI: Boolean = false
@@ -35,7 +35,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     init {
         watchdogPanel.border = IdeBorderFactory.createTitledBorder("Change size watchdog")
         autoRevertPanel.border = IdeBorderFactory.createTitledBorder("Auto-revert")
-        limboPanel.border = IdeBorderFactory.createTitledBorder("Limbo mode")
+        tcrPanel.border = IdeBorderFactory.createTitledBorder("TCR mode (test && commit || revert)")
 
         currentState.loadState(initialState)
         updateUIFromState()
@@ -57,8 +57,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         notifyOnRevert.addActionListener(commonActionListener)
         showTimerInToolbar.addActionListener(commonActionListener)
 
-        limboEnabled.addActionListener(commonActionListener)
-        notifyOnLimboRevert.addActionListener(commonActionListener)
+        tcrEnabled.addActionListener(commonActionListener)
+        notifyOnTcrRevert.addActionListener(commonActionListener)
         openCommitDialogOnPassedTest.addActionListener(commonActionListener)
 
         openReadme.setListener(
@@ -82,8 +82,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         notifyOnRevert.isSelected = currentState.notifyOnRevert
         showTimerInToolbar.isSelected = currentState.showTimerInToolbar
 
-        limboEnabled.isSelected = currentState.limboEnabled
-        notifyOnLimboRevert.isSelected = currentState.notifyOnLimboRevert
+        tcrEnabled.isSelected = currentState.tcrEnabled
+        notifyOnTcrRevert.isSelected = currentState.notifyOnTcrRevert
         openCommitDialogOnPassedTest.isSelected = currentState.openCommitDialogOnPassedTest
 
         minutesTillRevert.isEnabled = currentState.autoRevertEnabled
@@ -93,8 +93,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         notificationInterval.isEnabled = currentState.watchdogEnabled
         showRemainingInToolbar.isEnabled = currentState.watchdogEnabled
         noCommitsAboveThreshold.isEnabled = currentState.watchdogEnabled
-        notifyOnLimboRevert.isEnabled = currentState.limboEnabled
-        openCommitDialogOnPassedTest.isEnabled = currentState.limboEnabled
+        notifyOnTcrRevert.isEnabled = currentState.tcrEnabled
+        openCommitDialogOnPassedTest.isEnabled = currentState.tcrEnabled
 
         isUpdatingUI = false
     }
@@ -121,8 +121,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             currentState.notifyOnRevert = notifyOnRevert.isSelected
             currentState.showTimerInToolbar = showTimerInToolbar.isSelected
 
-            currentState.limboEnabled = limboEnabled.isSelected
-            currentState.notifyOnLimboRevert = notifyOnLimboRevert.isSelected
+            currentState.tcrEnabled = tcrEnabled.isSelected
+            currentState.notifyOnTcrRevert = notifyOnTcrRevert.isSelected
             currentState.openCommitDialogOnPassedTest = openCommitDialogOnPassedTest.isSelected
 
         } catch (ignored: NumberFormatException) {

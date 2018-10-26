@@ -1,4 +1,4 @@
-package limitedwip.limbo.components
+package limitedwip.tcr.components
 
 import com.intellij.execution.testframework.TestsUIUtil
 import com.intellij.notification.Notification

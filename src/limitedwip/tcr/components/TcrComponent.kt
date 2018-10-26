@@ -1,7 +1,7 @@
 // Because AbstractProjectComponent was deprecated relatively recently.
 @file:Suppress("DEPRECATION")
 
-package limitedwip.limbo.components
+package limitedwip.tcr.components
 
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
@@ -10,44 +10,44 @@ import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.vcs.AllowCommitAppComponent
 import limitedwip.common.vcs.AllowCommitListener
 import limitedwip.common.vcs.SuccessfulCheckin
-import limitedwip.limbo.Limbo
-import limitedwip.limbo.Limbo.ChangeListModifications
-import limitedwip.limbo.Limbo.Settings
+import limitedwip.tcr.Tcr
+import limitedwip.tcr.Tcr.ChangeListModifications
+import limitedwip.tcr.Tcr.Settings
 import limitedwip.autorevert.components.Ide as IdeFromAutoRevert
 
-class LimboComponent(project: Project): AbstractProjectComponent(project) {
-    private lateinit var limbo: Limbo
+class TcrComponent(project: Project): AbstractProjectComponent(project) {
+    private lateinit var tcr: Tcr
     private lateinit var ide: Ide
 
     override fun projectOpened() {
         ide = Ide(myProject)
-        limbo = Limbo(ide, LimitedWipSettings.getInstance().toLimboSettings())
+        tcr = Tcr(ide, LimitedWipSettings.getInstance().toTcrSettings())
         ide.listener = object: Ide.Listener {
-            override fun onForceCommit() = limbo.forceOneCommit()
+            override fun onForceCommit() = tcr.forceOneCommit()
         }
 
         UnitTestsWatcher(myProject).start(object: UnitTestsWatcher.Listener {
-            override fun onUnitTestSucceeded() = limbo.onUnitTestSucceeded(ChangeListModifications(ide.defaultChangeListModificationCount()))
-            override fun onUnitTestFailed() = limbo.onUnitTestFailed()
+            override fun onUnitTestSucceeded() = tcr.onUnitTestSucceeded(ChangeListModifications(ide.defaultChangeListModificationCount()))
+            override fun onUnitTestFailed() = tcr.onUnitTestFailed()
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
-            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = limbo.onSuccessfulCommit()
+            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = tcr.onSuccessfulCommit()
         })
 
         LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
-            override fun onUpdate(settings: LimitedWipSettings) = limbo.onSettingsUpdate(settings.toLimboSettings())
+            override fun onUpdate(settings: LimitedWipSettings) = tcr.onSettingsUpdate(settings.toTcrSettings())
         })
         AllowCommitAppComponent.getInstance().addListener(myProject, object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>) =
-                project != myProject || limbo.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
+                project != myProject || tcr.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
         })
     }
 
-    private fun LimitedWipSettings.toLimboSettings() =
+    private fun LimitedWipSettings.toTcrSettings() =
         Settings(
-            enabled = limboEnabled,
-            notifyOnRevert = notifyOnLimboRevert,
+            enabled = tcrEnabled,
+            notifyOnRevert = notifyOnTcrRevert,
             openCommitDialogOnPassedTest = openCommitDialogOnPassedTest
         )
 }

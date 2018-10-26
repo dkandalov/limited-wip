@@ -18,7 +18,7 @@
         <ul>
             <li><b>Change size watchdog</b>: show notifications when current changelist size exceeds threshold</li>
             <li><b>Auto-revert</b>: automatically revert current changelist after a timeout (the timer resets on each commit)</li>
-            <li><b>Limbo mode</b>: revert current changelist on failed test; open commit dialog on passed test</li>
+            <li><b>Test-commit-revert mode</b>: revert current changelist on failed test; open commit dialog on passed test</li>
         </ul>
         <br/>
         Why?
@@ -46,7 +46,7 @@
     <project-components>
         <component><implementation-class>limitedwip.watchdog.components.WatchdogComponent</implementation-class></component>
         <component><implementation-class>limitedwip.autorevert.components.AutoRevertComponent</implementation-class></component>
-        <component><implementation-class>limitedwip.limbo.components.LimboComponent</implementation-class></component>
+        <component><implementation-class>limitedwip.tcr.components.TcrComponent</implementation-class></component>
     </project-components>
 
     <actions>
