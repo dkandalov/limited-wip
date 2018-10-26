@@ -23,7 +23,7 @@ data class LimitedWipSettings(
     var watchdogEnabled: Boolean = true,
     var maxLinesInChange: Int = 80,
     var notificationIntervalInMinutes: Int = 1,
-    var noCommitsAboveThreshold: Boolean = false,
+    var noCommitsAboveThreshold: Boolean = true,
     var showRemainingChangesInToolbar: Boolean = true,
 
     var limboEnabled: Boolean = false,
