@@ -57,6 +57,7 @@
                 <item value="15"/>
                 <item value="25"/>
                 <item value="60"/>
+                <item value="120"/>
               </model>
             </properties>
           </component>
