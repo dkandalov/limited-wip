@@ -10,16 +10,29 @@
     <idea-version since-build="173"/>
 
     <description>
-        <![CDATA[<html lang="en"><body>
-Plugin to limit the amount of changes you make at a time. It has two main features:
-<ul>
-    <li>show notifications when current changelist size exceeds limit</li>
-    <li>automatically revert current changelist after a timeout</li>
-</ul>
-<br/>
-See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkandalov/limited-wip</a> for details.
-</body></html>
-		]]>
+        <![CDATA[
+        <html lang="en">
+        <body>
+        Plugin to help you limit work-in-progress (WIP) by imposing constraints on your workflow.
+        The plugin has three main components:
+        <ul>
+            <li><b>Change size watchdog</b>: show notifications when current changelist size exceeds threshold</li>
+            <li><b>Auto-revert</b>: automatically revert current changelist after a timeout (the timer resets on each commit)</li>
+            <li><b>Limbo mode</b>: revert current changelist on failed test; open commit dialog on passed test</li>
+        </ul>
+        <br/>
+        Why?
+        <ul>
+            <li>to make <b>really</b> small steps, focus on one thing at a time and commit as soon as it’s done</li>
+            <li>to learn from various constraints like reverting changes every 5 minutes as it's practiced at <a href="https://twitter.com/coderetreat">code retreats</a></li>
+            <li>to help you use particular constraints, not to impose them
+                (all components can be disabled and there are workarounds anyway, e.g. get reverted code from IDE local history)</li>
+        </ul>
+        <br/>
+        See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkandalov/limited-wip</a> for details.
+        </body>
+        </html>
+        ]]>
     </description>
 
     <depends>com.intellij.modules.platform</depends>
