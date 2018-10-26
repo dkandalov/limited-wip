@@ -15,16 +15,16 @@ import limitedwip.common.pluginId
     storages = arrayOf(Storage(file = "\$APP_CONFIG$/limitedwip.ui.settings.xml"))
 )
 data class LimitedWipSettings(
-    var autoRevertEnabled: Boolean = false,
-    var minutesTillRevert: Int = 2,
-    var notifyOnRevert: Boolean = true,
-    var showTimerInToolbar: Boolean = true,
-
     var watchdogEnabled: Boolean = true,
     var maxLinesInChange: Int = 80,
     var notificationIntervalInMinutes: Int = 1,
     var noCommitsAboveThreshold: Boolean = true,
     var showRemainingChangesInToolbar: Boolean = true,
+
+    var autoRevertEnabled: Boolean = false,
+    var minutesTillRevert: Int = 2,
+    var notifyOnRevert: Boolean = true,
+    var showTimerInToolbar: Boolean = true,
 
     var limboEnabled: Boolean = false,
     var notifyOnLimboRevert: Boolean = true,
