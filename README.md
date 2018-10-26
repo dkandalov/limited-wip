@@ -71,12 +71,12 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
 
 
 ## Screenshots
-<img src="https://github.com/dkandalov/limited-wip/blob/master/settings.png?raw=true" align="center"/>
+<img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/settings.png?raw=true" align="center"/>
 <br/><br/>
-<img src="https://github.com/dkandalov/limited-wip/blob/master/toolbar.png?raw=true" align="center"/>
+<img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/change-limit-exceeded.png?raw=true" align="center"/>
 <br/><br/>
-<img src="https://github.com/dkandalov/limited-wip/blob/master/change-size-exceeded.png?raw=true" align="center"/>
-<br/><br/>
+<img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/commit-cancelled.png?raw=true" align="center"/>
+<br/>
 
 
 ## History
