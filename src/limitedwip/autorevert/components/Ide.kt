@@ -6,10 +6,12 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.pluginDisplayName
+import java.awt.Component
 
 class Ide(
     private val project: Project,
@@ -69,6 +71,11 @@ class Ide(
         updateStatusBar()
     }
 
+    fun isCommitDialogOpen(): Boolean {
+        val component = IdeFocusManager.findInstanceByContext(null).focusOwner
+        return component.hasParentCommitDialog()
+    }
+
     private fun updateStatusBar() {
         val statusBar = project.statusBar() ?: return
 
@@ -92,6 +99,12 @@ class Ide(
         val min: Int = seconds / 60
         val sec: Int = seconds % 60
         return String.format("%02d", min) + ":" + String.format("%02d", sec)
+    }
+
+    private tailrec fun Component?.hasParentCommitDialog(): Boolean = when {
+        this == null -> false
+        this.toString().contains("layout=com.intellij.openapi.vcs.changes.ui.CommitChangeListDialog") -> true
+        else -> parent.hasParentCommitDialog()
     }
 }
 
