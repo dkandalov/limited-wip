@@ -78,6 +78,27 @@ class AutoRevertTests {
         ide.expect().showNotificationThatChangesWereReverted()
     }
 
+    @Test fun `don't start timer when timeout with commit dialog open`() {
+        autoRevert.start()
+        autoRevert.onTimer(next())
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+
+        `when`(ide.isCommitDialogOpen()).thenReturn(true)
+        autoRevert.onTimer(next())
+        ide.expect(inOrder).showInUITimeTillRevert(eq(1))
+        autoRevert.onTimer(next())
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+        autoRevert.onTimer(next())
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+
+        `when`(ide.isCommitDialogOpen()).thenReturn(false)
+        autoRevert.onTimer(next())
+        autoRevert.onTimer(next())
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+        autoRevert.onTimer(next())
+        ide.expect(inOrder).showInUITimeTillRevert(eq(1))
+    }
+
     @Test fun `don't revert changes when stopped`() {
         autoRevert.start()
         autoRevert.onTimer(next())
