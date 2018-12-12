@@ -44,9 +44,11 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         if (secondsPassed >= remainingSeconds) {
             startSeconds = undefined
             applyNewSettings()
-            val revertedFilesCount = ide.revertCurrentChangeList()
-            if (revertedFilesCount > 0 && settings.notifyOnRevert) {
-                ide.showNotificationThatChangesWereReverted()
+            if (!ide.isCommitDialogOpen()) {
+                val revertedFilesCount = ide.revertCurrentChangeList()
+                if (revertedFilesCount > 0 && settings.notifyOnRevert) {
+                    ide.showNotificationThatChangesWereReverted()
+                }
             }
         }
     }
