@@ -32,7 +32,7 @@ class TcrComponent(project: Project): AbstractProjectComponent(project) {
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
-            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) = tcr.onSuccessfulCommit()
+            override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) = tcr.onSuccessfulCommit()
         })
 
         LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {

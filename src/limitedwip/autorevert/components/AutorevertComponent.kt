@@ -3,10 +3,16 @@
 
 package limitedwip.autorevert.components
 
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.changes.ChangeListManager
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.TimerAppComponent
@@ -36,10 +42,18 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
-            override fun onSuccessfulCheckin(allFileAreCommitted: Boolean) {
-                if (allFileAreCommitted) autoRevert.onAllFilesCommitted()
+            override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) {
+                if (allChangesAreCommitted) autoRevert.onAllChangesCommitted()
             }
         })
+
+        ActionManager.getInstance().addAnActionListener(object : AnActionListener.Adapter() {
+            override fun afterActionPerformed(action: AnAction?, dataContext: DataContext?, event: AnActionEvent?) {
+                if (action?.javaClass?.simpleName != "RollbackAction") return
+                if (ChangeListManager.getInstance(myProject).defaultChangeList.changes.isNotEmpty()) return
+                autoRevert.onAllChangesRolledBack()
+            }
+        }, myProject)
     }
 
     fun startAutoRevert() {

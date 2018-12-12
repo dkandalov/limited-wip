@@ -19,21 +19,21 @@ class SuccessfulCheckin: CheckinHandlerFactory() {
 
                 val changeListManager = ChangeListManager.getInstance(project)
                 val uncommittedFileCount = changeListManager.defaultChangeList.changes.size - panel.selectedChanges.size
-                val allFileAreCommitted = uncommittedFileCount == 0
+                val allChangesAreCommitted = uncommittedFileCount == 0
 
-                notifySettingsListeners(allFileAreCommitted)
+                notifySettingsListeners(allChangesAreCommitted)
             }
         }
     }
 
-    private fun notifySettingsListeners(allFileAreCommitted: Boolean) {
+    private fun notifySettingsListeners(allChangesAreCommitted: Boolean) {
         Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName).extensions.forEach { listener ->
-            listener.onSuccessfulCheckin(allFileAreCommitted)
+            listener.onSuccessfulCheckin(allChangesAreCommitted)
         }
     }
 
     interface Listener {
-        fun onSuccessfulCheckin(allFileAreCommitted: Boolean)
+        fun onSuccessfulCheckin(allChangesAreCommitted: Boolean)
     }
 
     companion object {

@@ -55,12 +55,16 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         }
     }
 
-    fun onAllFilesCommitted() {
+    fun onAllChangesCommitted() {
         if (!isStarted) return
 
         startSeconds = undefined
         applyNewSettings()
         ide.showInUITimeTillRevert(remainingSeconds)
+    }
+
+    fun onAllChangesRolledBack() {
+        onAllChangesCommitted()
     }
 
     fun onSettingsUpdate(settings: Settings) {
