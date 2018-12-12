@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.ChangeListManager
+import com.intellij.openapi.vcs.changes.InvokeAfterUpdateMode
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.TimerAppComponent
@@ -20,7 +21,7 @@ import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
 
-class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
+class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
     private val timer = TimerAppComponent.getInstance()
     private lateinit var autoRevert: AutoRevert
 
@@ -31,29 +32,25 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
         val settings = LimitedWipSettings.getInstance().toAutoRevertSettings()
         autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
 
-        timer.addListener(object: TimerAppComponent.Listener {
+        timer.addListener(object : TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater({ autoRevert.onTimer(seconds) }, ModalityState.any())
             }
         }, myProject)
 
-        LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
+        LimitedWipSettings.getInstance().addListener(myProject, object : LimitedWipSettings.Listener {
             override fun onUpdate(settings: LimitedWipSettings) = autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
         })
 
-        SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
+        SuccessfulCheckin.registerListener(myProject, object : SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) {
                 if (allChangesAreCommitted) autoRevert.onAllChangesCommitted()
             }
         })
 
-        ActionManager.getInstance().addAnActionListener(object : AnActionListener.Adapter() {
-            override fun afterActionPerformed(action: AnAction?, dataContext: DataContext?, event: AnActionEvent?) {
-                if (action?.javaClass?.simpleName != "RollbackAction") return
-                if (ChangeListManager.getInstance(myProject).defaultChangeList.changes.isNotEmpty()) return
-                autoRevert.onAllChangesRolledBack()
-            }
-        }, myProject)
+        registerRollbackListener(myProject, onRollback = { allChangesRolledBack ->
+            if (allChangesRolledBack) autoRevert.onAllChangesRolledBack()
+        })
     }
 
     fun startAutoRevert() {
@@ -70,4 +67,22 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
             minutesTillRevert.toSeconds(),
             notifyOnRevert
         )
+}
+
+private fun registerRollbackListener(project: Project, onRollback: (allChangesRolledBack: Boolean) -> Unit) {
+    val changeListManager = ChangeListManager.getInstance(project)
+    ActionManager.getInstance().addAnActionListener(object : AnActionListener.Adapter() {
+        override fun afterActionPerformed(action: AnAction?, dataContext: DataContext?, event: AnActionEvent?) {
+            if (action?.javaClass?.simpleName != "RollbackAction") return
+
+            // Note that checking changelist size immediately after rollback action will show changes as they were before the rollback
+            // (even if the check is scheduled to be run later on EDT).
+            // The following seems the only reliable way to do it.
+            val afterUpdate = {
+                val changes = changeListManager.defaultChangeList.changes
+                onRollback(changes.isEmpty())
+            }
+            changeListManager.invokeAfterUpdate(afterUpdate, InvokeAfterUpdateMode.SILENT_CALLBACK_POOLED, null, ModalityState.any())
+        }
+    }, project)
 }
