@@ -6,12 +6,11 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.pluginDisplayName
-import java.awt.Component
+import java.awt.Window
 
 class Ide(
     private val project: Project,
@@ -72,8 +71,13 @@ class Ide(
     }
 
     fun isCommitDialogOpen(): Boolean {
-        val component = IdeFocusManager.findInstanceByContext(null).focusOwner
-        return component.hasParentCommitDialog()
+        val projectFrame = WindowManager.getInstance().getFrame(project) ?: return false
+        return Window.getWindows()
+            .filter { it.isVisible && it.parent == projectFrame }
+            .any {
+                val s = it.toString()
+                s.contains("com.intellij.openapi.ui.impl.DialogWrapperPeerImpl\$MyDialog") && s.contains("title=Commit Changes")
+            }
     }
 
     private fun updateStatusBar() {
@@ -99,12 +103,6 @@ class Ide(
         val min: Int = seconds / 60
         val sec: Int = seconds % 60
         return String.format("%02d", min) + ":" + String.format("%02d", sec)
-    }
-
-    private tailrec fun Component?.hasParentCommitDialog(): Boolean = when {
-        this == null -> false
-        this.toString().contains("layout=com.intellij.openapi.vcs.changes.ui.CommitChangeListDialog") -> true
-        else -> parent.hasParentCommitDialog()
     }
 }
 
