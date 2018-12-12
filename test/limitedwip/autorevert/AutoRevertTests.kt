@@ -66,6 +66,18 @@ class AutoRevertTests {
         ide.expect(never()).showNotificationThatChangesWereReverted()
     }
 
+    @Test fun `revert changes after commit dialog is closed`() {
+        autoRevert.start()
+        autoRevert.onTimer(next())
+        `when`(ide.isCommitDialogOpen()).thenReturn(true)
+        autoRevert.onTimer(next())
+
+        `when`(ide.isCommitDialogOpen()).thenReturn(false)
+        autoRevert.onTimer(next())
+        ide.expect().revertCurrentChangeList()
+        ide.expect().showNotificationThatChangesWereReverted()
+    }
+
     @Test fun `don't revert changes when stopped`() {
         autoRevert.start()
         autoRevert.onTimer(next())
