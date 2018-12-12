@@ -43,16 +43,18 @@ class AutoRevertTests {
         ide.expect(inOrder).showInUITimeTillRevert(anyInt())
     }
 
-    @Test fun `revert changes when received enough time updates`() {
+    @Test fun `revert changes after each timeout`() {
         autoRevert.start()
 
         autoRevert.onTimer(next())
         autoRevert.onTimer(next())
-        autoRevert.onTimer(next())
-        autoRevert.onTimer(next())
+        ide.expect(inOrder).revertCurrentChangeList()
+        ide.expect(inOrder).showNotificationThatChangesWereReverted()
 
-        ide.expect(times(2)).revertCurrentChangeList()
-        ide.expect(times(2)).showNotificationThatChangesWereReverted()
+        autoRevert.onTimer(next())
+        autoRevert.onTimer(next())
+        ide.expect(inOrder).revertCurrentChangeList()
+        ide.expect(inOrder).showNotificationThatChangesWereReverted()
     }
 
     @Test fun `don't revert changes when stopped`() {
@@ -66,11 +68,12 @@ class AutoRevertTests {
         ide.expect(never()).revertCurrentChangeList()
     }
 
-    @Test fun `reset time till revert when stopped`() {
+    @Test fun `reset timer when stopped`() {
         autoRevert.start()
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.stop()
+
         autoRevert.start()
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
@@ -78,12 +81,13 @@ class AutoRevertTests {
         ide.expect(inOrder).showInUITimeTillRevert(eq(1))
     }
 
-    @Test fun `reset time till revert when committed`() {
+    @Test fun `reset timer when committed`() {
         autoRevert.start()
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+
         autoRevert.onAllFilesCommitted()
-        ide.expect(inOrder).showInUITimeTillRevert(eq(secondsTillRevert))
+        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
         autoRevert.onTimer(next())
@@ -93,12 +97,13 @@ class AutoRevertTests {
     @Test fun `send UI notification on commit only when started`() {
         autoRevert.onAllFilesCommitted()
         ide.expect(inOrder, times(0)).showInUITimeTillRevert(anyInt())
+
         autoRevert.start()
         autoRevert.onAllFilesCommitted()
         ide.expect(inOrder).showInUITimeTillRevert(anyInt())
     }
 
-    @Test fun `apply revert time out change after start`() {
+    @Test fun `use updated revert timeout after start`() {
         autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
         autoRevert.start()
         autoRevert.onTimer(next())
@@ -108,7 +113,7 @@ class AutoRevertTests {
         ide.expect(times(2)).showNotificationThatChangesWereReverted()
     }
 
-    @Test fun `apply revert timeout change after end of current time out`() {
+    @Test fun `use updated revert timeout after end of the current timeout`() {
         autoRevert.start()
         autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
         autoRevert.onTimer(next())
@@ -120,7 +125,7 @@ class AutoRevertTests {
         ide.expect(times(3)).showNotificationThatChangesWereReverted()
     }
 
-    @Test fun `apply revert timeout change after commit`() {
+    @Test fun `use updated revert timeout after commit`() {
         autoRevert.start()
         autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
         autoRevert.onTimer(next())
