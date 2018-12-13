@@ -71,7 +71,9 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
 
 private fun registerRollbackListener(project: Project, onRollback: (allChangesRolledBack: Boolean) -> Unit) {
     val changeListManager = ChangeListManager.getInstance(project)
-    ActionManager.getInstance().addAnActionListener(object : AnActionListener.Adapter() {
+    ActionManager.getInstance().addAnActionListener(object : AnActionListener {
+        override fun beforeActionPerformed(action: AnAction?, dataContext: DataContext?, event: AnActionEvent?) {}
+
         override fun afterActionPerformed(action: AnAction?, dataContext: DataContext?, event: AnActionEvent?) {
             if (action?.javaClass?.simpleName != "RollbackAction") return
 
