@@ -58,6 +58,7 @@
         <applicationConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
         <applicationService serviceInterface="limitedwip.common.settings.LimitedWipSettings" serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.SuccessfulCheckin"/>
+        <search.topHitProvider implementation="limitedwip.common.settings.LimitedWipTopHitProvider"/>
     </extensions>
 
     <extensionPoints>

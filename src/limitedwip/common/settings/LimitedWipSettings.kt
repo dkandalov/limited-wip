@@ -36,12 +36,16 @@ data class LimitedWipSettings(
 
     override fun loadState(state: LimitedWipSettings) {
         XmlSerializerUtil.copyBean(state, this)
-        listeners.forEach { it.onUpdate(this) }
+        notifyListeners()
     }
 
     fun addListener(parentDisposable: Disposable, listener: Listener) {
         listeners.add(listener)
         Disposer.register(parentDisposable, Disposable { listeners.remove(listener) })
+    }
+
+    fun notifyListeners() {
+        listeners.forEach { it.onUpdate(this) }
     }
 
     interface Listener {
