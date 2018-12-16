@@ -55,7 +55,8 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
 
 
 ## TCR mode (test && commit || revert)
-On a failing test revert current change list. On a passing test open commit dialog.
+You're not allowed to commit without running a test.
+If the test fails, changes are reverted. If the test passed, you should commit.
 This is the most recent constraint so there isn't a lot of experience using it.
 However, it's much more useful and enjoyable than it might seem initially.
 
