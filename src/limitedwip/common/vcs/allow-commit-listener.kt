@@ -32,11 +32,12 @@ class AllowCommitAppComponent : ApplicationComponent {
     }
 
     override fun initComponent() {
-        registerBeforeCommitListener(object: AllowCommitListener {
+        val wasRegistered = registerBeforeCommitListener(object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
                 return listeners.all { it.allowCommit(project, changes) }
             }
         })
+        if (!wasRegistered) logger.warn("Failed to register commit listener.")
     }
 
     override fun disposeComponent() {}
@@ -49,7 +50,7 @@ class AllowCommitAppComponent : ApplicationComponent {
     }
 }
 
-fun registerBeforeCommitListener(listener: AllowCommitListener) {
+fun registerBeforeCommitListener(listener: AllowCommitListener): Boolean {
     // This is a hack caused by limitations of IntelliJ API.
     //  - cannot use CheckinHandlerFactory because:
     //		- CheckinHandler is used just before commit (and after displaying commit dialog)
@@ -61,25 +62,25 @@ fun registerBeforeCommitListener(listener: AllowCommitListener) {
     //
     // Therefore, using reflection.
 
-    accessField<MultiMap<VcsKey, VcsCheckinHandlerFactory>>(CheckinHandlersManager.getInstance(), asList("a", "b", "myVcsMap")) { multiMap ->
+    return accessField<MultiMap<VcsKey, VcsCheckinHandlerFactory>>(CheckinHandlersManager.getInstance(), asList("a", "b", "myVcsMap")) { multiMap ->
         for (key in multiMap.keySet()) {
             multiMap.putValue(key, DelegatingCheckinHandlerFactory(key as VcsKey, listener))
         }
     }
 }
 
-private inline fun <reified T> accessField(anObject: Any, possibleFieldNames: List<String>, f: (T) -> Unit) {
+private inline fun <reified T> accessField(anObject: Any, possibleFieldNames: List<String>, f: (T) -> Unit): Boolean {
     for (field in anObject.javaClass.declaredFields) {
         if (possibleFieldNames.contains(field.name) && T::class.java.isAssignableFrom(field.type)) {
             field.isAccessible = true
             try {
                 f.invoke(field.get(anObject) as T)
-                return
+                return true
             } catch (ignored: Exception) {
             }
         }
     }
-    logger.warn("Failed to access fields: $possibleFieldNames on '$anObject'")
+    return false
 }
 
 
