@@ -5,8 +5,11 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.common.pluginDisplayName
+import limitedwip.common.vcs.AllowCommitAppComponent
+import limitedwip.common.vcs.AllowCommitListener
 import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -17,13 +20,21 @@ class Ide(
     private val watchdogWidget: WatchdogStatusBarWidget,
     private var settings: Watchdog.Settings
 ) {
-    var listener: Listener? = null
+    lateinit var listener: Listener
     private var lastNotification: Notification? = null
+    private var changesInLastCancelledCommit: List<Change>? = null
 
     init {
         watchdogWidget.listener = object: WatchdogStatusBarWidget.Listener {
-            override fun onClick() = listener?.onWidgetClick() ?: Unit
+            override fun onClick() = listener.onWidgetClick()
         }
+        AllowCommitAppComponent.getInstance().addListener(project, object: AllowCommitListener {
+            override fun allowCommit(project: Project, changes: List<Change>): Boolean {
+                val result = project != this@Ide.project || listener.allowCommit()
+                changesInLastCancelledCommit = if (!result) changes else null
+                return result
+            }
+        })
     }
 
     fun currentChangeListSizeInLines() = changeSizeWatcher.getChangeListSizeInLines()
@@ -61,7 +72,7 @@ class Ide(
                 "(<a href=\"\">Click here</a> to skip notifications till next commit)",
             NotificationType.WARNING,
             NotificationListener { notification, _ ->
-                listener?.onSkipNotificationsUntilCommit()
+                listener.onSkipNotificationsUntilCommit()
                 notification.expire()
             }
         )
@@ -82,13 +93,13 @@ class Ide(
             pluginDisplayName,
             "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.WARNING,
-            NotificationListener { _, _ -> listener?.onForceCommit() }
+            NotificationListener { _, _ -> listener.onForceCommit() }
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
     fun openCommitDialog() {
-        limitedwip.common.vcs.openCommitDialog()
+        limitedwip.common.vcs.openCommitDialog(changesInLastCancelledCommit)
     }
 
     private fun updateStatusBar() {
@@ -120,5 +131,6 @@ class Ide(
         fun onForceCommit()
         fun onSkipNotificationsUntilCommit()
         fun onWidgetClick()
+        fun allowCommit(): Boolean
     }
 }

@@ -5,12 +5,30 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import limitedwip.common.pluginDisplayName
+import limitedwip.common.vcs.AllowCommitAppComponent
+import limitedwip.common.vcs.AllowCommitListener
 
 
 class Ide(private val project: Project) {
     lateinit var listener: Listener
+    private var changesInLastCancelledCommit: List<Change>? = null
+
+    init {
+        AllowCommitAppComponent.getInstance().addListener(project, object: AllowCommitListener {
+            override fun allowCommit(project: Project, changes: List<Change>): Boolean {
+                val result = project != this@Ide.project || listener.allowCommit()
+                changesInLastCancelledCommit = if (!result) changes else null
+                return result
+            }
+        })
+    }
+
+    fun openCommitDialog() {
+        limitedwip.common.vcs.openCommitDialog(changesInLastCancelledCommit)
+    }
 
     fun revertCurrentChangeList() {
         limitedwip.common.vcs.revertCurrentChangeList(project)
@@ -45,11 +63,8 @@ class Ide(private val project: Project) {
             .defaultChangeList.changes.mapNotNull { it.virtualFile }
             .associate { Pair(it.path, it.modificationCount) }
 
-    fun openCommitDialog() {
-        limitedwip.common.vcs.openCommitDialog()
-    }
-
     interface Listener {
         fun onForceCommit()
+        fun allowCommit(): Boolean
     }
 }
