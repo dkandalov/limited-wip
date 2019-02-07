@@ -1,5 +1,6 @@
 package limitedwip.tcr
 
+import limitedwip.common.settings.TcrAction.OpenCommitDialog
 import limitedwip.expect
 import limitedwip.shouldEqual
 import limitedwip.tcr.Tcr.ChangeListModifications
@@ -13,7 +14,8 @@ class TcrTests {
     private val settings = Tcr.Settings(
         enabled = true,
         notifyOnRevert = true,
-        openCommitDialogOnPassedTest = true
+        openCommitDialogOnPassedTest = true,
+        actionOnPassedTest = OpenCommitDialog
     )
     private val tcr = Tcr(ide, settings)
     private val someModifications = ChangeListModifications(mapOf("foo" to 1L))

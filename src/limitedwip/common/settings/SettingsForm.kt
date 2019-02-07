@@ -1,8 +1,10 @@
 package limitedwip.common.settings
 
+import com.google.common.collect.HashBiMap
 import com.intellij.ide.BrowserUtil
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.labels.LinkLabel
+import limitedwip.common.settings.TcrAction.*
 import java.awt.event.ActionEvent
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
@@ -29,8 +31,16 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var tcrEnabled: JCheckBox
     private lateinit var notifyOnTcrRevert: JCheckBox
     private lateinit var openCommitDialogOnPassedTest: JCheckBox
+    private lateinit var tcrActionOnPassedTest: JComboBox<*>
+
     private val currentState = LimitedWipSettings()
     private var isUpdatingUI: Boolean = false
+
+    private val tcrActionByIndex = HashBiMap.create<Int, TcrAction>().also {
+        it[0] = OpenCommitDialog
+        it[1] = Commit
+        it[2] = CommitAndPush
+    }
 
     init {
         watchdogPanel.border = IdeBorderFactory.createTitledBorder("Change size watchdog")
@@ -60,6 +70,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         tcrEnabled.addActionListener(commonActionListener)
         notifyOnTcrRevert.addActionListener(commonActionListener)
         openCommitDialogOnPassedTest.addActionListener(commonActionListener)
+        tcrActionOnPassedTest.addActionListener(commonActionListener)
 
         openReadme.setListener(
             { _, _ -> BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip") },
@@ -85,6 +96,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         tcrEnabled.isSelected = currentState.tcrEnabled
         notifyOnTcrRevert.isSelected = currentState.notifyOnTcrRevert
         openCommitDialogOnPassedTest.isSelected = currentState.openCommitDialogOnPassedTest
+        tcrActionOnPassedTest.selectedIndex = tcrActionByIndex.inverse()[currentState.tcrActionOnPassedTest]!!
 
         minutesTillRevert.isEnabled = currentState.autoRevertEnabled
         notifyOnRevert.isEnabled = currentState.autoRevertEnabled
@@ -95,6 +107,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         noCommitsAboveThreshold.isEnabled = currentState.watchdogEnabled
         notifyOnTcrRevert.isEnabled = currentState.tcrEnabled
         openCommitDialogOnPassedTest.isEnabled = currentState.tcrEnabled
+        tcrActionOnPassedTest.isEnabled = currentState.tcrEnabled
 
         isUpdatingUI = false
     }
@@ -124,6 +137,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             currentState.tcrEnabled = tcrEnabled.isSelected
             currentState.notifyOnTcrRevert = notifyOnTcrRevert.isSelected
             currentState.openCommitDialogOnPassedTest = openCommitDialogOnPassedTest.isSelected
+            currentState.tcrActionOnPassedTest = tcrActionByIndex[tcrActionOnPassedTest.selectedIndex]!!
 
         } catch (ignored: NumberFormatException) {
         }

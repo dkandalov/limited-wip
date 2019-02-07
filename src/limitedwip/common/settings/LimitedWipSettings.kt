@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
+import limitedwip.common.settings.TcrAction.*
 
 @State(
     name = "${pluginId}Settings",
@@ -28,7 +29,8 @@ data class LimitedWipSettings(
 
     var tcrEnabled: Boolean = false,
     var notifyOnTcrRevert: Boolean = true,
-    var openCommitDialogOnPassedTest: Boolean = true
+    var openCommitDialogOnPassedTest: Boolean = true,
+    var tcrActionOnPassedTest: TcrAction = OpenCommitDialog
 ): PersistentStateComponent<LimitedWipSettings> {
     private val listeners = ArrayList<Listener>()
 
@@ -62,3 +64,9 @@ data class LimitedWipSettings(
 }
 
 fun Int.toSeconds(): Int = this * 60
+
+enum class TcrAction {
+    OpenCommitDialog,
+    Commit,
+    CommitAndPush
+}
