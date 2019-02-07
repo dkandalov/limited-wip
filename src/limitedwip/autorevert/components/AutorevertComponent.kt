@@ -74,7 +74,7 @@ private fun registerRollbackListener(project: Project, onRollback: (allChangesRo
     ActionManager.getInstance().addAnActionListener(object : AnActionListener {
         override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {}
 
-        override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent?) {
+        override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
             if (action.javaClass.simpleName != "RollbackAction") return
 
             // Note that checking changelist size immediately after rollback action will show changes as they were before the rollback
