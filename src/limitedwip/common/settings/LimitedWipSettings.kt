@@ -29,7 +29,6 @@ data class LimitedWipSettings(
 
     var tcrEnabled: Boolean = false,
     var notifyOnTcrRevert: Boolean = true,
-    var openCommitDialogOnPassedTest: Boolean = true,
     var tcrActionOnPassedTest: TcrAction = OpenCommitDialog
 ): PersistentStateComponent<LimitedWipSettings> {
     private val listeners = ArrayList<Listener>()

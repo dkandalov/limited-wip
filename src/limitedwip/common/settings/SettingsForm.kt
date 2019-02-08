@@ -30,7 +30,6 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var tcrPanel: JPanel
     private lateinit var tcrEnabled: JCheckBox
     private lateinit var notifyOnTcrRevert: JCheckBox
-    private lateinit var openCommitDialogOnPassedTest: JCheckBox
     private lateinit var tcrActionOnPassedTest: JComboBox<*>
 
     private val currentState = LimitedWipSettings()
@@ -69,7 +68,6 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
         tcrEnabled.addActionListener(commonActionListener)
         notifyOnTcrRevert.addActionListener(commonActionListener)
-        openCommitDialogOnPassedTest.addActionListener(commonActionListener)
         tcrActionOnPassedTest.addActionListener(commonActionListener)
 
         openReadme.setListener(
@@ -95,7 +93,6 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
         tcrEnabled.isSelected = currentState.tcrEnabled
         notifyOnTcrRevert.isSelected = currentState.notifyOnTcrRevert
-        openCommitDialogOnPassedTest.isSelected = currentState.openCommitDialogOnPassedTest
         tcrActionOnPassedTest.selectedIndex = tcrActionByIndex.inverse()[currentState.tcrActionOnPassedTest]!!
 
         minutesTillRevert.isEnabled = currentState.autoRevertEnabled
@@ -106,7 +103,6 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         showRemainingInToolbar.isEnabled = currentState.watchdogEnabled
         noCommitsAboveThreshold.isEnabled = currentState.watchdogEnabled
         notifyOnTcrRevert.isEnabled = currentState.tcrEnabled
-        openCommitDialogOnPassedTest.isEnabled = currentState.tcrEnabled
         tcrActionOnPassedTest.isEnabled = currentState.tcrEnabled
 
         isUpdatingUI = false
@@ -136,7 +132,6 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
             currentState.tcrEnabled = tcrEnabled.isSelected
             currentState.notifyOnTcrRevert = notifyOnTcrRevert.isSelected
-            currentState.openCommitDialogOnPassedTest = openCommitDialogOnPassedTest.isSelected
             currentState.tcrActionOnPassedTest = tcrActionByIndex[tcrActionOnPassedTest.selectedIndex]!!
 
         } catch (ignored: NumberFormatException) {

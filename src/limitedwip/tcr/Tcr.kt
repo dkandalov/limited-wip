@@ -1,6 +1,7 @@
 package limitedwip.tcr
 
 import limitedwip.common.settings.TcrAction
+import limitedwip.common.settings.TcrAction.*
 import limitedwip.tcr.components.Ide
 
 class Tcr(private val ide: Ide, private var settings: Settings) {
@@ -12,7 +13,7 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
         if (settings.disabled) return
         allowedToCommit = true
         testedModifications = modifications
-        if (settings.openCommitDialogOnPassedTest && modifications.value.isNotEmpty()) {
+        if (settings.actionOnPassedTest == OpenCommitDialog && modifications.value.isNotEmpty()) {
             ide.openCommitDialog()
         }
     }
@@ -48,7 +49,6 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
     data class Settings(
         val enabled: Boolean,
         val notifyOnRevert: Boolean,
-        val openCommitDialogOnPassedTest: Boolean,
         val actionOnPassedTest: TcrAction
     ) {
         val disabled = !enabled

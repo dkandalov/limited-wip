@@ -12,8 +12,8 @@ class LimitedWipTopHitProvider : OptionsTopHitProvider() {
 
     override fun getId() = pluginId
 
-    override fun getOptions(project: Project?): Collection<OptionDescription> {
-        return listOf(
+    override fun getOptions(project: Project?): Collection<OptionDescription> =
+        listOf(
             Option("Change size watchdog enabled", settings::watchdogEnabled),
             Option("Show remaining changes in toolbar", settings::showRemainingChangesInToolbar),
             Option("No commits above threshold", settings::noCommitsAboveThreshold),
@@ -21,10 +21,8 @@ class LimitedWipTopHitProvider : OptionsTopHitProvider() {
             Option("Auto-revert enabled", settings::autoRevertEnabled),
             Option("Show time till revert", settings::showTimerInToolbar),
 
-            Option("TCR mode enabled", settings::tcrEnabled),
-            Option("Open commit dialog on passed test", settings::openCommitDialogOnPassedTest)
+            Option("TCR mode enabled", settings::tcrEnabled)
         )
-    }
 
     private inner class Option(
         optionName: String,

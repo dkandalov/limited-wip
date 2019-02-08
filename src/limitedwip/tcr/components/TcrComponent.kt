@@ -42,7 +42,6 @@ class TcrComponent(project: Project): AbstractProjectComponent(project) {
         Settings(
             enabled = tcrEnabled,
             notifyOnRevert = notifyOnTcrRevert,
-            openCommitDialogOnPassedTest = openCommitDialogOnPassedTest,
             actionOnPassedTest = tcrActionOnPassedTest
         )
 }
