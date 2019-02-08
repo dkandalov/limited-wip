@@ -1,11 +1,10 @@
 package limitedwip.tcr
 
-import limitedwip.common.settings.TcrAction.OpenCommitDialog
+import limitedwip.common.settings.TcrAction.*
 import limitedwip.expect
 import limitedwip.shouldEqual
 import limitedwip.tcr.Tcr.ChangeListModifications
 import limitedwip.tcr.components.Ide
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
@@ -28,22 +27,28 @@ class TcrTests {
         tcr.isCommitAllowed(someModifications) shouldEqual true
     }
 
-    @Test fun `show commit dialog after successful test run`() {
-        tcr.onUnitTestSucceeded(someModifications)
-        ide.expect().openCommitDialog()
-    }
-
     @Test fun `don't show commit dialog if there are no modifications`() {
         val noModifications = ChangeListModifications(emptyMap())
         tcr.onUnitTestSucceeded(noModifications)
         ide.expect(never()).openCommitDialog()
     }
 
-    @Ignore // TODO write tests for other types of TCR actions
-    @Test fun `don't show commit dialog if it's disabled in settings`() {
-//        tcr.onSettingsUpdate(settings.copy(openCommitDialogOnPassedTest = false))
+    @Test fun `show commit dialog after successful test run`() {
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = OpenCommitDialog))
         tcr.onUnitTestSucceeded(someModifications)
-        ide.expect(never()).openCommitDialog()
+        ide.expect().openCommitDialog()
+    }
+
+    @Test fun `commit after successful test run`() {
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = Commit))
+        tcr.onUnitTestSucceeded(someModifications)
+        ide.expect().quickCommit()
+    }
+
+    @Test fun `commit and push after successful test run`() {
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = CommitAndPush))
+        tcr.onUnitTestSucceeded(someModifications)
+        ide.expect().quickCommitAndPush()
     }
 
     @Test fun `after commit need to run a unit test to be able to commit again`() {

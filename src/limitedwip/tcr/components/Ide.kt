@@ -30,6 +30,14 @@ class Ide(private val project: Project) {
         limitedwip.common.vcs.openCommitDialog(changesInLastCancelledCommit)
     }
 
+    fun quickCommit() {
+        TODO()
+    }
+
+    fun quickCommitAndPush() {
+        TODO()
+    }
+
     fun revertCurrentChangeList() {
         limitedwip.common.vcs.revertCurrentChangeList(project)
     }

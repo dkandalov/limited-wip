@@ -13,8 +13,12 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
         if (settings.disabled) return
         allowedToCommit = true
         testedModifications = modifications
-        if (settings.actionOnPassedTest == OpenCommitDialog && modifications.value.isNotEmpty()) {
-            ide.openCommitDialog()
+        if (modifications.value.isNotEmpty()) {
+            when (settings.actionOnPassedTest) {
+                OpenCommitDialog -> ide.openCommitDialog()
+                Commit           -> ide.quickCommit()
+                CommitAndPush    -> ide.quickCommitAndPush()
+            }
         }
     }
 
