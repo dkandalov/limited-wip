@@ -5,5 +5,7 @@ data class ChangeSize(val value: Int, val isApproximate: Boolean = false) {
 
     companion object {
         val NA = ChangeSize(-1)
+        val empty = ChangeSize(0)
+        val approximatelyEmpty = ChangeSize(0, isApproximate = true)
     }
 }

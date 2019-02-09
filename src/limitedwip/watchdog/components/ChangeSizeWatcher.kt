@@ -44,7 +44,7 @@ class ChangeSizeWatcher(private val project: Project) {
         val (newChangeSize, changesToDiff) = application.runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
             val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
 
-            var result = ChangeSize(0)
+            var result = ChangeSize.empty
             val changesToDiff = ArrayList<Change>()
             for (change in changes) {
                 val changeSize = changeSizeCache[change.document()]
@@ -115,20 +115,20 @@ fun calculateChangeSizeInLines(change: Change, comparisonManager: ComparisonMana
     try {
         doCalculateChangeSizeInLines(change, comparisonManager)
     } catch (ignored: VcsException) {
-        ChangeSize(0, isApproximate = true)
+        ChangeSize.approximatelyEmpty
     } catch (ignored: FilesTooBigForDiffException) {
-        ChangeSize(0, isApproximate = true)
+        ChangeSize.approximatelyEmpty
     }
 
 private fun doCalculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
     val beforeRevision = change.beforeRevision
     val afterRevision = change.afterRevision
     if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
-        return ChangeSize(0, isApproximate = true)
+        return ChangeSize.approximatelyEmpty
     }
 
     val revision = afterRevision ?: beforeRevision
-    if (revision == null || revision.file.fileType.isBinary) return ChangeSize(0)
+    if (revision == null || revision.file.fileType.isBinary) return ChangeSize.empty
 
     val contentBefore = if (beforeRevision != null) beforeRevision.content ?: "" else ""
     val contentAfter = if (afterRevision != null) afterRevision.content ?: "" else ""
