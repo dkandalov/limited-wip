@@ -21,13 +21,13 @@ import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
     private val changeSizeCache = ChangeSizeCache(project)
-    private var changeSize = ChangeSize(0, true)
+    private var changeSize = ChangeSize(0, isApproximate = true)
     @Volatile private var isRunningBackgroundDiff: Boolean = false
 
     private val comparisonManager = ComparisonManager.getInstance()
     private val application = ApplicationManager.getApplication()
 
-    fun getChangeListSizeInLines() = changeSize
+    val changeListSizeInLines get() = changeSize
 
     /**
      * Can't use com.intellij.openapi.vcs.impl.LineStatusTrackerManager here because it only tracks changes for open files.
@@ -36,16 +36,16 @@ class ChangeSizeWatcher(private val project: Project) {
         if (isRunningBackgroundDiff) return
 
         val (newChangeSize, changesToDiff) = application.runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
-            val changeList = ChangeListManager.getInstance(project).defaultChangeList
+            val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
 
-            val changesToDiff = ArrayList<Change>()
             var result = ChangeSize(0)
-            for (change in changeList.changes) {
+            val changesToDiff = ArrayList<Change>()
+            for (change in changes) {
                 val changeSize = changeSizeCache[change.document()]
                 if (changeSize == null) {
                     changesToDiff.add(change)
                 } else {
-                    result = result.plus(changeSize)
+                    result += changeSize
                 }
             }
             Pair(result, changesToDiff)
@@ -90,7 +90,7 @@ class ChangeSizeWatcher(private val project: Project) {
 
         operator fun set(document: Document, changeSize: ChangeSize) {
             changeSizeByDocument[document] = changeSize
-            document.addDocumentListener(object: DocumentListener {
+            document.addDocumentListener(object : DocumentListener {
                 override fun beforeDocumentChange(event: DocumentEvent) {}
                 override fun documentChanged(event: DocumentEvent) {
                     changeSizeByDocument.remove(document)
@@ -105,15 +105,14 @@ class ChangeSizeWatcher(private val project: Project) {
 }
 
 
-fun calculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
-    return try {
+fun calculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize =
+    try {
         doCalculateChangeSizeInLines(change, comparisonManager)
     } catch (ignored: VcsException) {
-        ChangeSize(0, true)
+        ChangeSize(0, isApproximate = true)
     } catch (ignored: FilesTooBigForDiffException) {
-        ChangeSize(0, true)
+        ChangeSize(0, isApproximate = true)
     }
-}
 
 private fun doCalculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
     val beforeRevision = change.beforeRevision

@@ -37,7 +37,7 @@ class Ide(
         })
     }
 
-    fun currentChangeListSizeInLines() = changeSizeWatcher.getChangeListSizeInLines()
+    fun currentChangeListSizeInLines() = changeSizeWatcher.changeListSizeInLines
 
     fun calculateCurrentChangeListSizeInLines() = changeSizeWatcher.calculateCurrentChangeListSizeInLines()
 
@@ -104,24 +104,21 @@ class Ide(
 
     private fun updateStatusBar() {
         val statusBar = WindowManager.getInstance().getStatusBar(project) ?: return
-
         val hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null
         val shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar
-        if (hasWatchdogWidget && shouldShowWatchdog) {
-            statusBar.updateWidget(watchdogWidget.ID())
-
-        } else if (hasWatchdogWidget && !shouldShowWatchdog) {
-            statusBar.removeWidget(watchdogWidget.ID())
-
-        } else if (!hasWatchdogWidget && shouldShowWatchdog) {
-            watchdogWidget.showInitialText(settings.maxLinesInChange)
-            statusBar.addWidget(watchdogWidget, "before Position")
-            statusBar.updateWidget(watchdogWidget.ID())
+        when {
+            hasWatchdogWidget && shouldShowWatchdog  -> statusBar.updateWidget(watchdogWidget.ID())
+            hasWatchdogWidget && !shouldShowWatchdog -> statusBar.removeWidget(watchdogWidget.ID())
+            !hasWatchdogWidget && shouldShowWatchdog -> {
+                watchdogWidget.showInitialText(settings.maxLinesInChange)
+                statusBar.addWidget(watchdogWidget, "before Position")
+                statusBar.updateWidget(watchdogWidget.ID())
+            }
         }
     }
 
     private fun ChangeSize.toPrintableString() =
-        if (isApproximate) "≈$value" else value.toString()
+        (if (isApproximate) "≈" else "") + value.toString()
 
     private fun <T> T?.ifNotNull(f: (T) -> Unit) {
         if (this != null) f(this)
