@@ -110,7 +110,6 @@ class Ide(
             hasWatchdogWidget && shouldShowWatchdog  -> statusBar.updateWidget(watchdogWidget.ID())
             hasWatchdogWidget && !shouldShowWatchdog -> statusBar.removeWidget(watchdogWidget.ID())
             !hasWatchdogWidget && shouldShowWatchdog -> {
-                watchdogWidget.showInitialText(settings.maxLinesInChange)
                 statusBar.addWidget(watchdogWidget, "before Position")
                 statusBar.updateWidget(watchdogWidget.ID())
             }
@@ -118,7 +117,8 @@ class Ide(
     }
 
     private fun ChangeSize.toPrintableString() =
-        (if (isApproximate) "≈" else "") + value.toString()
+        if (this == ChangeSize.NA) "-"
+        else (if (isApproximate) "≈" else "") + value.toString()
 
     private fun <T> T?.ifNotNull(f: (T) -> Unit) {
         if (this != null) f(this)

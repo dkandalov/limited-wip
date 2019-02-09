@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.ChangeListManager
@@ -21,11 +22,12 @@ import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
     private val changeSizeCache = ChangeSizeCache(project)
-    private var changeSize = ChangeSize(0, isApproximate = true)
+    private var changeSize = ChangeSize.NA
     @Volatile private var isRunningBackgroundDiff: Boolean = false
 
     private val comparisonManager = ComparisonManager.getInstance()
     private val application = ApplicationManager.getApplication()
+    private val projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project)
 
     val changeListSizeInLines get() = changeSize
 
@@ -34,6 +36,10 @@ class ChangeSizeWatcher(private val project: Project) {
      */
     fun calculateCurrentChangeListSizeInLines() {
         if (isRunningBackgroundDiff) return
+        if (!projectLevelVcsManager.hasActiveVcss()) {
+            changeSize = ChangeSize.NA
+            return
+        }
 
         val (newChangeSize, changesToDiff) = application.runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
             val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
@@ -118,7 +124,7 @@ private fun doCalculateChangeSizeInLines(change: Change, comparisonManager: Comp
     val beforeRevision = change.beforeRevision
     val afterRevision = change.afterRevision
     if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
-        return ChangeSize(0, true)
+        return ChangeSize(0, isApproximate = true)
     }
 
     val revision = afterRevision ?: beforeRevision
