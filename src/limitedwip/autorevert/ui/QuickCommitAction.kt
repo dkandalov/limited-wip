@@ -25,6 +25,8 @@ class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
     override fun actionPerformed(event: AnActionEvent) {
         val project = AnAction.getEventProject(event) ?: return
         if (anySystemCheckinHandlerCancelsCommit(project)) return
+        // Don't attempt to commit if there are no VCS registered because it will throw an exception.
+        if (!ProjectLevelVcsManager.getInstance(project).hasActiveVcss()) return
 
         val runnable = Runnable {
             RefreshAction.doRefresh(project)

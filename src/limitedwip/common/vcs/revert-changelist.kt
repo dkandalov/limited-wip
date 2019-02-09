@@ -4,6 +4,7 @@ import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker
@@ -12,6 +13,10 @@ import limitedwip.common.pluginId
 private val logger = Logger.getInstance(pluginId)
 
 fun revertCurrentChangeList(project: Project): Int {
+    // Don't revert when there are no VCS registered because.
+    // (Note that it is possible to do a revert after removing VCS from project settings until IDE restart.)
+    if (!ProjectLevelVcsManager.getInstance(project).hasActiveVcss()) return 0
+
     val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
     TransactionGuard.getInstance().submitTransactionLater(project, Runnable {
         doRevert(project, changes)

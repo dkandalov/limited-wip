@@ -5,9 +5,9 @@ import limitedwip.expect
 import limitedwip.shouldEqual
 import limitedwip.tcr.Tcr.ChangeListModifications
 import limitedwip.tcr.components.Ide
+import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
+import org.mockito.Mockito.*
 
 class TcrTests {
     private val ide = mock(Ide::class.java)
@@ -118,5 +118,9 @@ class TcrTests {
 
         tcr.onSettingsUpdate(settings.copy(enabled = true))
         tcr.isCommitAllowed(someModifications) shouldEqual false
+    }
+
+    @Before fun setUp() {
+        `when`(ide.revertCurrentChangeList()).thenReturn(10)
     }
 }

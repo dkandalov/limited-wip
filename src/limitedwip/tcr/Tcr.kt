@@ -24,8 +24,8 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
 
     fun onUnitTestFailed() {
         if (settings.disabled) return
-        ide.revertCurrentChangeList()
-        if (settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
+        val revertedFileCount = ide.revertCurrentChangeList()
+        if (revertedFileCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
         allowedToCommit = false
     }
 
