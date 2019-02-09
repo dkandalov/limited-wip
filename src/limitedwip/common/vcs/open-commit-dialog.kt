@@ -1,9 +1,14 @@
 package limitedwip.common.vcs
 
+import com.intellij.dvcs.DvcsUtil
+import com.intellij.dvcs.push.PushSpec
+import com.intellij.dvcs.repo.VcsRepositoryManager
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState.NON_MODAL
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
@@ -24,19 +29,29 @@ fun doQuickCommit() {
     }
 }
 
-fun doQuickCommitAndPush() {
+fun doQuickCommitAndPush(project: Project) {
     invokeLater {
         QuickCommitAction().actionPerformed(anActionEvent(emptyMap()))
         invokeLater {
-            // TODO
+            doPush(project)
         }
     }
 }
 
-private fun invokeLater(f: () -> Unit) {
-    ApplicationManager.getApplication().invokeLater({
-        f()
-    }, NON_MODAL)
+private fun doPush(project: Project) {
+    val allActiveVcss = ProjectLevelVcsManager.getInstance(project).allActiveVcss
+    allActiveVcss.forEach { vcs ->
+        val pushSupport = DvcsUtil.getPushSupport(vcs) ?: return
+        VcsRepositoryManager.getInstance(project).repositories.forEach { repository ->
+            val source = pushSupport.getSource(repository)
+            val target = pushSupport.getDefaultTarget(repository) ?: return
+            pushSupport.pusher.push(mapOf(repository to PushSpec(source, target)), null, true)
+        }
+    }
+}
+
+private fun invokeLater(callback: () -> Unit) {
+    ApplicationManager.getApplication().invokeLater(callback, NON_MODAL)
 }
 
 private fun anActionEvent(map: Map<String, Any>): AnActionEvent {

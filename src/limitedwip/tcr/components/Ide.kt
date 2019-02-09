@@ -35,7 +35,7 @@ class Ide(private val project: Project) {
     }
 
     fun quickCommitAndPush() {
-        limitedwip.common.vcs.doQuickCommitAndPush()
+        limitedwip.common.vcs.doQuickCommitAndPush(project)
     }
 
     fun revertCurrentChangeList() {
