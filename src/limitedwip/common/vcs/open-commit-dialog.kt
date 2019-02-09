@@ -3,33 +3,57 @@ package limitedwip.common.vcs
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ModalityState.NON_MODAL
 import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.IdeFocusManager
+import limitedwip.autorevert.ui.QuickCommitAction
 
 fun openCommitDialog(changes: List<Change>? = null) {
-    ApplicationManager.getApplication().invokeLater({
-        val actionEvent = anActionEvent(changes)
+    invokeLater {
+        val map = if (changes != null) mapOf(VcsDataKeys.CHANGES.name to changes.toTypedArray()) else emptyMap()
+        val actionEvent = anActionEvent(map)
         CommonCheckinProjectAction().actionPerformed(actionEvent)
-    }, ModalityState.NON_MODAL)
+    }
 }
 
-private fun anActionEvent(changes: List<Change>?): AnActionEvent {
-    val actionManager = ActionManager.getInstance()
+fun doQuickCommit() {
+    invokeLater {
+        QuickCommitAction().actionPerformed(anActionEvent(emptyMap()))
+    }
+}
 
+fun doQuickCommitAndPush() {
+    invokeLater {
+        QuickCommitAction().actionPerformed(anActionEvent(emptyMap()))
+        invokeLater {
+            // TODO
+        }
+    }
+}
+
+private fun invokeLater(f: () -> Unit) {
+    ApplicationManager.getApplication().invokeLater({
+        f()
+    }, NON_MODAL)
+}
+
+private fun anActionEvent(map: Map<String, Any>): AnActionEvent {
     val component = IdeFocusManager.findInstance().lastFocusedFrame!!.component
     val dataContext = DataManager.getInstance().getDataContext(component)
-    val map = if (changes != null) {
-        mapOf(VcsDataKeys.CHANGES.name to changes.toTypedArray())
-    } else {
-        emptyMap()
-    }
+    val context = MapDataContext(map, dataContext)
 
-    return AnActionEvent(null, MapDataContext(map, dataContext), ActionPlaces.UNKNOWN, Presentation(), actionManager, 0)
+    return AnActionEvent(
+        null,
+        context,
+        ActionPlaces.UNKNOWN,
+        Presentation(),
+        ActionManager.getInstance(),
+        0
+    )
 }
 
-private class MapDataContext(val map: Map<String, Any>, val delegate: DataContext): DataContext {
+private class MapDataContext(val map: Map<String, Any>, val delegate: DataContext) : DataContext {
     override fun getData(dataId: String) = delegate.getData(dataId) ?: map[dataId]
 }

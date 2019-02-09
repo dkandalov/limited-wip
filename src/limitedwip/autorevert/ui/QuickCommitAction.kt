@@ -50,10 +50,7 @@ class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
                 noopCommitHandler
             )
 
-            val committed = commitHelper.doCommit()
-            if (committed) {
-                VcsConfiguration.getInstance(project).saveCommitMessage(lastCommitMessage)
-            }
+            commitHelper.doCommit()
         }
 
         ChangeListManager.getInstance(project).invokeAfterUpdate(

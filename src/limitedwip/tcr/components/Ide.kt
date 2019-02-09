@@ -31,11 +31,11 @@ class Ide(private val project: Project) {
     }
 
     fun quickCommit() {
-        TODO()
+        limitedwip.common.vcs.doQuickCommit()
     }
 
     fun quickCommitAndPush() {
-        TODO()
+        limitedwip.common.vcs.doQuickCommitAndPush()
     }
 
     fun revertCurrentChangeList() {
