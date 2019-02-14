@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
-import limitedwip.common.settings.TcrAction.*
+import limitedwip.common.settings.TcrAction.OpenCommitDialog
 
 @State(
     name = "${pluginId}Settings",
@@ -21,6 +21,7 @@ data class LimitedWipSettings(
     var notificationIntervalInMinutes: Int = 1,
     var noCommitsAboveThreshold: Boolean = true,
     var showRemainingChangesInToolbar: Boolean = true,
+    var exclusions: String = "",
 
     var autoRevertEnabled: Boolean = false,
     var minutesTillRevert: Int = 2,
@@ -54,9 +55,13 @@ data class LimitedWipSettings(
     }
 
     companion object {
-        val minutesToRevertRange = Range(1, 99)
-        val changedLinesRange = Range(1, 999)
-        val notificationIntervalRange = Range(1, 99)
+        private val minutesTillRevertRange = Range(1, 99)
+        private val changedLinesRange = Range(1, 999)
+        private val notificationIntervalRange = Range(1, 99)
+
+        fun isValidMinutesTillRevert(minutes: Int) = minutesTillRevertRange.isWithin(minutes)
+        fun isValidChangedSizeRange(lineCount: Int) = changedLinesRange.isWithin(lineCount)
+        fun isValidNotificationInterval(interval: Int) = notificationIntervalRange.isWithin(interval)
 
         fun getInstance(): LimitedWipSettings = ServiceManager.getService(LimitedWipSettings::class.java)
     }
