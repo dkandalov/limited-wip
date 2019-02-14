@@ -83,6 +83,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         val maxLinesInChange: Int,
         val notificationIntervalInSeconds: Int,
         val showRemainingChangesInToolbar: Boolean,
-        val noCommitsAboveThreshold: Boolean
+        val noCommitsAboveThreshold: Boolean,
+        val exclusions: String
     )
 }

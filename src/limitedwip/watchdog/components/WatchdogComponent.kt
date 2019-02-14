@@ -54,6 +54,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
             maxLinesInChange,
             notificationIntervalInMinutes.toSeconds(),
             showRemainingChangesInToolbar,
-            noCommitsAboveThreshold
+            noCommitsAboveThreshold,
+            exclusions
         )
 }
