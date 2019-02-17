@@ -14,5 +14,6 @@ class WildcardPathTests {
     @Test fun `dir name`() {
         convertToRegexp("/some/path/*.approved").matches("/some/path/foo.approved") shouldEqual true
         convertToRegexp("/some/path/*.approved").matches("/some/other/path/foo.approved") shouldEqual false
+        convertToRegexp("/some/**/path/*.approved").matches("/some/other/path/foo.approved") shouldEqual true
     }
 }
