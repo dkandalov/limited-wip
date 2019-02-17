@@ -28,7 +28,7 @@ class WatchdogTests {
     private val watchdog = Watchdog(ide, settings)
 
     @Test fun `don't send notification when change size is below threshold`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(10))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(10))
 
         watchdog.onTimer(next())
 
@@ -36,7 +36,7 @@ class WatchdogTests {
     }
 
     @Test fun `send notification when change size is above threshold`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onTimer(next())
 
@@ -44,7 +44,7 @@ class WatchdogTests {
     }
 
     @Test fun `send change size notification only on one of several updates`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onTimer(next()) // send notification
         watchdog.onTimer(next())
@@ -55,7 +55,7 @@ class WatchdogTests {
     }
 
     @Test fun `send change size notification after settings change`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
         val inOrder = inOrder(ide)
 
         watchdog.onTimer(next())
@@ -69,7 +69,7 @@ class WatchdogTests {
     }
 
     @Test fun `don't send notification when disabled`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSettingsUpdate(disabledSettings)
         watchdog.onTimer(next())
@@ -80,7 +80,7 @@ class WatchdogTests {
     }
 
     @Test fun `skip notifications util next commit`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSkipNotificationsUntilCommit()
         watchdog.onTimer(next())
@@ -92,13 +92,13 @@ class WatchdogTests {
     }
 
     @Test fun `send change size update`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
         watchdog.onTimer(next())
         ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `still send change size update when notifications are skipped till next commit`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSkipNotificationsUntilCommit()
         watchdog.onTimer(next())
@@ -107,7 +107,7 @@ class WatchdogTests {
     }
 
     @Test fun `don't send change size update when disabled`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSettingsUpdate(disabledSettings)
         watchdog.onTimer(next())
@@ -117,9 +117,9 @@ class WatchdogTests {
     }
 
     @Test fun `close notification when change size is back within limit`() {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(200))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
         watchdog.onTimer(next())
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSize(0))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(0))
         watchdog.onTimer(next())
         watchdog.onTimer(next())
 
@@ -130,21 +130,24 @@ class WatchdogTests {
     @Test fun `don't allow commits above threshold`() {
         watchdog.onSettingsUpdate(settings.copy(noCommitsAboveThreshold = true))
 
-        watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual false
+        watchdog.isCommitAllowed(someChangesWithSize(200)) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
     }
 
     @Test fun `allow one commit above threshold when forced`() {
         watchdog.onSettingsUpdate(settings.copy(noCommitsAboveThreshold = true))
 
-        watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual false
+        watchdog.isCommitAllowed(someChangesWithSize(200)) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
 
         watchdog.onForceCommit()
-        watchdog.isCommitAllowed(ChangeSize(200)) shouldEqual true
+        watchdog.isCommitAllowed(someChangesWithSize(200)) shouldEqual true
     }
 
     private fun next(): Int = ++timer
+
+    private fun someChangesWithSize(size: Int) =
+        ChangeSizesWithPath(listOf(Pair("", ChangeSize(size))))
 
     private fun anySettings(): Watchdog.Settings {
         val type = Watchdog.Settings::class.java

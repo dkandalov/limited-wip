@@ -19,7 +19,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
 
         ide.calculateCurrentChangeListSizeInLines()
 
-        val changeSize = ide.currentChangeListSizeInLines()
+        val changeSize = ide.currentChangeListSizeInLines().totalChangeSize
         val exceededThreshold = changeSize.value > settings.maxLinesInChange
         val isTimeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings.notificationIntervalInSeconds
 
@@ -38,7 +38,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         ide.onSettingsUpdate(settings)
         lastNotificationTime = undefined
         if (this.settings.maxLinesInChange != settings.maxLinesInChange) {
-            ide.showCurrentChangeListSize(ide.currentChangeListSizeInLines(), settings.maxLinesInChange)
+            ide.showCurrentChangeListSize(ide.currentChangeListSizeInLines().totalChangeSize, settings.maxLinesInChange)
         }
         this.settings = settings
     }
@@ -51,9 +51,9 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         allowOneCommitWithoutChecks = false
     }
 
-    fun isCommitAllowed(changeSize: ChangeSize): Boolean {
+    fun isCommitAllowed(changeSizesWithPath: ChangeSizesWithPath): Boolean {
         if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold) return true
-        if (changeSize.value > settings.maxLinesInChange) {
+        if (changeSizesWithPath.totalChangeSize.value > settings.maxLinesInChange) {
             ide.notifyThatCommitWasCancelled()
             return false
         }

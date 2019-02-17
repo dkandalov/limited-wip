@@ -31,8 +31,7 @@ class ChangeSizeWatcher(private val project: Project) {
     private val application = ApplicationManager.getApplication()
     private val projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project)
 
-    val changeListSizeInLines get() = changeSize
-    val changeListSize get() = changeSizesWithPath
+    val changeListSizeInLines get() = changeSizesWithPath
 
     /**
      * Can't use com.intellij.openapi.vcs.impl.LineStatusTrackerManager here because it only tracks changes for open files.
