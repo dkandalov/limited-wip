@@ -1,11 +1,9 @@
 package limitedwip.watchdog
 
-import com.intellij.compiler.CompilerConfigurationImpl.isPatternNegated
 import com.intellij.compiler.MalformedPatternException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.testFramework.utils.inlays.InlayHintsChecker.Companion.pattern
 import org.apache.oro.text.regex.Perl5Compiler
 import org.jetbrains.annotations.NonNls
 
@@ -14,10 +12,10 @@ data class CompiledPattern(
     val dirRegex: Regex?
 ) {
     fun matches(filePath: String): Boolean {
-        val slash = filePath.lastIndexOf('/')
-        return if (slash >= 0) {
-            val dir = filePath.substring(0, slash + 1)
-            val fileName = filePath.substring(slash + 1)
+        val slashIndex = filePath.lastIndexOf('/')
+        return if (slashIndex >= 0) {
+            val dir = filePath.substring(0, slashIndex + 1)
+            val fileName = filePath.substring(slashIndex + 1)
             fileNameRegex.matches(fileName) && (dirRegex == null || dirRegex.matches(dir))
         } else {
             fileNameRegex.matches(filePath)
@@ -26,11 +24,7 @@ data class CompiledPattern(
 }
 
 fun convertToRegexp(wildcardPattern: String): CompiledPattern {
-    var pattern = wildcardPattern
-    if (isPatternNegated(pattern)) {
-        pattern = pattern.substring(1)
-    }
-    pattern = FileUtil.toSystemIndependentName(pattern)
+    var pattern = FileUtil.toSystemIndependentName(wildcardPattern)
 
     var dirPattern: String? = null
     val slash = pattern.lastIndexOf('/')
@@ -49,9 +43,9 @@ fun convertToRegexp(wildcardPattern: String): CompiledPattern {
 
 @Throws(MalformedPatternException::class)
 private fun compilePattern(@NonNls s: String): String {
-    try {
+    return try {
         val compiler = Perl5Compiler()
-        return if (SystemInfo.isFileSystemCaseSensitive) compiler.compile(s).pattern
+        if (SystemInfo.isFileSystemCaseSensitive) compiler.compile(s).pattern
         else compiler.compile(s, Perl5Compiler.CASE_INSENSITIVE_MASK).pattern
     } catch (ex: org.apache.oro.text.regex.MalformedPatternException) {
         throw MalformedPatternException(ex)
@@ -69,10 +63,6 @@ private fun normalizeWildcards(wildcardPattern: String): String {
     return pattern
 }
 
-private fun optimize(wildcardPattern: String): String {
-    return wildcardPattern.replace("(?:\\.\\*)+".toRegex(), ".*")
-}
-
 private fun optimizeDirPattern(dirPattern: String): String {
     var pattern = dirPattern
     if (!pattern.startsWith("/")) {
@@ -88,3 +78,5 @@ private fun optimizeDirPattern(dirPattern: String): String {
     pattern = optimize(pattern)
     return pattern
 }
+
+private fun optimize(wildcardPattern: String) = wildcardPattern.replace("(?:\\.\\*)+".toRegex(), ".*")
