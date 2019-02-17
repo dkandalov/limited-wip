@@ -75,7 +75,9 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     }
 
     private fun ChangeSizesWithPath.totalChangeSizeWithoutExclusions(): ChangeSize {
-        return ChangeSizesWithPath(value.filter { (path, _) -> path !in settings.exclusions }).totalChangeSize
+        return ChangeSizesWithPath(
+            value.filter { (path, _) -> settings.exclusions.none { it.matches(path) } }
+        ).totalChangeSize
     }
 
     private fun skipNotificationsUntilCommit(value: Boolean) {
@@ -89,6 +91,6 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         val notificationIntervalInSeconds: Int,
         val showRemainingChangesInToolbar: Boolean,
         val noCommitsAboveThreshold: Boolean,
-        val exclusions: Set<String>
+        val exclusions: Set<PathMatcher>
     )
 }

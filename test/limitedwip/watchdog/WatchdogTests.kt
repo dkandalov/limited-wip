@@ -19,7 +19,10 @@ class WatchdogTests {
         notificationIntervalInSeconds = 2,
         showRemainingChangesInToolbar = true,
         noCommitsAboveThreshold = false,
-        exclusions = setOf("some/excluded/path", "another/excluded/path")
+        exclusions = setOf(
+            PathMatcher.parse("some/excluded/path"),
+            PathMatcher.parse("another/excluded/path")
+        )
     )
     private val disabledSettings = settings.copy(enabled = false)
     private var timer: Int = 0
@@ -37,9 +40,9 @@ class WatchdogTests {
 
     @Test fun `don't send notification when change size has excluded paths which make it below threshold`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSizesWithPath(listOf(
-            Pair("some/path", ChangeSize(90)),
-            Pair("some/excluded/path", ChangeSize(200)),
-            Pair("another/excluded/path", ChangeSize(200))
+            Pair("/some/path", ChangeSize(90)),
+            Pair("/some/excluded/path", ChangeSize(200)),
+            Pair("/another/excluded/path", ChangeSize(200))
         )))
 
         watchdog.onTimer(next())

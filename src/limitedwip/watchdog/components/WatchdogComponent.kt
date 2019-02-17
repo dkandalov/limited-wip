@@ -11,6 +11,7 @@ import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
+import limitedwip.watchdog.PathMatcher
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
@@ -55,6 +56,6 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
             notificationIntervalInMinutes.toSeconds(),
             showRemainingChangesInToolbar,
             noCommitsAboveThreshold,
-            exclusions.split(';').toSet()
+            exclusions.split(';').mapTo(HashSet()) { PathMatcher.parse(it) }
         )
 }
