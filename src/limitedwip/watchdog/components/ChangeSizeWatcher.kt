@@ -56,7 +56,7 @@ class ChangeSizeWatcher(private val project: Project) {
                     changesToDiff.add(change)
                 } else {
                     result += changeSize
-                    result2 = result2.add(change.path, changeSize)
+                    result2 = result2.add(change.path.replace(project.basePath ?: "", ""), changeSize)
                 }
             }
             Triple(result, result2, changesToDiff)

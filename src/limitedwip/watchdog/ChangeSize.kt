@@ -13,9 +13,8 @@ data class ChangeSize(
     }
 }
 
-data class ChangeSizesWithPath(
-    val value: List<Pair<String, ChangeSize>>
-) {
+data class ChangeSizesWithPath(val value: List<Pair<String, ChangeSize>>) {
+
     val totalChangeSize = value.map { it.second }.fold(ChangeSize.empty) { acc, it -> acc + it }
 
     fun add(path: String, changeSize: ChangeSize) =
