@@ -10,11 +10,11 @@ import org.apache.oro.text.regex.Perl5Compiler
 import org.jetbrains.annotations.NonNls
 
 data class CompiledPattern(
-    val fileName: Pattern,
-    val dir: Pattern?
+    val fileNameRegex: Regex,
+    val dirRegex: Regex?
 ) {
     fun matches(filePath: String): Boolean {
-        return Regex(fileName.pattern).matches(filePath)
+        return fileNameRegex.matches(filePath)
     }
 }
 
@@ -37,14 +37,15 @@ fun convertToRegexp(wildcardPattern: String): CompiledPattern {
     pattern = optimize(pattern)
 
     val dirCompiled = if (dirPattern == null) null else compilePattern(dirPattern)
-    return CompiledPattern(compilePattern(pattern), dirCompiled)
+    return CompiledPattern(Regex(compilePattern(pattern)), if (dirCompiled == null) null else Regex(dirCompiled))
 }
 
 @Throws(MalformedPatternException::class)
-private fun compilePattern(@NonNls s: String): Pattern {
+private fun compilePattern(@NonNls s: String): String {
     try {
         val compiler = Perl5Compiler()
-        return if (SystemInfo.isFileSystemCaseSensitive) compiler.compile(s) else compiler.compile(s, Perl5Compiler.CASE_INSENSITIVE_MASK)
+        return if (SystemInfo.isFileSystemCaseSensitive) compiler.compile(s).pattern
+        else compiler.compile(s, Perl5Compiler.CASE_INSENSITIVE_MASK).pattern
     } catch (ex: org.apache.oro.text.regex.MalformedPatternException) {
         throw MalformedPatternException(ex)
     }
