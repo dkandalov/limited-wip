@@ -11,11 +11,10 @@ import org.jetbrains.annotations.NonNls
 
 data class CompiledPattern(
     val fileName: Pattern,
-    val dir: Pattern?,
-    val srcRoot: Pattern?
+    val dir: Pattern?
 ) {
-    fun matches(s: String): Boolean {
-        return Regex(fileName.pattern).matches(s)
+    fun matches(filePath: String): Boolean {
+        return Regex(fileName.pattern).matches(filePath)
     }
 }
 
@@ -25,13 +24,6 @@ fun convertToRegexp(wildcardPattern: String): CompiledPattern {
         pattern = pattern.substring(1)
     }
     pattern = FileUtil.toSystemIndependentName(pattern)
-
-    var srcRoot: String? = null
-    val colon = pattern.indexOf(":")
-    if (colon > 0) {
-        srcRoot = pattern.substring(0, colon)
-        pattern = pattern.substring(colon + 1)
-    }
 
     var dirPattern: String? = null
     val slash = pattern.lastIndexOf('/')
@@ -45,8 +37,7 @@ fun convertToRegexp(wildcardPattern: String): CompiledPattern {
     pattern = optimize(pattern)
 
     val dirCompiled = if (dirPattern == null) null else compilePattern(dirPattern)
-    val srcCompiled = if (srcRoot == null) null else compilePattern(optimize(normalizeWildcards(srcRoot)))
-    return CompiledPattern(compilePattern(pattern), dirCompiled, srcCompiled)
+    return CompiledPattern(compilePattern(pattern), dirCompiled)
 }
 
 @Throws(MalformedPatternException::class)
