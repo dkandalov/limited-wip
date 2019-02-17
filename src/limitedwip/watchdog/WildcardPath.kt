@@ -5,7 +5,7 @@ import com.intellij.compiler.MalformedPatternException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import org.apache.oro.text.regex.Pattern
+import com.intellij.testFramework.utils.inlays.InlayHintsChecker.Companion.pattern
 import org.apache.oro.text.regex.Perl5Compiler
 import org.jetbrains.annotations.NonNls
 
@@ -14,7 +14,13 @@ data class CompiledPattern(
     val dirRegex: Regex?
 ) {
     fun matches(filePath: String): Boolean {
-        return fileNameRegex.matches(filePath)
+        val slash = filePath.lastIndexOf('/')
+        return if (slash >= 0) {
+            val fileName = filePath.substring(slash + 1)
+            fileNameRegex.matches(fileName)
+        } else {
+            fileNameRegex.matches(filePath)
+        }
     }
 }
 
