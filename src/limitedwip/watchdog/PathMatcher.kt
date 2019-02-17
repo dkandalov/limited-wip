@@ -7,7 +7,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.apache.oro.text.regex.Perl5Compiler
 import org.jetbrains.annotations.NonNls
 
-data class CompiledPattern(
+data class PathMatcher(
     val fileNameRegex: Regex,
     val dirRegex: Regex?
 ) {
@@ -21,24 +21,26 @@ data class CompiledPattern(
             fileNameRegex.matches(filePath)
         }
     }
-}
 
-fun convertToRegexp(wildcardPattern: String): CompiledPattern {
-    var pattern = FileUtil.toSystemIndependentName(wildcardPattern)
+    companion object {
+        fun parse(wildcardPattern: String): PathMatcher {
+            var pattern = FileUtil.toSystemIndependentName(wildcardPattern)
 
-    var dirPattern: String? = null
-    val slash = pattern.lastIndexOf('/')
-    if (slash >= 0) {
-        dirPattern = pattern.substring(0, slash)
-        pattern = pattern.substring(slash + 1)
-        dirPattern = optimizeDirPattern(dirPattern)
+            var dirPattern: String? = null
+            val slash = pattern.lastIndexOf('/')
+            if (slash >= 0) {
+                dirPattern = pattern.substring(0, slash)
+                pattern = pattern.substring(slash + 1)
+                dirPattern = optimizeDirPattern(dirPattern)
+            }
+
+            pattern = normalizeWildcards(pattern)
+            pattern = optimize(pattern)
+
+            val dirCompiled = if (dirPattern == null) null else compilePattern(dirPattern)
+            return PathMatcher(Regex(compilePattern(pattern)), if (dirCompiled == null) null else Regex(dirCompiled))
+        }
     }
-
-    pattern = normalizeWildcards(pattern)
-    pattern = optimize(pattern)
-
-    val dirCompiled = if (dirPattern == null) null else compilePattern(dirPattern)
-    return CompiledPattern(Regex(compilePattern(pattern)), if (dirCompiled == null) null else Regex(dirCompiled))
 }
 
 @Throws(MalformedPatternException::class)
