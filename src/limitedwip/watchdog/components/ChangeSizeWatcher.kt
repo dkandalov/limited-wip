@@ -18,11 +18,13 @@ import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.FakeRevision
 import com.intellij.util.diff.FilesTooBigForDiffException
 import limitedwip.watchdog.ChangeSize
+import limitedwip.watchdog.ChangeSizeWithPath
 import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
     private val changeSizeCache = ChangeSizeCache(project)
     private var changeSize = ChangeSize.NA
+    private var changeSizesWithPath = emptyList<ChangeSizeWithPath>()
     @Volatile private var isRunningBackgroundDiff: Boolean = false
 
     private val comparisonManager = ComparisonManager.getInstance()
@@ -38,13 +40,15 @@ class ChangeSizeWatcher(private val project: Project) {
         if (isRunningBackgroundDiff) return
         if (!projectLevelVcsManager.hasActiveVcss()) {
             changeSize = ChangeSize.NA
+            changeSizesWithPath = emptyList()
             return
         }
 
-        val (newChangeSize, changesToDiff) = application.runReadAction(Computable<Pair<ChangeSize, List<Change>>> {
+        val (newChangeSize, newChangeSizesWithPath, changesToDiff) = application.runReadAction(Computable {
             val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
 
             var result = ChangeSize.empty
+            var result2 = emptyList<ChangeSizeWithPath>()
             val changesToDiff = ArrayList<Change>()
             for (change in changes) {
                 val changeSize = changeSizeCache[change.document()]
@@ -52,12 +56,14 @@ class ChangeSizeWatcher(private val project: Project) {
                     changesToDiff.add(change)
                 } else {
                     result += changeSize
+                    result2 = result2 + ChangeSizeWithPath(change.path, changeSize)
                 }
             }
-            Pair(result, changesToDiff)
+            Triple(result, result2, changesToDiff)
         })
         if (changesToDiff.isEmpty()) {
             changeSize = newChangeSize
+            changeSizesWithPath = newChangeSizesWithPath
             return
         }
 
@@ -71,8 +77,10 @@ class ChangeSizeWatcher(private val project: Project) {
 
             application.invokeLater {
                 changeSize = newChangeSize
-                for (it in changeSizeByChange.values) {
+                changeSizesWithPath = newChangeSizesWithPath
+                for ((change, it) in changeSizeByChange) {
                     changeSize += it
+                    changeSizesWithPath = changeSizesWithPath + ChangeSizeWithPath(change.path, it)
                 }
                 for ((change, changeSize) in changeSizeByChange) {
                     val document = change.document()
@@ -109,6 +117,9 @@ class ChangeSizeWatcher(private val project: Project) {
             if (document == null) null else changeSizeByDocument[document]
     }
 }
+
+private val Change.path: String
+    get() = beforeRevision?.file?.path ?: afterRevision?.file?.path ?: ""
 
 
 fun calculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize =

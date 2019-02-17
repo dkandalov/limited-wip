@@ -12,3 +12,8 @@ data class ChangeSize(
         val approximatelyEmpty = ChangeSize(0, isApproximate = true)
     }
 }
+
+data class ChangeSizeWithPath(
+    val path: String,
+    val changeSize: ChangeSize
+)
