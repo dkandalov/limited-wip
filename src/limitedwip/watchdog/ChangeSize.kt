@@ -13,7 +13,13 @@ data class ChangeSize(
     }
 }
 
-data class ChangeSizeWithPath(
-    val path: String,
-    val changeSize: ChangeSize
-)
+data class ChangeSizesWithPath(
+    val value: List<Pair<String, ChangeSize>>
+) {
+    fun add(path: String, changeSize: ChangeSize) =
+        ChangeSizesWithPath(value + Pair(path, changeSize))
+
+    companion object {
+        val empty = ChangeSizesWithPath(emptyList())
+    }
+}
