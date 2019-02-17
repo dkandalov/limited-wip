@@ -55,6 +55,6 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
             notificationIntervalInMinutes.toSeconds(),
             showRemainingChangesInToolbar,
             noCommitsAboveThreshold,
-            exclusions
+            exclusions.split(';').toSet()
         )
 }
