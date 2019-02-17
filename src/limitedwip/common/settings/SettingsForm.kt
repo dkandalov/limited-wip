@@ -3,7 +3,9 @@ package limitedwip.common.settings
 import com.google.common.collect.HashBiMap
 import com.intellij.ide.BrowserUtil
 import com.intellij.ui.IdeBorderFactory
+import com.intellij.ui.RawCommandLineEditor
 import com.intellij.ui.components.labels.LinkLabel
+import com.intellij.util.execution.ParametersListUtil
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidChangedSizeRange
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidMinutesTillRevert
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidNotificationInterval
@@ -12,7 +14,8 @@ import java.awt.event.ActionEvent
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
 import javax.swing.JPanel
-import javax.swing.JTextField
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 class SettingsForm(private val initialState: LimitedWipSettings) {
     lateinit var root: JPanel
@@ -23,7 +26,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var notificationInterval: JComboBox<*>
     private lateinit var showRemainingInToolbar: JCheckBox
     private lateinit var noCommitsAboveThreshold: JCheckBox
-    private lateinit var exclusions: JTextField
+    private lateinit var exclusions: RawCommandLineEditor
 
     private lateinit var autoRevertPanel: JPanel
     private lateinit var autoRevertEnabled: JCheckBox
@@ -50,22 +53,29 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         watchdogPanel.border = IdeBorderFactory.createTitledBorder("Change size watchdog")
         autoRevertPanel.border = IdeBorderFactory.createTitledBorder("Auto-revert")
         tcrPanel.border = IdeBorderFactory.createTitledBorder("TCR mode (test \\&\\& commit || revert)")
+        exclusions = RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER)
+        exclusions.dialogCaption = "Resource patterns"
 
         currentState.loadState(initialState)
         updateUIFromState()
 
-        @Suppress("RedundantLambdaArrow") // because IJ is wrong
-        val commonActionListener = { _: ActionEvent ->
+        fun doUpdate() {
             updateStateFromUI()
             updateUIFromState()
         }
+
+        val commonActionListener = { _: ActionEvent -> doUpdate() }
 
         watchdogEnabled.addActionListener(commonActionListener)
         maxLinesInChange.addActionListener(commonActionListener)
         notificationInterval.addActionListener(commonActionListener)
         showRemainingInToolbar.addActionListener(commonActionListener)
         noCommitsAboveThreshold.addActionListener(commonActionListener)
-        exclusions.addActionListener(commonActionListener)
+        exclusions.document.addDocumentListener(object : DocumentListener {
+            override fun changedUpdate(e: DocumentEvent?) = doUpdate()
+            override fun insertUpdate(e: DocumentEvent?) = doUpdate()
+            override fun removeUpdate(e: DocumentEvent?) = doUpdate()
+        })
 
         autoRevertEnabled.addActionListener(commonActionListener)
         minutesTillRevert.addActionListener(commonActionListener)
