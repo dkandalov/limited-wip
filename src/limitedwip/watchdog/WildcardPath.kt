@@ -13,7 +13,11 @@ data class CompiledPattern(
     val fileName: Pattern,
     val dir: Pattern?,
     val srcRoot: Pattern?
-)
+) {
+    fun matches(s: String): Boolean {
+        return Regex(fileName.pattern).matches(s)
+    }
+}
 
 fun convertToRegexp(wildcardPattern: String): CompiledPattern {
     var pattern = wildcardPattern
