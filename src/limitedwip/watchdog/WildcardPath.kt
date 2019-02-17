@@ -14,7 +14,7 @@ data class CompiledPattern(
     fun matches(filePath: String): Boolean {
         val slashIndex = filePath.lastIndexOf('/')
         return if (slashIndex >= 0) {
-            val dir = filePath.substring(0, slashIndex + 1)
+            val dir = filePath.substring(0, slashIndex)
             val fileName = filePath.substring(slashIndex + 1)
             fileNameRegex.matches(fileName) && (dirRegex == null || dirRegex.matches(dir))
         } else {
@@ -29,7 +29,7 @@ fun convertToRegexp(wildcardPattern: String): CompiledPattern {
     var dirPattern: String? = null
     val slash = pattern.lastIndexOf('/')
     if (slash >= 0) {
-        dirPattern = pattern.substring(0, slash + 1)
+        dirPattern = pattern.substring(0, slash)
         pattern = pattern.substring(slash + 1)
         dirPattern = optimizeDirPattern(dirPattern)
     }
