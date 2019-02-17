@@ -15,5 +15,7 @@ class WildcardPathTests {
         convertToRegexp("/some/path/*.approved").matches("/some/path/foo.approved") shouldEqual true
         convertToRegexp("/some/path/*.approved").matches("/some/other/path/foo.approved") shouldEqual false
         convertToRegexp("/some/**/path/*.approved").matches("/some/other/path/foo.approved") shouldEqual true
+        convertToRegexp("/some/**/path/*.approved").matches("/some/other/longer/path/foo.approved") shouldEqual true
+        convertToRegexp("/some/**/path/*.approved").matches("/a/different/path/foo.approved") shouldEqual false
     }
 }
