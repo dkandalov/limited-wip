@@ -16,8 +16,9 @@ data class CompiledPattern(
     fun matches(filePath: String): Boolean {
         val slash = filePath.lastIndexOf('/')
         return if (slash >= 0) {
+            val dir = filePath.substring(0, slash + 1)
             val fileName = filePath.substring(slash + 1)
-            fileNameRegex.matches(fileName)
+            fileNameRegex.matches(fileName) && (dirRegex == null || dirRegex.matches(dir))
         } else {
             fileNameRegex.matches(filePath)
         }
