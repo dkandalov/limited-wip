@@ -20,7 +20,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
 
         ide.calculateCurrentChangeListSizeInLines()
 
-        val changeSize = ide.currentChangeListSizeInLines().totalChangeSizeWithoutExclusions()
+        val changeSize = ide.currentChangeListSizeInLines().applyExclusions()
         val exceededThreshold = changeSize.value > settings.maxLinesInChange
         val isTimeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings.notificationIntervalInSeconds
 
@@ -39,7 +39,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         ide.onSettingsUpdate(settings)
         lastNotificationTime = undefined
         if (this.settings.maxLinesInChange != settings.maxLinesInChange) {
-            ide.showCurrentChangeListSize(ide.currentChangeListSizeInLines().totalChangeSizeWithoutExclusions(), settings.maxLinesInChange)
+            ide.showCurrentChangeListSize(ide.currentChangeListSizeInLines().applyExclusions(), settings.maxLinesInChange)
         }
         this.settings = settings
     }
@@ -54,7 +54,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
 
     fun isCommitAllowed(changeSizesWithPath: ChangeSizesWithPath): Boolean {
         if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold) return true
-        if (changeSizesWithPath.totalChangeSizeWithoutExclusions().value > settings.maxLinesInChange) {
+        if (changeSizesWithPath.applyExclusions().value > settings.maxLinesInChange) {
             ide.notifyThatCommitWasCancelled()
             return false
         }
@@ -74,7 +74,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         ide.openCommitDialog()
     }
 
-    private fun ChangeSizesWithPath.totalChangeSizeWithoutExclusions(): ChangeSize {
+    private fun ChangeSizesWithPath.applyExclusions(): ChangeSize {
         return ChangeSizesWithPath(
             value.filter { (path, _) -> settings.exclusions.none { it.matches(path) } }
         ).totalChangeSize
