@@ -2,6 +2,8 @@ package limitedwip.common.settings
 
 import com.google.common.collect.HashBiMap
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.util.Ref
+import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.RawCommandLineEditor
 import com.intellij.ui.components.labels.LinkLabel
@@ -15,7 +17,6 @@ import javax.swing.JCheckBox
 import javax.swing.JComboBox
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
 
 class SettingsForm(private val initialState: LimitedWipSettings) {
     lateinit var root: JPanel
@@ -41,7 +42,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var tcrActionOnPassedTest: JComboBox<*>
 
     private val currentState = LimitedWipSettings()
-    private var isUpdatingUI: Boolean = false
+    private var isUpdating = Ref(false)
 
     private val tcrActionByIndex = HashBiMap.create<Int, TcrAction>().also {
         it[0] = OpenCommitDialog
@@ -49,32 +50,30 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         it[2] = CommitAndPush
     }
 
+    private fun createUIComponents() {
+        exclusions = RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER)
+        exclusions.dialogCaption = "Resource patterns"
+    }
+
     init {
         watchdogPanel.border = IdeBorderFactory.createTitledBorder("Change size watchdog")
         autoRevertPanel.border = IdeBorderFactory.createTitledBorder("Auto-revert")
         tcrPanel.border = IdeBorderFactory.createTitledBorder("TCR mode (test \\&\\& commit || revert)")
-        exclusions = RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER)
-        exclusions.dialogCaption = "Resource patterns"
 
         currentState.loadState(initialState)
         updateUIFromState()
 
-        fun doUpdate() {
-            updateStateFromUI()
-            updateUIFromState()
-        }
-
-        val commonActionListener = { _: ActionEvent -> doUpdate() }
+        val commonActionListener = { _: ActionEvent -> fullUpdate() }
 
         watchdogEnabled.addActionListener(commonActionListener)
         maxLinesInChange.addActionListener(commonActionListener)
         notificationInterval.addActionListener(commonActionListener)
         showRemainingInToolbar.addActionListener(commonActionListener)
         noCommitsAboveThreshold.addActionListener(commonActionListener)
-        exclusions.document.addDocumentListener(object : DocumentListener {
-            override fun changedUpdate(e: DocumentEvent?) = doUpdate()
-            override fun insertUpdate(e: DocumentEvent?) = doUpdate()
-            override fun removeUpdate(e: DocumentEvent?) = doUpdate()
+        exclusions.textField.document.addDocumentListener(object : DocumentAdapter() {
+            override fun textChanged(e: DocumentEvent?) = noReentryWhen(isUpdating) {
+                updateStateFromUI()
+            }
         })
 
         autoRevertEnabled.addActionListener(commonActionListener)
@@ -92,10 +91,12 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         )
     }
 
-    fun updateUIFromState() {
-        if (isUpdatingUI) return
-        isUpdatingUI = true
+    private fun fullUpdate() = noReentryWhen(isUpdating) {
+        updateStateFromUI()
+        updateUIFromState()
+    }
 
+    private fun updateUIFromState() {
         watchdogEnabled.isSelected = currentState.watchdogEnabled
         maxLinesInChange.selectedItem = currentState.maxLinesInChange.toString()
         notificationInterval.selectedItem = currentState.notificationIntervalInMinutes.toString()
@@ -128,8 +129,6 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             notifyOnTcrRevert.isEnabled = it
             tcrActionOnPassedTest.isEnabled = it
         }
-
-        isUpdatingUI = false
     }
 
     private fun updateStateFromUI() {
@@ -169,7 +168,20 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         return initialState
     }
 
-    fun resetChanges() = currentState.loadState(initialState)
+    fun resetChanges() {
+        currentState.loadState(initialState)
+        noReentryWhen(isUpdating) {
+            updateUIFromState()
+        }
+    }
 
     fun isModified() = currentState != initialState
+
+    private inline fun noReentryWhen(ref: Ref<Boolean>, f: () -> Unit) {
+        if (!ref.get()) {
+            ref.set(true)
+            f()
+            ref.set(false)
+        }
+    }
 }

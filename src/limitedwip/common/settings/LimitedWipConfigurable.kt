@@ -19,7 +19,6 @@ class LimitedWipConfigurable : SearchableConfigurable {
 
     override fun reset() {
         settingsForm.resetChanges()
-        settingsForm.updateUIFromState()
     }
 
     override fun isModified() = settingsForm.isModified()
