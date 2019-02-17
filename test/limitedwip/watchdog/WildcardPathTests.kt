@@ -5,15 +5,14 @@ import org.junit.Test
 
 class WildcardPathTests {
     @Test fun `file name`() {
-        val pattern = convertToRegexp("*.approved")
-        pattern.matches("foo.approved") shouldEqual true
-        pattern.matches("bar.approved") shouldEqual true
-        pattern.matches("/some/path/bar.approved") shouldEqual true
-        pattern.matches("foo.kt") shouldEqual false
+        convertToRegexp("*.approved").matches("foo.approved") shouldEqual true
+        convertToRegexp("*.approved").matches("bar.approved") shouldEqual true
+        convertToRegexp("*.approved").matches("/some/path/bar.approved") shouldEqual true
+        convertToRegexp("*.approved").matches("foo.kt") shouldEqual false
     }
 
     @Test fun `dir name`() {
-        val pattern = convertToRegexp("/some/path/*.approved")
-        pattern.matches("/some/path/bar.approved") shouldEqual true
+        convertToRegexp("/some/path/*.approved").matches("/some/path/foo.approved") shouldEqual true
+        convertToRegexp("/some/path/*.approved").matches("/some/other/path/foo.approved") shouldEqual false
     }
 }
