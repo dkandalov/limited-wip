@@ -6,6 +6,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     companion object {
         private const val undefined = -1
     }
+
     private var lastNotificationTime = undefined
     private var skipNotificationsUtilCommit = false
     private var allowOneCommitWithoutChecks = false
@@ -74,7 +75,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     }
 
     private fun ChangeSizesWithPath.totalChangeSizeWithoutExclusions(): ChangeSize {
-        return totalChangeSize
+        return ChangeSizesWithPath(value.filter { (path, _) -> path != settings.exclusions }).totalChangeSize
     }
 
     private fun skipNotificationsUntilCommit(value: Boolean) {
