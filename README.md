@@ -30,9 +30,12 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
  - enable/disable statusbar widget showing current change size and change size threshold, 
    e.g. `Change size: 50/80` means that change size is 50 and threshold is 80.
    You can click on the widget to suppress notifications until next commit.
- - if commits are allowed after change size exceeded threshold.
+ - enable/disable commits after change size exceeded threshold.
    If enabled and change size is above threshold, you will not be able to open commit dialog 
    and will see notification popup instead (although you can still force commit by clicking on the link in the popup).
+ - choose excluded files which will not be monitored by the watchdog.
+   Use `;` to separate patterns. Accepted wildcards: `?` - exactly one symbol;
+   `*` - zero or more symbols; `/` - path separator; `/**/` - any number of directories. 
 
 
 ## Auto-revert
@@ -55,15 +58,19 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
 
 
 ## TCR mode (test && commit || revert)
-You're not allowed to commit without running a test.
-If the test fails, changes are reverted. If the test passed, you should commit.
+ - You're not allowed to commit without running a test.
+ - If the test fails, current change list is reverted. 
+ - If the test passed, changes are committed.
 This is the most recent constraint so there isn't a lot of experience using it.
 However, it's much more useful and enjoyable than it might seem initially.
 
 You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
- - enable/disable component (it is disabled by default)
- - enable/disable notification on auto-revert (to make it clear why current changes disappeared)
- - enable/disable opening commit dialog on passed test 
+ - enable/disable component (disabled by default)
+ - enable/disable notification on revert (to make it clear why current changes disappeared)
+ - choose action on passed test, it can be
+    - open commit dialog
+    - commit (using last commit message)
+    - commit and push (if "push" is supported by VCS)
 
 I heard about the idea from [Kent Beck](https://twitter.com/KentBeck) mentioning Limbo and his
 ["test && commit || revert" blog post](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864) in particular.
