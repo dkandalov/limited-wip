@@ -75,6 +75,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
                 updateStateFromUI()
             }
         })
+        // It would be great to have exclusions label with html like in com.intellij.compiler.options.CompilerUIConfigurable.CompilerUIConfigurable
+        // but I failed to make it properly wrap its text without expanding horizontally to full width of the settings window.
 
         autoRevertEnabled.addActionListener(commonActionListener)
         minutesTillRevert.addActionListener(commonActionListener)

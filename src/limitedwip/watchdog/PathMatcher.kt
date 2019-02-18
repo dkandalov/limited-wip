@@ -23,6 +23,9 @@ data class PathMatcher(
     }
 
     companion object {
+        // Based on org.jetbrains.jps.model.java.impl.compiler.ResourcePatterns.convertToRegexp.
+        // Could use `FileSystems.getDefault().getPathMatcher()` with glob but it'll be OS specific
+        // and has more complicated rules than the ones below.
         fun parse(wildcardPattern: String): PathMatcher {
             var pattern = FileUtil.toSystemIndependentName(wildcardPattern)
 
