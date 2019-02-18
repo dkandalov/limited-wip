@@ -71,7 +71,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         showRemainingInToolbar.addActionListener(commonActionListener)
         noCommitsAboveThreshold.addActionListener(commonActionListener)
         exclusions.textField.document.addDocumentListener(object : DocumentAdapter() {
-            override fun textChanged(e: DocumentEvent?) = noReentryWhen(isUpdating) {
+            override fun textChanged(e: DocumentEvent) = noReentryWhen(isUpdating) {
                 updateStateFromUI()
             }
         })
