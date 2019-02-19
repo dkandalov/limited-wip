@@ -18,7 +18,8 @@
         <ul>
             <li><b>Change size watchdog</b>: show notifications when current changelist size exceeds threshold</li>
             <li><b>Auto-revert</b>: automatically revert current changelist after a timeout (the timer resets on each commit)</li>
-            <li><b>Test-commit-revert mode</b>: revert current changelist on failed test; open commit dialog on passed test</li>
+            <li><b>TCR mode (test && commit || revert)</b>: only commit after running a test;
+                   if the test fails, revert current changelist; if the test passes, do auto-commit</li>
         </ul>
         <br/>
         Why?

@@ -79,7 +79,7 @@ private fun registerRollbackListener(project: Project, onRollback: (allChangesRo
 
             // Note that checking changelist size immediately after rollback action will show changes as they were before the rollback
             // (even if the check is scheduled to be run later on EDT).
-            // The following seems the only reliable way to do it.
+            // The following seems to be the only reliable way to do it.
             val afterUpdate = {
                 val changes = changeListManager.defaultChangeList.changes
                 onRollback(changes.isEmpty())
