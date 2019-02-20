@@ -299,7 +299,7 @@
                   <anchor value=""/>
                   <componentStyle value="SMALL"/>
                   <fontColor value="BRIGHTER"/>
-                  <text value="e.g.: *.approval;**/docs/*.txt"/>
+                  <text value="e.g.: *.approved;**/docs/*.txt"/>
                 </properties>
               </component>
             </children>
