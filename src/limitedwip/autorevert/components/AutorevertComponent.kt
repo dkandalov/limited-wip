@@ -31,8 +31,15 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
             }
         }, myProject)
 
+        val rollbackListener = RollbackListener(myProject) { allChangesRolledBack ->
+            if (allChangesRolledBack) autoRevert.onAllChangesRolledBack()
+        }
+
         LimitedWipSettings.getInstance().addListener(myProject, object : LimitedWipSettings.Listener {
-            override fun onUpdate(settings: LimitedWipSettings) = autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
+            override fun onUpdate(settings: LimitedWipSettings) {
+                autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
+                if (settings.autoRevertEnabled) rollbackListener.enable() else rollbackListener.disable()
+            }
         })
 
         SuccessfulCheckin.registerListener(myProject, object : SuccessfulCheckin.Listener {
@@ -40,10 +47,6 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
                 if (allChangesAreCommitted) autoRevert.onAllChangesCommitted()
             }
         })
-
-        RollbackListener(myProject) { allChangesRolledBack ->
-            if (allChangesRolledBack) autoRevert.onAllChangesRolledBack()
-        }.init()
     }
 
     fun startAutoRevert() {

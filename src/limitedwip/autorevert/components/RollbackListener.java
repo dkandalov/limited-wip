@@ -23,33 +23,42 @@ import java.util.function.Function;
 public class RollbackListener {
     private final Project project;
     private final Function<Boolean, Unit> onRollback;
+    private AnActionListener actionListener;
 
     public RollbackListener(Project project, Function<Boolean, Unit> onRollback) {
         this.project = project;
         this.onRollback = onRollback;
     }
 
-    public void init() {
+    public void enable() {
+        if (actionListener != null) return;
+
         ChangeListManager changeListManager = ChangeListManager.getInstance(project);
-        ActionManager.getInstance().addAnActionListener(
-                new AnActionListener() {
-                    @Override public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-                    }
+        actionListener = new AnActionListener() {
+            @Override public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+            }
 
-                    @Override public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-                        if (event == null) return;
-                        if (!action.getClass().getSimpleName().equals("RollbackAction")) return;
+            @Override public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+                if (event == null) return;
+                if (!action.getClass().getSimpleName().equals("RollbackAction")) return;
 
-                        // Note that checking changelist size immediately after rollback action will show changes as they were before the rollback
-                        // (even if the check is scheduled to be run later on EDT).
-                        // The following seems to be the only reliable way to do it.
-                        Runnable afterUpdate = () -> {
-                            Collection<Change> changes = changeListManager.getDefaultChangeList().getChanges();
-                            onRollback.apply(changes.isEmpty());
-                        };
-                        changeListManager.invokeAfterUpdate(afterUpdate, InvokeAfterUpdateMode.SILENT_CALLBACK_POOLED, null, ModalityState.any());
-                    }
-                }
-        );
+                // Note that checking changelist size immediately after rollback action will show changes as they were before the rollback
+                // (even if the check is scheduled to be run later on EDT).
+                // The following seems to be the only reliable way to do it.
+                Runnable afterUpdate = () -> {
+                    Collection<Change> changes = changeListManager.getDefaultChangeList().getChanges();
+                    onRollback.apply(changes.isEmpty());
+                };
+                changeListManager.invokeAfterUpdate(afterUpdate, InvokeAfterUpdateMode.SILENT_CALLBACK_POOLED, null, ModalityState.any());
+            }
+        };
+        ActionManager.getInstance().addAnActionListener(actionListener, project);
+    }
+
+    public void disable() {
+        if (actionListener == null) return;
+
+        ActionManager.getInstance().removeAnActionListener(actionListener);
+        actionListener = null;
     }
 }
