@@ -33,12 +33,7 @@ class Ide(
     }
 
     fun showInUIThatAutoRevertStopped(timeEventsTillRevert: Int) {
-        if (settings.showTimerInToolbar) {
-            autoRevertWidget.showTime(formatTime(timeEventsTillRevert))
-        } else {
-            autoRevertWidget.showStartedText()
-        }
-        updateStatusBar()
+        showInUITimeTillRevert(timeEventsTillRevert)
     }
 
     fun showInUIThatAutoRevertStopped() {
