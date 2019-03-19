@@ -1,16 +1,3 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package limitedwip.autorevert
 
 import limitedwip.autorevert.AutoRevert.Settings
@@ -32,7 +19,7 @@ class AutoRevertTests {
 
     @Test fun `send UI startup notification`() {
         autoRevert.start()
-        ide.expect().showInUIThatAutoRevertStopped(eq(secondsTillRevert))
+        ide.expect().showInUITimeTillRevert(eq(secondsTillRevert))
     }
 
     @Test fun `send UI notification on timer only when started`() {
@@ -40,7 +27,7 @@ class AutoRevertTests {
         ide.expect(inOrder, times(0)).showInUITimeTillRevert(anyInt())
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).showInUITimeTillRevert(anyInt())
+        ide.expect(inOrder, times(2)).showInUITimeTillRevert(anyInt())
     }
 
     @Test fun `revert changes after each timeout`() {
@@ -81,7 +68,7 @@ class AutoRevertTests {
     @Test fun `don't start timer when timeout with commit dialog open`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+        ide.expect(inOrder, times(2)).showInUITimeTillRevert(eq(2))
 
         `when`(ide.isCommitDialogOpen()).thenReturn(true)
         autoRevert.onTimer(next())
@@ -105,7 +92,6 @@ class AutoRevertTests {
         autoRevert.stop()
         autoRevert.onTimer(next())
 
-        ide.expect().showInUIThatAutoRevertStopped(anyInt())
         ide.expect().showInUIThatAutoRevertStopped()
         ide.expect(never()).revertCurrentChangeList()
     }
@@ -113,12 +99,12 @@ class AutoRevertTests {
     @Test fun `reset timer when stopped`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+        ide.expect(inOrder, times(2)).showInUITimeTillRevert(eq(2))
         autoRevert.stop()
 
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+        ide.expect(inOrder, times(2)).showInUITimeTillRevert(eq(2))
         autoRevert.onTimer(next())
         ide.expect(inOrder).showInUITimeTillRevert(eq(1))
     }
@@ -126,7 +112,7 @@ class AutoRevertTests {
     @Test fun `reset timer when committed`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        ide.expect(inOrder).showInUITimeTillRevert(eq(2))
+        ide.expect(inOrder, times(2)).showInUITimeTillRevert(eq(2))
 
         autoRevert.onAllChangesCommitted()
         ide.expect(inOrder).showInUITimeTillRevert(eq(2))
@@ -142,7 +128,7 @@ class AutoRevertTests {
 
         autoRevert.start()
         autoRevert.onAllChangesCommitted()
-        ide.expect(inOrder).showInUITimeTillRevert(anyInt())
+        ide.expect(inOrder, times(2)).showInUITimeTillRevert(anyInt())
     }
 
     @Test fun `use updated revert timeout after start`() {

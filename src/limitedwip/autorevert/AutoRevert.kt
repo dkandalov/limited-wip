@@ -24,7 +24,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         startSeconds = undefined
         applyNewSettings()
 
-        ide.showInUIThatAutoRevertStopped(remainingSeconds)
+        ide.showInUITimeTillRevert(remainingSeconds)
     }
 
     fun stop() {

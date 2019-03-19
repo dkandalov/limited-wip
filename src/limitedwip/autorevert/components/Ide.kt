@@ -32,10 +32,6 @@ class Ide(
         return limitedwip.common.vcs.revertCurrentChangeList(project)
     }
 
-    fun showInUIThatAutoRevertStopped(timeEventsTillRevert: Int) {
-        showInUITimeTillRevert(timeEventsTillRevert)
-    }
-
     fun showInUIThatAutoRevertStopped() {
         autoRevertWidget.showStoppedText()
         updateStatusBar()
