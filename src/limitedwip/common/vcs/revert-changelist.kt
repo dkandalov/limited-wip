@@ -13,7 +13,7 @@ import limitedwip.common.pluginId
 private val logger = Logger.getInstance(pluginId)
 
 fun revertCurrentChangeList(project: Project): Int {
-    // Don't revert when there are no VCS registered because.
+    // Don't revert when there are no VCS registered.
     // (Note that it is possible to do a revert after removing VCS from project settings until IDE restart.)
     if (!ProjectLevelVcsManager.getInstance(project).hasActiveVcss()) return 0
 

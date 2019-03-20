@@ -71,7 +71,7 @@ class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
         }
 
         /**
-         * Couldn't find better way to "reuse" this code but to copy-paste it from
+         * Couldn't find a better way to "reuse" this code but to copy-paste it from
          * [com.intellij.openapi.vcs.changes.ui.CommitChangeListDialog].
          */
         private fun anySystemCheckinHandlerCancelsCommit(project: Project): Boolean {

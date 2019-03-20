@@ -11,8 +11,7 @@ class StartOrStopAutoRevertAction : AnAction(AllIcons.Actions.Rollback) {
     private val stopText = "Stop auto-revert"
 
     override fun actionPerformed(event: AnActionEvent) {
-        val project = event.project ?: return
-        val autoRevertComponent = project.getComponent(AutoRevertComponent::class.java) ?: return
+        val autoRevertComponent = event.project?.getComponent(AutoRevertComponent::class.java) ?: return
 
         if (autoRevertComponent.isAutoRevertStarted) {
             autoRevertComponent.stopAutoRevert()
@@ -29,9 +28,7 @@ class StartOrStopAutoRevertAction : AnAction(AllIcons.Actions.Rollback) {
     }
 
     private fun actionTextFor(project: Project?): String {
-        if (project == null) return startText
-        val autoRevertComponent = project.getComponent(AutoRevertComponent::class.java) ?: return startText
-
+        val autoRevertComponent = project?.getComponent(AutoRevertComponent::class.java) ?: return startText
         return if (autoRevertComponent.isAutoRevertStarted) stopText else startText
     }
 }
