@@ -7,6 +7,7 @@ import limitedwip.expectNoMoreInteractions
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
+import org.mockito.Mockito.`when` as whenCalled
 
 class AutoRevertTests {
     private val secondsTillRevert = 2
@@ -20,20 +21,21 @@ class AutoRevertTests {
     private val autoRevert = AutoRevert(ide, settings)
     private var seconds: Int = 0
 
-    @Test fun `send UI startup notification`() {
+    @Test fun `show time till revert when started`() {
         autoRevert.start()
         ide.expect().showTimeTillRevert(eq(secondsTillRevert))
     }
 
-    @Test fun `send UI notification on timer only when started`() {
+    @Test fun `don't show time till revert before start`() {
         autoRevert.onTimer(next())
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
+
         autoRevert.start()
         autoRevert.onTimer(next())
         ide.expect(inOrder, times(2)).showTimeTillRevert(anyInt())
     }
 
-    @Test fun `revert changes after each timeout`() {
+    @Test fun `revert changes after timeout`() {
         autoRevert.start()
 
         autoRevert.onTimer(next())
@@ -50,8 +52,10 @@ class AutoRevertTests {
     @Test fun `don't revert changes while commit dialog is open`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        `when`(ide.isCommitDialogOpen()).thenReturn(true)
+        whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
         autoRevert.onTimer(next())
+        autoRevert.onTimer(next())
+
         ide.expect(never()).revertCurrentChangeList()
         ide.expect(never()).notifyThatChangesWereReverted()
     }
@@ -59,29 +63,29 @@ class AutoRevertTests {
     @Test fun `revert changes after commit dialog is closed`() {
         autoRevert.start()
         autoRevert.onTimer(next())
-        `when`(ide.isCommitDialogOpen()).thenReturn(true)
+        whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
         autoRevert.onTimer(next())
 
-        `when`(ide.isCommitDialogOpen()).thenReturn(false)
+        whenCalled(ide.isCommitDialogOpen()).thenReturn(false)
         autoRevert.onTimer(next())
         ide.expect().revertCurrentChangeList()
         ide.expect().notifyThatChangesWereReverted()
     }
 
-    @Test fun `don't start timer when timeout with commit dialog open`() {
+    @Test fun `don't start timer after timeout with commit dialog open`() {
         autoRevert.start()
         autoRevert.onTimer(next())
         ide.expect(inOrder, times(2)).showTimeTillRevert(eq(2))
 
-        `when`(ide.isCommitDialogOpen()).thenReturn(true)
+        whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
         autoRevert.onTimer(next())
         ide.expect(inOrder).showTimeTillRevert(eq(1))
         autoRevert.onTimer(next())
         ide.expect(inOrder).showTimeTillRevert(eq(2))
         autoRevert.onTimer(next())
-        ide.expect(inOrder).showTimeTillRevert(eq(2))
+        ide.expect(inOrder).showTimeTillRevert(eq(2)) // timer is still 2
 
-        `when`(ide.isCommitDialogOpen()).thenReturn(false)
+        whenCalled(ide.isCommitDialogOpen()).thenReturn(false)
         autoRevert.onTimer(next())
         autoRevert.onTimer(next())
         ide.expect(inOrder).showTimeTillRevert(eq(2))
@@ -91,8 +95,8 @@ class AutoRevertTests {
 
     @Test fun `don't revert changes when stopped`() {
         autoRevert.start()
-        autoRevert.onTimer(next())
         autoRevert.stop()
+        autoRevert.onTimer(next())
         autoRevert.onTimer(next())
 
         ide.expect().showThatAutoRevertStopped()
@@ -112,7 +116,7 @@ class AutoRevertTests {
         ide.expect(inOrder).showTimeTillRevert(eq(1))
     }
 
-    @Test fun `reset timer when committed`() {
+    @Test fun `reset timer on commit`() {
         autoRevert.start()
         autoRevert.onTimer(next())
         ide.expect(inOrder, times(2)).showTimeTillRevert(eq(2))
@@ -125,7 +129,7 @@ class AutoRevertTests {
         ide.expect(inOrder).showTimeTillRevert(eq(1))
     }
 
-    @Test fun `send UI notification on commit only when started`() {
+    @Test fun `on commit show time till revert only when started`() {
         autoRevert.onAllChangesCommitted()
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
 
@@ -144,7 +148,7 @@ class AutoRevertTests {
         ide.expect(times(2)).notifyThatChangesWereReverted()
     }
 
-    @Test fun `use updated revert timeout after end of the current timeout`() {
+    @Test fun `use updated revert timeout after the end of the current timeout`() {
         autoRevert.start()
         autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
         autoRevert.onTimer(next())
@@ -169,7 +173,7 @@ class AutoRevertTests {
         ide.expect(times(3)).notifyThatChangesWereReverted()
     }
 
-    @Test fun `don't send UI startup notification when disabled`() {
+    @Test fun `don't show anything in UI when disabled`() {
         val disabledSettings = Settings(false, secondsTillRevert, false)
         autoRevert.onSettingsUpdate(disabledSettings)
         autoRevert.start()
@@ -189,7 +193,7 @@ class AutoRevertTests {
     }
 
     @Before fun setUp() {
-        `when`(ide.revertCurrentChangeList()).thenReturn(10)
+        whenCalled(ide.revertCurrentChangeList()).thenReturn(10)
     }
 
     private fun next(): Int = ++seconds
