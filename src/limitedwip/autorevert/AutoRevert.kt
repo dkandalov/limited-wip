@@ -24,12 +24,12 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         startSeconds = undefined
         applyNewSettings()
 
-        ide.showInUITimeTillRevert(remainingSeconds)
+        ide.showTimeTillRevert(remainingSeconds)
     }
 
     fun stop() {
         isStarted = false
-        ide.showInUIThatAutoRevertStopped()
+        ide.showThatAutoRevertStopped()
     }
 
     fun onTimer(seconds: Int) {
@@ -40,7 +40,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         }
         val secondsPassed = seconds - startSeconds
 
-        ide.showInUITimeTillRevert(remainingSeconds - secondsPassed + 1)
+        ide.showTimeTillRevert(remainingSeconds - secondsPassed + 1)
 
         if (secondsPassed >= remainingSeconds || postponeRevert) {
             startSeconds = undefined
@@ -49,7 +49,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
             if (!postponeRevert) {
                 val revertedFilesCount = ide.revertCurrentChangeList()
                 if (revertedFilesCount > 0 && settings.notifyOnRevert) {
-                    ide.showNotificationThatChangesWereReverted()
+                    ide.notifyThatChangesWereReverted()
                 }
             }
         }
@@ -60,7 +60,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
         startSeconds = undefined
         applyNewSettings()
-        ide.showInUITimeTillRevert(remainingSeconds)
+        ide.showTimeTillRevert(remainingSeconds)
     }
 
     fun onAllChangesRolledBack() {

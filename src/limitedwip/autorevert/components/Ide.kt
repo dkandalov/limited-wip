@@ -32,12 +32,12 @@ class Ide(
         return limitedwip.common.vcs.revertCurrentChangeList(project)
     }
 
-    fun showInUIThatAutoRevertStopped() {
+    fun showThatAutoRevertStopped() {
         autoRevertWidget.showStoppedText()
         updateStatusBar()
     }
 
-    fun showNotificationThatChangesWereReverted() {
+    fun notifyThatChangesWereReverted() {
         val notification = Notification(
             pluginDisplayName,
             pluginDisplayName,
@@ -47,7 +47,7 @@ class Ide(
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
-    fun showInUITimeTillRevert(secondsLeft: Int) {
+    fun showTimeTillRevert(secondsLeft: Int) {
         if (settings.showTimerInToolbar) {
             autoRevertWidget.showTime(formatTime(secondsLeft))
         } else {
