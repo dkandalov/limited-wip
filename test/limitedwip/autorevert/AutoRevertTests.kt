@@ -30,6 +30,14 @@ class AutoRevertTests {
         ide.expect(inOrder, times(2)).showTimeTillRevert(anyInt())
     }
 
+    @Test fun `automatically start on timer update with some changes`() {
+        autoRevert.onNextTimer()
+        ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
+
+        autoRevert.onNextTimer(hasChanges = true)
+        ide.expect(inOrder, times(2)).showTimeTillRevert(anyInt())
+    }
+
     @Test fun `revert changes after timeout`() {
         autoRevert.start()
         autoRevert.onNextTimer()

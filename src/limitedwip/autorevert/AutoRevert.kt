@@ -33,6 +33,8 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onTimer(seconds: Int, hasChanges: Boolean) {
+        if (!settings.autoRevertEnabled) return
+        if (!isStarted && hasChanges) start()
         if (!isStarted) return
 
         if (startSeconds == undefined || postponeRevert) {
