@@ -49,7 +49,7 @@ class Ide(
 
     fun showTimeTillRevert(secondsLeft: Int) {
         if (settings.showTimerInToolbar) {
-            autoRevertWidget.showTime(formatTime(secondsLeft))
+            autoRevertWidget.showTimeLeft(formatTime(secondsLeft))
         } else {
             autoRevertWidget.showStartedText()
         }

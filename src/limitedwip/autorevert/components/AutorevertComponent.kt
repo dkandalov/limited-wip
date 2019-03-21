@@ -19,9 +19,6 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
     private val timer = TimerAppComponent.getInstance()
     private lateinit var autoRevert: AutoRevert
 
-    val isAutoRevertStarted: Boolean
-        get() = autoRevert.isStarted
-
     override fun projectOpened() {
         val settings = LimitedWipSettings.getInstance().toAutoRevertSettings()
         autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
@@ -51,14 +48,6 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
                 if (allChangesAreCommitted) autoRevert.onAllChangesCommitted()
             }
         })
-    }
-
-    fun startAutoRevert() {
-        autoRevert.start()
-    }
-
-    fun stopAutoRevert() {
-        autoRevert.stop()
     }
 
     private fun LimitedWipSettings.toAutoRevertSettings() =

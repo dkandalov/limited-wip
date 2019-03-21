@@ -51,7 +51,6 @@
     </project-components>
 
     <actions>
-        <action id="StartAutoRevert" class="limitedwip.autorevert.ui.StartOrStopAutoRevertAction" text="Start auto-revert"/>
         <action id="QuickCommitAction" class="limitedwip.autorevert.ui.QuickCommitAction" text="Quick commit"/>
     </actions>
 
