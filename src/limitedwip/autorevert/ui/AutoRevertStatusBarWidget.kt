@@ -42,7 +42,6 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
                 return Consumer { mouseEvent ->
                     val dataContext = DataManager.getInstance().getDataContext(mouseEvent.component)
                     val project = PlatformDataKeys.PROJECT.getData(dataContext) ?: return@Consumer
-
                     val autoRevertComponent = project.getComponent(AutoRevertComponent::class.java) ?: return@Consumer
 
                     if (autoRevertComponent.isAutoRevertStarted) {
