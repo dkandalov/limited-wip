@@ -7,29 +7,13 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     companion object {
         private const val undefined = -1
     }
-    var isStarted = false
-        private set
+    private var isStarted = false
     private var startSeconds: Int = 0
     private var remainingSeconds: Int = 0
     private var postponeRevert: Boolean = false
 
     init {
         onSettingsUpdate(settings)
-    }
-
-    fun start() {
-        if (!settings.autoRevertEnabled) return
-
-        isStarted = true
-        startSeconds = undefined
-        applyNewSettings()
-
-        ide.showTimeTillRevert(remainingSeconds)
-    }
-
-    fun stop() {
-        isStarted = false
-        ide.showThatAutoRevertStopped()
     }
 
     fun onTimer(seconds: Int, hasChanges: Boolean) {
@@ -52,6 +36,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
                 val revertedFilesCount = ide.revertCurrentChangeList()
                 if (revertedFilesCount > 0 && settings.notifyOnRevert) {
                     ide.notifyThatChangesWereReverted()
+                    // TODO stop()
                 }
             }
         }
@@ -75,6 +60,19 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
             stop()
         }
         this.settings = settings
+    }
+
+    private fun start() {
+        isStarted = true
+        startSeconds = undefined
+        applyNewSettings()
+
+        ide.showTimeTillRevert(remainingSeconds)
+    }
+
+    private fun stop() {
+        isStarted = false
+        ide.showThatAutoRevertStopped()
     }
 
     private fun applyNewSettings() {
