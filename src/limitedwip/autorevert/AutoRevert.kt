@@ -66,8 +66,6 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         isStarted = true
         startSeconds = undefined
         applyNewSettings()
-
-        ide.showTimeTillRevert(remainingSeconds)
     }
 
     private fun stop() {
