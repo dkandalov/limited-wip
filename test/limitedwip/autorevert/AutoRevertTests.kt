@@ -22,11 +22,6 @@ class AutoRevertTests {
     private var seconds: Int = 0
 
     @Test fun `show time till revert when started`() {
-        autoRevert.start()
-        ide.expect().showTimeTillRevert(eq(secondsTillRevert))
-    }
-    
-    @Test fun `don't show time till revert before start`() {
         autoRevert.onNextTimer()
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
 
@@ -190,7 +185,7 @@ class AutoRevertTests {
         whenCalled(ide.revertCurrentChangeList()).thenReturn(10)
     }
 
-    private fun AutoRevert.onNextTimer() = onTimer(next())
+    private fun AutoRevert.onNextTimer(hasChanges: Boolean = false) = onTimer(next(), hasChanges)
     
     private fun next(): Int = ++seconds
 }

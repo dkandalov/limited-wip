@@ -17,6 +17,7 @@ import com.intellij.openapi.vcs.changes.ui.CommitHelper
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.util.FunctionUtil
+import limitedwip.common.vcs.defaultChangeList
 import java.util.*
 
 
@@ -26,12 +27,11 @@ class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
         val project = AnAction.getEventProject(event) ?: return
         if (anySystemCheckinHandlerCancelsCommit(project)) return
         // Don't attempt to commit if there are no VCS registered because it will throw an exception.
-        if (!ProjectLevelVcsManager.getInstance(project).hasActiveVcss()) return
+        val defaultChangeList = project.defaultChangeList() ?: return
 
         val runnable = Runnable {
             RefreshAction.doRefresh(project)
 
-            val defaultChangeList = ChangeListManager.getInstance(project).defaultChangeList
             if (defaultChangeList.changes.isEmpty()) {
                 Messages.showInfoMessage(
                     project,

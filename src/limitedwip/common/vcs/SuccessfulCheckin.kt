@@ -4,7 +4,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vcs.CheckinProjectPanel
-import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
@@ -15,13 +14,9 @@ class SuccessfulCheckin: CheckinHandlerFactory() {
     override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
         return object: CheckinHandler() {
             override fun checkinSuccessful() {
-                val project = panel.project
-
-                val changeListManager = ChangeListManager.getInstance(project)
-                val uncommittedFileCount = changeListManager.defaultChangeList.changes.size - panel.selectedChanges.size
-                val allChangesAreCommitted = uncommittedFileCount == 0
-
-                notifySettingsListeners(allChangesAreCommitted)
+                val changeList = panel.project.defaultChangeList() ?: return
+                val uncommittedFileCount = changeList.changes.size - panel.selectedChanges.size
+                notifySettingsListeners(allChangesAreCommitted = uncommittedFileCount == 0)
             }
         }
     }

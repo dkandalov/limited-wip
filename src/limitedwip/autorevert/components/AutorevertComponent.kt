@@ -13,6 +13,7 @@ import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.toSeconds
 import limitedwip.common.vcs.SuccessfulCheckin
+import limitedwip.common.vcs.defaultChangeList
 
 class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) {
     private val timer = TimerAppComponent.getInstance()
@@ -27,7 +28,10 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
 
         timer.addListener(object : TimerAppComponent.Listener {
             override fun onUpdate(seconds: Int) {
-                ApplicationManager.getApplication().invokeLater({ autoRevert.onTimer(seconds) }, ModalityState.any())
+                ApplicationManager.getApplication().invokeLater({
+                    val hasChanges = myProject.defaultChangeList()?.changes?.isNotEmpty() ?: false
+                    autoRevert.onTimer(seconds, hasChanges)
+                }, ModalityState.any())
             }
         }, myProject)
 

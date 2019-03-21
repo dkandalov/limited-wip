@@ -6,10 +6,10 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
-import com.intellij.openapi.vcs.changes.ChangeListManager
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.AllowCommitAppComponent
 import limitedwip.common.vcs.AllowCommitListener
+import limitedwip.common.vcs.defaultChangeList
 
 
 class Ide(private val project: Project) {
@@ -66,10 +66,12 @@ class Ide(private val project: Project) {
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
-    fun defaultChangeListModificationCount(): Map<String, Long> =
-        ChangeListManager.getInstance(project)
-            .defaultChangeList.changes.mapNotNull { it.virtualFile }
+    fun defaultChangeListModificationCount(): Map<String, Long> {
+        val changeList = project.defaultChangeList() ?: return emptyMap()
+        return changeList.changes
+            .mapNotNull { it.virtualFile }
             .associate { Pair(it.path, it.modificationCount) }
+    }
 
     interface Listener {
         fun onForceCommit()

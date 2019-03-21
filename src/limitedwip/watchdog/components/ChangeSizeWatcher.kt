@@ -11,12 +11,11 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
-import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.changes.Change
-import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.FakeRevision
 import com.intellij.util.diff.FilesTooBigForDiffException
+import limitedwip.common.vcs.defaultChangeList
 import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.ChangeSizesWithPath
 import java.util.*
@@ -29,7 +28,6 @@ class ChangeSizeWatcher(private val project: Project) {
 
     private val comparisonManager = ComparisonManager.getInstance()
     private val application = ApplicationManager.getApplication()
-    private val projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project)
 
     val changeListSizeInLines get() = changeSizesWithPath
 
@@ -38,19 +36,18 @@ class ChangeSizeWatcher(private val project: Project) {
      */
     fun calculateCurrentChangeListSizeInLines() {
         if (isRunningBackgroundDiff) return
-        if (!projectLevelVcsManager.hasActiveVcss()) {
+        val changeList = project.defaultChangeList()
+        if (changeList == null) {
             changeSize = ChangeSize.NA
             changeSizesWithPath = ChangeSizesWithPath.empty
             return
         }
 
         val (newChangeSize, newChangeSizesWithPath, changesToDiff) = application.runReadAction(Computable {
-            val changes = ChangeListManager.getInstance(project).defaultChangeList.changes
-
             var result = ChangeSize.empty
             var result2 = ChangeSizesWithPath.empty
             val changesToDiff = ArrayList<Change>()
-            for (change in changes) {
+            for (change in changeList.changes) {
                 val changeSize = changeSizeCache[change.document()]
                 if (changeSize == null) {
                     changesToDiff.add(change)
@@ -94,9 +91,8 @@ class ChangeSizeWatcher(private val project: Project) {
     }
 
     private fun Change.document(): Document? {
-        val virtualFile = virtualFile
-        return if (virtualFile == null) null
-        else FileDocumentManager.getInstance().getDocument(virtualFile)
+        val file = virtualFile ?: return null
+        return FileDocumentManager.getInstance().getDocument(file)
     }
 
     private class ChangeSizeCache(private val parentDisposable: Disposable) {
