@@ -25,8 +25,7 @@ class AutoRevertTests {
         autoRevert.onNextTimer()
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
 
-        autoRevert.start()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         ide.expect(inOrder, times(2)).showTimeTillRevert(anyInt())
     }
 
@@ -34,44 +33,40 @@ class AutoRevertTests {
         autoRevert.onNextTimer()
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
 
-        autoRevert.onNextTimer(hasChanges = true)
+        autoRevert.onTimerWithChanges()
         ide.expect(inOrder, times(2)).showTimeTillRevert(anyInt())
     }
 
     @Test fun `revert changes after timeout`() {
-        autoRevert.start()
-        autoRevert.onNextTimer()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
+        autoRevert.onTimerWithChanges()
         ide.expect(inOrder).revertCurrentChangeList()
         ide.expect(inOrder).notifyThatChangesWereReverted()
     }
 
     @Test fun `don't revert changes while commit dialog is open`() {
-        autoRevert.start()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
-        autoRevert.onNextTimer()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
+        autoRevert.onTimerWithChanges()
 
         ide.expect(never()).revertCurrentChangeList()
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 
     @Test fun `revert changes after commit dialog is closed`() {
-        autoRevert.start()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
 
         whenCalled(ide.isCommitDialogOpen()).thenReturn(false)
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         ide.expect().revertCurrentChangeList()
         ide.expect().notifyThatChangesWereReverted()
     }
 
     @Test fun `don't start timer after timeout with commit dialog open`() {
-        autoRevert.start()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         ide.expect(inOrder, times(2)).showTimeTillRevert(eq(2))
 
         whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
@@ -90,32 +85,8 @@ class AutoRevertTests {
         ide.expect(inOrder).showTimeTillRevert(eq(1))
     }
 
-    @Test fun `don't revert changes when stopped`() {
-        autoRevert.start()
-        autoRevert.stop()
-        autoRevert.onNextTimer()
-        autoRevert.onNextTimer()
-
-        ide.expect().showThatAutoRevertStopped()
-        ide.expect(never()).revertCurrentChangeList()
-    }
-
-    @Test fun `reset timer when stopped`() {
-        autoRevert.start()
-        autoRevert.onNextTimer()
-        ide.expect(inOrder, times(2)).showTimeTillRevert(eq(2))
-        autoRevert.stop()
-
-        autoRevert.start()
-        autoRevert.onNextTimer()
-        ide.expect(inOrder, times(2)).showTimeTillRevert(eq(2))
-        autoRevert.onNextTimer()
-        ide.expect(inOrder).showTimeTillRevert(eq(1))
-    }
-
     @Test fun `reset timer on commit`() {
-        autoRevert.start()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         ide.expect(inOrder, times(2)).showTimeTillRevert(eq(2))
 
         autoRevert.onAllChangesCommitted()
@@ -126,45 +97,33 @@ class AutoRevertTests {
         ide.expect(inOrder).showTimeTillRevert(eq(1))
     }
 
-    @Test fun `on commit show time till revert only when started`() {
-        autoRevert.onAllChangesCommitted()
-        ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
-
-        autoRevert.start()
-        autoRevert.onAllChangesCommitted()
-        ide.expect(inOrder, times(2)).showTimeTillRevert(anyInt())
-    }
-
-    @Test fun `use updated revert timeout after start`() {
+    @Test fun `use updated settings`() {
         autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
-        autoRevert.start()
-        autoRevert.onNextTimer()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
+        autoRevert.onTimerWithChanges()
 
         ide.expect(times(2)).revertCurrentChangeList()
         ide.expect(times(2)).notifyThatChangesWereReverted()
     }
 
-    @Test fun `use updated revert timeout after the end of the current timeout`() {
-        autoRevert.start()
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
-        autoRevert.onNextTimer()
-        autoRevert.onNextTimer() // reverts changes after 2nd time event
-        autoRevert.onNextTimer() // reverts changes after 1st time event
-        autoRevert.onNextTimer() // reverts changes after 1st time event
+    @Test fun `use updated settings after the end of the current timeout`() {
+        autoRevert.onTimerWithChanges()
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1)) // settings not applied yet
+        autoRevert.onTimerWithChanges() // reverts changes after 2nd time event; settings applied
+        autoRevert.onTimerWithChanges() // reverts changes after 1st time event
+        autoRevert.onTimerWithChanges() // reverts changes after 1st time event
 
         ide.expect(times(3)).revertCurrentChangeList()
         ide.expect(times(3)).notifyThatChangesWereReverted()
     }
 
-    @Test fun `use updated revert timeout after commit`() {
-        autoRevert.start()
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
-        autoRevert.onNextTimer()
-        autoRevert.onAllChangesCommitted()
-        autoRevert.onNextTimer() // reverts changes after 1st time event
-        autoRevert.onNextTimer() // reverts changes after 1st time event
-        autoRevert.onNextTimer() // reverts changes after 1st time event
+    @Test fun `use updated settings after commit`() {
+        autoRevert.onTimerWithChanges()
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1)) // settings not applied yet
+        autoRevert.onAllChangesCommitted() // settings applied
+        autoRevert.onTimerWithChanges() // reverts changes after 1st time event
+        autoRevert.onTimerWithChanges() // reverts changes after 1st time event
+        autoRevert.onTimerWithChanges() // reverts changes after 1st time event
 
         ide.expect(times(3)).revertCurrentChangeList()
         ide.expect(times(3)).notifyThatChangesWereReverted()
@@ -173,7 +132,7 @@ class AutoRevertTests {
     @Test fun `don't show anything in UI when disabled`() {
         val disabledSettings = Settings(false, secondsTillRevert, false)
         autoRevert.onSettingsUpdate(disabledSettings)
-        autoRevert.start()
+        autoRevert.onTimerWithChanges()
 
         ide.expect().onSettingsUpdate(settings)
         ide.expect().onSettingsUpdate(disabledSettings)
@@ -181,10 +140,9 @@ class AutoRevertTests {
     }
 
     @Test fun `don't revert changes when disabled`() {
-        autoRevert.start()
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         autoRevert.onSettingsUpdate(Settings(false, 2, false))
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
 
         ide.expect(never()).revertCurrentChangeList()
     }
@@ -193,7 +151,9 @@ class AutoRevertTests {
         whenCalled(ide.revertCurrentChangeList()).thenReturn(10)
     }
 
+    private fun AutoRevert.onTimerWithChanges() = onTimer(next(), hasChanges = true)
+
     private fun AutoRevert.onNextTimer(hasChanges: Boolean = false) = onTimer(next(), hasChanges)
-    
+
     private fun next(): Int = ++seconds
 }
