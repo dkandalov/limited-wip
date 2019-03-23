@@ -21,7 +21,7 @@ class AutoRevertTests {
     private val autoRevert = AutoRevert(ide, settings)
     private var seconds: Int = 0
 
-    @Test fun `automatically start timer when some changes are made`() {
+    @Test fun `start timer when some changes are made`() {
         autoRevert.onNextTimer()
         autoRevert.onNextTimer()
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
@@ -37,16 +37,22 @@ class AutoRevertTests {
         ide.expect(inOrder).notifyThatChangesWereReverted()
     }
 
-    @Test fun `reset timer on commit`() {
+    @Test fun `reset timer after commit`() {
         autoRevert.onTimerWithChanges()
         ide.expect(inOrder, times(1)).showTimeTillRevert(eq(2))
 
         autoRevert.onAllChangesCommitted()
+        autoRevert.onTimerWithChanges()
         ide.expect(inOrder).showTimeTillRevert(eq(2))
-        autoRevert.onNextTimer()
-        ide.expect(inOrder).showTimeTillRevert(eq(2))
-        autoRevert.onNextTimer()
+        autoRevert.onTimerWithChanges()
         ide.expect(inOrder).showTimeTillRevert(eq(1))
+    }
+
+    @Test fun `stop timer if there are no changes`() {
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 10))
+        autoRevert.onTimerWithChanges()
+        autoRevert.onNextTimer()
+        ide.expect().showThatAutoRevertStopped()
     }
 
     @Test fun `when commit dialog is open, don't revert changes`() {

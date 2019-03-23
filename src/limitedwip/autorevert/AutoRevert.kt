@@ -19,6 +19,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     fun onTimer(seconds: Int, hasChanges: Boolean) {
         if (!settings.autoRevertEnabled) return
         if (!isStarted && hasChanges) start()
+        if (isStarted && !hasChanges) stop()
         if (!isStarted) return
 
         if (startSeconds == undefined || postponeRevert) {
@@ -34,9 +35,9 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
             postponeRevert = ide.isCommitDialogOpen()
             if (!postponeRevert) {
                 val revertedFilesCount = ide.revertCurrentChangeList()
-                if (revertedFilesCount > 0 && settings.notifyOnRevert) {
-                    ide.notifyThatChangesWereReverted()
-                    // TODO stop()
+                if (revertedFilesCount > 0) {
+                    if (settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
+                    stop()
                 }
             }
         }
@@ -47,7 +48,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
         startSeconds = undefined
         applyNewSettings()
-        ide.showTimeTillRevert(remainingSeconds)
+        stop()
     }
 
     fun onAllChangesRolledBack() {
