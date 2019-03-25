@@ -4,9 +4,6 @@ package limitedwip.autorevert
 import limitedwip.autorevert.components.Ide
 
 class AutoRevert(private val ide: Ide, private var settings: Settings) {
-    companion object {
-        private const val undefined = -1
-    }
     private var isStarted = false
     private var startSeconds: Int = 0
     private var remainingSeconds: Int = 0
@@ -18,30 +15,25 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
     fun onTimer(seconds: Int, hasChanges: Boolean) {
         if (!settings.autoRevertEnabled) return
-        if (!isStarted && hasChanges) {
-            isStarted = true
-            startSeconds = seconds - 1
-            applySecondsTillRevertSettings()
-        }
-        if (isStarted && !hasChanges) stop()
+        if (postponedRevert && !ide.isCommitDialogOpen()) return revert()
+        if (isStarted && !hasChanges) return stop()
+        if (!isStarted && hasChanges) start(seconds)
         if (!isStarted) return
 
-        if (startSeconds == undefined) {
-            startSeconds = seconds - 1
-        }
         val secondsPassed = seconds - startSeconds
-
         ide.showTimeTillRevert(remainingSeconds - secondsPassed + 1)
 
         if (secondsPassed >= remainingSeconds || postponedRevert) {
-            startSeconds = undefined
             postponedRevert = ide.isCommitDialogOpen()
-            if (!postponedRevert) {
-                val revertedFilesCount = ide.revertCurrentChangeList()
-                if (revertedFilesCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
-                stop()
-            }
+            if (!postponedRevert) revert()
+            stop()
         }
+    }
+
+    private fun revert() {
+        val revertedFilesCount = ide.revertCurrentChangeList()
+        if (revertedFilesCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
+        postponedRevert = false
     }
 
     fun onAllChangesCommitted() {
@@ -61,9 +53,14 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         this.settings = settings
     }
 
+    private fun start(seconds: Int) {
+        isStarted = true
+        startSeconds = seconds - 1
+        applySecondsTillRevertSettings()
+    }
+
     private fun stop() {
         isStarted = false
-        postponedRevert = false
         ide.showThatAutoRevertStopped()
     }
 
