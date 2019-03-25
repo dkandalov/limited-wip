@@ -23,7 +23,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         val secondsPassed = seconds - startSeconds
         ide.showTimeTillRevert(remainingSeconds - secondsPassed + 1)
 
-        if (secondsPassed >= remainingSeconds || postponedRevert) {
+        if (secondsPassed >= remainingSeconds) {
             postponedRevert = ide.isCommitDialogOpen()
             if (!postponedRevert) revert()
             stop()

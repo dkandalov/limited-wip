@@ -85,7 +85,6 @@ class AutoRevertTests {
         autoRevert.onTimerWithChanges()
         ide.expect(inOrder).showTimeTillRevert(eq(1))
         autoRevert.onTimerWithChanges()
-        ide.expect(inOrder).showTimeTillRevert(eq(2))
         autoRevert.onTimerWithChanges()
         ide.expect(inOrder).showTimeTillRevert(eq(2)) // timer is still 2
 
