@@ -7,7 +7,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     private var isStarted = false
     private var startSeconds: Int = 0
     private var remainingSeconds: Int = 0
-    private var postponedRevert: Boolean = false
+    private var skippedRevert: Boolean = false
 
     init {
         onSettingsUpdate(settings)
@@ -15,7 +15,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
     fun onTimer(seconds: Int, hasChanges: Boolean) {
         if (!settings.autoRevertEnabled) return
-        if (postponedRevert && !ide.isCommitDialogOpen()) return revert()
+        if (skippedRevert && revert()) return
         if (isStarted && !hasChanges) return stop()
         if (!isStarted && hasChanges) start(seconds)
         if (!isStarted) return
@@ -24,16 +24,9 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         ide.showTimeTillRevert(remainingSeconds - secondsPassed + 1)
 
         if (secondsPassed >= remainingSeconds) {
-            postponedRevert = ide.isCommitDialogOpen()
-            if (!postponedRevert) revert()
+            revert()
             stop()
         }
-    }
-
-    private fun revert() {
-        val revertedFilesCount = ide.revertCurrentChangeList()
-        if (revertedFilesCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
-        postponedRevert = false
     }
 
     fun onAllChangesCommitted() {
@@ -62,6 +55,17 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     private fun stop() {
         isStarted = false
         ide.showThatAutoRevertStopped()
+    }
+
+    private fun revert(): Boolean {
+        if (ide.isCommitDialogOpen()) {
+            skippedRevert = true
+            return false
+        }
+        val revertedFilesCount = ide.revertCurrentChangeList()
+        if (revertedFilesCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
+        skippedRevert = false
+        return true
     }
 
     private fun applySecondsTillRevertSettings() {
