@@ -24,10 +24,13 @@ data class Fixture(
             PathMatcher.parse("another/excluded/path")
         )
     ),
-    val disabledSettings: Settings = settings.copy(enabled = false),
     val ide: Ide = mock(Ide::class.java),
     val watchdog: Watchdog = Watchdog(ide, settings)
 ) {
+    init {
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
+    }
+
     fun someChangesWithSize(size: Int) =
         ChangeSizesWithPath(listOf(Pair("", ChangeSize(size))))
 
@@ -45,16 +48,12 @@ data class Fixture(
 }
 
 class WatchdogTests {
-
     @Test fun `show in UI current change size`() = Fixture().run {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
         watchdog.onTimer()
         ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send notification when change size is above threshold`() = Fixture().run {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-
         watchdog.onTimer() // send notification
         watchdog.onTimer()
         watchdog.onTimer() // send notification
@@ -65,14 +64,11 @@ class WatchdogTests {
 
     @Test fun `don't send notification when change size is below threshold`() = Fixture().run {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(10))
-
         watchdog.onTimer()
-
         ide.expect(never()).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
     }
 
-    @Test
-    fun `don't send notification when change size has excluded paths which make it below threshold`() = Fixture().run {
+    @Test fun `don't send notification when change size has excluded paths which make it below threshold`() = Fixture().run {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(ChangeSizesWithPath(listOf(
             Pair("/some/path", ChangeSize(90)),
             Pair("/some/excluded/path", ChangeSize(200)),
@@ -82,62 +78,6 @@ class WatchdogTests {
         watchdog.onTimer()
 
         ide.expect(never()).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
-    }
-
-    @Test fun `send change size notification after settings change`() = Fixture().run {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-        val inOrder = inOrder(ide)
-
-        watchdog.onTimer()
-        ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
-
-        watchdog.onSettingsUpdate(settings.copy(maxLinesInChange = 150))
-        ide.expect(inOrder).showCurrentChangeListSize(ChangeSize(200), 150)
-
-        watchdog.onTimer()
-        ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), 150)
-    }
-
-    @Test fun `skip notifications util next commit`() = Fixture().run {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-
-        watchdog.onSkipNotificationsUntilCommit()
-        watchdog.onTimer()
-        watchdog.onTimer()
-        watchdog.onSuccessfulCommit()
-        watchdog.onTimer()
-
-        ide.expect().showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
-    }
-
-    @Test fun `still send change size update when notifications are skipped till next commit`() = Fixture().run {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-
-        watchdog.onSkipNotificationsUntilCommit()
-        watchdog.onTimer()
-
-        ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
-    }
-
-    @Test fun `don't send change size update when disabled`() = Fixture().run {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-
-        watchdog.onSettingsUpdate(disabledSettings)
-        watchdog.onTimer()
-
-        ide.expect(times(2)).onSettingsUpdate(anySettings())
-        ide.expectNoMoreInteractions()
-    }
-
-    @Test fun `don't send notification when disabled`() = Fixture().run {
-        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-
-        watchdog.onSettingsUpdate(disabledSettings)
-        watchdog.onTimer()
-        watchdog.onTimer()
-
-        ide.expect(times(2)).onSettingsUpdate(anySettings())
-        ide.expectNoMoreInteractions()
     }
 
     @Test fun `close notification when change size is back within limit`() = Fixture().run {
@@ -151,6 +91,40 @@ class WatchdogTests {
         ide.expect(times(2)).hideNotificationThatChangeSizeIsTooBig()
     }
 
+    @Test fun `send change size notification after settings have changed`() = Fixture().run {
+        val inOrder = inOrder(ide)
+
+        watchdog.onTimer()
+        ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
+
+        watchdog.onSettingsUpdate(settings.copy(maxLinesInChange = 150))
+        ide.expect(inOrder).showCurrentChangeListSize(ChangeSize(200), 150)
+
+        watchdog.onTimer()
+        ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), 150)
+    }
+}
+
+class WatchdogSkipNotificationsTests {
+    @Test fun `skip notifications util next commit`() = Fixture().run {
+        watchdog.onSkipNotificationsUntilCommit()
+        watchdog.onTimer()
+        watchdog.onTimer()
+        watchdog.onSuccessfulCommit()
+        watchdog.onTimer()
+
+        ide.expect().showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
+    }
+
+    @Test fun `show change size in UI when notifications are skipped till next commit`() = Fixture().run {
+        watchdog.onSkipNotificationsUntilCommit()
+        watchdog.onTimer()
+
+        ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
+    }
+}
+
+class WatchdogCommitTests {
     @Test fun `don't allow commits above threshold`() = Fixture().run {
         watchdog.isCommitAllowed(someChangesWithSize(200)) shouldEqual false
         ide.expect().notifyThatCommitWasCancelled()
@@ -162,5 +136,19 @@ class WatchdogTests {
 
         watchdog.onForceCommit()
         watchdog.isCommitAllowed(someChangesWithSize(200)) shouldEqual true
+    }
+}
+
+class WatchdogDisabledSettingsTests {
+    private val Fixture.disabledSettings: Settings
+        get() = settings.copy(enabled = false)
+
+    @Test fun `when disabled, don't show change size or notifications`() = Fixture().run {
+        watchdog.onSettingsUpdate(disabledSettings)
+        watchdog.onTimer()
+        watchdog.onTimer()
+
+        ide.expect(times(2)).onSettingsUpdate(anySettings())
+        ide.expectNoMoreInteractions()
     }
 }
