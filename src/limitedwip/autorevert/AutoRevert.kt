@@ -5,7 +5,6 @@ import limitedwip.autorevert.components.Ide
 
 class AutoRevert(private val ide: Ide, private var settings: Settings) {
     private var isStarted = false
-    private var startSeconds: Int = 0
     private var remainingSeconds: Int = 0
     private var skippedRevert: Boolean = false
 
@@ -13,18 +12,18 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         onSettingsUpdate(settings)
     }
 
-    fun onTimer(seconds: Int, hasChanges: Boolean) {
+    fun onTimer(hasChanges: Boolean) {
         if (!settings.autoRevertEnabled) return
         if (skippedRevert && revert()) return
-        if (skippedRevert && seconds - startSeconds > remainingSeconds) return
+        if (skippedRevert && remainingSeconds < 0) return
         if (isStarted && !hasChanges) return stop()
-        if (!isStarted && hasChanges) start(seconds)
+        if (!isStarted && hasChanges) start()
         if (!isStarted) return
 
-        val secondsPassed = seconds - startSeconds
-        ide.showTimeTillRevert(remainingSeconds - secondsPassed + 1)
+        remainingSeconds--
+        ide.showTimeTillRevert(remainingSeconds + 1)
 
-        if (secondsPassed > remainingSeconds) {
+        if (remainingSeconds < 0) {
             revert()
             stop()
         }
@@ -47,10 +46,9 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         this.settings = settings
     }
 
-    private fun start(seconds: Int) {
+    private fun start() {
         isStarted = true
-        startSeconds = seconds - 1
-        applySecondsTillRevertSettings()
+        remainingSeconds = settings.secondsTillRevert
     }
 
     private fun stop() {
@@ -67,10 +65,6 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         if (revertedFilesCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
         skippedRevert = false
         return true
-    }
-
-    private fun applySecondsTillRevertSettings() {
-        remainingSeconds = settings.secondsTillRevert
     }
 
 

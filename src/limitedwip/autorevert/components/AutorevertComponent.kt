@@ -27,7 +27,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
             override fun onUpdate(seconds: Int) {
                 ApplicationManager.getApplication().invokeLater({
                     val hasChanges = myProject.defaultChangeList()?.changes?.isNotEmpty() ?: false
-                    autoRevert.onTimer(seconds, hasChanges)
+                    autoRevert.onTimer(hasChanges)
                 }, ModalityState.any())
             }
         }, myProject)

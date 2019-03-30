@@ -12,21 +12,24 @@ import com.intellij.openapi.util.Disposer
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit.MILLISECONDS
-import java.util.concurrent.TimeUnit.SECONDS
 
-class TimerAppComponent : ApplicationComponent {
+class TimerAppComponent: ApplicationComponent {
     private val log = Logger.getInstance(TimerAppComponent::class.java)
     private val timer = Timer("$pluginId-TimeEvents")
     private val listeners = CopyOnWriteArrayList<Listener>()
 
     override fun initComponent() {
         val startTime = System.currentTimeMillis()
+        var lastSecondsSinceStart = 0L
         val task = object: TimerTask() {
             override fun run() {
                 try {
                     val secondsSinceStart = MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime)
-                    for (listener in listeners) {
-                        listener.onUpdate(secondsSinceStart.toInt())
+                    if (secondsSinceStart != lastSecondsSinceStart) {
+                        lastSecondsSinceStart = secondsSinceStart
+                        for (listener in listeners) {
+                            listener.onUpdate(secondsSinceStart.toInt())
+                        }
                     }
                 } catch (ignored: ProcessCanceledException) {
                 } catch (e: Exception) {
@@ -34,7 +37,8 @@ class TimerAppComponent : ApplicationComponent {
                 }
             }
         }
-        timer.schedule(task, 0, SECONDS.toMillis(1))
+        val periodInMillis = 500L
+        timer.schedule(task, 0, periodInMillis)
     }
 
     override fun disposeComponent() {
