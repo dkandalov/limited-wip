@@ -38,7 +38,7 @@ sourceRoots {
 }
 
 dependencies {
-    testCompile("org.mockito:mockito-inline:2.23.0")
+    testCompile("org.mockito:mockito-inline:2.25.1")
 }
 
 tasks.withType<KotlinJvmCompile> {
