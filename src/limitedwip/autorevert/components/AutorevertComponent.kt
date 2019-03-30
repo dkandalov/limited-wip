@@ -24,7 +24,7 @@ class AutoRevertComponent(project: Project) : AbstractProjectComponent(project) 
         autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
 
         timer.addListener(object : TimerAppComponent.Listener {
-            override fun onUpdate(seconds: Int) {
+            override fun onUpdate() {
                 ApplicationManager.getApplication().invokeLater({
                     val hasChanges = myProject.defaultChangeList()?.changes?.isNotEmpty() ?: false
                     autoRevert.onTimer(hasChanges)

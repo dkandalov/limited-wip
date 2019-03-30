@@ -25,15 +25,13 @@ class WatchdogTests {
         )
     )
     private val disabledSettings = settings.copy(enabled = false)
-    private var timer: Int = 0
-
     private val ide = mock(Ide::class.java)
     private val watchdog = Watchdog(ide, settings)
 
     @Test fun `don't send notification when change size is below threshold`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(10))
 
-        watchdog.onTimer(next())
+        watchdog.onTimer()
 
         ide.expect(never()).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
     }
@@ -45,7 +43,7 @@ class WatchdogTests {
             Pair("/another/excluded/path", ChangeSize(200))
         )))
 
-        watchdog.onTimer(next())
+        watchdog.onTimer()
 
         ide.expect(never()).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
     }
@@ -53,7 +51,7 @@ class WatchdogTests {
     @Test fun `send notification when change size is above threshold`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
-        watchdog.onTimer(next())
+        watchdog.onTimer()
 
         ide.expect().showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
     }
@@ -61,10 +59,10 @@ class WatchdogTests {
     @Test fun `send change size notification only on one of several updates`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
-        watchdog.onTimer(next()) // send notification
-        watchdog.onTimer(next())
-        watchdog.onTimer(next()) // send notification
-        watchdog.onTimer(next())
+        watchdog.onTimer() // send notification
+        watchdog.onTimer()
+        watchdog.onTimer() // send notification
+        watchdog.onTimer()
 
         ide.expect(times(2)).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
     }
@@ -73,13 +71,13 @@ class WatchdogTests {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
         val inOrder = inOrder(ide)
 
-        watchdog.onTimer(next())
+        watchdog.onTimer()
         ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
 
         watchdog.onSettingsUpdate(settings.copy(maxLinesInChange = 150))
         ide.expect(inOrder).showCurrentChangeListSize(ChangeSize(200), 150)
 
-        watchdog.onTimer(next())
+        watchdog.onTimer()
         ide.expect(inOrder).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), 150)
     }
 
@@ -87,8 +85,8 @@ class WatchdogTests {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSettingsUpdate(disabledSettings)
-        watchdog.onTimer(next())
-        watchdog.onTimer(next())
+        watchdog.onTimer()
+        watchdog.onTimer()
 
         ide.expect(times(2)).onSettingsUpdate(anySettings())
         ide.expectNoMoreInteractions()
@@ -98,17 +96,17 @@ class WatchdogTests {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSkipNotificationsUntilCommit()
-        watchdog.onTimer(next())
-        watchdog.onTimer(next())
+        watchdog.onTimer()
+        watchdog.onTimer()
         watchdog.onSuccessfulCommit()
-        watchdog.onTimer(next())
+        watchdog.onTimer()
 
         ide.expect().showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
     }
 
     @Test fun `send change size update`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-        watchdog.onTimer(next())
+        watchdog.onTimer()
         ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
 
@@ -116,7 +114,7 @@ class WatchdogTests {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSkipNotificationsUntilCommit()
-        watchdog.onTimer(next())
+        watchdog.onTimer()
 
         ide.expect().showCurrentChangeListSize(ChangeSize(200), maxLinesInChange)
     }
@@ -125,7 +123,7 @@ class WatchdogTests {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onSettingsUpdate(disabledSettings)
-        watchdog.onTimer(next())
+        watchdog.onTimer()
 
         ide.expect(times(2)).onSettingsUpdate(anySettings())
         ide.expectNoMoreInteractions()
@@ -133,10 +131,10 @@ class WatchdogTests {
 
     @Test fun `close notification when change size is back within limit`() {
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
-        watchdog.onTimer(next())
+        watchdog.onTimer()
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(0))
-        watchdog.onTimer(next())
-        watchdog.onTimer(next())
+        watchdog.onTimer()
+        watchdog.onTimer()
 
         ide.expect(times(1)).showNotificationThatChangeSizeIsTooBig(ChangeSize(200), maxLinesInChange)
         ide.expect(times(2)).hideNotificationThatChangeSizeIsTooBig()
@@ -158,8 +156,6 @@ class WatchdogTests {
         watchdog.onForceCommit()
         watchdog.isCommitAllowed(someChangesWithSize(200)) shouldEqual true
     }
-
-    private fun next(): Int = ++timer
 
     private fun someChangesWithSize(size: Int) =
         ChangeSizesWithPath(listOf(Pair("", ChangeSize(size))))

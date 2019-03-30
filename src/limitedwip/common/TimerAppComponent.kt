@@ -28,7 +28,7 @@ class TimerAppComponent: ApplicationComponent {
                     if (secondsSinceStart != lastSecondsSinceStart) {
                         lastSecondsSinceStart = secondsSinceStart
                         for (listener in listeners) {
-                            listener.onUpdate(secondsSinceStart.toInt())
+                            listener.onUpdate()
                         }
                     }
                 } catch (ignored: ProcessCanceledException) {
@@ -54,7 +54,7 @@ class TimerAppComponent: ApplicationComponent {
     }
 
     interface Listener {
-        fun onUpdate(seconds: Int)
+        fun onUpdate()
     }
 
     companion object {

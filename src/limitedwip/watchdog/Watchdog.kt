@@ -3,30 +3,26 @@ package limitedwip.watchdog
 import limitedwip.watchdog.components.Ide
 
 class Watchdog(private val ide: Ide, private var settings: Settings) {
-    companion object {
-        private const val undefined = -1
-    }
-
-    private var lastNotificationTime = undefined
-    private var skipNotificationsUtilCommit = false
+    private var secondsTillNotification = 0
+    private var skipNotificationsUntilCommit = false
     private var allowOneCommitWithoutChecks = false
 
     init {
         onSettingsUpdate(settings)
     }
 
-    fun onTimer(seconds: Int) {
+    fun onTimer() {
         if (!settings.enabled) return
 
         ide.calculateCurrentChangeListSizeInLines()
 
         val changeSize = ide.currentChangeListSizeInLines().applyExclusions()
         val exceededThreshold = changeSize.value > settings.maxLinesInChange
-        val isTimeToNotify = lastNotificationTime == undefined || seconds - lastNotificationTime >= settings.notificationIntervalInSeconds
 
-        if (exceededThreshold && isTimeToNotify && !skipNotificationsUtilCommit) {
+        secondsTillNotification--
+        if (exceededThreshold && secondsTillNotification <= 0 && !skipNotificationsUntilCommit) {
             ide.showNotificationThatChangeSizeIsTooBig(changeSize, settings.maxLinesInChange)
-            lastNotificationTime = seconds
+            secondsTillNotification = settings.notificationIntervalInSeconds
         }
         if (!exceededThreshold) {
             ide.hideNotificationThatChangeSizeIsTooBig()
@@ -37,7 +33,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
 
     fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
-        lastNotificationTime = undefined
+        secondsTillNotification = 0 // set to 0 so that notifications are send immediately after watchdog is started
         if (this.settings.maxLinesInChange != settings.maxLinesInChange) {
             ide.showCurrentChangeListSize(ide.currentChangeListSizeInLines().applyExclusions(), settings.maxLinesInChange)
         }
@@ -48,7 +44,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         // This is a workaround to suppress notifications sent while commit dialog is open.
         ide.hideNotificationThatChangeSizeIsTooBig()
 
-        skipNotificationsUtilCommit = false
+        skipNotificationsUntilCommit = false
         allowOneCommitWithoutChecks = false
     }
 
@@ -62,7 +58,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     }
 
     fun toggleSkipNotificationsUntilCommit() {
-        skipNotificationsUntilCommit(!skipNotificationsUtilCommit)
+        skipNotificationsUntilCommit(!skipNotificationsUntilCommit)
     }
 
     fun onSkipNotificationsUntilCommit() {
@@ -81,7 +77,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     }
 
     private fun skipNotificationsUntilCommit(value: Boolean) {
-        skipNotificationsUtilCommit = value
+        skipNotificationsUntilCommit = value
         ide.showNotificationThatWatchdogIsDisableUntilNextCommit(value)
     }
 

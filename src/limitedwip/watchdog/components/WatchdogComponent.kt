@@ -31,10 +31,10 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         }
 
         timer.addListener(object: TimerAppComponent.Listener {
-            override fun onUpdate(seconds: Int) {
+            override fun onUpdate() {
                 ApplicationManager.getApplication().invokeLater({
                     if (!myProject.isDisposed) { // Project can be closed (disposed) during handover between timer thread and EDT.
-                        watchdog.onTimer(seconds)
+                        watchdog.onTimer()
                     }
                 }, ModalityState.any())
             }
