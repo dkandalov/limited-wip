@@ -39,7 +39,7 @@ class AutoRevertTests {
 
     @Test fun `reset timer after commit`() {
         autoRevert.onTimerWithChanges()
-        ide.expect(inOrder, times(1)).showTimeTillRevert(eq(2))
+        ide.expect(inOrder).showTimeTillRevert(eq(2))
 
         autoRevert.onAllChangesCommitted()
         autoRevert.onTimerWithChanges()
@@ -78,6 +78,8 @@ class AutoRevertTests {
     }
 
     @Test fun `when commit dialog is open, don't start timer after timeout`() {
+        ide.expect().onSettingsUpdate(settings)
+
         autoRevert.onTimerWithChanges()
         ide.expect(inOrder, times(1)).showTimeTillRevert(eq(2))
 
@@ -86,14 +88,8 @@ class AutoRevertTests {
         ide.expect(inOrder).showTimeTillRevert(eq(1))
         autoRevert.onTimerWithChanges()
         autoRevert.onTimerWithChanges()
-        ide.expect(inOrder).showTimeTillRevert(eq(2)) // timer is still 2
-
-        whenCalled(ide.isCommitDialogOpen()).thenReturn(false)
         autoRevert.onTimerWithChanges()
-        autoRevert.onTimerWithChanges()
-        ide.expect(inOrder).showTimeTillRevert(eq(2))
-        autoRevert.onTimerWithChanges()
-        ide.expect(inOrder).showTimeTillRevert(eq(1))
+        ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
     }
 
     @Test fun `use updated 'secondsTillRevert' settings`() {
