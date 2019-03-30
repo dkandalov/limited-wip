@@ -10,16 +10,15 @@ import org.mockito.Mockito.*
 import org.mockito.Mockito.`when` as whenCalled
 
 class AutoRevertTests {
-    private val secondsTillRevert = 2
     private val ide = mock(Ide::class.java)
     private val inOrder = inOrder(ide)
     private val settings = Settings(
         autoRevertEnabled = true,
-        secondsTillRevert = secondsTillRevert,
+        secondsTillRevert = 1,
         notifyOnRevert = true
     )
     private val autoRevert = AutoRevert(ide, settings)
-    private var seconds: Int = 0
+    private var seconds = 0
 
     @Test fun `start timer when some changes are made`() {
         autoRevert.onNextTimer()
@@ -39,13 +38,13 @@ class AutoRevertTests {
 
     @Test fun `reset timer after commit`() {
         autoRevert.onTimerWithChanges()
-        ide.expect(inOrder).showTimeTillRevert(eq(2))
+        ide.expect(inOrder).showTimeTillRevert(eq(1))
 
         autoRevert.onAllChangesCommitted()
         autoRevert.onTimerWithChanges()
-        ide.expect(inOrder).showTimeTillRevert(eq(2))
-        autoRevert.onTimerWithChanges()
         ide.expect(inOrder).showTimeTillRevert(eq(1))
+        autoRevert.onTimerWithChanges()
+        ide.expect(inOrder).showTimeTillRevert(eq(0))
     }
 
     @Test fun `stop timer if there are no changes`() {
@@ -81,11 +80,11 @@ class AutoRevertTests {
         ide.expect().onSettingsUpdate(settings)
 
         autoRevert.onTimerWithChanges()
-        ide.expect(inOrder, times(1)).showTimeTillRevert(eq(2))
+        ide.expect(inOrder, times(1)).showTimeTillRevert(eq(1))
 
         whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
         autoRevert.onTimerWithChanges()
-        ide.expect(inOrder).showTimeTillRevert(eq(1))
+        ide.expect(inOrder).showTimeTillRevert(eq(0))
         autoRevert.onTimerWithChanges()
         autoRevert.onTimerWithChanges()
         autoRevert.onTimerWithChanges()
@@ -93,7 +92,7 @@ class AutoRevertTests {
     }
 
     @Test fun `use updated 'secondsTillRevert' settings`() {
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1))
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 0))
         autoRevert.onTimerWithChanges()
         autoRevert.onTimerWithChanges()
 
@@ -103,7 +102,7 @@ class AutoRevertTests {
 
     @Test fun `use updated 'secondsTillRevert' settings after the end of the current timeout`() {
         autoRevert.onTimerWithChanges()
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1)) // settings not applied yet
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 0)) // settings not applied yet
         autoRevert.onTimerWithChanges() // reverts changes after 2nd time event; settings applied
         autoRevert.onTimerWithChanges() // reverts changes after 1st time event
         autoRevert.onTimerWithChanges() // reverts changes after 1st time event
@@ -114,7 +113,7 @@ class AutoRevertTests {
 
     @Test fun `use updated 'secondsTillRevert' settings after commit`() {
         autoRevert.onTimerWithChanges()
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 1)) // settings not applied yet
+        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 0)) // settings not applied yet
         autoRevert.onAllChangesCommitted() // settings applied
         autoRevert.onTimerWithChanges() // reverts changes after 1st time event
         autoRevert.onTimerWithChanges() // reverts changes after 1st time event

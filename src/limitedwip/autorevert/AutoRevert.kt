@@ -16,7 +16,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     fun onTimer(seconds: Int, hasChanges: Boolean) {
         if (!settings.autoRevertEnabled) return
         if (skippedRevert && revert()) return
-        if (skippedRevert && seconds - startSeconds >= remainingSeconds) return
+        if (skippedRevert && seconds - startSeconds > remainingSeconds) return
         if (isStarted && !hasChanges) return stop()
         if (!isStarted && hasChanges) start(seconds)
         if (!isStarted) return
@@ -24,7 +24,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         val secondsPassed = seconds - startSeconds
         ide.showTimeTillRevert(remainingSeconds - secondsPassed + 1)
 
-        if (secondsPassed >= remainingSeconds) {
+        if (secondsPassed > remainingSeconds) {
             revert()
             stop()
         }
