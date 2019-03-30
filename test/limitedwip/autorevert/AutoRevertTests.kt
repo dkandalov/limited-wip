@@ -136,7 +136,7 @@ class AutoRevertUpdateSettingsTests {
     }
 }
 
-class AutoRevertDisabledSettingsTests {
+class AutoRevertDisabledTests {
     private val Fixture.disabledSettings: Settings
         get() = settings.copy(autoRevertEnabled = false)
 

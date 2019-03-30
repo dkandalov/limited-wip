@@ -139,7 +139,7 @@ class WatchdogCommitTests {
     }
 }
 
-class WatchdogDisabledSettingsTests {
+class WatchdogDisabledTests {
     private val Fixture.disabledSettings: Settings
         get() = settings.copy(enabled = false)
 
