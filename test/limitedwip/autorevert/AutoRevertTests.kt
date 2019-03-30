@@ -4,22 +4,30 @@ import limitedwip.autorevert.AutoRevert.Settings
 import limitedwip.autorevert.components.Ide
 import limitedwip.expect
 import limitedwip.expectNoMoreInteractions
-import org.junit.Before
 import org.junit.Test
+import org.mockito.InOrder
 import org.mockito.Mockito.*
 import org.mockito.Mockito.`when` as whenCalled
 
-class AutoRevertTests {
-    private val ide = mock(Ide::class.java)
-    private val inOrder = inOrder(ide)
-    private val settings = Settings(
+data class Fixture(
+    val ide: Ide = mock(Ide::class.java),
+    val inOrder: InOrder = inOrder(ide),
+    val settings: Settings = Settings(
         autoRevertEnabled = true,
         secondsTillRevert = 1,
         notifyOnRevert = true
-    )
-    private val autoRevert = AutoRevert(ide, settings)
+    ),
+    val autoRevert: AutoRevert = AutoRevert(ide, settings)
+) {
+    init {
+        whenCalled(ide.revertCurrentChangeList()).thenReturn(10)
+    }
 
-    @Test fun `start timer when some changes are made`() {
+    fun run(f: Fixture.() -> Unit) = f(this)
+}
+
+class AutoRevertBasicTests {
+    @Test fun `start timer when some changes are made`() = Fixture().run {
         autoRevert.onTimer(hasChanges = false)
         autoRevert.onTimer(hasChanges = false)
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
@@ -28,14 +36,14 @@ class AutoRevertTests {
         ide.expect(inOrder, times(1)).showTimeTillRevert(anyInt())
     }
 
-    @Test fun `revert changes after timeout`() {
+    @Test fun `revert changes after timeout`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder).revertCurrentChangeList()
         ide.expect(inOrder).notifyThatChangesWereReverted()
     }
 
-    @Test fun `reset timer after commit`() {
+    @Test fun `reset timer after commit`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder).showTimeTillRevert(eq(1))
 
@@ -46,14 +54,16 @@ class AutoRevertTests {
         ide.expect(inOrder).showTimeTillRevert(eq(0))
     }
 
-    @Test fun `stop timer if there are no changes`() {
+    @Test fun `stop timer if there are no changes`() = Fixture().run {
         autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 10))
         autoRevert.onTimer(hasChanges = true)
         autoRevert.onTimer(hasChanges = false)
         ide.expect().showThatAutoRevertStopped()
     }
+}
 
-    @Test fun `when commit dialog is open, don't revert changes`() {
+class AutoRevertCommitDialogTests {
+    @Test fun `when commit dialog is open, don't revert changes`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
         whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
         autoRevert.onTimer(hasChanges = true)
@@ -64,7 +74,7 @@ class AutoRevertTests {
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 
-    @Test fun `after commit dialog is closed, revert pending changes`() {
+    @Test fun `after commit dialog is closed, revert pending changes`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
         whenCalled(ide.isCommitDialogOpen()).thenReturn(true)
         autoRevert.onTimer(hasChanges = true)
@@ -75,9 +85,7 @@ class AutoRevertTests {
         ide.expect().notifyThatChangesWereReverted()
     }
 
-    @Test fun `when commit dialog is open, don't start timer after timeout`() {
-        ide.expect().onSettingsUpdate(settings)
-
+    @Test fun `when commit dialog is open, don't start timer after timeout`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder, times(1)).showTimeTillRevert(eq(1))
 
@@ -89,9 +97,14 @@ class AutoRevertTests {
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
     }
+}
 
-    @Test fun `use updated 'secondsTillRevert' settings`() {
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 0))
+class AutoRevertUpdateSettingsTests {
+    private val Fixture.newSettings: Settings
+        get() = settings.copy(secondsTillRevert = 0)
+
+    @Test fun `use updated 'secondsTillRevert' settings`() = Fixture().run {
+        autoRevert.onSettingsUpdate(newSettings)
         autoRevert.onTimer(hasChanges = true)
         autoRevert.onTimer(hasChanges = true)
 
@@ -99,9 +112,9 @@ class AutoRevertTests {
         ide.expect(times(2)).notifyThatChangesWereReverted()
     }
 
-    @Test fun `use updated 'secondsTillRevert' settings after the end of the current timeout`() {
+    @Test fun `use updated 'secondsTillRevert' settings after the end of the current timeout`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 0)) // settings not applied yet
+        autoRevert.onSettingsUpdate(newSettings) // settings not applied yet
         autoRevert.onTimer(hasChanges = true) // reverts changes after 2nd time event; settings applied
         autoRevert.onTimer(hasChanges = true) // reverts changes after 1st time event
         autoRevert.onTimer(hasChanges = true) // reverts changes after 1st time event
@@ -110,9 +123,9 @@ class AutoRevertTests {
         ide.expect(times(3)).notifyThatChangesWereReverted()
     }
 
-    @Test fun `use updated 'secondsTillRevert' settings after commit`() {
+    @Test fun `use updated 'secondsTillRevert' settings after commit`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
-        autoRevert.onSettingsUpdate(settings.copy(secondsTillRevert = 0)) // settings not applied yet
+        autoRevert.onSettingsUpdate(newSettings) // settings not applied yet
         autoRevert.onAllChangesCommitted() // settings applied
         autoRevert.onTimer(hasChanges = true) // reverts changes after 1st time event
         autoRevert.onTimer(hasChanges = true) // reverts changes after 1st time event
@@ -121,9 +134,13 @@ class AutoRevertTests {
         ide.expect(times(3)).revertCurrentChangeList()
         ide.expect(times(3)).notifyThatChangesWereReverted()
     }
+}
 
-    @Test fun `when disabled, don't show anything in UI`() {
-        val disabledSettings = settings.copy(autoRevertEnabled = false)
+class AutoRevertDisabledSettingsTests {
+    private val Fixture.disabledSettings: Settings
+        get() = settings.copy(autoRevertEnabled = false)
+
+    @Test fun `when disabled, don't show anything in UI`() = Fixture().run {
         autoRevert.onSettingsUpdate(disabledSettings)
         autoRevert.onTimer(hasChanges = true)
 
@@ -132,16 +149,11 @@ class AutoRevertTests {
         ide.expectNoMoreInteractions()
     }
 
-    @Test fun `when disabled while timer is running, don't revert changes`() {
-        val disabledSettings = settings.copy(autoRevertEnabled = false)
+    @Test fun `when disabled while timer is running, don't revert changes`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
         autoRevert.onSettingsUpdate(disabledSettings)
         autoRevert.onTimer(hasChanges = true)
 
         ide.expect(never()).revertCurrentChangeList()
-    }
-
-    @Before fun setUp() {
-        whenCalled(ide.revertCurrentChangeList()).thenReturn(10)
     }
 }
