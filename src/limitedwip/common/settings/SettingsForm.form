@@ -417,7 +417,7 @@
               <editable value="false"/>
               <model>
                 <item value="last commit"/>
-                <item value="change list name"/>
+                <item value="changelist name"/>
               </model>
             </properties>
           </component>
