@@ -8,6 +8,7 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.RawCommandLineEditor
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.execution.ParametersListUtil
+import limitedwip.common.settings.CommitMessageSource.*
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidChangedSizeRange
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidMinutesTillRevert
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidNotificationInterval
@@ -40,6 +41,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var tcrEnabled: JCheckBox
     private lateinit var notifyOnTcrRevert: JCheckBox
     private lateinit var tcrActionOnPassedTest: JComboBox<*>
+    private lateinit var commitMessageSource: JComboBox<*>
 
     private val currentState = LimitedWipSettings()
     private var isUpdating = Ref(false)
@@ -48,6 +50,11 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         it[0] = OpenCommitDialog
         it[1] = Commit
         it[2] = CommitAndPush
+    }
+
+    private val commitMessageSourceByIndex = HashBiMap.create<Int, CommitMessageSource>().also {
+        it[0] = LastCommit
+        it[1] = ChangeListName
     }
 
     private fun createUIComponents() {
@@ -86,6 +93,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         tcrEnabled.addActionListener(commonActionListener)
         notifyOnTcrRevert.addActionListener(commonActionListener)
         tcrActionOnPassedTest.addActionListener(commonActionListener)
+        commitMessageSource.addActionListener(commonActionListener)
 
         openReadme.setListener(
             { _, _ -> BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip") },
@@ -114,6 +122,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         tcrEnabled.isSelected = currentState.tcrEnabled
         notifyOnTcrRevert.isSelected = currentState.notifyOnTcrRevert
         tcrActionOnPassedTest.selectedIndex = tcrActionByIndex.inverse()[currentState.tcrActionOnPassedTest]!!
+        commitMessageSource.selectedIndex = commitMessageSourceByIndex.inverse()[currentState.commitMessageSource]!!
 
         currentState.autoRevertEnabled.let {
             minutesTillRevert.isEnabled = it
@@ -130,6 +139,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         currentState.tcrEnabled.let {
             notifyOnTcrRevert.isEnabled = it
             tcrActionOnPassedTest.isEnabled = it
+            commitMessageSource.isEnabled = it
         }
     }
 
@@ -160,6 +170,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             currentState.tcrEnabled = tcrEnabled.isSelected
             currentState.notifyOnTcrRevert = notifyOnTcrRevert.isSelected
             currentState.tcrActionOnPassedTest = tcrActionByIndex[tcrActionOnPassedTest.selectedIndex]!!
+            currentState.commitMessageSource = commitMessageSourceByIndex[commitMessageSource.selectedIndex]!!
 
         } catch (ignored: NumberFormatException) {
         }
