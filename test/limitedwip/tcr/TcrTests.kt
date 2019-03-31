@@ -20,7 +20,7 @@ private data class Fixture(
     val someModifications: ChangeListModifications = ChangeListModifications(mapOf("foo" to 1L))
 ) {
     init {
-        `when`(ide.revertCurrentChangeList()).thenReturn(10)
+        `when`(ide.revertCurrentChangeList(anyBoolean())).thenReturn(10)
     }
 
     fun run(f: Fixture.() -> Unit) = f(this)
@@ -37,7 +37,7 @@ class TcrTests {
 
     @Test fun `when test failed, revert changes`() = Fixture().run {
         tcr.onUnitTestFailed()
-        ide.expect().revertCurrentChangeList()
+        ide.expect().revertCurrentChangeList(anyBoolean())
     }
 
     @Test fun `when test passed, show commit dialog`() = Fixture().run {
@@ -88,14 +88,14 @@ class TcrTests {
 
     @Test fun `notify user on revert`() = Fixture().run {
         tcr.onUnitTestFailed()
-        ide.expect().revertCurrentChangeList()
+        ide.expect().revertCurrentChangeList(anyBoolean())
         ide.expect().notifyThatChangesWereReverted()
     }
 
     @Test fun `don't notify user on revert if notification is disabled in settings`() = Fixture().run {
         tcr.onSettingsUpdate(settings.copy(notifyOnRevert = false))
         tcr.onUnitTestFailed()
-        ide.expect().revertCurrentChangeList()
+        ide.expect().revertCurrentChangeList(anyBoolean())
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 
@@ -119,7 +119,7 @@ class TcrDisabledTests {
     @Test fun `if disabled, don't revert changes on failed unit test`() = Fixture().run {
         tcr.onSettingsUpdate(settings.copy(enabled = false))
         tcr.onUnitTestFailed()
-        ide.expect(never()).revertCurrentChangeList()
+        ide.expect(never()).revertCurrentChangeList(anyBoolean())
         ide.expect(never()).notifyThatChangesWereReverted()
     }
 

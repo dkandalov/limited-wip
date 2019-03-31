@@ -38,8 +38,8 @@ class Ide(private val project: Project) {
         limitedwip.common.vcs.doQuickCommitAndPush(project)
     }
 
-    fun revertCurrentChangeList(): Int {
-        return limitedwip.common.vcs.revertCurrentChangeList(project)
+    fun revertCurrentChangeList(doNotRevertTests: Boolean): Int {
+        return limitedwip.common.vcs.revertCurrentChangeList(project, doNotRevertTests)
     }
 
     fun notifyThatCommitWasCancelled() {
