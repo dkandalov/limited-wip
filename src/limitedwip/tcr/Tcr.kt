@@ -53,7 +53,8 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
     data class Settings(
         val enabled: Boolean,
         val notifyOnRevert: Boolean,
-        val actionOnPassedTest: TcrAction
+        val actionOnPassedTest: TcrAction,
+        val doNotRevertTests: Boolean
     ) {
         val disabled = !enabled
     }

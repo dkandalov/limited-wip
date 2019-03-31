@@ -42,6 +42,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var notifyOnTcrRevert: JCheckBox
     private lateinit var tcrActionOnPassedTest: JComboBox<*>
     private lateinit var commitMessageSource: JComboBox<*>
+    private lateinit var doNotRevertTests: JCheckBox
 
     private val currentState = LimitedWipSettings()
     private var isUpdating = Ref(false)
@@ -94,6 +95,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         notifyOnTcrRevert.addActionListener(commonActionListener)
         tcrActionOnPassedTest.addActionListener(commonActionListener)
         commitMessageSource.addActionListener(commonActionListener)
+        doNotRevertTests.addActionListener(commonActionListener)
 
         openReadme.setListener(
             { _, _ -> BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip") },
@@ -123,6 +125,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         notifyOnTcrRevert.isSelected = currentState.notifyOnTcrRevert
         tcrActionOnPassedTest.selectedIndex = tcrActionByIndex.inverse()[currentState.tcrActionOnPassedTest]!!
         commitMessageSource.selectedIndex = commitMessageSourceByIndex.inverse()[currentState.commitMessageSource]!!
+        doNotRevertTests.isSelected = currentState.doNotRevertTests
 
         currentState.autoRevertEnabled.let {
             minutesTillRevert.isEnabled = it
@@ -140,6 +143,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             notifyOnTcrRevert.isEnabled = it
             tcrActionOnPassedTest.isEnabled = it
             commitMessageSource.isEnabled = it
+            doNotRevertTests.isEnabled = it
         }
     }
 
@@ -171,6 +175,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             currentState.notifyOnTcrRevert = notifyOnTcrRevert.isSelected
             currentState.tcrActionOnPassedTest = tcrActionByIndex[tcrActionOnPassedTest.selectedIndex]!!
             currentState.commitMessageSource = commitMessageSourceByIndex[commitMessageSource.selectedIndex]!!
+            currentState.doNotRevertTests = doNotRevertTests.isSelected
 
         } catch (ignored: NumberFormatException) {
         }

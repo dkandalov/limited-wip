@@ -8,12 +8,13 @@ import limitedwip.tcr.components.Ide
 import org.junit.Test
 import org.mockito.Mockito.*
 
-data class Fixture(
+private data class Fixture(
     val ide: Ide = mock(Ide::class.java),
     val settings: Tcr.Settings = Tcr.Settings(
         enabled = true,
         notifyOnRevert = true,
-        actionOnPassedTest = OpenCommitDialog
+        actionOnPassedTest = OpenCommitDialog,
+        doNotRevertTests = false
     ),
     val tcr: Tcr = Tcr(ide, settings),
     val someModifications: ChangeListModifications = ChangeListModifications(mapOf("foo" to 1L))
