@@ -6,7 +6,7 @@ This is a plugin for IntelliJ IDEs to help you limit work-in-progress (WIP) by i
 It has three main components:
  - **Change size watchdog**: it shows notifications when current changelist size exceeds threshold
  - **Auto-revert**: it automatically reverts current changelist after a timeout (the timer resets on each commit)
- - **Test-commit-revert mode**: it reverts current changelist on failed test and opens commit dialog on passed test
+ - **Test-commit-revert mode**: it reverts current changelist on failed test and commits on passed test
 
 
 ## Why?
@@ -71,6 +71,8 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
     - open commit dialog
     - commit (using last commit message)
     - commit and push (if "push" is supported by VCS)
+ - enable/disable revert of test code (aka [relaxed TCR](https://medium.com/@tdeniffel/tcr-variants-test-commit-revert-bf6bd84b17d3))
+ - exclude files from revert in case some of the tests are not marked as test source root in IDE
 
 I heard about the idea from [Kent Beck](https://twitter.com/KentBeck) mentioning Limbo and his
 ["test && commit || revert" blog post](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864) in particular.
