@@ -75,9 +75,9 @@ class Ide(
         val statusBar = project.statusBar() ?: return
         val hasAutoRevertWidget = statusBar.getWidget(autoRevertWidget.ID()) != null
         when {
-            hasAutoRevertWidget && settings.autoRevertEnabled -> statusBar.updateWidget(autoRevertWidget.ID())
-            hasAutoRevertWidget                               -> statusBar.removeWidget(autoRevertWidget.ID())
-            settings.autoRevertEnabled                        -> {
+            hasAutoRevertWidget && settings.enabled -> statusBar.updateWidget(autoRevertWidget.ID())
+            hasAutoRevertWidget                     -> statusBar.removeWidget(autoRevertWidget.ID())
+            settings.enabled                        -> {
                 autoRevertWidget.showStoppedText()
                 statusBar.addWidget(autoRevertWidget, "before Position")
                 statusBar.updateWidget(autoRevertWidget.ID())

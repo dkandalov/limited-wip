@@ -13,7 +13,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onTimer(hasChanges: Boolean) {
-        if (!settings.autoRevertEnabled) return
+        if (!settings.enabled) return
         if (skippedRevert && revert()) return
         if (skippedRevert && remainingSeconds < 0) return
         if (isStarted && !hasChanges) return stop()
@@ -40,7 +40,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
     fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
-        if (isStarted && !settings.autoRevertEnabled) {
+        if (isStarted && !settings.enabled) {
             stop()
         }
         this.settings = settings
@@ -69,7 +69,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
 
     data class Settings(
-        val autoRevertEnabled: Boolean,
+        val enabled: Boolean,
         val secondsTillRevert: Int,
         val notifyOnRevert: Boolean,
         val showTimerInToolbar: Boolean = true

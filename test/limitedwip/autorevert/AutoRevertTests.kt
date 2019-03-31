@@ -13,7 +13,7 @@ data class Fixture(
     val ide: Ide = mock(Ide::class.java),
     val inOrder: InOrder = inOrder(ide),
     val settings: Settings = Settings(
-        autoRevertEnabled = true,
+        enabled = true,
         secondsTillRevert = 1,
         notifyOnRevert = true
     ),
@@ -138,7 +138,7 @@ class AutoRevertUpdateSettingsTests {
 
 class AutoRevertDisabledTests {
     private val Fixture.disabledSettings: Settings
-        get() = settings.copy(autoRevertEnabled = false)
+        get() = settings.copy(enabled = false)
 
     @Test fun `when disabled, don't show anything in UI`() = Fixture().run {
         autoRevert.onSettingsUpdate(disabledSettings)
