@@ -6,6 +6,7 @@ package limitedwip.tcr.components
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
 import limitedwip.common.settings.LimitedWipSettings
+import limitedwip.common.toPathMatchers
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.tcr.Tcr
 import limitedwip.tcr.Tcr.ChangeListModifications
@@ -43,6 +44,7 @@ class TcrComponent(project: Project): AbstractProjectComponent(project) {
             enabled = tcrEnabled,
             notifyOnRevert = notifyOnTcrRevert,
             actionOnPassedTest = tcrActionOnPassedTest,
-            doNotRevertTests = doNotRevertTests
+            doNotRevertTests = doNotRevertTests,
+            doNotRevertFiles = doNotRevertFiles.toPathMatchers()
         )
 }

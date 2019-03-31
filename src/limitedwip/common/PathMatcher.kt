@@ -1,4 +1,4 @@
-package limitedwip.watchdog
+package limitedwip.common
 
 import com.intellij.compiler.MalformedPatternException
 import com.intellij.openapi.util.SystemInfo
@@ -25,7 +25,7 @@ data class PathMatcher(
     companion object {
         // Based on org.jetbrains.jps.model.java.impl.compiler.ResourcePatterns.convertToRegexp.
         // Could use `FileSystems.getDefault().getPathMatcher()` with glob but it'll be OS specific
-        // and has more complicated rules than the ones below.
+        // and would be more complicated rules than the ones below.
         fun parse(wildcardPattern: String): PathMatcher {
             var pattern = FileUtil.toSystemIndependentName(wildcardPattern)
 
@@ -45,6 +45,9 @@ data class PathMatcher(
         }
     }
 }
+
+fun String.toPathMatchers(): Set<PathMatcher> =
+    split(';').mapTo(HashSet()) { PathMatcher.parse(it) }
 
 @Throws(MalformedPatternException::class)
 private fun compilePattern(@NonNls s: String): String {

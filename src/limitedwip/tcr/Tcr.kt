@@ -1,5 +1,6 @@
 package limitedwip.tcr
 
+import limitedwip.common.PathMatcher
 import limitedwip.common.settings.TcrAction
 import limitedwip.common.settings.TcrAction.*
 import limitedwip.tcr.components.Ide
@@ -54,7 +55,8 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
         val enabled: Boolean,
         val notifyOnRevert: Boolean,
         val actionOnPassedTest: TcrAction,
-        val doNotRevertTests: Boolean
+        val doNotRevertTests: Boolean,
+        val doNotRevertFiles: Set<PathMatcher>
     ) {
         val disabled = !enabled
     }

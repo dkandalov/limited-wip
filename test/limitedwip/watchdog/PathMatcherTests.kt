@@ -1,5 +1,6 @@
 package limitedwip.watchdog
 
+import limitedwip.common.PathMatcher
 import limitedwip.shouldEqual
 import org.junit.Test
 

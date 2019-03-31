@@ -1,5 +1,6 @@
 package limitedwip.watchdog
 
+import limitedwip.common.PathMatcher
 import limitedwip.expect
 import limitedwip.expectNoMoreInteractions
 import limitedwip.shouldEqual

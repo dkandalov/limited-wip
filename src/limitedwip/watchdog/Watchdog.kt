@@ -1,5 +1,6 @@
 package limitedwip.watchdog
 
+import limitedwip.common.PathMatcher
 import limitedwip.watchdog.components.Ide
 
 class Watchdog(private val ide: Ide, private var settings: Settings) {

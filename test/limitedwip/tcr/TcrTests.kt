@@ -14,7 +14,8 @@ private data class Fixture(
         enabled = true,
         notifyOnRevert = true,
         actionOnPassedTest = OpenCommitDialog,
-        doNotRevertTests = false
+        doNotRevertTests = false,
+        doNotRevertFiles = emptySet()
     ),
     val tcr: Tcr = Tcr(ide, settings),
     val someModifications: ChangeListModifications = ChangeListModifications(mapOf("foo" to 1L))

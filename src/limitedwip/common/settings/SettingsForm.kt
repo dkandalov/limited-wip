@@ -43,6 +43,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var tcrActionOnPassedTest: JComboBox<*>
     private lateinit var commitMessageSource: JComboBox<*>
     private lateinit var doNotRevertTests: JCheckBox
+    private lateinit var doNotRevertFiles: RawCommandLineEditor
 
     private val currentState = LimitedWipSettings()
     private var isUpdating = Ref(false)
@@ -72,17 +73,18 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         updateUIFromState()
 
         val commonActionListener = { _: ActionEvent -> fullUpdate() }
+        val commonDocumentListener = object: DocumentAdapter() {
+            override fun textChanged(e: DocumentEvent) = noReentryWhen(isUpdating) {
+                updateStateFromUI()
+            }
+        }
 
         watchdogEnabled.addActionListener(commonActionListener)
         maxLinesInChange.addActionListener(commonActionListener)
         notificationInterval.addActionListener(commonActionListener)
         showRemainingInToolbar.addActionListener(commonActionListener)
         noCommitsAboveThreshold.addActionListener(commonActionListener)
-        exclusions.textField.document.addDocumentListener(object : DocumentAdapter() {
-            override fun textChanged(e: DocumentEvent) = noReentryWhen(isUpdating) {
-                updateStateFromUI()
-            }
-        })
+        exclusions.textField.document.addDocumentListener(commonDocumentListener)
         // It would be great to have exclusions label with html like in com.intellij.compiler.options.CompilerUIConfigurable.CompilerUIConfigurable
         // but I failed to make it properly wrap its text without expanding horizontally to full width of the settings window.
 
@@ -96,6 +98,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         tcrActionOnPassedTest.addActionListener(commonActionListener)
         commitMessageSource.addActionListener(commonActionListener)
         doNotRevertTests.addActionListener(commonActionListener)
+        doNotRevertFiles.textField.document.addDocumentListener(commonDocumentListener)
 
         openReadme.setListener(
             { _, _ -> BrowserUtil.open("https://github.com/dkandalov/limited-wip/blob/master/README.md#limited-wip") },
@@ -126,6 +129,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         tcrActionOnPassedTest.selectedIndex = tcrActionByIndex.inverse()[currentState.tcrActionOnPassedTest]!!
         commitMessageSource.selectedIndex = commitMessageSourceByIndex.inverse()[currentState.commitMessageSource]!!
         doNotRevertTests.isSelected = currentState.doNotRevertTests
+        doNotRevertFiles.text = currentState.doNotRevertFiles
 
         currentState.autoRevertEnabled.let {
             minutesTillRevert.isEnabled = it
@@ -144,6 +148,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             tcrActionOnPassedTest.isEnabled = it
             commitMessageSource.isEnabled = it
             doNotRevertTests.isEnabled = it
+            doNotRevertFiles.isEnabled = it
         }
     }
 
@@ -176,6 +181,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             currentState.tcrActionOnPassedTest = tcrActionByIndex[tcrActionOnPassedTest.selectedIndex]!!
             currentState.commitMessageSource = commitMessageSourceByIndex[commitMessageSource.selectedIndex]!!
             currentState.doNotRevertTests = doNotRevertTests.isSelected
+            currentState.doNotRevertFiles = doNotRevertFiles.text
 
         } catch (ignored: NumberFormatException) {
         }

@@ -33,7 +33,8 @@ data class LimitedWipSettings(
     var notifyOnTcrRevert: Boolean = true,
     var tcrActionOnPassedTest: TcrAction = OpenCommitDialog,
     var commitMessageSource: CommitMessageSource = LastCommit,
-    var doNotRevertTests: Boolean = false
+    var doNotRevertTests: Boolean = false,
+    var doNotRevertFiles: String = ""
 ): PersistentStateComponent<LimitedWipSettings> {
     private val listeners = ArrayList<Listener>()
 
