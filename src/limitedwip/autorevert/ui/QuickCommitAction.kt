@@ -17,11 +17,14 @@ import com.intellij.openapi.vcs.changes.ui.CommitHelper
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.util.FunctionUtil
+import limitedwip.common.settings.CommitMessageSource.ChangeListName
+import limitedwip.common.settings.CommitMessageSource.LastCommit
+import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.vcs.defaultChangeList
 import java.util.*
 
 
-class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
+class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = AnAction.getEventProject(event) ?: return
@@ -40,14 +43,16 @@ class QuickCommitAction : AnAction(AllIcons.Actions.Commit) {
                 )
                 return@Runnable
             }
-            val lastCommitMessage = VcsConfiguration.getInstance(project).LAST_COMMIT_MESSAGE
-
+            val commitMessage = when (LimitedWipSettings.getInstance().commitMessageSource) {
+                LastCommit     -> VcsConfiguration.getInstance(project).LAST_COMMIT_MESSAGE
+                ChangeListName -> defaultChangeList.name
+            }
             val commitHelper = CommitHelper(
                 project,
                 defaultChangeList,
                 defaultChangeList.changes.toList(),
                 "",
-                lastCommitMessage,
+                commitMessage,
                 emptyCheckinHandlers, true, true, FunctionUtil.nullConstant(),
                 noopCommitHandler
             )
