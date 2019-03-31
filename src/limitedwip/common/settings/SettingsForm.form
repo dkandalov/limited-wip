@@ -279,7 +279,7 @@
                 </constraints>
                 <properties>
                   <text value=""/>
-                  <toolTipText value="List of excluded files and paths separated by &quot;;&quot;."/>
+                  <toolTipText value="List of files and paths separated by &quot;;&quot;."/>
                 </properties>
               </component>
               <component id="9f8aa" class="javax.swing.JLabel">
@@ -299,7 +299,7 @@
                   <anchor value=""/>
                   <componentStyle value="SMALL"/>
                   <fontColor value="BRIGHTER"/>
-                  <text value="e.g.: *.approved;**/docs/*.txt"/>
+                  <text value="e.g. *.approved;**/docs/*.txt"/>
                 </properties>
               </component>
             </children>
@@ -456,7 +456,7 @@
                 </constraints>
                 <properties>
                   <text value=""/>
-                  <toolTipText value="List of excluded files and paths separated by &quot;;&quot;."/>
+                  <toolTipText value="List of files and paths separated by &quot;;&quot;."/>
                 </properties>
               </component>
               <component id="9c68b" class="javax.swing.JLabel">
@@ -476,7 +476,7 @@
                   <anchor value=""/>
                   <componentStyle value="SMALL"/>
                   <fontColor value="BRIGHTER"/>
-                  <text value="e.g.: *.approved;**/tests/*.js"/>
+                  <text value="e.g. *.approved;**/tests/*.js"/>
                 </properties>
               </component>
             </children>

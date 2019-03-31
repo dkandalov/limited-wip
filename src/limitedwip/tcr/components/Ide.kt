@@ -6,6 +6,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
+import limitedwip.common.PathMatcher
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.AllowCommitAppComponent
 import limitedwip.common.vcs.AllowCommitListener
@@ -38,8 +39,8 @@ class Ide(private val project: Project) {
         limitedwip.common.vcs.doQuickCommitAndPush(project)
     }
 
-    fun revertCurrentChangeList(doNotRevertTests: Boolean): Int {
-        return limitedwip.common.vcs.revertCurrentChangeList(project, doNotRevertTests)
+    fun revertCurrentChangeList(doNotRevertTests: Boolean, doNotRevertFiles: Set<PathMatcher>): Int {
+        return limitedwip.common.vcs.revertCurrentChangeList(project, doNotRevertTests, doNotRevertFiles)
     }
 
     fun notifyThatCommitWasCancelled() {

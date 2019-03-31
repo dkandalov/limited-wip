@@ -62,6 +62,9 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private fun createUIComponents() {
         exclusions = RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER)
         exclusions.dialogCaption = "Resource patterns"
+
+        doNotRevertFiles = RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER)
+        doNotRevertFiles.dialogCaption = "Resource patterns"
     }
 
     init {
