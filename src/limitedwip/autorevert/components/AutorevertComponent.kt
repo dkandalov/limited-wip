@@ -17,16 +17,17 @@ import limitedwip.common.vcs.invokeLater
 
 class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
     private val timer = TimerAppComponent.getInstance()
-    private lateinit var autoRevert: AutoRevert
+    @Volatile private var enabled = false
 
     override fun projectOpened() {
         val settings = LimitedWipSettings.getInstance().toAutoRevertSettings()
-        autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
+        val autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
+        enabled = settings.enabled
 
         timer.addListener(myProject, object: TimerAppComponent.Listener {
             override fun onUpdate() {
                 // Optimisation to avoid scheduling task when component is not enabled.
-                if (!settings.enabled) return
+                if (!enabled) return
 
                 invokeLater(ModalityState.any()) {
                     // Project can be closed (disposed) during handover between timer thread and EDT.
@@ -43,7 +44,8 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
         LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
             override fun onUpdate(settings: LimitedWipSettings) {
                 autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
-                if (settings.autoRevertEnabled) rollbackListener.enable() else rollbackListener.disable()
+                enabled = settings.autoRevertEnabled
+                if (enabled) rollbackListener.enable() else rollbackListener.disable()
             }
         })
 

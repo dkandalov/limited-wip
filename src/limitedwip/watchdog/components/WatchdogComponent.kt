@@ -17,11 +17,13 @@ import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
 class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     private val timer = TimerAppComponent.getInstance()
+    @Volatile private var enabled = false
 
     override fun projectOpened() {
         val settings = LimitedWipSettings.getInstance().toWatchdogSettings()
         val ide = Ide(myProject, ChangeSizeWatcher(myProject), WatchdogStatusBarWidget(), settings)
         val watchdog = Watchdog(ide, settings)
+        enabled = settings.enabled
 
         ide.listener = object: Ide.Listener {
             override fun allowCommit() = watchdog.isCommitAllowed(ide.currentChangeListSizeInLines())
@@ -33,7 +35,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         timer.addListener(myProject, object: TimerAppComponent.Listener {
             override fun onUpdate() {
                 // Optimisation to avoid scheduling task when component is not enabled.
-                if (!settings.enabled) return
+                if (!enabled) return
 
                 invokeLater(ModalityState.any()) {
                     // Project can be closed (disposed) during handover between timer thread and EDT.
@@ -44,7 +46,10 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
         })
 
         LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
-            override fun onUpdate(settings: LimitedWipSettings) = watchdog.onSettingsUpdate(settings.toWatchdogSettings())
+            override fun onUpdate(settings: LimitedWipSettings) {
+                enabled = settings.watchdogEnabled
+                watchdog.onSettingsUpdate(settings.toWatchdogSettings())
+            }
         })
 
         SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
