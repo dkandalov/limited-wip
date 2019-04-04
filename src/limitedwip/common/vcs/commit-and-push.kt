@@ -6,6 +6,7 @@ import com.intellij.dvcs.repo.VcsRepositoryManager
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ModalityState.NON_MODAL
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
@@ -50,8 +51,8 @@ private fun doPush(project: Project) {
     }
 }
 
-private fun invokeLater(callback: () -> Unit) {
-    ApplicationManager.getApplication().invokeLater(callback, NON_MODAL)
+fun invokeLater(modalityState: ModalityState = NON_MODAL, callback: () -> Unit) {
+    ApplicationManager.getApplication().invokeLater(callback, modalityState)
 }
 
 private fun anActionEvent(map: Map<String, Any>): AnActionEvent {

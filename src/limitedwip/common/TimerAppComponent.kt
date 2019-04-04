@@ -48,7 +48,7 @@ class TimerAppComponent: ApplicationComponent {
 
     override fun getComponentName(): String = "$pluginId-${this.javaClass.simpleName}"
 
-    fun addListener(listener: Listener, parentDisposable: Disposable) {
+    fun addListener(parentDisposable: Disposable, listener: Listener) {
         listeners.add(listener)
         Disposer.register(parentDisposable, Disposable { listeners.remove(listener) })
     }
