@@ -44,15 +44,18 @@ class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
                 return@Runnable
             }
             val commitMessage = when (LimitedWipSettings.getInstance().commitMessageSource) {
-                LastCommit     -> VcsConfiguration.getInstance(project).LAST_COMMIT_MESSAGE
+                LastCommit     -> VcsConfiguration.getInstance(project).LAST_COMMIT_MESSAGE ?: ""
                 ChangeListName -> defaultChangeList.name
             }
+            // Can't use empty message because CommitHelper will silently not commit changes.
+            val nonEmptyCommitMessage = if (commitMessage.isBlank()) "empty message" else commitMessage
+
             val commitHelper = CommitHelper(
                 project,
                 defaultChangeList,
                 defaultChangeList.changes.toList(),
                 "",
-                commitMessage,
+                nonEmptyCommitMessage,
                 emptyCheckinHandlers, true, true, FunctionUtil.nullConstant(),
                 noopCommitHandler
             )
