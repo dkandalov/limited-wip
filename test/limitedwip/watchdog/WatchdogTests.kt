@@ -35,10 +35,10 @@ data class Fixture(
     fun someChangesWithSize(size: Int) =
         ChangeSizesWithPath(listOf(Pair("", ChangeSize(size))))
 
-    fun anySettings(): Watchdog.Settings {
-        val type = Watchdog.Settings::class.java
+    fun anySettings(): Settings {
+        val type = Settings::class.java
         mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any ${type.canonicalName}>"))
-        return Watchdog.Settings(false, 0, 0, false, false, emptySet())
+        return Settings(false, 0, 0, false, false, emptySet())
     }
 
     fun anyChangeSize(): ChangeSize {

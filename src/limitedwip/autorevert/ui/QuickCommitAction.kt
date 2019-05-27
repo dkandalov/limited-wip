@@ -27,7 +27,7 @@ import java.util.*
 class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
 
     override fun actionPerformed(event: AnActionEvent) {
-        val project = AnAction.getEventProject(event) ?: return
+        val project = getEventProject(event) ?: return
         if (anySystemCheckinHandlerCancelsCommit(project)) return
         // Don't attempt to commit if there are no VCS registered because it will throw an exception.
         val defaultChangeList = project.defaultChangeList() ?: return
