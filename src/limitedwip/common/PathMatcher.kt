@@ -1,11 +1,9 @@
 package limitedwip.common
 
-import com.intellij.compiler.MalformedPatternException
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.apache.oro.text.regex.Perl5Compiler
-import org.jetbrains.annotations.NonNls
 
 data class PathMatcher(
     val fileNameRegex: Regex,
@@ -40,8 +38,9 @@ data class PathMatcher(
             pattern = normalizeWildcards(pattern)
             pattern = optimize(pattern)
 
-            val dirCompiled = if (dirPattern == null) null else compilePattern(dirPattern)
-            return PathMatcher(Regex(compilePattern(pattern)), if (dirCompiled == null) null else Regex(dirCompiled))
+            val dirRegex = dirPattern?.compilePattern()?.let { Regex(it) }
+            val fileNameRegex = Regex(pattern.compilePattern())
+            return PathMatcher(fileNameRegex, dirRegex)
         }
     }
 }
@@ -49,16 +48,14 @@ data class PathMatcher(
 fun String.toPathMatchers(): Set<PathMatcher> =
     split(';').mapTo(HashSet()) { PathMatcher.parse(it) }
 
-@Throws(MalformedPatternException::class)
-private fun compilePattern(@NonNls s: String): String {
-    return try {
+private fun String.compilePattern(): String =
+    try {
         val compiler = Perl5Compiler()
-        if (SystemInfo.isFileSystemCaseSensitive) compiler.compile(s).pattern
-        else compiler.compile(s, Perl5Compiler.CASE_INSENSITIVE_MASK).pattern
+        if (SystemInfo.isFileSystemCaseSensitive) compiler.compile(this).pattern
+        else compiler.compile(this, Perl5Compiler.CASE_INSENSITIVE_MASK).pattern
     } catch (ex: org.apache.oro.text.regex.MalformedPatternException) {
-        throw MalformedPatternException(ex)
+        error(ex.message.toString())
     }
-}
 
 private fun normalizeWildcards(wildcardPattern: String): String {
     var pattern = wildcardPattern
