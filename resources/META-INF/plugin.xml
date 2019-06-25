@@ -51,7 +51,7 @@
     </project-components>
 
     <actions>
-        <action id="QuickCommitAction" class="limitedwip.autorevert.ui.QuickCommitAction" text="Quick commit"/>
+        <action id="QuickCommitAction" class="limitedwip.common.vcs.QuickCommitAction" text="Quick commit"/>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

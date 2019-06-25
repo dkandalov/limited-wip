@@ -1,4 +1,4 @@
-package limitedwip.autorevert.ui
+package limitedwip.common.vcs
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
@@ -20,7 +20,6 @@ import com.intellij.util.FunctionUtil
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings
-import limitedwip.common.vcs.defaultChangeList
 import java.util.*
 
 

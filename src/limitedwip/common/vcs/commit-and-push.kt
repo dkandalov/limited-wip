@@ -14,7 +14,6 @@ import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.IdeFocusManager
-import limitedwip.autorevert.ui.QuickCommitAction
 
 fun openCommitDialog(changes: List<Change>? = null) {
     invokeLater {
