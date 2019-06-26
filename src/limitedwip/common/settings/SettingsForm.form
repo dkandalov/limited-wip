@@ -382,9 +382,9 @@
             <properties>
               <editable value="false"/>
               <model>
-                <item value="open commit dialog"/>
                 <item value="commit"/>
                 <item value="commit and push"/>
+                <item value="open commit dialog"/>
               </model>
             </properties>
           </component>
