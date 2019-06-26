@@ -36,8 +36,8 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
     fun onPause() {
         if (!isStarted) return
-        paused = true
-        ide.showPaused()
+        paused = !paused
+        if (paused) ide.showPaused()
     }
 
     fun onAllChangesCommitted() {
