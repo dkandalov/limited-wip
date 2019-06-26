@@ -71,8 +71,10 @@ class AutoRevertPauseTests {
 
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
+        ide.expect(inOrder, times(1)).showPaused()
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
+        ide.expect(inOrder, times(1)).showPaused()
     }
 }
 

@@ -56,6 +56,11 @@ class Ide(
         updateStatusBar()
     }
 
+    fun showPaused() {
+        autoRevertWidget.showPausedText()
+        updateStatusBar()
+    }
+
     fun onSettingsUpdate(settings: AutoRevert.Settings) {
         this.settings = settings
         updateStatusBar()
