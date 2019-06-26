@@ -29,6 +29,10 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         }
     }
 
+    fun onPause() {
+        // TODO
+    }
+
     fun onAllChangesCommitted() {
         if (!isStarted) return
         stop()

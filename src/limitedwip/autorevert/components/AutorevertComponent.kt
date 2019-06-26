@@ -21,8 +21,13 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
 
     override fun projectOpened() {
         val settings = LimitedWipSettings.getInstance(myProject).toAutoRevertSettings()
-        val autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
+        val widget = AutoRevertStatusBarWidget()
+        val autoRevert = AutoRevert(Ide(myProject, settings, widget), settings)
         enabled = settings.enabled
+
+        widget.onClick {
+            autoRevert.onPause()
+        }
 
         timer.addListener(myProject, object: TimerAppComponent.Listener {
             override fun onUpdate() {

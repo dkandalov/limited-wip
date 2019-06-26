@@ -10,6 +10,11 @@ import java.awt.event.MouseEvent
 class AutoRevertStatusBarWidget : StatusBarWidget {
     private var text = ""
     private var tooltipText = ""
+    private lateinit var callback: () -> Unit
+
+    fun onClick(callback: () -> Unit) {
+        this.callback = callback
+    }
 
     override fun install(statusBar: StatusBar) {}
 
@@ -36,7 +41,7 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
 
             override fun getTooltipText() = this@AutoRevertStatusBarWidget.tooltipText
 
-            override fun getClickConsumer(): Consumer<MouseEvent>? = null
+            override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { callback() }
 
             override fun getAlignment() = Component.CENTER_ALIGNMENT
 
