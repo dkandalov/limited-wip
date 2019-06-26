@@ -8,7 +8,7 @@ import limitedwip.tcr.components.Ide
 import org.junit.Test
 import org.mockito.Mockito.*
 
-private data class Fixture(
+private class Fixture(
     val ide: Ide = mock(Ide::class.java),
     val settings: Tcr.Settings = Tcr.Settings(
         enabled = true,

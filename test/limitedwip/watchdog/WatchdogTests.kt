@@ -12,7 +12,7 @@ import org.mockito.internal.matchers.InstanceOf
 import org.mockito.internal.progress.ThreadSafeMockingProgress.mockingProgress
 import org.mockito.Mockito.`when` as whenCalled
 
-data class Fixture(
+private class Fixture(
     val maxLinesInChange: Int = 100,
     val settings: Settings = Settings(
         enabled = true,
@@ -38,7 +38,14 @@ data class Fixture(
     fun anySettings(): Settings {
         val type = Settings::class.java
         mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any ${type.canonicalName}>"))
-        return Settings(false, 0, 0, false, false, emptySet())
+        return Settings(
+            enabled = false,
+            maxLinesInChange = 0,
+            notificationIntervalInSeconds = 0,
+            showRemainingChangesInToolbar = false,
+            noCommitsAboveThreshold = false,
+            exclusions = emptySet()
+        )
     }
 
     fun anyChangeSize(): ChangeSize {

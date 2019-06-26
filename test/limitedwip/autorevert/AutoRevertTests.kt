@@ -9,7 +9,7 @@ import org.mockito.InOrder
 import org.mockito.Mockito.*
 import org.mockito.Mockito.`when` as whenCalled
 
-data class Fixture(
+private data class Fixture(
     val ide: Ide = mock(Ide::class.java),
     val inOrder: InOrder = inOrder(ide),
     val settings: Settings = Settings(
