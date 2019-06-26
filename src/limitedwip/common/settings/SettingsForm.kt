@@ -149,7 +149,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         currentState.tcrEnabled.let {
             notifyOnTcrRevert.isEnabled = it
             tcrActionOnPassedTest.isEnabled = it
-            commitMessageSource.isEnabled = it
+            commitMessageSource.isEnabled = it && currentState.tcrActionOnPassedTest != OpenCommitDialog
             doNotRevertTests.isEnabled = it
             doNotRevertFiles.isEnabled = it
         }
