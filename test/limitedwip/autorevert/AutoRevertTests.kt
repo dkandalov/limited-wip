@@ -76,6 +76,17 @@ class AutoRevertPauseTests {
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
         ide.expect(inOrder, times(1)).showPaused()
     }
+
+    @Test fun `don't pause if timer is not started`() = Fixture().run {
+        autoRevert.onTimer(hasChanges = false)
+        ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
+
+        autoRevert.onPause()
+
+        autoRevert.onTimer(hasChanges = true)
+        ide.expect(inOrder, times(1)).showTimeTillRevert(anyInt())
+        ide.expect(inOrder, times(0)).showPaused()
+    }
 }
 
 class AutoRevertCommitDialogTests {
