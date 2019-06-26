@@ -68,6 +68,7 @@ class AutoRevertPauseTests {
         ide.expect(inOrder, times(1)).showTimeTillRevert(anyInt())
 
         autoRevert.onPause()
+        ide.expect(inOrder, times(1)).showPaused()
 
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder, times(0)).showTimeTillRevert(anyInt())
@@ -88,14 +89,13 @@ class AutoRevertPauseTests {
         ide.expect(inOrder, times(0)).showPaused()
     }
 
-    @Test fun `un-pause after stop`() = Fixture().run {
+    @Test fun `timer is un-paused after stop`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
         autoRevert.onPause()
         autoRevert.onTimer(hasChanges = false)
 
         autoRevert.onTimer(hasChanges = true)
         ide.expect(inOrder, times(1)).showTimeTillRevert(anyInt())
-        ide.expect(inOrder, times(0)).showPaused()
     }
 }
 
