@@ -39,14 +39,13 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
 
 
 ## Auto-revert
-Every `N` minutes all changes in the current change list are automatically reverted.
-You should make all necessary changes and commit before the timeout. Timer is reset on each commit.
-Initially, auto-revert is stopped. To start/stop countdown until revert click on 
-auto-revert widget in the statusbar or run `Start/stop auto-revert` action. 
+ - Timer starts as soon as there are any changes in version control.
+ - Timer resets when there are no more changes (because of commit, revert or undo).
+ - When timer reaches 0 seconds, all changes are automatically reverted.
 
 This constraint has been used at [code retreats](https://twitter.com/coderetreat) with 5 minute timeout 
-for quite a few years. It has been also useful on large scale enterprise projects with longer timeout 
-(e.g. 30, 60, 120 minutes).
+for quite a few years. It has been useful on large scale enterprise projects with longer timeouts 
+(e.g. 30, 60, 120 minutes). And it also seems to work well in combination with TCR.
 
 You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
  - enable/disable component (it is disabled by default)
@@ -55,6 +54,8 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
  - enable/disable displaying timer in auto-revert widget. 
    Sometimes it can be useful to see how much time is left till revert. 
    In other cases, you might prefer not to see time left and just focus on making smallest change possible.
+
+This is not part of the workflow, but you can pause the timer by clicking on auto-revert widget in IDE toolbar. 
 
 
 ## TCR mode (test && commit || revert)
@@ -66,11 +67,14 @@ However, it's much more useful and enjoyable than it might seem initially.
 
 You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
  - enable/disable component (disabled by default)
- - enable/disable notification on revert (to make it clear why current changes disappeared)
  - choose action on passed test, it can be
-    - open commit dialog
-    - commit (using last commit message)
+    - commit
     - commit and push (if "push" is supported by VCS)
+    - open commit dialog
+ - choose commit message source, it can be
+    - last commit
+    - current changelist name
+ - enable/disable notification on revert (to make it clear why current changes disappeared)
  - enable/disable revert of test code (aka [relaxed TCR](https://medium.com/@tdeniffel/tcr-variants-test-commit-revert-bf6bd84b17d3))
  - exclude files from revert in case some of the tests are not marked as test source root in IDE
 
@@ -87,6 +91,12 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
 <br/>
 <img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/commit-cancelled.png?raw=true" align="center"/>
 <br/>
+
+
+## Videos
+ - [Mobbing FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=tmRRlzPWyYA) 
+ - [Tennis kata with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=H0z_NhQIOHQ) 
+ - [FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=3s14AtA5R48) 
 
 
 ## History
