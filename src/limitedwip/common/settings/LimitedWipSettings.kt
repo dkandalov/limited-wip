@@ -27,9 +27,9 @@ data class LimitedWipSettings(
     var showTimerInToolbar: Boolean = true,
 
     var tcrEnabled: Boolean = false,
-    var notifyOnTcrRevert: Boolean = true,
     var tcrActionOnPassedTest: TcrAction = Commit,
     var commitMessageSource: CommitMessageSource = LastCommit,
+    var notifyOnTcrRevert: Boolean = false,
     var doNotRevertTests: Boolean = false,
     var doNotRevertFiles: String = ""
 ): PersistentStateComponent<LimitedWipSettings> {
