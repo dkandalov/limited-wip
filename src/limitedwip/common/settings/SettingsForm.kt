@@ -49,9 +49,9 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private var isUpdating = Ref(false)
 
     private val tcrActionByIndex = HashBiMap.create<Int, TcrAction>().also {
-        it[0] = OpenCommitDialog
-        it[1] = Commit
-        it[2] = CommitAndPush
+        it[0] = Commit
+        it[1] = CommitAndPush
+        it[2] = OpenCommitDialog
     }
 
     private val commitMessageSourceByIndex = HashBiMap.create<Int, CommitMessageSource>().also {

@@ -10,14 +10,14 @@ import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
 import limitedwip.common.settings.CommitMessageSource.LastCommit
-import limitedwip.common.settings.TcrAction.OpenCommitDialog
+import limitedwip.common.settings.TcrAction.*
 
 @State(name = "${pluginId}Settings")
 data class LimitedWipSettings(
     var watchdogEnabled: Boolean = true,
     var maxLinesInChange: Int = 80,
     var notificationIntervalInMinutes: Int = 1,
-    var noCommitsAboveThreshold: Boolean = true,
+    var noCommitsAboveThreshold: Boolean = false,
     var showRemainingChangesInToolbar: Boolean = true,
     var exclusions: String = "",
 
@@ -28,7 +28,7 @@ data class LimitedWipSettings(
 
     var tcrEnabled: Boolean = false,
     var notifyOnTcrRevert: Boolean = true,
-    var tcrActionOnPassedTest: TcrAction = OpenCommitDialog,
+    var tcrActionOnPassedTest: TcrAction = Commit,
     var commitMessageSource: CommitMessageSource = LastCommit,
     var doNotRevertTests: Boolean = false,
     var doNotRevertFiles: String = ""
