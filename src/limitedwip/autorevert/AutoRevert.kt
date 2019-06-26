@@ -21,9 +21,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         if (!isStarted && hasChanges) start()
         if (!isStarted) return
 
-        if (paused) {
-            ide.showPaused()
-        } else {
+        if (!paused) {
             remainingSeconds--
             ide.showTimeTillRevert(remainingSeconds + 1)
         }
