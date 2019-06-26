@@ -55,8 +55,8 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
-        <applicationService serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
+        <projectConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
+        <projectService serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.SuccessfulCheckin"/>
         <search.topHitProvider implementation="limitedwip.common.settings.LimitedWipTopHitProvider"/>
     </extensions>

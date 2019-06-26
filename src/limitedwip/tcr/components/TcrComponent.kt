@@ -19,7 +19,7 @@ class TcrComponent(project: Project): AbstractProjectComponent(project) {
 
     override fun projectOpened() {
         ide = Ide(myProject)
-        tcr = Tcr(ide, LimitedWipSettings.getInstance().toTcrSettings())
+        tcr = Tcr(ide, LimitedWipSettings.getInstance(myProject).toTcrSettings())
         ide.listener = object: Ide.Listener {
             override fun onForceCommit() = tcr.forceOneCommit()
             override fun allowCommit() = tcr.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
@@ -34,7 +34,7 @@ class TcrComponent(project: Project): AbstractProjectComponent(project) {
             override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) = tcr.onSuccessfulCommit()
         })
 
-        LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
+        LimitedWipSettings.getInstance(myProject).addListener(myProject, object: LimitedWipSettings.Listener {
             override fun onUpdate(settings: LimitedWipSettings) = tcr.onSettingsUpdate(settings.toTcrSettings())
         })
     }

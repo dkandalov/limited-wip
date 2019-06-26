@@ -20,7 +20,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
     @Volatile private var enabled = false
 
     override fun projectOpened() {
-        val settings = LimitedWipSettings.getInstance().toWatchdogSettings()
+        val settings = LimitedWipSettings.getInstance(myProject).toWatchdogSettings()
         val ide = Ide(myProject, ChangeSizeWatcher(myProject), WatchdogStatusBarWidget(), settings)
         val watchdog = Watchdog(ide, settings)
         enabled = settings.enabled
@@ -45,7 +45,7 @@ class WatchdogComponent(project: Project): AbstractProjectComponent(project) {
             }
         })
 
-        LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
+        LimitedWipSettings.getInstance(myProject).addListener(myProject, object: LimitedWipSettings.Listener {
             override fun onUpdate(settings: LimitedWipSettings) {
                 enabled = settings.watchdogEnabled
                 watchdog.onSettingsUpdate(settings.toWatchdogSettings())

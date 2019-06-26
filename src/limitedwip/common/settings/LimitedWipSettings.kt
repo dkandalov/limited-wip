@@ -4,18 +4,15 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
-import limitedwip.common.settings.CommitMessageSource.*
+import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.TcrAction.OpenCommitDialog
 
-@State(
-    name = "${pluginId}Settings",
-    storages = arrayOf(Storage(file = "\$APP_CONFIG$/limitedwip.ui.settings.xml"))
-)
+@State(name = "${pluginId}Settings")
 data class LimitedWipSettings(
     var watchdogEnabled: Boolean = true,
     var maxLinesInChange: Int = 80,
@@ -67,7 +64,8 @@ data class LimitedWipSettings(
         fun isValidChangedSizeRange(lineCount: Int) = changedLinesRange.isWithin(lineCount)
         fun isValidNotificationInterval(interval: Int) = notificationIntervalRange.isWithin(interval)
 
-        fun getInstance(): LimitedWipSettings = ServiceManager.getService(LimitedWipSettings::class.java)
+        fun getInstance(project: Project): LimitedWipSettings =
+            ServiceManager.getService(project, LimitedWipSettings::class.java)
     }
 }
 

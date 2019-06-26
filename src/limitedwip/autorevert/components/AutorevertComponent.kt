@@ -20,7 +20,7 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
     @Volatile private var enabled = false
 
     override fun projectOpened() {
-        val settings = LimitedWipSettings.getInstance().toAutoRevertSettings()
+        val settings = LimitedWipSettings.getInstance(myProject).toAutoRevertSettings()
         val autoRevert = AutoRevert(Ide(myProject, settings, AutoRevertStatusBarWidget()), settings)
         enabled = settings.enabled
 
@@ -41,7 +41,7 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
             if (allChangesRolledBack) autoRevert.onAllChangesRolledBack()
         }
 
-        LimitedWipSettings.getInstance().addListener(myProject, object: LimitedWipSettings.Listener {
+        LimitedWipSettings.getInstance(myProject).addListener(myProject, object: LimitedWipSettings.Listener {
             override fun onUpdate(settings: LimitedWipSettings) {
                 autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
                 enabled = settings.autoRevertEnabled

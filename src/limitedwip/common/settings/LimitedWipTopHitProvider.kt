@@ -8,25 +8,26 @@ import limitedwip.common.pluginId
 import kotlin.reflect.KMutableProperty0
 
 class LimitedWipTopHitProvider : OptionsTopHitProvider() {
-    private val settings = LimitedWipSettings.getInstance()
-
     override fun getId() = pluginId
 
-    override fun getOptions(project: Project?): Collection<OptionDescription> =
-        listOf(
-            Option("Change size watchdog enabled", settings::watchdogEnabled),
-            Option("Show remaining changes in toolbar", settings::showRemainingChangesInToolbar),
-            Option("No commits above threshold", settings::noCommitsAboveThreshold),
+    override fun getOptions(project: Project?): Collection<OptionDescription> {
+        val settings = LimitedWipSettings.getInstance(project ?: return emptyList())
+        return listOf(
+            Option("Change size watchdog enabled", settings::watchdogEnabled, settings),
+            Option("Show remaining changes in toolbar", settings::showRemainingChangesInToolbar, settings),
+            Option("No commits above threshold", settings::noCommitsAboveThreshold, settings),
 
-            Option("Auto-revert enabled", settings::autoRevertEnabled),
-            Option("Show time till revert", settings::showTimerInToolbar),
+            Option("Auto-revert enabled", settings::autoRevertEnabled, settings),
+            Option("Show time till revert", settings::showTimerInToolbar, settings),
 
-            Option("TCR mode enabled", settings::tcrEnabled)
+            Option("TCR mode enabled", settings::tcrEnabled, settings)
         )
+    }
 
     private inner class Option(
         optionName: String,
-        val property: KMutableProperty0<Boolean>
+        val property: KMutableProperty0<Boolean>,
+        val settings: LimitedWipSettings
     ) : BooleanOptionDescription(optionName, pluginId) {
         override fun isOptionEnabled() = property()
         override fun setOptionState(enabled: Boolean) {
