@@ -63,6 +63,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
     private fun stop() {
         isStarted = false
+        paused = false
         ide.showThatAutoRevertStopped()
     }
 
