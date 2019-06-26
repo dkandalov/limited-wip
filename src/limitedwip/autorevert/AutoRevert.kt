@@ -7,6 +7,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     private var isStarted = false
     private var remainingSeconds: Int = 0
     private var skippedRevert: Boolean = false
+    private var paused: Boolean = false
 
     init {
         onSettingsUpdate(settings)
@@ -20,8 +21,10 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         if (!isStarted && hasChanges) start()
         if (!isStarted) return
 
-        remainingSeconds--
-        ide.showTimeTillRevert(remainingSeconds + 1)
+        if (!paused) {
+            remainingSeconds--
+            ide.showTimeTillRevert(remainingSeconds + 1)
+        }
 
         if (remainingSeconds < 0) {
             revert()
@@ -30,7 +33,7 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onPause() {
-        // TODO
+        paused = true
     }
 
     fun onAllChangesCommitted() {
