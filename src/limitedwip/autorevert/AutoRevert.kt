@@ -4,7 +4,7 @@ package limitedwip.autorevert
 import limitedwip.autorevert.components.Ide
 
 class AutoRevert(private val ide: Ide, private var settings: Settings) {
-    private var isStarted = false
+    private var started = false
     private var remainingSeconds: Int = 0
     private var skippedRevert: Boolean = false
     private var paused: Boolean = false
@@ -17,9 +17,9 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         if (!settings.enabled) return
         if (skippedRevert && revert()) return
         if (skippedRevert && remainingSeconds < 0) return
-        if (isStarted && !hasChanges) return stop()
-        if (!isStarted && hasChanges) start()
-        if (!isStarted) return
+        if (started && !hasChanges) return stop()
+        if (!started && hasChanges) start()
+        if (!started) return
 
         if (!paused) {
             remainingSeconds--
@@ -33,13 +33,13 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
     }
 
     fun onPause() {
-        if (!isStarted) return
+        if (!started) return
         paused = !paused
         if (paused) ide.showPaused()
     }
 
     fun onAllChangesCommitted() {
-        if (!isStarted) return
+        if (!started) return
         stop()
     }
 
@@ -49,19 +49,19 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
 
     fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
-        if (isStarted && !settings.enabled) {
+        if (started && !settings.enabled) {
             stop()
         }
         this.settings = settings
     }
 
     private fun start() {
-        isStarted = true
+        started = true
         remainingSeconds = settings.secondsTillRevert
     }
 
     private fun stop() {
-        isStarted = false
+        started = false
         paused = false
         ide.showThatAutoRevertStopped()
     }
