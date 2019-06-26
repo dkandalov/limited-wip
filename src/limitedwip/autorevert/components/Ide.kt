@@ -15,15 +15,15 @@ import java.awt.Window
 class Ide(
     private val project: Project,
     private var settings: AutoRevert.Settings,
-    private val autoRevertWidget: AutoRevertStatusBarWidget
+    private val widget: AutoRevertStatusBarWidget
 ) {
     init {
         Disposer.register(project, Disposable {
             val statusBar = project.statusBar()
             if (statusBar != null) {
-                autoRevertWidget.showStoppedText()
-                statusBar.removeWidget(autoRevertWidget.ID())
-                statusBar.updateWidget(autoRevertWidget.ID())
+                widget.showStoppedText()
+                statusBar.removeWidget(widget.ID())
+                statusBar.updateWidget(widget.ID())
             }
         })
     }
@@ -33,7 +33,7 @@ class Ide(
     }
 
     fun showThatAutoRevertStopped() {
-        autoRevertWidget.showStoppedText()
+        widget.showStoppedText()
         updateStatusBar()
     }
 
@@ -49,15 +49,15 @@ class Ide(
 
     fun showTimeTillRevert(secondsLeft: Int) {
         if (settings.showTimerInToolbar) {
-            autoRevertWidget.showTimeLeft(formatTime(secondsLeft))
+            widget.showTimeLeft(formatTime(secondsLeft))
         } else {
-            autoRevertWidget.showStartedText()
+            widget.showStartedText()
         }
         updateStatusBar()
     }
 
     fun showPaused() {
-        autoRevertWidget.showPausedText()
+        widget.showPausedText()
         updateStatusBar()
     }
 
@@ -78,14 +78,14 @@ class Ide(
 
     private fun updateStatusBar() {
         val statusBar = project.statusBar() ?: return
-        val hasAutoRevertWidget = statusBar.getWidget(autoRevertWidget.ID()) != null
+        val hasAutoRevertWidget = statusBar.getWidget(widget.ID()) != null
         when {
-            hasAutoRevertWidget && settings.enabled -> statusBar.updateWidget(autoRevertWidget.ID())
-            hasAutoRevertWidget                     -> statusBar.removeWidget(autoRevertWidget.ID())
+            hasAutoRevertWidget && settings.enabled -> statusBar.updateWidget(widget.ID())
+            hasAutoRevertWidget                     -> statusBar.removeWidget(widget.ID())
             settings.enabled                        -> {
-                autoRevertWidget.showStoppedText()
-                statusBar.addWidget(autoRevertWidget, "before Position")
-                statusBar.updateWidget(autoRevertWidget.ID())
+                widget.showStoppedText()
+                statusBar.addWidget(widget, "before Position")
+                statusBar.updateWidget(widget.ID())
             }
         }
     }
