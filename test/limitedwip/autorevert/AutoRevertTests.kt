@@ -62,6 +62,17 @@ class AutoRevertBasicTests {
     }
 }
 
+class AutoRevertPauseTests {
+    @Test fun `pause timer when some changes are made`() = Fixture().run {
+        autoRevert.onTimer(hasChanges = true)
+        ide.expect(inOrder, times(1)).showTimeTillRevert(anyInt())
+
+        autoRevert.onPause()
+
+        // TODO
+    }
+}
+
 class AutoRevertCommitDialogTests {
     @Test fun `when commit dialog is open, don't revert changes`() = Fixture().run {
         autoRevert.onTimer(hasChanges = true)
