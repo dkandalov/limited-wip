@@ -236,6 +236,7 @@
                 <item value="15"/>
                 <item value="25"/>
                 <item value="60"/>
+                <item value="never"/>
               </model>
             </properties>
           </component>
@@ -257,11 +258,12 @@
               <text value="Enabled"/>
             </properties>
           </component>
-          <component id="4b95a" class="javax.swing.JLabel">
+          <component id="4b95a" class="javax.swing.JLabel" binding="notificationMinutesLabel">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <enabled value="true"/>
               <text value="minute(s)"/>
             </properties>
           </component>

@@ -16,6 +16,7 @@ import limitedwip.common.settings.TcrAction.*
 import java.awt.event.ActionEvent
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
+import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
@@ -29,6 +30,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private lateinit var showRemainingInToolbar: JCheckBox
     private lateinit var noCommitsAboveThreshold: JCheckBox
     private lateinit var exclusions: RawCommandLineEditor
+    private lateinit var notificationMinutesLabel: JLabel
 
     private lateinit var autoRevertPanel: JPanel
     private lateinit var autoRevertEnabled: JCheckBox
@@ -117,7 +119,9 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private fun updateUIFromState() {
         watchdogEnabled.isSelected = currentState.watchdogEnabled
         maxLinesInChange.selectedItem = currentState.maxLinesInChange.toString()
-        notificationInterval.selectedItem = currentState.notificationIntervalInMinutes.toString()
+        notificationInterval.selectedItem =
+            currentState.notificationIntervalInMinutes.let { if (it == Int.MAX_VALUE) "never" else it.toString() }
+        notificationMinutesLabel.isVisible = notificationInterval.selectedItem != "never"
         showRemainingInToolbar.isSelected = currentState.showRemainingChangesInToolbar
         noCommitsAboveThreshold.isSelected = currentState.noCommitsAboveThreshold
         exclusions.text = currentState.exclusions
@@ -162,7 +166,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             if (isValidChangedSizeRange(lineCount)) {
                 currentState.maxLinesInChange = lineCount
             }
-            var minutes = (notificationInterval.selectedItem as String).toInt()
+            var minutes = (notificationInterval.selectedItem as String).let { if (it == "never") Int.MAX_VALUE else it.toInt() }
             if (isValidNotificationInterval(minutes)) {
                 currentState.notificationIntervalInMinutes = minutes
             }
