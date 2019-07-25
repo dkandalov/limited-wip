@@ -1,5 +1,5 @@
 language: java
-jdk: 2
+jdk: oraclejdk11
 
 env:
   - LIMITED_WIP_PLUGIN_IDEA_VERSION=IC-172.3757.29
