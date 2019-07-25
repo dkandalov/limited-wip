@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 plugins {
     idea
     java
-    kotlin("jvm").version("1.1.1")
+    kotlin("jvm").version("1.1.4")
     id("org.jetbrains.intellij").version("0.4.9")
 }
 java {
