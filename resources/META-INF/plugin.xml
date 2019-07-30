@@ -6,8 +6,8 @@
     <category>Misc</category>
 
     <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
-    <!-- Since this IJ version because it includes LineStatusTrackerManager. -->
-    <idea-version since-build="181.3870.7"/>
+    <!-- Since this IJ version because it includes LineStatusTrackerManager and because of "Forms instrumentation failed" error in 181. -->
+    <idea-version since-build="182.2949.2"/>
 
     <description>
         <![CDATA[
