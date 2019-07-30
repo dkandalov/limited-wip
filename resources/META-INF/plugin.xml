@@ -6,8 +6,8 @@
     <category>Misc</category>
 
     <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
-    <!-- Since IJ 2017.3 because it supports Kotlin 1.1. -->
-    <idea-version since-build="173"/>
+    <!-- Since this IJ version because it includes LineStatusTrackerManager. -->
+    <idea-version since-build="181.3870.7"/>
 
     <description>
         <![CDATA[

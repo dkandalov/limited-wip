@@ -16,6 +16,7 @@ import com.intellij.openapi.vcs.changes.actions.RefreshAction
 import com.intellij.openapi.vcs.changes.ui.CommitHelper
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
+import com.intellij.openapi.vcs.impl.LineStatusTrackerManager
 import com.intellij.util.FunctionUtil
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
@@ -33,6 +34,9 @@ class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
 
         val runnable = Runnable {
             RefreshAction.doRefresh(project)
+
+            // Need this starting from around IJ 2019.2 because otherwise changes are not included into commit.
+            LineStatusTrackerManager.getInstanceImpl(project).resetExcludedFromCommitMarkers()
 
             if (defaultChangeList.changes.isEmpty()) {
                 Messages.showInfoMessage(
