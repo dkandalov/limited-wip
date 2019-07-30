@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 plugins {
     idea
     java
-    kotlin("jvm").version("1.1.1")
+    kotlin("jvm").version("1.2.31")
     id("org.jetbrains.intellij").version("0.4.9")
 }
 java {
@@ -44,8 +44,8 @@ dependencies {
 tasks.withType<KotlinJvmCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
-        apiVersion = "1.1"
-        languageVersion = "1.1"
+        apiVersion = "1.2"
+        languageVersion = "1.2"
         // Compiler flag to allow building against pre-released versions of Kotlin
         // because IJ EAP can be built using pre-released Kotlin but it's still worth doing to check API compatibility
         freeCompilerArgs = freeCompilerArgs + listOf("-Xskip-metadata-version-check")
