@@ -11,7 +11,6 @@ import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.tcr.Tcr
 import limitedwip.tcr.Tcr.ChangeListModifications
 import limitedwip.tcr.Tcr.Settings
-import limitedwip.autorevert.components.Ide as IdeFromAutoRevert
 
 class TcrComponent(project: Project): AbstractProjectComponent(project) {
     private lateinit var tcr: Tcr

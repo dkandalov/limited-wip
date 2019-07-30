@@ -56,9 +56,10 @@ data class LimitedWipSettings(
     }
 
     companion object {
+        const val never = Int.MAX_VALUE
         private val minutesTillRevertRange = Range(1, 99)
         private val changedLinesRange = Range(1, 999)
-        private val notificationIntervalRange = Range(1, Int.MAX_VALUE)
+        private val notificationIntervalRange = Range(1, never)
 
         fun isValidMinutesTillRevert(minutes: Int) = minutesTillRevertRange.isWithin(minutes)
         fun isValidChangedSizeRange(lineCount: Int) = changedLinesRange.isWithin(lineCount)

@@ -12,6 +12,7 @@ import limitedwip.common.settings.CommitMessageSource.*
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidChangedSizeRange
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidMinutesTillRevert
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidNotificationInterval
+import limitedwip.common.settings.LimitedWipSettings.Companion.never
 import limitedwip.common.settings.TcrAction.*
 import java.awt.event.ActionEvent
 import javax.swing.JCheckBox
@@ -119,9 +120,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private fun updateUIFromState() {
         watchdogEnabled.isSelected = currentState.watchdogEnabled
         maxLinesInChange.selectedItem = currentState.maxLinesInChange.toString()
-        notificationInterval.selectedItem =
-            currentState.notificationIntervalInMinutes.let { if (it == Int.MAX_VALUE) "never" else it.toString() }
-        notificationMinutesLabel.isVisible = notificationInterval.selectedItem != "never"
+        notificationInterval.selectedItem = currentState.notificationIntervalInMinutes.toIntervalString()
+        notificationMinutesLabel.isVisible = currentState.notificationIntervalInMinutes != never
         showRemainingInToolbar.isSelected = currentState.showRemainingChangesInToolbar
         noCommitsAboveThreshold.isSelected = currentState.noCommitsAboveThreshold
         exclusions.text = currentState.exclusions
@@ -166,7 +166,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             if (isValidChangedSizeRange(lineCount)) {
                 currentState.maxLinesInChange = lineCount
             }
-            var minutes = (notificationInterval.selectedItem as String).let { if (it == "never") Int.MAX_VALUE else it.toInt() }
+            var minutes = (notificationInterval.selectedItem as String).parseInterval()
             if (isValidNotificationInterval(minutes)) {
                 currentState.notificationIntervalInMinutes = minutes
             }
@@ -216,3 +216,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         }
     }
 }
+
+private fun String.parseInterval() = if (this == "never") never else toInt()
+
+private fun Int.toIntervalString() = if (this == never) "never" else toString()
