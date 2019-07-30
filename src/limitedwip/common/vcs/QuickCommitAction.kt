@@ -51,7 +51,7 @@ class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
                 ChangeListName -> defaultChangeList.name
             }
             // Can't use empty message because CommitHelper will silently not commit changes.
-            val nonEmptyCommitMessage = if (commitMessage.isBlank()) "empty message" else commitMessage
+            val nonEmptyCommitMessage = if (commitMessage.trim().isEmpty()) "empty message" else commitMessage
 
             // Commit "asynchronously" because right now in IJ this means doing it as background task
             // and this is better UX compared to a flashing modal commit progress window (which people have noticed and complained about).
