@@ -1,6 +1,7 @@
 package limitedwip.watchdog
 
 import limitedwip.common.PathMatcher
+import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.expect
 import limitedwip.expectNoMoreInteractions
 import limitedwip.shouldEqual
@@ -85,6 +86,15 @@ class WatchdogTests {
 
         watchdog.onTimer()
 
+        ide.expect(never()).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
+    }
+
+    @Test fun `don't send notification when notification interval is 'never'`() = Fixture().run {
+        watchdog.onSettingsUpdate(settings.copy(notificationIntervalInSeconds = LimitedWipSettings.never))
+        whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
+
+        watchdog.onTimer()
+        watchdog.onTimer()
         ide.expect(never()).showNotificationThatChangeSizeIsTooBig(anyChangeSize(), anyInt())
     }
 

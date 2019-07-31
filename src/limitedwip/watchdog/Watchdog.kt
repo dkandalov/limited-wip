@@ -1,6 +1,7 @@
 package limitedwip.watchdog
 
 import limitedwip.common.PathMatcher
+import limitedwip.common.settings.LimitedWipSettings.Companion.never
 import limitedwip.watchdog.components.Ide
 
 class Watchdog(private val ide: Ide, private var settings: Settings) {
@@ -21,7 +22,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
         val exceededThreshold = changeSize.value > settings.maxLinesInChange
 
         secondsTillNotification--
-        if (exceededThreshold && secondsTillNotification <= 0 && !skipNotificationsUntilCommit) {
+        if (exceededThreshold && settings.notificationIntervalInSeconds != never && secondsTillNotification <= 0 && !skipNotificationsUntilCommit) {
             ide.showNotificationThatChangeSizeIsTooBig(changeSize, settings.maxLinesInChange)
             secondsTillNotification = settings.notificationIntervalInSeconds
         }
@@ -34,7 +35,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
 
     fun onSettingsUpdate(settings: Settings) {
         ide.onSettingsUpdate(settings)
-        secondsTillNotification = 0 // set to 0 so that notifications are send immediately after watchdog is started
+        secondsTillNotification = 0 // Set to 0 so that notifications are sent immediately after watchdog is started.
         if (this.settings.maxLinesInChange != settings.maxLinesInChange) {
             ide.showCurrentChangeListSize(ide.currentChangeListSizeInLines().applyExclusions(), settings.maxLinesInChange)
         }

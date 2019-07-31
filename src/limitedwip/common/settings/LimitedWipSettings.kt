@@ -10,6 +10,7 @@ import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
 import limitedwip.common.settings.CommitMessageSource.LastCommit
+import limitedwip.common.settings.LimitedWipSettings.Companion.never
 import limitedwip.common.settings.TcrAction.*
 
 @State(name = "${pluginId}Settings")
@@ -70,7 +71,7 @@ data class LimitedWipSettings(
     }
 }
 
-fun Int.toSeconds(): Int = this * 60
+fun Int.toSeconds(): Int = if (this == never) never else this * 60
 
 enum class TcrAction {
     OpenCommitDialog,
