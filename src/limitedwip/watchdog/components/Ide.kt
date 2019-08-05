@@ -10,6 +10,7 @@ import com.intellij.openapi.wm.WindowManager
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.AllowCommitAppComponent
 import limitedwip.common.vcs.AllowCommitListener
+import limitedwip.common.vcs.openCommitDialog
 import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -99,7 +100,7 @@ class Ide(
     }
 
     fun openCommitDialog() {
-        limitedwip.common.vcs.openCommitDialog(changesInLastCancelledCommit)
+        openCommitDialog(changesInLastCancelledCommit)
     }
 
     private fun updateStatusBar() {

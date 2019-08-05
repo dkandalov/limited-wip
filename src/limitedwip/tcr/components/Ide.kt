@@ -8,9 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.PathMatcher
 import limitedwip.common.pluginDisplayName
-import limitedwip.common.vcs.AllowCommitAppComponent
-import limitedwip.common.vcs.AllowCommitListener
-import limitedwip.common.vcs.defaultChangeList
+import limitedwip.common.vcs.*
 
 
 class Ide(private val project: Project) {
@@ -28,19 +26,19 @@ class Ide(private val project: Project) {
     }
 
     fun openCommitDialog() {
-        limitedwip.common.vcs.openCommitDialog(changesInLastCancelledCommit)
+        openCommitDialog(changesInLastCancelledCommit)
     }
 
     fun quickCommit() {
-        limitedwip.common.vcs.doQuickCommit()
+        doQuickCommit()
     }
 
     fun quickCommitAndPush() {
-        limitedwip.common.vcs.doQuickCommitAndPush(project)
+        doQuickCommitAndPush(project)
     }
 
     fun revertCurrentChangeList(doNotRevertTests: Boolean, doNotRevertFiles: Set<PathMatcher>): Int {
-        return limitedwip.common.vcs.revertCurrentChangeList(project, doNotRevertTests, doNotRevertFiles)
+        return revertCurrentChangeList(project, doNotRevertTests, doNotRevertFiles)
     }
 
     fun notifyThatCommitWasCancelled() {

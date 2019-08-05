@@ -10,6 +10,7 @@ import com.intellij.openapi.wm.WindowManager
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.pluginDisplayName
+import limitedwip.common.vcs.revertCurrentChangeList
 import java.awt.Window
 
 class Ide(
@@ -28,9 +29,7 @@ class Ide(
         })
     }
 
-    fun revertCurrentChangeList(): Int {
-        return limitedwip.common.vcs.revertCurrentChangeList(project)
-    }
+    fun revertCurrentChangeList(): Int = revertCurrentChangeList(project)
 
     fun showThatAutoRevertStopped() {
         widget.showStoppedText()
