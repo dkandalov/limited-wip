@@ -67,9 +67,7 @@ class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
                 true,
                 commitSynchronously,
                 FunctionUtil.nullConstant(),
-                noopCommitHandler,
-                false,
-                null
+                noopCommitHandler
             )
             commitHelper.doCommit()
         }
