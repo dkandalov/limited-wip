@@ -7,8 +7,10 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.RawCommandLineEditor
 import com.intellij.ui.components.labels.LinkLabel
-import com.intellij.util.execution.ParametersListUtil
-import limitedwip.common.settings.CommitMessageSource.*
+import com.intellij.util.execution.ParametersListUtil.COLON_LINE_JOINER
+import com.intellij.util.execution.ParametersListUtil.COLON_LINE_PARSER
+import limitedwip.common.settings.CommitMessageSource.ChangeListName
+import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidChangedSizeRange
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidMinutesTillRevert
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidNotificationInterval
@@ -63,11 +65,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     }
 
     private fun createUIComponents() {
-        exclusions = RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER)
-        exclusions.dialogCaption = "Resource patterns"
-
-        doNotRevertFiles = RawCommandLineEditor(ParametersListUtil.COLON_LINE_PARSER, ParametersListUtil.COLON_LINE_JOINER)
-        doNotRevertFiles.dialogCaption = "Resource patterns"
+        exclusions = RawCommandLineEditor(COLON_LINE_PARSER, COLON_LINE_JOINER)
+        doNotRevertFiles = RawCommandLineEditor(COLON_LINE_PARSER, COLON_LINE_JOINER)
     }
 
     init {
