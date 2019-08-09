@@ -5,33 +5,33 @@ import com.intellij.dvcs.push.PushSpec
 import com.intellij.dvcs.repo.VcsRepositoryManager
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.CommonDataKeys.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ModalityState.NON_MODAL
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
-import com.intellij.openapi.vcs.VcsDataKeys
+import com.intellij.openapi.vcs.VcsDataKeys.CHANGES
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.IdeFocusManager
 
 fun openCommitDialog(changes: List<Change>? = null) {
     invokeLater {
-        val map = if (changes != null) mapOf(VcsDataKeys.CHANGES.name to changes.toTypedArray()) else emptyMap()
-        val actionEvent = anActionEvent(map)
+        val actionEvent = if (changes == null) anActionEvent() else anActionEvent(CHANGES.name to changes.toTypedArray())
         CommonCheckinProjectAction().actionPerformed(actionEvent)
     }
 }
 
-fun doQuickCommit() {
+fun doQuickCommit(project: Project) {
     invokeLater {
-        QuickCommitAction().actionPerformed(anActionEvent(emptyMap()))
+        QuickCommitAction().actionPerformed(anActionEvent(PROJECT.name to project))
     }
 }
 
 fun doQuickCommitAndPush(project: Project) {
     invokeLater {
-        QuickCommitAction().actionPerformed(anActionEvent(emptyMap()))
+        QuickCommitAction().actionPerformed(anActionEvent(PROJECT.name to project))
         invokeLater {
             doPush(project)
         }
@@ -54,10 +54,10 @@ fun invokeLater(modalityState: ModalityState = NON_MODAL, callback: () -> Unit) 
     ApplicationManager.getApplication().invokeLater(callback, modalityState)
 }
 
-private fun anActionEvent(map: Map<String, Any>): AnActionEvent {
+private fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent {
     val component = IdeFocusManager.findInstance().lastFocusedFrame!!.component
     val dataContext = DataManager.getInstance().getDataContext(component)
-    val context = MapDataContext(map, dataContext)
+    val context = MapDataContext(eventContext.toMap(), dataContext)
 
     return AnActionEvent(
         null,

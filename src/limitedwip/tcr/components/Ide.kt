@@ -32,7 +32,7 @@ class Ide(private val project: Project) {
     }
 
     fun quickCommit() {
-        doQuickCommit()
+        doQuickCommit(project)
     }
 
     fun quickCommitAndPush() {
