@@ -5,7 +5,9 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.changes.Change
+import com.intellij.vcs.log.VcsLogProvider.LOG_PROVIDER_EP
 import limitedwip.common.PathMatcher
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.*
@@ -39,6 +41,20 @@ class Ide(private val project: Project) {
 
     fun revertCurrentChangeList(doNotRevertTests: Boolean, doNotRevertFiles: Set<PathMatcher>): Int {
         return revertCurrentChangeList(project, doNotRevertTests, doNotRevertFiles)
+    }
+
+    fun lastCommitIsNotPushed(): Boolean {
+        val logProviders = LOG_PROVIDER_EP.getExtensions(project)
+        val roots = ProjectLevelVcsManager.getInstance(project).allVcsRoots
+        roots.forEach { root ->
+            val logProvider = logProviders.find { it.supportedVcs == root.vcs?.keyInstanceMethod }!!
+            val logData = logProvider.readFirstBlock(root.path!!) { 1 }
+            val hash = logData.commits.last().id
+            val branches = logProvider.getContainingBranches(root.path!!, hash)
+            val currentBranch = logProvider.getCurrentBranch(root.path!!)
+            if ((branches - currentBranch).isNotEmpty()) return false
+        }
+        return true
     }
 
     fun notifyThatCommitWasCancelled() {
