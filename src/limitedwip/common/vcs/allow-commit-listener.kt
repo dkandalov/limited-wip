@@ -1,3 +1,5 @@
+// Because ApplicationComponent was deprecated relatively recently.
+@file:Suppress("DEPRECATION")
 package limitedwip.common.vcs
 
 import com.intellij.openapi.Disposable
