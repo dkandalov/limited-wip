@@ -43,20 +43,6 @@ class Ide(private val project: Project) {
         return revertCurrentChangeList(project, doNotRevertTests, doNotRevertFiles)
     }
 
-    fun lastCommitIsNotPushed(): Boolean {
-        val logProviders = LOG_PROVIDER_EP.getExtensions(project)
-        val roots = ProjectLevelVcsManager.getInstance(project).allVcsRoots
-        roots.forEach { root ->
-            val logProvider = logProviders.find { it.supportedVcs == root.vcs?.keyInstanceMethod }!!
-            val logData = logProvider.readFirstBlock(root.path!!) { 1 }
-            val hash = logData.commits.last().id
-            val branches = logProvider.getContainingBranches(root.path!!, hash)
-            val currentBranch = logProvider.getCurrentBranch(root.path!!)
-            if ((branches - currentBranch).isNotEmpty()) return false
-        }
-        return true
-    }
-
     fun notifyThatCommitWasCancelled() {
         val notification = Notification(
             pluginDisplayName,
