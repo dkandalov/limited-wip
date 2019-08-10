@@ -22,6 +22,8 @@ import com.intellij.vcs.log.VcsLogProvider
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings
+import limitedwip.common.settings.TcrAction
+import limitedwip.common.settings.TcrAction.*
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -87,8 +89,8 @@ class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
 
     private fun createCommitContext(project: Project): PseudoMap<Any, Any> {
         return PseudoMap<Any, Any>().also {
-            // LimitedWipSettings.getInstance(project).tcrActionOnPassedTest == TcrAction.AmendCommit
-            if (lastCommitExistOnlyOnCurrentBranch(project)) {
+            val isAmendCommit = LimitedWipSettings.getInstance(project).tcrActionOnPassedTest == AmendCommit
+            if (isAmendCommit && lastCommitExistOnlyOnCurrentBranch(project)) {
                 CommitContext().isAmendCommitMode // Accessing field to force lazy-loading of IS_AMEND_COMMIT_MODE_KEY 🙄
                 @Suppress("UNCHECKED_CAST")
                 // Search for Key by name because IS_AMEND_COMMIT_MODE_KEY is private.

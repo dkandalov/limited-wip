@@ -385,6 +385,7 @@
               <editable value="false"/>
               <model>
                 <item value="commit"/>
+                <item value="amend commit"/>
                 <item value="commit and push"/>
                 <item value="open commit dialog"/>
               </model>

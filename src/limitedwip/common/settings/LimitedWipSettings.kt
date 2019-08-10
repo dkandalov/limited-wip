@@ -76,6 +76,7 @@ fun Int.toSeconds(): Int = if (this == never) never else this * 60
 enum class TcrAction {
     OpenCommitDialog,
     Commit,
+    AmendCommit,
     CommitAndPush
 }
 
