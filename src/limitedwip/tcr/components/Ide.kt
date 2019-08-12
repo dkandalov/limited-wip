@@ -74,6 +74,10 @@ class Ide(private val project: Project) {
             .associate { Pair(it.path, it.modificationCount) }
     }
 
+    fun lastCommitExistOnlyOnCurrentBranch(): Boolean {
+        return false // TODO
+    }
+
     interface Listener {
         fun onForceCommit()
         fun allowCommit(): Boolean

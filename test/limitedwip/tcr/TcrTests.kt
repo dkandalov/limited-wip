@@ -53,6 +53,13 @@ class TcrTests {
         ide.expect().quickCommit()
     }
 
+    @Test fun `when test passed, do amend commit`() = Fixture().run {
+        `when`(ide.lastCommitExistOnlyOnCurrentBranch()).thenReturn(true)
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = AmendCommit))
+        tcr.onUnitTestSucceeded(someModifications)
+        ide.expect().quickCommit()
+    }
+
     @Test fun `when test passed, do commit and push`() = Fixture().run {
         tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = CommitAndPush))
         tcr.onUnitTestSucceeded(someModifications)
