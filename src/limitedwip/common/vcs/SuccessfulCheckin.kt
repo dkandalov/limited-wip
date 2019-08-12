@@ -1,8 +1,7 @@
 package limitedwip.common.vcs
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.checkin.CheckinHandler
@@ -34,10 +33,10 @@ class SuccessfulCheckin: CheckinHandlerFactory() {
     companion object {
         private const val extensionPointName = "$pluginId.checkinListener"
 
-        fun registerListener(disposable: Disposable, listener: Listener) {
-            val extensionPoint = Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName)
-            extensionPoint.registerExtension(listener)
-            Disposer.register(disposable, Disposable { extensionPoint.unregisterExtension(listener) })
+        fun registerListener(project: Project, listener: Listener) {
+            Extensions.getArea(project)
+                .getExtensionPoint<Listener>(extensionPointName)
+                .registerExtension(listener, project)
         }
     }
 }
