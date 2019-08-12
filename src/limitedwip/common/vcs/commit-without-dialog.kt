@@ -22,7 +22,6 @@ import com.intellij.vcs.log.VcsLogProvider
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings
-import limitedwip.common.settings.TcrAction.AmendCommit
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -33,7 +32,7 @@ class CommitWithoutDialogAction: AnAction(AllIcons.Actions.Commit) {
     }
 }
 
-fun doCommitWithoutDialog(project: Project): Boolean {
+fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false): Boolean {
     if (anySystemCheckinHandlerCancelsCommit(project)) return true
     // Don't attempt to commit if there are no VCS registered because it will throw an exception.
     val defaultChangeList = project.defaultChangeList() ?: return true
@@ -75,7 +74,7 @@ fun doCommitWithoutDialog(project: Project): Boolean {
             emptyCheckinHandlers,
             true,
             commitSynchronously,
-            createCommitContext(project),
+            createCommitContext(isAmendCommit),
             noopCommitHandler
         )
         commitHelper.doCommit()
@@ -108,10 +107,9 @@ private fun anySystemCheckinHandlerCancelsCommit(project: Project): Boolean {
         .any { it != null && !it.beforeCommitDialogShown(project, ArrayList(), ArrayList(), false) }
 }
 
-private fun createCommitContext(project: Project): PseudoMap<Any, Any> {
+private fun createCommitContext(isAmendCommit: Boolean): PseudoMap<Any, Any> {
     return PseudoMap<Any, Any>().also {
-        val isAmendCommit = LimitedWipSettings.getInstance(project).tcrActionOnPassedTest == AmendCommit
-        if (isAmendCommit && lastCommitExistOnlyOnCurrentBranch(project)) {
+        if (isAmendCommit) {
             CommitContext().isAmendCommitMode // Accessing field to force lazy-loading of IS_AMEND_COMMIT_MODE_KEY 🙄
             @Suppress("UNCHECKED_CAST")
             // Search for Key by name because IS_AMEND_COMMIT_MODE_KEY is private.
@@ -120,7 +118,7 @@ private fun createCommitContext(project: Project): PseudoMap<Any, Any> {
     }
 }
 
-private fun lastCommitExistOnlyOnCurrentBranch(project: Project): Boolean {
+fun lastCommitExistOnlyOnCurrentBranch(project: Project): Boolean {
     val logProviders = VcsLogProvider.LOG_PROVIDER_EP.getExtensions(project)
     val roots = ProjectLevelVcsManager.getInstance(project).allVcsRoots
     roots.map { root ->

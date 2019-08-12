@@ -30,7 +30,9 @@ class Ide(private val project: Project) {
     }
 
     fun amendCommitWithoutDialog() {
-        TODO()
+        invokeLater {
+            doCommitWithoutDialog(project, isAmendCommit = true)
+        }
     }
 
     fun commitWithoutDialog() {
@@ -79,7 +81,7 @@ class Ide(private val project: Project) {
     }
 
     fun lastCommitExistOnlyOnCurrentBranch(): Boolean {
-        return false // TODO
+        return lastCommitExistOnlyOnCurrentBranch(project)
     }
 
     interface Listener {
