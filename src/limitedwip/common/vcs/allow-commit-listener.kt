@@ -1,10 +1,7 @@
-// Because ApplicationComponent was deprecated relatively recently.
-@file:Suppress("DEPRECATION")
 package limitedwip.common.vcs
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -23,17 +20,10 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 private val logger = Logger.getInstance(pluginId)
 
-class AllowCommitAppComponent : ApplicationComponent {
+class AllowCommitAppComponent {
     private val listeners = CopyOnWriteArraySet<AllowCommitListener>()
 
-    fun addListener(parentDisposable: Disposable, listener: AllowCommitListener) {
-        Disposer.register(parentDisposable, Disposable {
-            listeners.remove(listener)
-        })
-        listeners.add(listener)
-    }
-
-    override fun initComponent() {
+    init {
         val wasRegistered = registerBeforeCommitListener(object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
                 return listeners.all { it.allowCommit(project, changes) }
@@ -42,9 +32,12 @@ class AllowCommitAppComponent : ApplicationComponent {
         if (!wasRegistered) logger.warn("Failed to register commit listener.")
     }
 
-    override fun disposeComponent() {}
-
-    override fun getComponentName() = this.javaClass.canonicalName!!
+    fun addListener(parentDisposable: Disposable, listener: AllowCommitListener) {
+        Disposer.register(parentDisposable, Disposable {
+            listeners.remove(listener)
+        })
+        listeners.add(listener)
+    }
 
     companion object {
         fun getInstance(): AllowCommitAppComponent =
