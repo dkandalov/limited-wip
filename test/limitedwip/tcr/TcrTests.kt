@@ -60,6 +60,13 @@ class TcrTests {
         ide.expect().amendCommitWithoutDialog()
     }
 
+    @Test fun `when test passed, open dialog instead of amend commit if commit exists on other branches`() = Fixture().run {
+        `when`(ide.lastCommitExistOnlyOnCurrentBranch()).thenReturn(false)
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = AmendCommit))
+        tcr.onUnitTestSucceeded(someModifications)
+        ide.expect().openCommitDialog()
+    }
+
     @Test fun `when test passed, do commit and push`() = Fixture().run {
         tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = CommitAndPush))
         tcr.onUnitTestSucceeded(someModifications)
