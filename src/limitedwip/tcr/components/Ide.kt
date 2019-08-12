@@ -29,14 +29,14 @@ class Ide(private val project: Project) {
         openCommitDialog(changesInLastCancelledCommit)
     }
 
-    fun quickCommit() {
+    fun commitWithoutDialog() {
         invokeLater {
-            doQuickCommit(project)
+            doCommitWithoutDialog(project)
         }
     }
 
-    fun quickCommitAndPush() {
-        doQuickCommitAndPush(project)
+    fun commitWithoutDialogAndPush() {
+        commitWithoutDialogAndPush(project)
     }
 
     fun revertCurrentChangeList(doNotRevertTests: Boolean, doNotRevertFiles: Set<PathMatcher>): Int {

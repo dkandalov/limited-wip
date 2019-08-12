@@ -51,7 +51,7 @@
     </project-components>
 
     <actions>
-        <action id="QuickCommitAction" class="limitedwip.common.vcs.QuickCommitAction" text="Quick Commit"/>
+        <action id="CommitWithoutDialogAction" class="limitedwip.common.vcs.CommitWithoutDialogAction" text="Commit Without Dialog"/>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

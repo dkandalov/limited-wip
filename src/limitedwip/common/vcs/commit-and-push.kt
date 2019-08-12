@@ -5,7 +5,6 @@ import com.intellij.dvcs.push.PushSpec
 import com.intellij.dvcs.repo.VcsRepositoryManager
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.CommonDataKeys.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ModalityState.NON_MODAL
@@ -15,7 +14,6 @@ import com.intellij.openapi.vcs.VcsDataKeys.CHANGES
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.IdeFocusManager
-import com.intellij.testFramework.MapDataContext
 
 fun openCommitDialog(changes: List<Change>? = null) {
     invokeLater {
@@ -24,9 +22,9 @@ fun openCommitDialog(changes: List<Change>? = null) {
     }
 }
 
-fun doQuickCommitAndPush(project: Project) {
+fun commitWithoutDialogAndPush(project: Project) {
     invokeLater {
-        doQuickCommit(project)
+        doCommitWithoutDialog(project)
         invokeLater {
             doPush(project)
         }

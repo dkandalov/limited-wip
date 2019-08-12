@@ -27,13 +27,13 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 
-class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
+class CommitWithoutDialogAction: AnAction(AllIcons.Actions.Commit) {
     override fun actionPerformed(event: AnActionEvent) {
-        doQuickCommit(event.project ?: return)
+        doCommitWithoutDialog(event.project ?: return)
     }
 }
 
-fun doQuickCommit(project: Project): Boolean {
+fun doCommitWithoutDialog(project: Project): Boolean {
     if (anySystemCheckinHandlerCancelsCommit(project)) return true
     // Don't attempt to commit if there are no VCS registered because it will throw an exception.
     val defaultChangeList = project.defaultChangeList() ?: return true
