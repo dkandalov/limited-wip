@@ -15,6 +15,7 @@ import com.intellij.openapi.vcs.VcsDataKeys.CHANGES
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.IdeFocusManager
+import com.intellij.testFramework.MapDataContext
 
 fun openCommitDialog(changes: List<Change>? = null) {
     invokeLater {
@@ -38,23 +39,14 @@ fun doQuickCommitAndPush(project: Project) {
     }
 }
 
-private fun doPush(project: Project) {
-    val allActiveVcss = ProjectLevelVcsManager.getInstance(project).allActiveVcss
-    allActiveVcss.forEach { vcs ->
-        val pushSupport = DvcsUtil.getPushSupport(vcs) ?: return
-        VcsRepositoryManager.getInstance(project).repositories.forEach { repository ->
-            val source = pushSupport.getSource(repository)
-            val target = pushSupport.getDefaultTarget(repository) ?: return
-            pushSupport.pusher.push(mapOf(repository to PushSpec(source, target)), null, true)
-        }
-    }
-}
-
 fun invokeLater(modalityState: ModalityState = NON_MODAL, callback: () -> Unit) {
     ApplicationManager.getApplication().invokeLater(callback, modalityState)
 }
 
 private fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent {
+    class MapDataContext(val map: Map<String, Any>, val delegate: DataContext) : DataContext {
+        override fun getData(dataId: String) = delegate.getData(dataId) ?: map[dataId]
+    }
     val component = IdeFocusManager.findInstance().lastFocusedFrame!!.component
     val dataContext = DataManager.getInstance().getDataContext(component)
     val context = MapDataContext(eventContext.toMap(), dataContext)
@@ -69,6 +61,14 @@ private fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent
     )
 }
 
-private class MapDataContext(val map: Map<String, Any>, val delegate: DataContext) : DataContext {
-    override fun getData(dataId: String) = delegate.getData(dataId) ?: map[dataId]
+private fun doPush(project: Project) {
+    val allActiveVcss = ProjectLevelVcsManager.getInstance(project).allActiveVcss
+    allActiveVcss.forEach { vcs ->
+        val pushSupport = DvcsUtil.getPushSupport(vcs) ?: return
+        VcsRepositoryManager.getInstance(project).repositories.forEach { repository ->
+            val source = pushSupport.getSource(repository)
+            val target = pushSupport.getDefaultTarget(repository) ?: return
+            pushSupport.pusher.push(mapOf(repository to PushSpec(source, target)), null, true)
+        }
+    }
 }
