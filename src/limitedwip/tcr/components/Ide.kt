@@ -5,9 +5,7 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.changes.Change
-import com.intellij.vcs.log.VcsLogProvider.LOG_PROVIDER_EP
 import limitedwip.common.PathMatcher
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.*
@@ -32,7 +30,9 @@ class Ide(private val project: Project) {
     }
 
     fun quickCommit() {
-        doQuickCommit(project)
+        invokeLater {
+            doQuickCommit(project)
+        }
     }
 
     fun quickCommitAndPush() {

@@ -22,18 +22,18 @@ import com.intellij.vcs.log.VcsLogProvider
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings
-import limitedwip.common.settings.TcrAction.*
+import limitedwip.common.settings.TcrAction.AmendCommit
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
 
 class QuickCommitAction: AnAction(AllIcons.Actions.Commit) {
     override fun actionPerformed(event: AnActionEvent) {
-        quickCommit(event.project ?: return)
+        doQuickCommit(event.project ?: return)
     }
 }
 
-private fun quickCommit(project: Project): Boolean {
+fun doQuickCommit(project: Project): Boolean {
     if (anySystemCheckinHandlerCancelsCommit(project)) return true
     // Don't attempt to commit if there are no VCS registered because it will throw an exception.
     val defaultChangeList = project.defaultChangeList() ?: return true

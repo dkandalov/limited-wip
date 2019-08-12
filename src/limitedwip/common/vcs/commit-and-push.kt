@@ -24,15 +24,9 @@ fun openCommitDialog(changes: List<Change>? = null) {
     }
 }
 
-fun doQuickCommit(project: Project) {
-    invokeLater {
-        QuickCommitAction().actionPerformed(anActionEvent(PROJECT.name to project))
-    }
-}
-
 fun doQuickCommitAndPush(project: Project) {
     invokeLater {
-        QuickCommitAction().actionPerformed(anActionEvent(PROJECT.name to project))
+        doQuickCommit(project)
         invokeLater {
             doPush(project)
         }
