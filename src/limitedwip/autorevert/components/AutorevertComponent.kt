@@ -1,11 +1,8 @@
-// Because AbstractProjectComponent was deprecated relatively recently.
-@file:Suppress("DEPRECATION")
-
 package limitedwip.autorevert.components
 
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupActivity
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.TimerAppComponent
@@ -15,38 +12,38 @@ import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.common.vcs.defaultChangeList
 import limitedwip.common.vcs.invokeLater
 
-class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
+class AutoRevertComponent: StartupActivity {
     private val timer = TimerAppComponent.getInstance()
     @Volatile private var enabled = false
 
-    override fun projectOpened() {
-        val settings = LimitedWipSettings.getInstance(myProject).toAutoRevertSettings()
+    override fun runActivity(project: Project) {
+        val settings = LimitedWipSettings.getInstance(project).toAutoRevertSettings()
         val widget = AutoRevertStatusBarWidget()
-        val autoRevert = AutoRevert(Ide(myProject, settings, widget), settings)
+        val autoRevert = AutoRevert(Ide(project, settings, widget), settings)
         widget.onClick {
             autoRevert.onPause()
         }
 
         enabled = settings.enabled
 
-        timer.addListener(myProject, object: TimerAppComponent.Listener {
+        timer.addListener(project, object: TimerAppComponent.Listener {
             override fun onUpdate() {
                 // Optimisation to avoid scheduling task when component is not enabled.
                 if (!enabled) return
 
                 invokeLater(ModalityState.any()) {
                     // Project can be closed (disposed) during handover between timer thread and EDT.
-                    if (myProject.isDisposed) return@invokeLater
-                    autoRevert.onTimer(hasChanges = myProject.defaultChangeList()?.changes?.isNotEmpty() ?: false)
+                    if (project.isDisposed) return@invokeLater
+                    autoRevert.onTimer(hasChanges = project.defaultChangeList()?.changes?.isNotEmpty() ?: false)
                 }
             }
         })
 
-        val rollbackListener = RollbackListener(myProject) { allChangesRolledBack ->
+        val rollbackListener = RollbackListener(project) { allChangesRolledBack ->
             if (allChangesRolledBack) autoRevert.onAllChangesRolledBack()
         }
 
-        LimitedWipSettings.getInstance(myProject).addListener(myProject, object: LimitedWipSettings.Listener {
+        LimitedWipSettings.getInstance(project).addListener(project, object: LimitedWipSettings.Listener {
             override fun onUpdate(settings: LimitedWipSettings) {
                 autoRevert.onSettingsUpdate(settings.toAutoRevertSettings())
                 enabled = settings.autoRevertEnabled
@@ -54,7 +51,7 @@ class AutoRevertComponent(project: Project): AbstractProjectComponent(project) {
             }
         })
 
-        SuccessfulCheckin.registerListener(myProject, object: SuccessfulCheckin.Listener {
+        SuccessfulCheckin.registerListener(project, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) {
                 if (allChangesAreCommitted) autoRevert.onAllChangesCommitted()
             }
