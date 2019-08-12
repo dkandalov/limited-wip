@@ -13,11 +13,11 @@ import com.intellij.openapi.vcs.VcsBundle
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.changes.*
 import com.intellij.openapi.vcs.changes.actions.RefreshAction
-import com.intellij.openapi.vcs.changes.ui.CommitHelper
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.openapi.vcs.impl.LineStatusTrackerManager
-import com.intellij.vcs.commit.isAmendCommitMode
+import com.intellij.util.ObjectUtils.notNull
+import com.intellij.vcs.commit.*
 import com.intellij.vcs.log.VcsLogProvider
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
@@ -63,8 +63,6 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false): Boo
         // and this is better UX compared to a flashing modal commit progress window (which people have noticed and complained about).
         val commitSynchronously = false
 
-        // Not getting rid of deprecated CommitHelper for now because the new API is too new
-        // and moving to it will mean that the plugin will be only compatible with IJ 2019.
         val commitHelper = CommitHelper(
             project,
             defaultChangeList,
@@ -107,13 +105,13 @@ private fun anySystemCheckinHandlerCancelsCommit(project: Project): Boolean {
         .any { it != null && !it.beforeCommitDialogShown(project, ArrayList(), ArrayList(), false) }
 }
 
-private fun createCommitContext(isAmendCommit: Boolean): PseudoMap<Any, Any> {
-    return PseudoMap<Any, Any>().also {
+private fun createCommitContext(isAmendCommit: Boolean): CommitContext {
+    return CommitContext().also {
         if (isAmendCommit) {
-            CommitContext().isAmendCommitMode // Accessing field to force lazy-loading of IS_AMEND_COMMIT_MODE_KEY 🙄
+            it.isAmendCommitMode // Accessing field to force lazy-loading of IS_AMEND_COMMIT_MODE_KEY 🙄
             @Suppress("UNCHECKED_CAST")
             // Search for Key by name because IS_AMEND_COMMIT_MODE_KEY is private.
-            it.commitContext.putUserData(Key.findKeyByName("Vcs.Commit.IsAmendCommitMode") as Key<Boolean>, true)
+            it.putUserData(Key.findKeyByName("Vcs.Commit.IsAmendCommitMode") as Key<Boolean>, true)
         }
     }
 }
@@ -134,4 +132,29 @@ fun lastCommitExistOnlyOnCurrentBranch(project: Project): Boolean {
         if (commitIsOnOtherBranches.get()) return false
     }
     return true
+}
+
+private class CommitHelper(
+    project: Project,
+    changeList: ChangeList,
+    changes: List<Change>,
+    private val myActionName: String,
+    commitMessage: String,
+    handlers: List<CheckinHandler>,
+    isDefaultChangeListFullyIncluded: Boolean,
+    private val myForceSyncCommit: Boolean,
+    commitContext: CommitContext,
+    resultHandler: CommitResultHandler?
+) {
+    private val myCommitter: AbstractCommitter
+
+    init {
+        val commitState = ChangeListCommitState(changeList as LocalChangeList, changes, commitMessage)
+        myCommitter = SingleChangeListCommitter(project, commitState, commitContext, handlers, null, myActionName, isDefaultChangeListFullyIncluded)
+        myCommitter.addResultHandler(notNull(resultHandler, DefaultCommitResultHandler(myCommitter)))
+    }
+
+    fun doCommit() {
+        myCommitter.runCommit(myActionName, myForceSyncCommit)
+    }
 }
