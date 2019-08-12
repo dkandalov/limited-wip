@@ -17,7 +17,7 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
         if (modifications.value.isNotEmpty()) {
             when (settings.actionOnPassedTest) {
                 OpenCommitDialog -> ide.openCommitDialog()
-                AmendCommit      -> ide.commitWithoutDialog()
+                AmendCommit      -> ide.amendCommitWithoutDialog()
                 Commit           -> ide.commitWithoutDialog()
                 CommitAndPush    -> ide.commitWithoutDialogAndPush()
             }

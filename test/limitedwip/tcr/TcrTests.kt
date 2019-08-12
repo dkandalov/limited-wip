@@ -57,7 +57,7 @@ class TcrTests {
         `when`(ide.lastCommitExistOnlyOnCurrentBranch()).thenReturn(true)
         tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = AmendCommit))
         tcr.onUnitTestSucceeded(someModifications)
-        ide.expect().commitWithoutDialog()
+        ide.expect().amendCommitWithoutDialog()
     }
 
     @Test fun `when test passed, do commit and push`() = Fixture().run {

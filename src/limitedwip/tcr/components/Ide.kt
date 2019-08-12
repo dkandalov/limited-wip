@@ -29,6 +29,10 @@ class Ide(private val project: Project) {
         openCommitDialog(changesInLastCancelledCommit)
     }
 
+    fun amendCommitWithoutDialog() {
+        TODO()
+    }
+
     fun commitWithoutDialog() {
         invokeLater {
             doCommitWithoutDialog(project)
