@@ -44,17 +44,15 @@
         <component><implementation-class>limitedwip.common.vcs.AllowCommitAppComponent</implementation-class></component>
     </application-components>
 
-    <project-components>
-        <component><implementation-class>limitedwip.watchdog.components.WatchdogComponent</implementation-class></component>
-        <component><implementation-class>limitedwip.autorevert.components.AutoRevertComponent</implementation-class></component>
-        <component><implementation-class>limitedwip.tcr.components.TcrComponent</implementation-class></component>
-    </project-components>
-
     <actions>
         <action id="CommitWithoutDialogAction" class="limitedwip.common.vcs.CommitWithoutDialogAction" text="Commit Without Dialog"/>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="limitedwip.watchdog.components.WatchdogComponent"/>
+        <postStartupActivity implementation="limitedwip.autorevert.components.AutoRevertComponent"/>
+        <postStartupActivity implementation="limitedwip.tcr.components.TcrComponent"/>
+
         <projectConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
         <projectService serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.SuccessfulCheckin"/>
