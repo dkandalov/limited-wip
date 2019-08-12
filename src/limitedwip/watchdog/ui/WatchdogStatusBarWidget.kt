@@ -23,16 +23,8 @@ class WatchdogStatusBarWidget: StatusBarWidget {
     override fun getPresentation(type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? {
         return object: StatusBarWidget.TextPresentation {
             override fun getText() = this@WatchdogStatusBarWidget.text
-
-            @Suppress("OverridingDeprecatedMember") // Override to be compatible with older IJ versions.
-            override fun getMaxPossibleText() = ""
-
             override fun getTooltipText() = "Shows amount of changed lines in current change list vs change size limit."
-
-            override fun getClickConsumer(): Consumer<MouseEvent>? {
-                return Consumer { listener?.onClick() }
-            }
-
+            override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { listener?.onClick() }
             override fun getAlignment() = Component.CENTER_ALIGNMENT
         }
     }

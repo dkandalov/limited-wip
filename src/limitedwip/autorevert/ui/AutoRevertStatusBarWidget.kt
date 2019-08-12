@@ -49,9 +49,6 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
             override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { callback() }
 
             override fun getAlignment() = Component.CENTER_ALIGNMENT
-
-            @Suppress("OverridingDeprecatedMember") // Override to be compatible with older IJ versions.
-            override fun getMaxPossibleText() = ""
         }
     }
 
