@@ -12,11 +12,14 @@ import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.common.vcs.defaultChangeList
 import limitedwip.common.vcs.invokeLater
 
-class AutoRevertComponent: StartupActivity {
-    private val timer = TimerAppComponent.getInstance()
+class AutoRevertComponentStartup: StartupActivity {
+    override fun runActivity(project: Project) = AutoRevertComponent(project).start()
+}
+
+class AutoRevertComponent(private val project: Project) {
     @Volatile private var enabled = false
 
-    override fun runActivity(project: Project) {
+    fun start() {
         val settings = LimitedWipSettings.getInstance(project).toAutoRevertSettings()
         val widget = AutoRevertStatusBarWidget()
         val autoRevert = AutoRevert(Ide(project, settings, widget), settings)
@@ -26,7 +29,7 @@ class AutoRevertComponent: StartupActivity {
 
         enabled = settings.enabled
 
-        timer.addListener(project, object: TimerAppComponent.Listener {
+        TimerAppComponent.getInstance().addListener(project, object: TimerAppComponent.Listener {
             override fun onUpdate() {
                 // Optimisation to avoid scheduling task when component is not enabled.
                 if (!enabled) return

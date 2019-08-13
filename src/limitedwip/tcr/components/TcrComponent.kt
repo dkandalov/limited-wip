@@ -13,7 +13,7 @@ class TcrComponentStartup: StartupActivity {
     override fun runActivity(project: Project) = TcrComponent(project).start()
 }
 
-class TcrComponent(private val project: Project) {
+private class TcrComponent(private val project: Project) {
     fun start() {
         val ide = Ide(project)
         val tcr = Tcr(ide, LimitedWipSettings.getInstance(project).toTcrSettings())

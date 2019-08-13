@@ -50,7 +50,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="limitedwip.watchdog.components.WatchdogComponentStartup"/>
-        <postStartupActivity implementation="limitedwip.autorevert.components.AutoRevertComponent"/>
+        <postStartupActivity implementation="limitedwip.autorevert.components.AutoRevertComponentStartup"/>
         <postStartupActivity implementation="limitedwip.tcr.components.TcrComponentStartup"/>
 
         <projectConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>

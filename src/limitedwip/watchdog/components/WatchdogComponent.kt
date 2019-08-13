@@ -16,7 +16,7 @@ class WatchdogComponentStartup: StartupActivity {
     override fun runActivity(project: Project) = WatchdogComponent(project).start()
 }
 
-class WatchdogComponent(val project: Project) {
+class WatchdogComponent(private val project: Project) {
     @Volatile private var enabled = false
 
     fun start() {
