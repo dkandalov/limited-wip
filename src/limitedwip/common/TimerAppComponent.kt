@@ -37,9 +37,9 @@ class TimerAppComponent {
         timer.schedule(task, 0, periodInMillis)
     }
 
-    fun addListener(parentDisposable: Disposable, listener: Listener) {
+    fun addListener(disposable: Disposable, listener: Listener) {
         listeners.add(listener)
-        Disposer.register(parentDisposable, Disposable { listeners.remove(listener) })
+        Disposer.register(disposable, Disposable { listeners.remove(listener) })
     }
 
     interface Listener {

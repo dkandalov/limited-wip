@@ -12,11 +12,14 @@ import limitedwip.common.vcs.invokeLater
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class WatchdogComponent: StartupActivity {
-    private val timer = TimerAppComponent.getInstance()
+class WatchdogComponentStartup: StartupActivity {
+    override fun runActivity(project: Project) = WatchdogComponent(project).start()
+}
+
+class WatchdogComponent(val project: Project) {
     @Volatile private var enabled = false
 
-    override fun runActivity(project: Project) {
+    fun start() {
         val settings = LimitedWipSettings.getInstance(project).toWatchdogSettings()
         val ide = Ide(project, ChangeSizeWatcher(project), WatchdogStatusBarWidget(), settings)
         val watchdog = Watchdog(ide, settings)
@@ -29,7 +32,7 @@ class WatchdogComponent: StartupActivity {
             override fun onWidgetClick() = watchdog.toggleSkipNotificationsUntilCommit()
         }
 
-        timer.addListener(project, object: TimerAppComponent.Listener {
+        TimerAppComponent.getInstance().addListener(project, object: TimerAppComponent.Listener {
             override fun onUpdate() {
                 // Optimisation to avoid scheduling task when component is not enabled.
                 if (!enabled) return

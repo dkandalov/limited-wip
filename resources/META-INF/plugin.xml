@@ -49,7 +49,7 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="limitedwip.watchdog.components.WatchdogComponent"/>
+        <postStartupActivity implementation="limitedwip.watchdog.components.WatchdogComponentStartup"/>
         <postStartupActivity implementation="limitedwip.autorevert.components.AutoRevertComponent"/>
         <postStartupActivity implementation="limitedwip.tcr.components.TcrComponentStartup"/>
 
