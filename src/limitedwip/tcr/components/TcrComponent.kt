@@ -9,13 +9,14 @@ import limitedwip.tcr.Tcr
 import limitedwip.tcr.Tcr.ChangeListModifications
 import limitedwip.tcr.Tcr.Settings
 
-class TcrComponent: StartupActivity {
-    private lateinit var tcr: Tcr
-    private lateinit var ide: Ide
+class TcrComponentStartup: StartupActivity {
+    override fun runActivity(project: Project) = TcrComponent(project).start()
+}
 
-    override fun runActivity(project: Project) {
-        ide = Ide(project)
-        tcr = Tcr(ide, LimitedWipSettings.getInstance(project).toTcrSettings())
+class TcrComponent(private val project: Project) {
+    fun start() {
+        val ide = Ide(project)
+        val tcr = Tcr(ide, LimitedWipSettings.getInstance(project).toTcrSettings())
         ide.listener = object: Ide.Listener {
             override fun onForceCommit() = tcr.forceOneCommit()
             override fun allowCommit() = tcr.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
