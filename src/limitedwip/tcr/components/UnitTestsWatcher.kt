@@ -41,7 +41,7 @@ class UnitTestsWatcher(private val project: Project) {
     }
 
     interface Listener {
-        fun onUnitTestSucceeded(profileName: String)
-        fun onUnitTestFailed(profileName: String)
+        fun onUnitTestSucceeded(testName: String)
+        fun onUnitTestFailed(testName: String)
     }
 }

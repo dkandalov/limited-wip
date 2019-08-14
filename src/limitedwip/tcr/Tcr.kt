@@ -10,7 +10,7 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
     private var allowOneCommitWithoutChecks = false
     private var testedModifications: ChangeListModifications? = null
 
-    fun onUnitTestSucceeded(modifications: ChangeListModifications) {
+    fun onUnitTestSucceeded(modifications: ChangeListModifications, testName: String) {
         if (settings.disabled) return
         allowedToCommit = true
         testedModifications = modifications
@@ -24,7 +24,7 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
         }
     }
 
-    fun onUnitTestFailed() {
+    fun onUnitTestFailed(testName: String) {
         if (settings.disabled) return
         val revertedFileCount = ide.revertCurrentChangeList(settings.doNotRevertTests, settings.doNotRevertFiles)
         if (revertedFileCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()

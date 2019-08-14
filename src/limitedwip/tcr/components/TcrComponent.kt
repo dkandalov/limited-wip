@@ -23,8 +23,8 @@ private class TcrComponent(private val project: Project) {
         }
 
         UnitTestsWatcher(project).start(object: UnitTestsWatcher.Listener {
-            override fun onUnitTestSucceeded(profileName: String) = tcr.onUnitTestSucceeded(ChangeListModifications(ide.defaultChangeListModificationCount()))
-            override fun onUnitTestFailed(profileName: String) = tcr.onUnitTestFailed()
+            override fun onUnitTestSucceeded(testName: String) = tcr.onUnitTestSucceeded(ChangeListModifications(ide.defaultChangeListModificationCount()), testName)
+            override fun onUnitTestFailed(testName: String) = tcr.onUnitTestFailed(testName)
         })
 
         SuccessfulCheckin.registerListener(project, object: SuccessfulCheckin.Listener {
