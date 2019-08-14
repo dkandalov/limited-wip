@@ -9,6 +9,7 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
     private var allowedToCommit = false
     private var allowOneCommitWithoutChecks = false
     private var testedModifications: ChangeListModifications? = null
+    private var lastTestName: String? = null
 
     fun onUnitTestSucceeded(modifications: ChangeListModifications, testName: String) {
         if (settings.disabled) return
@@ -17,10 +18,13 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
         if (modifications.value.isNotEmpty()) {
             when (settings.actionOnPassedTest) {
                 OpenCommitDialog -> ide.openCommitDialog()
-                AmendCommit      -> if (ide.lastCommitExistOnlyOnCurrentBranch()) ide.amendCommitWithoutDialog() else ide.openCommitDialog()
+                AmendCommit      ->
+                    if ((lastTestName == null || lastTestName == testName) && ide.lastCommitExistOnlyOnCurrentBranch()) ide.amendCommitWithoutDialog()
+                    else ide.openCommitDialog()
                 Commit           -> ide.commitWithoutDialog()
                 CommitAndPush    -> ide.commitWithoutDialogAndPush()
             }
+            lastTestName = testName
         }
     }
 
@@ -29,6 +33,7 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
         val revertedFileCount = ide.revertCurrentChangeList(settings.doNotRevertTests, settings.doNotRevertFiles)
         if (revertedFileCount > 0 && settings.notifyOnRevert) ide.notifyThatChangesWereReverted()
         allowedToCommit = false
+        lastTestName = testName
     }
 
     fun forceOneCommit() {

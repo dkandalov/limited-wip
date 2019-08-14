@@ -61,6 +61,12 @@ class TcrTests {
         ide.expect().amendCommitWithoutDialog()
     }
 
+    @Test fun `when test passed, do commit and push`() = Fixture().run {
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = CommitAndPush))
+        tcr.onUnitTestSucceeded(someModifications, someTestName)
+        ide.expect().commitWithoutDialogAndPush()
+    }
+
     @Test fun `when test passed and commit exists on other branches, open dialog instead of amend commit`() = Fixture().run {
         `when`(ide.lastCommitExistOnlyOnCurrentBranch()).thenReturn(false)
         tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = AmendCommit))
@@ -68,10 +74,22 @@ class TcrTests {
         ide.expect().openCommitDialog()
     }
 
-    @Test fun `when test passed, do commit and push`() = Fixture().run {
-        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = CommitAndPush))
+    @Test fun `when test passed and test name is different from last execution, open dialog instead of amend commit`() = Fixture().run {
+        `when`(ide.lastCommitExistOnlyOnCurrentBranch()).thenReturn(true)
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = AmendCommit))
         tcr.onUnitTestSucceeded(someModifications, someTestName)
-        ide.expect().commitWithoutDialogAndPush()
+        tcr.onUnitTestSucceeded(someModifications, "SomeOtherTest")
+        ide.expect().amendCommitWithoutDialog()
+        ide.expect().openCommitDialog()
+    }
+
+    @Test fun `when test failed and next passed test name is different from last execution, open dialog instead of amend commit`() = Fixture().run {
+        `when`(ide.lastCommitExistOnlyOnCurrentBranch()).thenReturn(true)
+        tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = AmendCommit))
+        tcr.onUnitTestFailed(someTestName)
+        tcr.onUnitTestSucceeded(someModifications, "SomeOtherTest")
+        ide.expect().revertCurrentChangeList(anyBoolean(), anySet())
+        ide.expect().openCommitDialog()
     }
 
     @Test fun `don't show commit dialog if there are no modifications`() = Fixture().run {
