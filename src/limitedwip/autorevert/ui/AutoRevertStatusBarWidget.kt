@@ -43,11 +43,8 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
     override fun getPresentation(type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? {
         return object : StatusBarWidget.TextPresentation {
             override fun getText() = this@AutoRevertStatusBarWidget.text
-
             override fun getTooltipText() = this@AutoRevertStatusBarWidget.tooltipText
-
             override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { callback() }
-
             override fun getAlignment() = Component.CENTER_ALIGNMENT
         }
     }

@@ -10,9 +10,13 @@ import java.awt.event.MouseEvent
 class WatchdogStatusBarWidget: StatusBarWidget {
     private val textPrefix = "Change size: "
     private var text = ""
+    private var linesInChange = ""
+    private var maxLinesInChange = ""
     var listener: Listener? = null
 
     fun showChangeSize(linesInChange: String, maxLinesInChange: Int) {
+        this.linesInChange = linesInChange
+        this.maxLinesInChange = maxLinesInChange.toString()
         text = "$textPrefix$linesInChange/$maxLinesInChange"
     }
 
@@ -23,7 +27,7 @@ class WatchdogStatusBarWidget: StatusBarWidget {
     override fun getPresentation(type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? {
         return object: StatusBarWidget.TextPresentation {
             override fun getText() = this@WatchdogStatusBarWidget.text
-            override fun getTooltipText() = "Shows amount of changed lines in current change list vs change size limit."
+            override fun getTooltipText() = "Changed lines in current change list: $linesInChange; Change size limit: $maxLinesInChange"
             override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { listener?.onClick() }
             override fun getAlignment() = Component.CENTER_ALIGNMENT
         }
