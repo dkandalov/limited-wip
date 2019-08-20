@@ -69,6 +69,7 @@ You can find settings in `Preferences -> Other Settings -> Limited WIP`, where y
  - enable/disable component (disabled by default)
  - choose action on passed test, it can be
     - commit
+    - amend commit (will open commit dialog if the last commit has been pushed or different set of tests has been run compared to last execution)
     - commit and push (if "push" is supported by VCS)
     - open commit dialog
  - choose commit message source, it can be
@@ -85,11 +86,11 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
 
 
 ## Screenshots
-<img width="50%" src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/settings.png?raw=true" align="center"/>
+<img width="50%" src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/settings.png?raw=true" align="center" alt="settings screenshot"/>
 <br/>
-<img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/change-limit-exceeded.png?raw=true" align="center"/>
+<img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/change-limit-exceeded.png?raw=true" align="center" alt="change limit exceeded notification"/>
 <br/>
-<img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/commit-cancelled.png?raw=true" align="center"/>
+<img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/commit-cancelled.png?raw=true" align="center" alt="commit cancelled notification"/>
 <br/>
 
 
