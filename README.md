@@ -62,6 +62,7 @@ This is not part of the workflow, but you can pause the timer by clicking on aut
  - You're not allowed to commit without running a test.
  - If the test fails, current change list is reverted. 
  - If the test passed, changes are committed.
+
 This is the most recent constraint so there isn't a lot of experience using it.
 However, it's much more useful and enjoyable than it might seem initially.
 
