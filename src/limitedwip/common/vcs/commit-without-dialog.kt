@@ -13,7 +13,6 @@ import com.intellij.openapi.vcs.VcsBundle
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.changes.*
 import com.intellij.openapi.vcs.changes.actions.RefreshAction
-import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.openapi.vcs.impl.LineStatusTrackerManager
 import com.intellij.util.ObjectUtils.notNull
@@ -69,7 +68,6 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false): Boo
             defaultChangeList.changes.toList(),
             "",
             nonEmptyCommitMessage,
-            emptyCheckinHandlers,
             true,
             commitSynchronously,
             createCommitContext(isAmendCommit),
@@ -87,7 +85,6 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false): Boo
     return false
 }
 
-private val emptyCheckinHandlers = emptyList<CheckinHandler>()
 private val noopCommitHandler = object: CommitResultHandler {
     override fun onSuccess(commitMessage: String) {}
     override fun onFailure() {}
@@ -109,7 +106,7 @@ private fun createCommitContext(isAmendCommit: Boolean): CommitContext {
     return CommitContext().also {
         if (isAmendCommit) {
             it.isAmendCommitMode // Accessing field to force lazy-loading of IS_AMEND_COMMIT_MODE_KEY 🙄
-            @Suppress("UNCHECKED_CAST")
+            @Suppress("UNCHECKED_CAST", "DEPRECATION")
             // Search for Key by name because IS_AMEND_COMMIT_MODE_KEY is private.
             it.putUserData(Key.findKeyByName("Vcs.Commit.IsAmendCommitMode") as Key<Boolean>, true)
         }
@@ -123,10 +120,10 @@ fun lastCommitExistOnlyOnCurrentBranch(project: Project): Boolean {
         val commitIsOnOtherBranches = CompletableFuture<Boolean>()
         ApplicationManager.getApplication().executeOnPooledThread {
             val logProvider = logProviders.find { it.supportedVcs == root.vcs?.keyInstanceMethod }!!
-            val logData = logProvider.readFirstBlock(root.path!!) { 1 }
+            val logData = logProvider.readFirstBlock(root.path) { 1 }
             val hash = logData.commits.last().id
-            val branchesWithCommit = logProvider.getContainingBranches(root.path!!, hash)
-            val currentBranch = logProvider.getCurrentBranch(root.path!!)
+            val branchesWithCommit = logProvider.getContainingBranches(root.path, hash)
+            val currentBranch = logProvider.getCurrentBranch(root.path)
             commitIsOnOtherBranches.complete((branchesWithCommit - currentBranch).isNotEmpty())
         }
         if (commitIsOnOtherBranches.get()) return false
@@ -140,7 +137,6 @@ private class CommitHelper(
     changes: List<Change>,
     private val myActionName: String,
     commitMessage: String,
-    handlers: List<CheckinHandler>,
     isDefaultChangeListFullyIncluded: Boolean,
     private val myForceSyncCommit: Boolean,
     commitContext: CommitContext,
@@ -150,8 +146,8 @@ private class CommitHelper(
 
     init {
         val commitState = ChangeListCommitState(changeList as LocalChangeList, changes, commitMessage)
-        myCommitter = SingleChangeListCommitter(project, commitState, commitContext, handlers, null, myActionName, isDefaultChangeListFullyIncluded)
-        myCommitter.addResultHandler(notNull(resultHandler, DefaultCommitResultHandler(myCommitter)))
+        myCommitter = SingleChangeListCommitter(project, commitState, commitContext, null, myActionName, isDefaultChangeListFullyIncluded)
+        myCommitter.addResultHandler(notNull(resultHandler, ShowNotificationCommitResultHandler(myCommitter)))
     }
 
     fun doCommit() {
