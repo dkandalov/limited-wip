@@ -1,24 +1,24 @@
 package limitedwip.autorevert.components
 
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.AnActionListener
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.InvokeAfterUpdateMode
-import java.util.function.Function
+import com.intellij.util.messages.MessageBusConnection
 
-class RollbackListener(private val project: Project, private val onRollback: Function<Boolean, Unit>) {
-    private var actionListener: AnActionListener? = null
+class RollbackListener(private val project: Project, private val onRollback: (Boolean) -> Unit) {
+    private var busConnection: MessageBusConnection? = null
 
     fun enable() {
-        if (actionListener != null) return
+        if (busConnection != null) return
 
         val changeListManager = ChangeListManager.getInstance(project)
-        actionListener = object: AnActionListener {
+        val listener = object: AnActionListener {
             override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {}
 
             override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
@@ -29,18 +29,21 @@ class RollbackListener(private val project: Project, private val onRollback: Fun
                 // The following seems to be the only reliable way to do it.
                 val afterUpdate = {
                     val changes = changeListManager.defaultChangeList.changes
-                    onRollback.apply(changes.isEmpty())
+                    onRollback(changes.isEmpty())
                 }
                 changeListManager.invokeAfterUpdate(afterUpdate, InvokeAfterUpdateMode.SILENT_CALLBACK_POOLED, null, ModalityState.any())
             }
         }
-        ActionManager.getInstance().addAnActionListener(actionListener, project)
+
+        busConnection = ApplicationManager.getApplication().messageBus.connect(project).also {
+            it.subscribe(AnActionListener.TOPIC, listener)
+        }
     }
 
     fun disable() {
-        if (actionListener == null) return
-
-        ActionManager.getInstance().removeAnActionListener(actionListener)
-        actionListener = null
+        if (busConnection != null) {
+            busConnection!!.disconnect()
+            busConnection = null
+        }
     }
 }

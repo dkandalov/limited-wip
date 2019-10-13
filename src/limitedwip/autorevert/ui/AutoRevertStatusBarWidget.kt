@@ -40,7 +40,7 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
         tooltipText = "Auto-revert timer will continue next time you click on the widget"
     }
 
-    override fun getPresentation(type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? {
+    override fun getPresentation(): StatusBarWidget.WidgetPresentation? {
         return object : StatusBarWidget.TextPresentation {
             override fun getText() = this@AutoRevertStatusBarWidget.text
             override fun getTooltipText() = this@AutoRevertStatusBarWidget.tooltipText
