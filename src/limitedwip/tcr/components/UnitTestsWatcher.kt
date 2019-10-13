@@ -8,7 +8,6 @@ import com.intellij.execution.testframework.TestsUIUtil
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
-import com.intellij.notification.NotificationsAdapter
 import com.intellij.openapi.project.Project
 import java.util.concurrent.atomic.AtomicReference
 
@@ -23,7 +22,7 @@ class UnitTestsWatcher(private val project: Project) {
             }
         })
 
-        project.messageBus.connect(project).subscribe(Notifications.TOPIC, object : NotificationsAdapter() {
+        project.messageBus.connect(project).subscribe(Notifications.TOPIC, object : Notifications {
             override fun notify(notification: Notification) {
                 if (notification.groupId == TestsUIUtil.NOTIFICATION_GROUP.displayId) {
                     // Can happen when test run configuration has wrong test class name.

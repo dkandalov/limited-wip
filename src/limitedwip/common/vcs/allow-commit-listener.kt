@@ -15,7 +15,6 @@ import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.util.containers.MultiMap
 import limitedwip.common.pluginId
-import java.util.Arrays.asList
 import java.util.concurrent.CopyOnWriteArraySet
 
 private val logger = Logger.getInstance(pluginId)
@@ -57,7 +56,7 @@ fun registerBeforeCommitListener(listener: AllowCommitListener): Boolean {
     //
     // Therefore, using reflection.
 
-    return accessField<MultiMap<VcsKey, VcsCheckinHandlerFactory>>(CheckinHandlersManager.getInstance(), asList("a", "b", "myVcsMap")) { multiMap ->
+    return accessField<MultiMap<VcsKey, VcsCheckinHandlerFactory>>(CheckinHandlersManager.getInstance(), listOf("a", "b", "myVcsMap")) { multiMap ->
         for (key in multiMap.keySet()) {
             multiMap.putValue(key, DelegatingCheckinHandlerFactory(key as VcsKey, listener))
         }

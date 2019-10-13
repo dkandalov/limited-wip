@@ -24,7 +24,7 @@ class WatchdogStatusBarWidget: StatusBarWidget {
 
     override fun dispose() {}
 
-    override fun getPresentation(type: StatusBarWidget.PlatformType): StatusBarWidget.WidgetPresentation? {
+    override fun getPresentation(): StatusBarWidget.WidgetPresentation? {
         return object: StatusBarWidget.TextPresentation {
             override fun getText() = this@WatchdogStatusBarWidget.text
             override fun getTooltipText() = "Change size in lines: $linesInChange; threshold: $maxLinesInChange"
