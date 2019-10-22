@@ -2,7 +2,7 @@ language: java
 jdk: oraclejdk11
 
 env:
-  - LIMITED_WIP_PLUGIN_IDEA_VERSION=IC-192.5728.98
+  - LIMITED_WIP_PLUGIN_IDEA_VERSION=IC-193.4386.10
   - LIMITED_WIP_PLUGIN_IDEA_VERSION=LATEST-EAP-SNAPSHOT
 
 script: ./gradlew check buildPlugin --info

@@ -6,8 +6,8 @@
     <category>Misc</category>
 
     <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
-    <!-- Since this IJ version because it has CommitContext.isAmendCommitMode. -->
-    <idea-version since-build="192.5728.98"/>
+    <!-- Since this IJ version because it broke plugin compilation. -->
+    <idea-version since-build="193.4386.10"/>
 
     <description>
         <![CDATA[
