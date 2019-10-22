@@ -4,12 +4,12 @@ import com.intellij.diff.comparison.ComparisonManagerImpl
 import com.intellij.openapi.vcs.LocalFilePath
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.SimpleContentRevision
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import limitedwip.shouldEqual
 import limitedwip.watchdog.components.calculateChangeSizeInLines
 import org.junit.Test
 
-class CalculateChangeSizeTests : LightPlatformCodeInsightFixtureTestCase() {
+class CalculateChangeSizeTests : BasePlatformTestCase() {
     private val comparisonManager = ComparisonManagerImpl()
 
     @Test fun `test trivial diffs`() {
