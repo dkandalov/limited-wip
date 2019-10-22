@@ -9,7 +9,6 @@ import limitedwip.shouldEqual
 import org.junit.Test
 
 class AllowCommitListenerTests : BasePlatformTestCase() {
-
     @Test fun `test that registering commit listener still via reflection still works`() {
         val wasRegistered = registerBeforeCommitListener(object: AllowCommitListener {
             override fun allowCommit(project: Project, changes: List<Change>) = true

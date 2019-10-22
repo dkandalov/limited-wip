@@ -56,7 +56,7 @@ fun registerBeforeCommitListener(listener: AllowCommitListener): Boolean {
     //
     // Therefore, using reflection.
 
-    return accessField<MultiMap<VcsKey, VcsCheckinHandlerFactory>>(CheckinHandlersManager.getInstance(), listOf("a", "b", "myVcsMap")) { multiMap ->
+    return accessField<MultiMap<VcsKey, VcsCheckinHandlerFactory>>(CheckinHandlersManager.getInstance(), listOf("a", "b", "myVcsMap", "vcsFactories")) { multiMap ->
         for (key in multiMap.keySet()) {
             multiMap.putValue(key, DelegatingCheckinHandlerFactory(key as VcsKey, listener))
         }
