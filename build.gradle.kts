@@ -1,8 +1,8 @@
-import org.gradle.api.JavaVersion.VERSION_1_8
-import org.gradle.api.internal.HasConvention
-import org.jetbrains.intellij.IntelliJPluginExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.gradle.api.JavaVersion.*
+import org.gradle.api.internal.*
+import org.jetbrains.intellij.*
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
 
 plugins {
     idea
@@ -55,8 +55,8 @@ tasks.withType<KotlinJvmCompile> {
 configure<IntelliJPluginExtension> {
     // See https://www.jetbrains.com/intellij-repository/releases for a list of available IDEA builds
     val ideVersion = System.getenv().getOrDefault("LIMITED_WIP_PLUGIN_IDEA_VERSION",
-//        "IC-193.4386.10"
-        "LATEST-EAP-SNAPSHOT"
+        "IC-193.5233.102"
+//        "LATEST-EAP-SNAPSHOT"
     )
     println("Using ide version: $ideVersion")
     version = ideVersion
