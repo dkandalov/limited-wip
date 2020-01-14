@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference
 class UnitTestsWatcher(private val project: Project) {
 
     fun start(listener: Listener) {
-        val profileNameRef = AtomicReference<String>()
+        val profileNameRef = AtomicReference<String?>()
 
         project.messageBus.connect(project).subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
             override fun processTerminated(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler, exitCode: Int) {
@@ -25,12 +25,15 @@ class UnitTestsWatcher(private val project: Project) {
         project.messageBus.connect(project).subscribe(Notifications.TOPIC, object : Notifications {
             override fun notify(notification: Notification) {
                 if (notification.groupId == TestsUIUtil.NOTIFICATION_GROUP.displayId) {
-                    // Can happen when test run configuration has wrong test class name.
+                    // The following can happen when test run configuration has wrong test class name.
                     // Console output might be something like this: Class not found: "com.MyTest"
                     if (notification.content.contains(" 0 passed")) return
 
                     val testsFailed = notification.type == NotificationType.ERROR
-                    val profileName = profileNameRef.get()
+                    // It seems to be possible to get profileName as null probably because
+                    // Notifications.TOPIC callback is invoked before ExecutionManager.EXECUTION_TOPIC.
+                    // Using below some default value just to avoid null.
+                    val profileName = profileNameRef.get() ?: "unknown-profile"
 
                     if (testsFailed) listener.onUnitTestFailed(profileName)
                     else listener.onUnitTestSucceeded(profileName)
