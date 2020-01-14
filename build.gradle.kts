@@ -1,8 +1,8 @@
-import org.gradle.api.JavaVersion.*
-import org.gradle.api.internal.*
-import org.jetbrains.intellij.*
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.gradle.api.JavaVersion.VERSION_1_8
+import org.gradle.api.internal.HasConvention
+import org.jetbrains.intellij.IntelliJPluginExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     idea

@@ -28,7 +28,7 @@ class WatchdogStatusBarWidget: StatusBarWidget {
         return object: StatusBarWidget.TextPresentation {
             override fun getText() = this@WatchdogStatusBarWidget.text
             override fun getTooltipText() = "Change size in lines: $linesInChange; threshold: $maxLinesInChange"
-            override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { listener?.onClick() }
+            override fun getClickConsumer() = Consumer<MouseEvent> { listener?.onClick() }
             override fun getAlignment() = Component.CENTER_ALIGNMENT
         }
     }
