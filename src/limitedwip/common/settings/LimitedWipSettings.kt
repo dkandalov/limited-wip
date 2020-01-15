@@ -17,7 +17,7 @@ import limitedwip.common.settings.TimeUnit.Minutes
 data class LimitedWipSettings(
     var watchdogEnabled: Boolean = true,
     var maxLinesInChange: Int = 80,
-    var notificationIntervalInMinutes: Int = 1,
+    var notificationIntervalInMinutes: Int = never,
     var noCommitsAboveThreshold: Boolean = false,
     var showRemainingChangesInToolbar: Boolean = true,
     var exclusions: String = "",
