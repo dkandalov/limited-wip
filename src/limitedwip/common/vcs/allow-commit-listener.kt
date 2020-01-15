@@ -9,6 +9,7 @@ import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.VcsKey
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.CommitExecutor
+import com.intellij.openapi.vcs.changes.shelf.ShelveChangesCommitExecutor
 import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory
@@ -87,7 +88,7 @@ private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener:
     override fun createSystemReadyHandler(project: Project): BeforeCheckinDialogHandler? {
         return object: BeforeCheckinDialogHandler() {
             override fun beforeCommitDialogShown(project: Project, changes: List<Change>, executors: Iterable<CommitExecutor>, showVcsCommit: Boolean): Boolean {
-                return listener.allowCommit(project, changes)
+                return executors.all { it is ShelveChangesCommitExecutor } || listener.allowCommit(project, changes)
             }
         }
     }
