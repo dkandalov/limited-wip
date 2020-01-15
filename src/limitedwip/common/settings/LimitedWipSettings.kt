@@ -6,7 +6,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.Range
 import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
 import limitedwip.common.settings.CommitMessageSource.LastCommit
@@ -68,13 +67,13 @@ data class LimitedWipSettings(
 
     companion object {
         const val never = Int.MAX_VALUE
-        private val timeTillRevertRange = Range(1, 999)
-        private val changedLinesRange = Range(1, 999)
-        private val notificationIntervalRange = Range(1, never)
+        private val timeTillRevertRange = IntRange(1, 999)
+        private val changedLinesRange = IntRange(1, 999)
+        private val notificationIntervalRange = IntRange(1, never)
 
-        fun isValidTimeTillRevert(duration: Int) = timeTillRevertRange.isWithin(duration)
-        fun isValidChangedSizeRange(lineCount: Int) = changedLinesRange.isWithin(lineCount)
-        fun isValidNotificationInterval(interval: Int) = notificationIntervalRange.isWithin(interval)
+        fun isValidTimeTillRevert(duration: Int) = duration in timeTillRevertRange
+        fun isValidChangedSizeRange(lineCount: Int) = lineCount in changedLinesRange
+        fun isValidNotificationInterval(interval: Int) = interval in notificationIntervalRange
 
         fun getInstance(project: Project): LimitedWipSettings =
             ServiceManager.getService(project, LimitedWipSettings::class.java)
