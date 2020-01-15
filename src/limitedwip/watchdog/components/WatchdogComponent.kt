@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipSettings
-import limitedwip.common.settings.toSeconds
+import limitedwip.common.settings.TimeUnit.Minutes
 import limitedwip.common.toPathMatchers
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.common.vcs.invokeLater
@@ -61,7 +61,7 @@ class WatchdogComponent(private val project: Project) {
         Watchdog.Settings(
             watchdogEnabled,
             maxLinesInChange,
-            notificationIntervalInMinutes.toSeconds(),
+            Minutes.toSeconds(notificationIntervalInMinutes),
             showRemainingChangesInToolbar,
             noCommitsAboveThreshold,
             exclusions.toPathMatchers()

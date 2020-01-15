@@ -12,10 +12,12 @@ import com.intellij.util.execution.ParametersListUtil.COLON_LINE_PARSER
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidChangedSizeRange
-import limitedwip.common.settings.LimitedWipSettings.Companion.isValidMinutesTillRevert
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidNotificationInterval
+import limitedwip.common.settings.LimitedWipSettings.Companion.isValidTimeTillRevert
 import limitedwip.common.settings.LimitedWipSettings.Companion.never
 import limitedwip.common.settings.TcrAction.*
+import limitedwip.common.settings.TimeUnit.Minutes
+import limitedwip.common.settings.TimeUnit.Seconds
 import java.awt.event.ActionEvent
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
@@ -37,7 +39,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
 
     private lateinit var autoRevertPanel: JPanel
     private lateinit var autoRevertEnabled: JCheckBox
-    private lateinit var minutesTillRevert: JComboBox<*>
+    private lateinit var timeTillRevert: JComboBox<*>
+    private lateinit var timeUnitTillRevert: JComboBox<*>
     private lateinit var notifyOnRevert: JCheckBox
     private lateinit var showTimerInToolbar: JCheckBox
     private lateinit var openReadme: LinkLabel<Void>
@@ -63,6 +66,11 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private val commitMessageSourceByIndex = HashBiMap.create<Int, CommitMessageSource>().also {
         it[0] = LastCommit
         it[1] = ChangeListName
+    }
+
+    private val timeUnitByIndex = HashBiMap.create<Int, TimeUnit>().also {
+        it[0] = Seconds
+        it[1] = Minutes
     }
 
     private fun createUIComponents() {
@@ -95,7 +103,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         // but I failed to make it properly wrap its text without expanding horizontally to full width of the settings window.
 
         autoRevertEnabled.addActionListener(commonActionListener)
-        minutesTillRevert.addActionListener(commonActionListener)
+        timeTillRevert.addActionListener(commonActionListener)
+        timeUnitTillRevert.addActionListener(commonActionListener)
         notifyOnRevert.addActionListener(commonActionListener)
         showTimerInToolbar.addActionListener(commonActionListener)
 
@@ -127,7 +136,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         exclusions.text = currentState.exclusions
 
         autoRevertEnabled.isSelected = currentState.autoRevertEnabled
-        minutesTillRevert.selectedItem = currentState.minutesTillRevert.toString()
+        timeTillRevert.selectedItem = currentState.timeTillRevert.toString()
+        timeUnitTillRevert.selectedIndex = timeUnitByIndex.inverse()[currentState.timeUnitTillRevert]!!
         notifyOnRevert.isSelected = currentState.notifyOnRevert
         showTimerInToolbar.isSelected = currentState.showTimerInToolbar
 
@@ -139,7 +149,8 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
         doNotRevertFiles.text = currentState.doNotRevertFiles
 
         currentState.autoRevertEnabled.let {
-            minutesTillRevert.isEnabled = it
+            timeTillRevert.isEnabled = it
+            timeUnitTillRevert.isEnabled = it
             notifyOnRevert.isEnabled = it
             showTimerInToolbar.isEnabled = it
         }
@@ -166,9 +177,9 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             if (isValidChangedSizeRange(lineCount)) {
                 currentState.maxLinesInChange = lineCount
             }
-            var minutes = (notificationInterval.selectedItem as String).parseInterval()
-            if (isValidNotificationInterval(minutes)) {
-                currentState.notificationIntervalInMinutes = minutes
+            val notificationInMinutes = (notificationInterval.selectedItem as String).parseInterval()
+            if (isValidNotificationInterval(notificationInMinutes)) {
+                currentState.notificationIntervalInMinutes = notificationInMinutes
             }
             currentState.showRemainingChangesInToolbar = showRemainingInToolbar.isSelected
             currentState.noCommitsAboveThreshold = noCommitsAboveThreshold.isSelected
@@ -176,10 +187,11 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             currentState.exclusions = exclusions.text
 
             currentState.autoRevertEnabled = autoRevertEnabled.isSelected
-            minutes = (minutesTillRevert.selectedItem as String).toInt()
-            if (isValidMinutesTillRevert(minutes)) {
-                currentState.minutesTillRevert = minutes
+            val timeTillRevert = (timeTillRevert.selectedItem as String).toInt()
+            if (isValidTimeTillRevert(timeTillRevert)) {
+                currentState.timeTillRevert = timeTillRevert
             }
+            currentState.timeUnitTillRevert = timeUnitByIndex[timeUnitTillRevert.selectedIndex]!!
             currentState.notifyOnRevert = notifyOnRevert.isSelected
             currentState.showTimerInToolbar = showTimerInToolbar.isSelected
 

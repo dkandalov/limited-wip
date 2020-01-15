@@ -44,7 +44,7 @@
               <text value="Show time till revert"/>
             </properties>
           </component>
-          <component id="c20a1" class="javax.swing.JComboBox" binding="minutesTillRevert" default-binding="true">
+          <component id="c20a1" class="javax.swing.JComboBox" binding="timeTillRevert">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -59,14 +59,6 @@
                 <item value="60"/>
                 <item value="120"/>
               </model>
-            </properties>
-          </component>
-          <component id="491fd" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="minute(s)"/>
             </properties>
           </component>
           <component id="d1c58" class="javax.swing.JCheckBox" binding="showTimerInToolbar">
@@ -118,6 +110,18 @@
             </constraints>
             <properties>
               <text value="Enabled"/>
+            </properties>
+          </component>
+          <component id="247a9" class="javax.swing.JComboBox" binding="timeUnitTillRevert">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <model>
+                <item value="seconds"/>
+                <item value="minutes"/>
+              </model>
             </properties>
           </component>
         </children>

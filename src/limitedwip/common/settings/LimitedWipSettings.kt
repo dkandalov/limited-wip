@@ -11,7 +11,8 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 import limitedwip.common.pluginId
 import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings.Companion.never
-import limitedwip.common.settings.TcrAction.*
+import limitedwip.common.settings.TcrAction.Commit
+import limitedwip.common.settings.TimeUnit.Minutes
 
 @State(name = "${pluginId}Settings")
 data class LimitedWipSettings(
@@ -23,7 +24,10 @@ data class LimitedWipSettings(
     var exclusions: String = "",
 
     var autoRevertEnabled: Boolean = false,
-    var minutesTillRevert: Int = 2,
+    @Deprecated("Should be removed in the future when it seems like all the users have upgraded")
+    var minutesTillRevert: Int = never,
+    var timeTillRevert: Int = 2,
+    var timeUnitTillRevert: TimeUnit = Minutes,
     var notifyOnRevert: Boolean = true,
     var showTimerInToolbar: Boolean = true,
 
@@ -38,8 +42,14 @@ data class LimitedWipSettings(
 
     override fun getState(): LimitedWipSettings? = this
 
+    @Suppress("DEPRECATION")
     override fun loadState(state: LimitedWipSettings) {
         XmlSerializerUtil.copyBean(state, this)
+        if (minutesTillRevert != never) {
+            timeTillRevert = minutesTillRevert
+            timeUnitTillRevert = Minutes
+            minutesTillRevert = never
+        }
         notifyListeners()
     }
 
@@ -58,11 +68,11 @@ data class LimitedWipSettings(
 
     companion object {
         const val never = Int.MAX_VALUE
-        private val minutesTillRevertRange = Range(1, 99)
+        private val timeTillRevertRange = Range(1, 999)
         private val changedLinesRange = Range(1, 999)
         private val notificationIntervalRange = Range(1, never)
 
-        fun isValidMinutesTillRevert(minutes: Int) = minutesTillRevertRange.isWithin(minutes)
+        fun isValidTimeTillRevert(duration: Int) = timeTillRevertRange.isWithin(duration)
         fun isValidChangedSizeRange(lineCount: Int) = changedLinesRange.isWithin(lineCount)
         fun isValidNotificationInterval(interval: Int) = notificationIntervalRange.isWithin(interval)
 
@@ -70,8 +80,6 @@ data class LimitedWipSettings(
             ServiceManager.getService(project, LimitedWipSettings::class.java)
     }
 }
-
-fun Int.toSeconds(): Int = if (this == never) never else this * 60
 
 enum class TcrAction {
     OpenCommitDialog,
@@ -83,4 +91,16 @@ enum class TcrAction {
 enum class CommitMessageSource {
     LastCommit,
     ChangeListName
+}
+
+enum class TimeUnit {
+    Seconds,
+    Minutes;
+
+    fun toSeconds(duration: Int): Int =
+        if (duration == never) never
+        else when (this) {
+            Seconds -> duration
+            Minutes -> duration * 60
+        }
 }
