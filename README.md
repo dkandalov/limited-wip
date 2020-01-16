@@ -1,25 +1,25 @@
 [![Build Status](https://travis-ci.org/dkandalov/limited-wip.svg?branch=master)](https://travis-ci.org/dkandalov/limited-wip)
 
 ## Limited WIP
-This is a plugin for IntelliJ IDEs to help you limit work-in-progress (WIP) by imposing constraints on your workflow.
+This is a plugin for IntelliJ IDEs to limit work-in-progress (WIP) by adding constraints to your normal workflow in IDE.
 
-It has three main components:
- - **Change size watchdog**: it shows notifications when current changelist size exceeds threshold
- - **Auto-revert**: it automatically reverts current changelist after a timeout (the timer resets on each commit)
- - **Test-commit-revert mode**: it reverts current changelist on failed test and commits on passed test
+It has three main components (each one can be enabled/disabled):
+ - **Change size watchdog**: shows notifications when current changelist size exceeds threshold
+ - **Auto-revert**: automatically reverts current changelist after a timeout (the timer is reset after each commit)
+ - **TCR mode (test && commit || revert)**: you can only commit after running a test;
+ if the test fails, current changelist is reverted; if the test passes, changes are automatically committed
 
 
 ## Why?
- - to make *really* small steps, focus on one thing at a time and commit as soon as it’s done
- - to learn from various constraints like reverting changes every 5 minutes as it's practiced at [code retreats](https://twitter.com/coderetreat)
- - to help you use particular constraints, not to impose them 
-   (all components can be disabled and there are workarounds anyway, e.g. get reverted code from IDE local history)
+ - focus on one thing at a time, make *really* small steps and commit as soon as you're done
+ - practice various constraints as if you're at a [code retreat](https://twitter.com/coderetreat)
+ - explore your limits and learn new refactoring, coding and problem solving techniques
 
 
 ## Change size watchdog
 Whenever size of the current change list exceeds specified threshold, 
 watchdog will show notification popup reminding to reduce amount of changes.
-This is the least extreme constraint. It has been used on large scale enterprise projects.
+This is the least extreme constraint and has been used on large scale enterprise projects.
 
 You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
  - enable/disable component
@@ -49,7 +49,7 @@ for quite a few years. It has been useful on large scale enterprise projects wit
 
 You can find settings in `Preferences -> Other Settings -> Limited WIP`, where you can:
  - enable/disable component (it is disabled by default)
- - timeout until revert in minutes
+ - timeout until revert in minutes or seconds
  - enable/disable notification on auto-revert (to make it clear why current changes disappeared)
  - enable/disable displaying timer in auto-revert widget. 
    Sometimes it can be useful to see how much time is left till revert. 

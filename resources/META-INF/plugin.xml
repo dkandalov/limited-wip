@@ -14,21 +14,21 @@
         <![CDATA[
         <html lang="en">
         <body>
-        Plugin to help you limit work-in-progress (WIP) by imposing constraints on your workflow.
-        The plugin has three main components:
+        This plugin helps limit work-in-progress (WIP) by adding constraints to your normal workflow in IDE.
+        <br/><br/>
+        It has three main components (each one can be enabled/disabled):
         <ul>
-            <li><b>Change size watchdog</b>: show notifications when current changelist size exceeds threshold</li>
-            <li><b>Auto-revert</b>: automatically revert current changelist after a timeout (the timer resets on each commit)</li>
-            <li><b>TCR mode (test && commit || revert)</b>: can only commit after running a test;
-                   if the test fails, revert current changelist; if the test passes, do auto-commit</li>
+            <li><b>Change size watchdog</b>: shows notifications when current changelist size exceeds threshold</li>
+            <li><b>Auto-revert</b>: automatically reverts current changelist after a timeout (the timer is reset after each commit)</li>
+            <li><b>TCR mode (test && commit || revert)</b>: you can only commit after running a test;
+                   if the test fails, current changelist is reverted; if the test passes, changes are automatically committed</li>
         </ul>
         <br/>
-        Why?
+        <h3>Why?</h3>
         <ul>
-            <li>to make <b>really</b> small steps, focus on one thing at a time and commit as soon as it’s done</li>
-            <li>to learn from various constraints like reverting changes every 5 minutes as it's practiced at <a href="https://twitter.com/coderetreat">code retreats</a></li>
-            <li>to help you use particular constraints, not to impose them
-                (all components can be disabled and there are workarounds anyway, e.g. get reverted code from IDE local history)</li>
+            <li>focus on one thing at a time, make <b>really</b> small steps and commit as soon as you're done</li>
+            <li>practice various constraints as if you're at a <a href="https://twitter.com/coderetreat">code retreat</a></li>
+            <li>explore your limits and learn new refactoring, coding and problem solving techniques</li>
         </ul>
         <br/>
         See <a href="https://github.com/dkandalov/limited-wip">https://github.com/dkandalov/limited-wip</a> for details.
