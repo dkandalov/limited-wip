@@ -8,7 +8,7 @@
     <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
     <!-- https://www.jetbrains.com/intellij-repository/releases -->
     <!-- Since this IJ version because it broke plugin compilation. -->
-    <idea-version since-build="193.4386.10"/>
+    <idea-version since-build="193.5233.102"/>
 
     <description>
         <![CDATA[
