@@ -87,6 +87,7 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
 
 
 ## Screenshots
+<!--suppress HtmlDeprecatedAttribute -->
 <img width="50%" src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/settings.png?raw=true" align="center" alt="settings screenshot"/>
 <br/>
 <img src="https://github.com/dkandalov/limited-wip/blob/master/screenshots/change-limit-exceeded.png?raw=true" align="center" alt="change limit exceeded notification"/>
@@ -96,6 +97,7 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
 
 
 ## Videos
+ - [Regex matcher using TCR with Jordan Stewart](https://www.youtube.com/watch?v=QEd2anW86YQ)
  - [Mobbing FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=tmRRlzPWyYA) 
  - [Tennis kata with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=H0z_NhQIOHQ) 
  - [FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=3s14AtA5R48) 
