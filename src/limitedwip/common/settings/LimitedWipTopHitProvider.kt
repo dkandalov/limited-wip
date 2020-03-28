@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import limitedwip.common.pluginId
 import kotlin.reflect.KMutableProperty0
 
-class LimitedWipTopHitProvider : OptionsTopHitProvider() {
+class LimitedWipTopHitProvider: OptionsTopHitProvider() {
     override fun getId() = pluginId
 
     override fun getOptions(project: Project?): Collection<OptionDescription> {
@@ -28,7 +28,7 @@ class LimitedWipTopHitProvider : OptionsTopHitProvider() {
         optionName: String,
         val property: KMutableProperty0<Boolean>,
         val settings: LimitedWipSettings
-    ) : BooleanOptionDescription(optionName, pluginId) {
+    ): BooleanOptionDescription(optionName, pluginId) {
         override fun isOptionEnabled() = property()
         override fun setOptionState(enabled: Boolean) {
             property.set(enabled)

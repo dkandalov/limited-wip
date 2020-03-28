@@ -6,7 +6,7 @@ import limitedwip.common.pluginDisplayName
 import limitedwip.common.pluginId
 import javax.swing.JComponent
 
-class LimitedWipConfigurable(val project: Project) : SearchableConfigurable {
+class LimitedWipConfigurable(val project: Project): SearchableConfigurable {
     private lateinit var settingsForm: SettingsForm
 
     override fun createComponent(): JComponent? {

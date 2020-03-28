@@ -7,7 +7,7 @@ import limitedwip.common.pluginId
 import java.awt.Component
 import java.awt.event.MouseEvent
 
-class AutoRevertStatusBarWidget : StatusBarWidget {
+class AutoRevertStatusBarWidget: StatusBarWidget {
     private var text = ""
     private var tooltipText = ""
     private lateinit var callback: () -> Unit
@@ -40,14 +40,13 @@ class AutoRevertStatusBarWidget : StatusBarWidget {
         tooltipText = "Auto-revert timer will continue next time you click on the widget"
     }
 
-    override fun getPresentation(): StatusBarWidget.WidgetPresentation? {
-        return object : StatusBarWidget.TextPresentation {
+    override fun getPresentation() =
+        object: StatusBarWidget.TextPresentation {
             override fun getText() = this@AutoRevertStatusBarWidget.text
             override fun getTooltipText() = this@AutoRevertStatusBarWidget.tooltipText
             override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { callback() }
             override fun getAlignment() = Component.CENTER_ALIGNMENT
         }
-    }
 
     override fun ID() = pluginId + "_" + this.javaClass.simpleName
 }
