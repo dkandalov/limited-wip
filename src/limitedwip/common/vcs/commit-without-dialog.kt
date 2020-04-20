@@ -146,7 +146,7 @@ private class CommitHelper(
 
     init {
         val commitState = ChangeListCommitState(changeList as LocalChangeList, changes, commitMessage)
-        myCommitter = SingleChangeListCommitter(project, commitState, commitContext, null, myActionName, isDefaultChangeListFullyIncluded)
+        myCommitter = SingleChangeListCommitter(project, commitState, commitContext, myActionName, isDefaultChangeListFullyIncluded)
         myCommitter.addResultHandler(notNull(resultHandler, ShowNotificationCommitResultHandler(myCommitter)))
     }
 
