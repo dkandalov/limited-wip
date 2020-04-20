@@ -1,4 +1,3 @@
-import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.intellij.IntelliJPluginExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
@@ -7,12 +6,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 plugins {
     idea
     java
-    kotlin("jvm").version("1.2.31")
+    kotlin("jvm").version("1.3.71")
     id("org.jetbrains.intellij").version("0.4.18")
-}
-java {
-    sourceCompatibility = VERSION_1_8
-    targetCompatibility = VERSION_1_8
 }
 repositories {
     mavenCentral()
@@ -43,9 +38,9 @@ dependencies {
 
 tasks.withType<KotlinJvmCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
-        apiVersion = "1.2"
-        languageVersion = "1.2"
+        jvmTarget = "11"
+        apiVersion = "1.3"
+        languageVersion = "1.3"
         // Compiler flag to allow building against pre-released versions of Kotlin
         // because IJ EAP can be built using pre-released Kotlin but it's still worth doing to check API compatibility
         freeCompilerArgs = freeCompilerArgs + listOf("-Xskip-metadata-version-check")
@@ -55,8 +50,8 @@ tasks.withType<KotlinJvmCompile> {
 configure<IntelliJPluginExtension> {
     // See https://www.jetbrains.com/intellij-repository/releases for a list of available IDEA builds
     val ideVersion = System.getenv().getOrDefault("LIMITED_WIP_PLUGIN_IDEA_VERSION",
-        "IC-193.5233.102"
-//        "LATEST-EAP-SNAPSHOT"
+//        "IC-193.5233.102"
+        "LATEST-EAP-SNAPSHOT"
     )
     println("Using ide version: $ideVersion")
     version = ideVersion
