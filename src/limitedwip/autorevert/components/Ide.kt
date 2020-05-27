@@ -79,12 +79,15 @@ class Ide(
         val statusBar = project.statusBar() ?: return
         val hasAutoRevertWidget = statusBar.getWidget(widget.ID()) != null
         when {
-            hasAutoRevertWidget && settings.enabled -> statusBar.updateWidget(widget.ID())
-            hasAutoRevertWidget                     -> statusBar.removeWidget(widget.ID())
+            hasAutoRevertWidget && settings.enabled -> {
+                widget.updateOn(statusBar)
+            }
+            hasAutoRevertWidget                     -> {
+                widget.removeFrom(statusBar)
+            }
             settings.enabled                        -> {
                 widget.showStoppedText()
-                statusBar.addWidget(widget, "before Position")
-                statusBar.updateWidget(widget.ID())
+                widget.addTo(statusBar)
             }
         }
     }
@@ -97,4 +100,3 @@ class Ide(
         return String.format("%02d", min) + ":" + String.format("%02d", sec)
     }
 }
-

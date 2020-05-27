@@ -18,7 +18,7 @@ import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 class Ide(
     private val project: Project,
     private val changeSizeWatcher: ChangeSizeWatcher,
-    private val watchdogWidget: WatchdogStatusBarWidget,
+    private val widget: WatchdogStatusBarWidget,
     private var settings: Watchdog.Settings
 ) {
     lateinit var listener: Listener
@@ -26,7 +26,7 @@ class Ide(
     private var changesInLastCancelledCommit: List<Change>? = null
 
     init {
-        watchdogWidget.listener = object: WatchdogStatusBarWidget.Listener {
+        widget.listener = object: WatchdogStatusBarWidget.Listener {
             override fun onClick() = listener.onWidgetClick()
         }
         AllowCommitAppComponent.getInstance().addListener(project, object: AllowCommitListener {
@@ -43,7 +43,7 @@ class Ide(
     fun calculateCurrentChangeListSizeInLines() = changeSizeWatcher.calculateCurrentChangeListSizeInLines()
 
     fun showCurrentChangeListSize(linesInChange: ChangeSize, maxLinesInChange: Int) {
-        watchdogWidget.showChangeSize(linesInChange.toPrintableString(), maxLinesInChange)
+        widget.showChangeSize(linesInChange.toPrintableString(), maxLinesInChange)
         updateStatusBar()
     }
 
@@ -105,14 +105,17 @@ class Ide(
 
     private fun updateStatusBar() {
         val statusBar = WindowManager.getInstance().getStatusBar(project) ?: return
-        val hasWatchdogWidget = statusBar.getWidget(watchdogWidget.ID()) != null
+        val hasWatchdogWidget = statusBar.getWidget(widget.ID()) != null
         val shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar
         when {
-            hasWatchdogWidget && shouldShowWatchdog  -> statusBar.updateWidget(watchdogWidget.ID())
-            hasWatchdogWidget && !shouldShowWatchdog -> statusBar.removeWidget(watchdogWidget.ID())
+            hasWatchdogWidget && shouldShowWatchdog  -> {
+                widget.updateOn(statusBar)
+            }
+            hasWatchdogWidget && !shouldShowWatchdog -> {
+                widget.removeFrom(statusBar)
+            }
             !hasWatchdogWidget && shouldShowWatchdog -> {
-                statusBar.addWidget(watchdogWidget, "before Position")
-                statusBar.updateWidget(watchdogWidget.ID())
+                widget.addTo(statusBar)
             }
         }
     }
