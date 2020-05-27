@@ -51,7 +51,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
     }
 
     fun isCommitAllowed(changeSizesWithPath: ChangeSizesWithPath): Boolean {
-        if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold) return true
+        if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold || !settings.enabled) return true
         if (changeSizesWithPath.applyExclusions().value > settings.maxLinesInChange) {
             ide.notifyThatCommitWasCancelled()
             return false

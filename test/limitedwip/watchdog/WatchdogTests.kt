@@ -169,4 +169,9 @@ class WatchdogDisabledTests {
         ide.expect(times(2)).onSettingsUpdate(anySettings())
         ide.expectNoMoreInteractions()
     }
+
+    @Test fun `when disabled, allow commits`() = Fixture().run {
+        watchdog.onSettingsUpdate(disabledSettings)
+        watchdog.isCommitAllowed(someChangesWithSize(200)) shouldEqual true
+    }
 }
