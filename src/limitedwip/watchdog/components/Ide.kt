@@ -9,7 +9,6 @@ import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.AllowCommit
-import limitedwip.common.vcs.AllowCommitListener
 import limitedwip.common.vcs.openCommitDialog
 import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
@@ -29,7 +28,7 @@ class Ide(
         widget.listener = object: WatchdogStatusBarWidget.Listener {
             override fun onClick() = listener.onWidgetClick()
         }
-        AllowCommit.addListener(project, object: AllowCommitListener {
+        AllowCommit.addListener(project, object: AllowCommit.Listener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
                 val result = project != this@Ide.project || listener.allowCommit()
                 changesInLastCancelledCommit = if (!result) changes else null

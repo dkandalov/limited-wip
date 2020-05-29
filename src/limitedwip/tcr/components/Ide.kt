@@ -16,7 +16,7 @@ class Ide(private val project: Project) {
     private var changesInLastCancelledCommit: List<Change>? = null
 
     init {
-        AllowCommit.addListener(project, object: AllowCommitListener {
+        AllowCommit.addListener(project, object: AllowCommit.Listener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
                 val result = project != this@Ide.project || listener.allowCommit()
                 changesInLastCancelledCommit = if (!result) changes else null

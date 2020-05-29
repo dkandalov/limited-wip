@@ -1,7 +1,6 @@
 package limitedwip.common.vcs
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vcs.CheckinProjectPanel
@@ -18,21 +17,17 @@ import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.util.containers.MultiMap
-import limitedwip.common.pluginId
 import java.util.concurrent.CopyOnWriteArraySet
 
-private val logger = Logger.getInstance(pluginId)
-
 object AllowCommit: CheckinHandlerFactory() {
-    private val listeners = CopyOnWriteArraySet<AllowCommitListener>()
+    private val listeners = CopyOnWriteArraySet<Listener>()
 
     init {
-        val wasRegistered = registerBeforeCommitListener(object: AllowCommitListener {
+        registerBeforeCommitListener(object: Listener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
                 return listeners.all { it.allowCommit(project, changes) }
             }
         })
-        if (!wasRegistered) logger.warn("Failed to register commit listener.")
     }
 
     override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
@@ -44,11 +39,15 @@ object AllowCommit: CheckinHandlerFactory() {
         }
     }
 
-    fun addListener(parentDisposable: Disposable, listener: AllowCommitListener) {
+    fun addListener(parentDisposable: Disposable, listener: Listener) {
         Disposer.register(parentDisposable, Disposable {
             listeners.remove(listener)
         })
         listeners.add(listener)
+    }
+
+    interface Listener {
+        fun allowCommit(project: Project, changes: List<Change>): Boolean
     }
 }
 
@@ -60,7 +59,7 @@ object AllowCommit: CheckinHandlerFactory() {
  *
  * Not deleting this function for now to maintain compatibility with older IJ versions.
  */
-private fun registerBeforeCommitListener(listener: AllowCommitListener): Boolean {
+private fun registerBeforeCommitListener(listener: AllowCommit.Listener): Boolean {
     // This is a hack caused by limitations of IntelliJ API.
     //  - cannot use CheckinHandlerFactory because:
     //		- CheckinHandler is used just before commit (and after displaying commit dialog)
@@ -94,12 +93,7 @@ private inline fun <reified T> accessField(anObject: Any, possibleFieldNames: Li
 }
 
 
-interface AllowCommitListener {
-    fun allowCommit(project: Project, changes: List<Change>): Boolean
-}
-
-
-private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener: AllowCommitListener): VcsCheckinHandlerFactory(key) {
+private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener: AllowCommit.Listener): VcsCheckinHandlerFactory(key) {
     override fun createSystemReadyHandler(project: Project): BeforeCheckinDialogHandler? {
         return object: BeforeCheckinDialogHandler() {
             override fun beforeCommitDialogShown(project: Project, changes: List<Change>, executors: Iterable<CommitExecutor>, showVcsCommit: Boolean): Boolean {
