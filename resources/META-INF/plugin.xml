@@ -42,7 +42,6 @@
 
     <application-components>
         <component><implementation-class>limitedwip.common.TimerAppComponent</implementation-class></component>
-        <component><implementation-class>limitedwip.common.vcs.AllowCommitAppComponent</implementation-class></component>
     </application-components>
 
     <actions>
@@ -57,13 +56,14 @@
         <projectConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
         <projectService serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.SuccessfulCheckin"/>
+        <checkinHandlerFactory implementation="limitedwip.common.vcs.AllowCommit"/>
         <search.topHitProvider implementation="limitedwip.common.settings.LimitedWipTopHitProvider"/>
 
-        <registryKey key="limited-wip.floating-widgets.enabled" defaultValue="false"/>
-        <registryKey key="limited-wip.watchdog.widget.x" defaultValue="230"/>
-        <registryKey key="limited-wip.watchdog.widget.y" defaultValue="10000"/>
-        <registryKey key="limited-wip.autorevert.widget.x" defaultValue="230"/>
-        <registryKey key="limited-wip.autorevert.widget.y" defaultValue="975"/>
+        <registryKey key="limited-wip.floating-widgets.enabled" defaultValue="false" description="..."/>
+        <registryKey key="limited-wip.watchdog.widget.x" defaultValue="230" description="..."/>
+        <registryKey key="limited-wip.watchdog.widget.y" defaultValue="10000" description="..."/>
+        <registryKey key="limited-wip.autorevert.widget.x" defaultValue="230" description="..."/>
+        <registryKey key="limited-wip.autorevert.widget.y" defaultValue="975" description="..."/>
     </extensions>
 
     <extensionPoints>

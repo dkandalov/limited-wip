@@ -1,17 +1,20 @@
 package limitedwip.common.vcs
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.VcsKey
 import com.intellij.openapi.vcs.changes.Change
+import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.changes.CommitExecutor
 import com.intellij.openapi.vcs.changes.shelf.ShelveChangesCommitExecutor
 import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandler
+import com.intellij.openapi.vcs.checkin.CheckinHandler.ReturnResult.CANCEL
+import com.intellij.openapi.vcs.checkin.CheckinHandler.ReturnResult.COMMIT
+import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.util.containers.MultiMap
@@ -20,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 private val logger = Logger.getInstance(pluginId)
 
-class AllowCommitAppComponent {
+object AllowCommit: CheckinHandlerFactory() {
     private val listeners = CopyOnWriteArraySet<AllowCommitListener>()
 
     init {
@@ -32,20 +35,32 @@ class AllowCommitAppComponent {
         if (!wasRegistered) logger.warn("Failed to register commit listener.")
     }
 
+    override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
+        return object : CheckinHandler() {
+            override fun beforeCheckin(): ReturnResult {
+                val canCommit = listeners.all { it.allowCommit(panel.project, panel.selectedChanges.toList()) }
+                return if (canCommit) COMMIT else CANCEL
+            }
+        }
+    }
+
     fun addListener(parentDisposable: Disposable, listener: AllowCommitListener) {
         Disposer.register(parentDisposable, Disposable {
             listeners.remove(listener)
         })
         listeners.add(listener)
     }
-
-    companion object {
-        fun getInstance(): AllowCommitAppComponent =
-            ApplicationManager.getApplication().getComponent(AllowCommitAppComponent::class.java)
-    }
 }
 
-fun registerBeforeCommitListener(listener: AllowCommitListener): Boolean {
+/**
+ * This function is obsolete because:
+ *  - the reflection trick doesn't work anymore since #IC-202.4357.23 or so
+ *  - the new commit dialog is not in a separate window,
+ *    and to cancel commits CheckinHandlerFactory must be used
+ *
+ * Not deleting this function for now to maintain compatibility with older IJ versions.
+ */
+private fun registerBeforeCommitListener(listener: AllowCommitListener): Boolean {
     // This is a hack caused by limitations of IntelliJ API.
     //  - cannot use CheckinHandlerFactory because:
     //		- CheckinHandler is used just before commit (and after displaying commit dialog)
