@@ -1,5 +1,5 @@
+.gradle
 .idea
+build/
+out/
 *.iml
-/build/
-/out/
-/out/production/classes/
