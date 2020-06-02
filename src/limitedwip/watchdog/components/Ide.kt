@@ -9,7 +9,8 @@ import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.AllowCommit
-import limitedwip.common.vcs.openCommitDialog
+import limitedwip.common.vcs.doCommitWithoutDialog
+import limitedwip.common.vcs.invokeLater
 import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
@@ -72,8 +73,8 @@ class Ide(
                 "(<a href=\"\">Click here</a> to skip notifications till next commit)",
             NotificationType.WARNING,
             NotificationListener { notification, _ ->
-                listener.onSkipNotificationsUntilCommit()
                 notification.expire()
+                listener.onSkipNotificationsUntilCommit()
             }
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
@@ -93,13 +94,18 @@ class Ide(
             pluginDisplayName,
             "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
             NotificationType.WARNING,
-            NotificationListener { _, _ -> listener.onForceCommit() }
+            NotificationListener { notification, _ ->
+                notification.expire()
+                listener.onForceCommit()
+            }
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
-    fun openCommitDialog() {
-        openCommitDialog(changesInLastCancelledCommit)
+    fun commitWithoutDialog() {
+        invokeLater {
+            doCommitWithoutDialog(project)
+        }
     }
 
     private fun updateStatusBar() {

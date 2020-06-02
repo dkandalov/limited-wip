@@ -38,7 +38,7 @@ class Tcr(private val ide: Ide, private var settings: Settings) {
 
     fun forceOneCommit() {
         allowOneCommitWithoutChecks = true
-        ide.openCommitDialog()
+        ide.commitWithoutDialog()
     }
 
     fun isCommitAllowed(modifications: ChangeListModifications): Boolean {

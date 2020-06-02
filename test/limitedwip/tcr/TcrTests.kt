@@ -137,7 +137,7 @@ class TcrTests {
         tcr.isCommitAllowed(someModifications) shouldEqual false
         tcr.forceOneCommit()
         tcr.isCommitAllowed(someModifications) shouldEqual true
-        ide.expect().openCommitDialog()
+        ide.expect().commitWithoutDialog()
 
         tcr.onSuccessfulCommit()
         tcr.isCommitAllowed(someModifications) shouldEqual false

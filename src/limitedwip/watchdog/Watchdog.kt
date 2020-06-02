@@ -69,7 +69,7 @@ class Watchdog(private val ide: Ide, private var settings: Settings) {
 
     fun onForceCommit() {
         allowOneCommitWithoutChecks = true
-        ide.openCommitDialog()
+        ide.commitWithoutDialog()
     }
 
     private fun ChangeSizesWithPath.applyExclusions(): ChangeSize {
