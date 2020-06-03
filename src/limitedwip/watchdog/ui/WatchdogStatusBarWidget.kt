@@ -1,9 +1,11 @@
 package limitedwip.watchdog.ui
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
+import com.intellij.openapi.wm.WindowManager
 import com.intellij.util.Consumer
 import limitedwip.common.FloatingWidget
 import limitedwip.common.pluginId
@@ -11,11 +13,14 @@ import java.awt.Component
 import java.awt.Point
 import java.awt.event.MouseEvent
 
-class WatchdogStatusBarWidget: StatusBarWidget {
-    private val floatingWidget = FloatingWidget(Point(
-        Registry.intValue("limited-wip.watchdog.widget.x"),
-        Registry.intValue("limited-wip.watchdog.widget.y")
-    ))
+class WatchdogStatusBarWidget(project: Project): StatusBarWidget {
+    private val floatingWidget = FloatingWidget(
+        projectComponent = WindowManager.getInstance().getIdeFrame(project)?.component,
+        point = Point(
+            Registry.intValue("limited-wip.watchdog.widget.x"),
+            Registry.intValue("limited-wip.watchdog.widget.y")
+        )
+    )
 
     private val textPrefix = "Change size: "
     private var text = ""

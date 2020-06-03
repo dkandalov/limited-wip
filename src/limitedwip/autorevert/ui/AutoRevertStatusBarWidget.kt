@@ -1,9 +1,11 @@
 package limitedwip.autorevert.ui
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
+import com.intellij.openapi.wm.WindowManager
 import com.intellij.util.Consumer
 import limitedwip.common.FloatingWidget
 import limitedwip.common.pluginId
@@ -11,11 +13,14 @@ import java.awt.Component
 import java.awt.Point
 import java.awt.event.MouseEvent
 
-class AutoRevertStatusBarWidget: StatusBarWidget {
-    private val floatingWidget = FloatingWidget(Point(
-        Registry.intValue("limited-wip.autorevert.widget.x"),
-        Registry.intValue("limited-wip.autorevert.widget.y")
-    ))
+class AutoRevertStatusBarWidget(project: Project): StatusBarWidget {
+    private val floatingWidget = FloatingWidget(
+        projectComponent = WindowManager.getInstance().getIdeFrame(project)?.component,
+        point = Point (
+            Registry.intValue("limited-wip.autorevert.widget.x"),
+            Registry.intValue("limited-wip.autorevert.widget.y")
+        )
+    )
 
     private var text = ""
     private var tooltipText = ""

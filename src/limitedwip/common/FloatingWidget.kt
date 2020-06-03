@@ -14,8 +14,9 @@ import com.intellij.util.ui.JBUI
 import java.awt.Dimension
 import java.awt.GridBagLayout
 import java.awt.Point
+import javax.swing.JComponent
 
-class FloatingWidget(private val point: Point): Disposable {
+class FloatingWidget(private val point: Point, private val projectComponent: JComponent?): Disposable {
     private val label = JBLabel("<html></html>")
     private val panel = JBPanel<JBPanel<*>>().also {
         it.layout = GridBagLayout()
@@ -34,7 +35,10 @@ class FloatingWidget(private val point: Point): Disposable {
         if (Registry.`is`("limited-wip.floating-widgets.enabled", false)) {
             dispose()
             balloon = createBalloon().also {
-                it.show(RelativePoint(point), Balloon.Position.below)
+                val relativePoint =
+                    if (projectComponent == null) RelativePoint(point)
+                    else RelativePoint(projectComponent, point)
+                it.show(relativePoint, Balloon.Position.below)
             }
         }
     }

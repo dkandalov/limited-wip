@@ -21,7 +21,7 @@ class WatchdogComponent(private val project: Project) {
 
     fun start() {
         val settings = LimitedWipSettings.getInstance(project).toWatchdogSettings()
-        val ide = Ide(project, ChangeSizeWatcher(project), WatchdogStatusBarWidget(), settings)
+        val ide = Ide(project, ChangeSizeWatcher(project), WatchdogStatusBarWidget(project), settings)
         val watchdog = Watchdog(ide, settings)
         enabled = settings.enabled
 
