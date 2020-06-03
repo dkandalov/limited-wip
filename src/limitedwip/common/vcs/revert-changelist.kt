@@ -1,6 +1,5 @@
 package limitedwip.common.vcs
 
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.ModuleManager
@@ -23,9 +22,9 @@ fun revertCurrentChangeList(
     // Don't revert when there are no VCS registered.
     // (Note that it is possible to do a revert after removing VCS from project settings until IDE restart.)
     val changeList = project.defaultChangeList() ?: return 0
-    TransactionGuard.getInstance().submitTransactionLater(project, Runnable {
+    invokeLater {
         doRevert(project, changeList.changes, doNotRevertTests, doNotRevertFiles)
-    })
+    }
     return changeList.changes.size
 }
 
