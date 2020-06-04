@@ -141,10 +141,10 @@ private fun doCalculateChangeSizeInLines(change: Change, comparisonManager: Comp
     val contentAfter = if (afterRevision != null) afterRevision.content ?: "" else ""
 
     val result = comparisonManager
-        .compareWords(contentBefore, contentAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
+        .compareLinesInner(contentBefore, contentAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
         .sumBy { fragment ->
-            val subSequence1 = contentBefore.subSequence(IntRange(fragment.startOffset1, fragment.endOffset1 - 1)).replace(Regex("\n+"), "\n")
-            val subSequence2 = contentAfter.subSequence(IntRange(fragment.startOffset2, fragment.endOffset2 - 1)).replace(Regex("\n+"), "\n")
+            val subSequence1 = contentBefore.subSequence(IntRange(fragment.startOffset1, fragment.endOffset1 - 1)).replace(Regex("\n+"), "\n").trim()
+            val subSequence2 = contentAfter.subSequence(IntRange(fragment.startOffset2, fragment.endOffset2 - 1)).replace(Regex("\n+"), "\n").trim()
 
             val changeSize1 = subSequence1.count { it == '\n' } + (if (subSequence1.isEmpty()) 0 else 1)
             val changeSize2 = subSequence2.count { it == '\n' } + (if (subSequence2.isEmpty()) 0 else 1)

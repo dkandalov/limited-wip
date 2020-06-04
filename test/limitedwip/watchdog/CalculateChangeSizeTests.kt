@@ -31,11 +31,23 @@ class CalculateChangeSizeTests : BasePlatformTestCase() {
         changeSizeInLines("text\n\n\ntext\n\n\n", "\n") shouldEqual ChangeSize(2)
     }
 
-    private fun changeSizeInLines(before: String, after: String): ChangeSize {
-        val change = Change(
+    @Test fun `test correctly diff a bit of code`() {
+        changeSizeInLines(
+            """
+            |try {
+            |} catch (Error error) {
+            |}
+            """.trimMargin(),
+            """
+            |try {
+            |}
+            """.trimMargin()
+        ) shouldEqual ChangeSize(1)
+    }
+
+    private fun changeSizeInLines(before: String, after: String) =
+        comparisonManager.calculateChangeSizeInLines(Change(
             SimpleContentRevision(before, LocalFilePath("before.txt", false), "some-revision-before"),
             SimpleContentRevision(after, LocalFilePath("after.txt", false), "some-revision-after")
-        )
-        return comparisonManager.calculateChangeSizeInLines(change)
-    }
+        ))
 }
