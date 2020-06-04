@@ -36,6 +36,6 @@ class CalculateChangeSizeTests : BasePlatformTestCase() {
             SimpleContentRevision(before, LocalFilePath("before.txt", false), "some-revision-before"),
             SimpleContentRevision(after, LocalFilePath("after.txt", false), "some-revision-after")
         )
-        return calculateChangeSizeInLines(change, comparisonManager)
+        return comparisonManager.calculateChangeSizeInLines(change)
     }
 }

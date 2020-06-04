@@ -69,7 +69,7 @@ class ChangeSizeWatcher(private val project: Project) {
 
             val changeSizeByChange = HashMap<Change, ChangeSize>()
             for (change in changesToDiff) {
-                changeSizeByChange[change] = calculateChangeSizeInLines(change, comparisonManager)
+                changeSizeByChange[change] = comparisonManager.calculateChangeSizeInLines(change)
             }
 
             application.invokeLater {
@@ -118,9 +118,9 @@ private val Change.path: String
     get() = beforeRevision?.file?.path ?: afterRevision?.file?.path ?: ""
 
 
-fun calculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize =
+fun ComparisonManager.calculateChangeSizeInLines(change: Change): ChangeSize =
     try {
-        doCalculateChangeSizeInLines(change, comparisonManager)
+        doCalculateChangeSizeInLines(change, this)
     } catch (ignored: VcsException) {
         ChangeSize.approximatelyEmpty
     } catch (ignored: FilesTooBigForDiffException) {
