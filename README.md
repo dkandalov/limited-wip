@@ -101,7 +101,7 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
  - [Mobbing FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=tmRRlzPWyYA) 
  - [Tennis kata with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=H0z_NhQIOHQ) 
  - [FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=3s14AtA5R48) 
-
+ - [YOW! 2011 Joshua Kerievsky - The Limited Red Society](https://www.youtube.com/watch?v=6u0GknnOLnc)
 
 ## History
 The original version of the plugin called "Auto-revert" was conceived
