@@ -101,9 +101,9 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
  - [Mobbing FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=tmRRlzPWyYA) 
  - [Tennis kata with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=H0z_NhQIOHQ) 
  - [FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=3s14AtA5R48)
- - [Conway's Game of Life with Georgina McFadyen at GDCR 2019](https://youtu.be/EQ3jSatHWh0) 
- - [Conway's Game of Life with Duncan McGregor - Part 1](https://youtu.be/NzJM83ezcQw) 
- - [Conway's Game of Life with Duncan McGregor - Part 2](https://youtu.be/o8BW0QvYH-c) 
+ - [Conway's Game of Life with Georgina McFadyen at GDCR 2019](https://www.youtube.com/watch?v=EQ3jSatHWh0) 
+ - [Conway's Game of Life with Duncan McGregor - Part 1](https://www.youtube.com/watch?v=NzJM83ezcQw) 
+ - [Conway's Game of Life with Duncan McGregor - Part 2](https://www.youtube.com/watch?v=o8BW0QvYH-c) 
  - [YOW! 2011 Joshua Kerievsky - The Limited Red Society](https://www.youtube.com/watch?v=6u0GknnOLnc)
 
 ## History
