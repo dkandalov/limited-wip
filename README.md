@@ -97,10 +97,10 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
 
 
 ## Videos
- - [Regex matcher using TCR with Jordan Stewart](https://www.youtube.com/watch?v=QEd2anW86YQ)
+ - [Regex matcher with Jordan Stewart](https://www.youtube.com/watch?v=QEd2anW86YQ)
  - [Mobbing FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=tmRRlzPWyYA) 
- - [Tennis kata with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=H0z_NhQIOHQ) 
- - [FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=3s14AtA5R48)
+ - [Tennis kata with Jess Pumphrey at SoCraTes UK 2019](https://www.youtube.com/watch?v=H0z_NhQIOHQ) 
+ - [FizzBuzzWoof with Craig J. Bass at SoCraTes UK 2019](https://www.youtube.com/watch?v=3s14AtA5R48)
  - [Conway's Game of Life with Georgina McFadyen at GDCR 2019](https://www.youtube.com/watch?v=EQ3jSatHWh0) 
  - [Conway's Game of Life with Duncan McGregor - Part 1](https://www.youtube.com/watch?v=NzJM83ezcQw) 
  - [Conway's Game of Life with Duncan McGregor - Part 2](https://www.youtube.com/watch?v=o8BW0QvYH-c) 
