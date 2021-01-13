@@ -1,7 +1,6 @@
 package limitedwip.watchdog.components
 
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
@@ -66,17 +65,16 @@ class Ide(
     fun showNotificationThatChangeSizeIsTooBig(linesChanged: ChangeSize, changedLinesLimit: Int) {
         val notification = Notification(
             pluginDisplayName,
-            "Change Size Exceeded Limit",
+            "Change size exceeded limit",
             "Lines changed: " + linesChanged.toPrintableString() + "; " +
                 "limit: " + changedLinesLimit + "<br/>" +
                 "Please commit, split or revert changes<br/>" +
                 "(<a href=\"\">Click here</a> to skip notifications till next commit)",
-            NotificationType.WARNING,
-            NotificationListener { notification, _ ->
-                notification.expire()
-                listener.onSkipNotificationsUntilCommit()
-            }
-        )
+            NotificationType.WARNING
+        ) { notification, _ ->
+            notification.expire()
+            listener.onSkipNotificationsUntilCommit()
+        }
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
 
         lastNotification.ifNotNull { it.expire() }
@@ -89,17 +87,15 @@ class Ide(
     }
 
     fun notifyThatCommitWasCancelled() {
-        val notification = Notification(
+        project.messageBus.syncPublisher(Notifications.TOPIC).notify(Notification(
             pluginDisplayName,
             pluginDisplayName,
             "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
-            NotificationType.WARNING,
-            NotificationListener { notification, _ ->
-                notification.expire()
-                listener.onForceCommit()
-            }
-        )
-        project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
+            NotificationType.WARNING
+        ) { notification, _ ->
+            notification.expire()
+            listener.onForceCommit()
+        })
     }
 
     fun commitWithoutDialog() {
@@ -113,15 +109,9 @@ class Ide(
         val hasWatchdogWidget = statusBar.getWidget(widget.ID()) != null
         val shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar
         when {
-            hasWatchdogWidget && shouldShowWatchdog  -> {
-                widget.updateOn(statusBar)
-            }
-            hasWatchdogWidget && !shouldShowWatchdog -> {
-                widget.removeFrom(statusBar)
-            }
-            !hasWatchdogWidget && shouldShowWatchdog -> {
-                widget.addTo(statusBar)
-            }
+            hasWatchdogWidget && shouldShowWatchdog  -> widget.updateOn(statusBar)
+            hasWatchdogWidget && !shouldShowWatchdog -> widget.removeFrom(statusBar)
+            !hasWatchdogWidget && shouldShowWatchdog -> widget.addTo(statusBar)
         }
     }
 

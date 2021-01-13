@@ -47,7 +47,7 @@ class ChangeSizeWatcher(private val project: Project) {
             var result = ChangeSize.empty
             var result2 = ChangeSizesWithPath.empty
             val changesToDiff = ArrayList<Change>()
-            for (change in changeList.changes) {
+            changeList.changes.forEach { change ->
                 val changeSize = changeSizeCache[change.document()]
                 if (changeSize == null) {
                     changesToDiff.add(change)
@@ -68,18 +68,18 @@ class ChangeSizeWatcher(private val project: Project) {
             isRunningBackgroundDiff = true
 
             val changeSizeByChange = HashMap<Change, ChangeSize>()
-            for (change in changesToDiff) {
+            changesToDiff.forEach { change ->
                 changeSizeByChange[change] = comparisonManager.calculateChangeSizeInLines(change)
             }
 
             application.invokeLater {
                 changeSize = newChangeSize
                 changeSizesWithPath = newChangeSizesWithPath
-                for ((change, it) in changeSizeByChange) {
+                changeSizeByChange.forEach { (change, it) ->
                     changeSize += it
                     changeSizesWithPath = changeSizesWithPath.add(change.path, it)
                 }
-                for ((change, changeSize) in changeSizeByChange) {
+                changeSizeByChange.forEach { (change, changeSize) ->
                     val document = change.document()
                     if (document != null && !changeSize.isApproximate) {
                         changeSizeCache[document] = changeSize
