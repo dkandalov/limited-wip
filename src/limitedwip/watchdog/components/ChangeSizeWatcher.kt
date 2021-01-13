@@ -27,6 +27,7 @@ class ChangeSizeWatcher(private val project: Project) {
 
     private val comparisonManager = ComparisonManager.getInstance()
     private val application = ApplicationManager.getApplication()
+    private val projectBasePath = project.basePath ?: ""
 
     val changeListSizeInLines get() = changeSizesWithPath
 
@@ -49,7 +50,7 @@ class ChangeSizeWatcher(private val project: Project) {
                 if (changeSize == null) {
                     changesToDiff.add(change)
                 } else {
-                    result = result.add(change.path.replace(project.basePath ?: "", ""), changeSize)
+                    result = result.add(change.path.replace(projectBasePath, ""), changeSize)
                 }
             }
             Pair(result, changesToDiff)
@@ -62,15 +63,14 @@ class ChangeSizeWatcher(private val project: Project) {
         application.executeOnPooledThread {
             isRunningBackgroundDiff = true
 
-            val changeSizeByChange = HashMap<Change, ChangeSize>()
-            changesToDiff.forEach { change ->
-                changeSizeByChange[change] = comparisonManager.calculateChangeSizeInLines(change)
+            val changeSizeByChange = changesToDiff.associateWith { change ->
+                comparisonManager.calculateChangeSizeInLines(change)
             }
 
             application.invokeLater {
                 changeSizesWithPath = newChangeSizesWithPath
-                changeSizeByChange.forEach { (change, it) ->
-                    changeSizesWithPath = changeSizesWithPath.add(change.path, it)
+                changeSizeByChange.forEach { (change, changeSize) ->
+                    changeSizesWithPath = changeSizesWithPath.add(change.path, changeSize)
                 }
                 changeSizeByChange.forEach { (change, changeSize) ->
                     val document = change.document()
