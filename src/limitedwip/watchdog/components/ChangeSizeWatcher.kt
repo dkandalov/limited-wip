@@ -22,7 +22,6 @@ import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
     private val changeSizeCache = ChangeSizeCache(project)
-    private var changeSize = ChangeSize.NA
     private var changeSizesWithPath = ChangeSizesWithPath.empty
     @Volatile private var isRunningBackgroundDiff: Boolean = false
 
@@ -38,28 +37,24 @@ class ChangeSizeWatcher(private val project: Project) {
         if (isRunningBackgroundDiff) return
         val changeList = project.defaultChangeList()
         if (changeList == null) {
-            changeSize = ChangeSize.NA
             changeSizesWithPath = ChangeSizesWithPath.empty
             return
         }
 
-        val (newChangeSize, newChangeSizesWithPath, changesToDiff) = application.runReadAction(Computable {
-            var result = ChangeSize.empty
-            var result2 = ChangeSizesWithPath.empty
+        val (newChangeSizesWithPath, changesToDiff) = application.runReadAction(Computable {
+            var result = ChangeSizesWithPath.empty
             val changesToDiff = ArrayList<Change>()
             changeList.changes.forEach { change ->
                 val changeSize = changeSizeCache[change.document()]
                 if (changeSize == null) {
                     changesToDiff.add(change)
                 } else {
-                    result += changeSize
-                    result2 = result2.add(change.path.replace(project.basePath ?: "", ""), changeSize)
+                    result = result.add(change.path.replace(project.basePath ?: "", ""), changeSize)
                 }
             }
-            Triple(result, result2, changesToDiff)
+            Pair(result, changesToDiff)
         })
         if (changesToDiff.isEmpty()) {
-            changeSize = newChangeSize
             changeSizesWithPath = newChangeSizesWithPath
             return
         }
@@ -73,10 +68,8 @@ class ChangeSizeWatcher(private val project: Project) {
             }
 
             application.invokeLater {
-                changeSize = newChangeSize
                 changeSizesWithPath = newChangeSizesWithPath
                 changeSizeByChange.forEach { (change, it) ->
-                    changeSize += it
                     changeSizesWithPath = changeSizesWithPath.add(change.path, it)
                 }
                 changeSizeByChange.forEach { (change, changeSize) ->
