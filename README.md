@@ -111,7 +111,7 @@ The original version of the plugin called "Auto-revert" was conceived
 at [LSCC meetup](http://www.meetup.com/london-software-craftsmanship/) in 2012
 after having a chat with [Samir Talwar](https://twitter.com/SamirTalwar)
 (it's easy to implement a basic version of auto-revert in bash but there are problems
-like resetting timer after each commit and IntelliJ asking on revert from command line if you really want to load changes from file system).
+like resetting the timer after each commit and the problem with IntelliJ asking on each revert from command line if you really want to load changes from file system).
 
 Some time later (in 2015) after trying auto-revert on large legacy code bases I felt that it's a bit too harsh sometimes 
 and I end up watching timer to stop it before auto-revert. 
