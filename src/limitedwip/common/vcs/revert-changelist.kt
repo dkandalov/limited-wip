@@ -53,7 +53,7 @@ private fun doRevert(
             file == null || doNotRevertFiles.none { it.matches(file.path) }
         }
 
-        val operationName = "$pluginId revert"
+        val operationName = "$pluginId Revert"
         RollbackWorker(project, operationName, false).doRollback(changesToRevert, true, null, operationName)
 
     } catch (e: Exception) {
