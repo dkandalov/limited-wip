@@ -24,6 +24,11 @@ class CalculateChangeSizeTests : BasePlatformTestCase() {
         changeSizeInLines("text\ntext", "") shouldEqual ChangeSize(2)
     }
 
+    @Test fun `test change size calculation with windows separator`() {
+        changeSizeInLines("text\r\ntext", "text") shouldEqual ChangeSize(1)
+        changeSizeInLines("text\r\ntext", "") shouldEqual ChangeSize(2)
+    }
+
     @Test fun `test ignore spaces and newlines`() {
         changeSizeInLines("\n\ntext\n\n", "") shouldEqual ChangeSize(1)
         changeSizeInLines("    text    ", "") shouldEqual ChangeSize(1)

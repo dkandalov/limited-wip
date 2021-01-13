@@ -2,6 +2,7 @@ package limitedwip.watchdog.components
 
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy.IGNORE_WHITESPACES
+import com.intellij.diff.fragments.LineFragment
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
@@ -21,7 +22,7 @@ import limitedwip.watchdog.ChangeSizesWithPath
 import java.util.*
 
 class ChangeSizeWatcher(private val project: Project) {
-    private val changeSizeCache = ChangeSizeCache(project)
+    private val documentChangeSizeCache = DocumentChangeSizeCache(project)
     private var changeSizesWithPath = ChangeSizesWithPath.empty
     @Volatile private var isRunningBackgroundDiff: Boolean = false
 
@@ -42,11 +43,11 @@ class ChangeSizeWatcher(private val project: Project) {
             return
         }
 
-        val (newChangeSizesWithPath, changesToDiff) = application.runReadAction(Computable {
+        val (newChangeSizesWithPath, changesToProcess) = application.runReadAction(Computable {
             var result = ChangeSizesWithPath.empty
             val changesToDiff = ArrayList<Change>()
             changeList.changes.forEach { change ->
-                val changeSize = changeSizeCache[change.document()]
+                val changeSize = documentChangeSizeCache[change.document()]
                 if (changeSize == null) {
                     changesToDiff.add(change)
                 } else {
@@ -55,7 +56,7 @@ class ChangeSizeWatcher(private val project: Project) {
             }
             Pair(result, changesToDiff)
         })
-        if (changesToDiff.isEmpty()) {
+        if (changesToProcess.isEmpty()) {
             changeSizesWithPath = newChangeSizesWithPath
             return
         }
@@ -63,7 +64,7 @@ class ChangeSizeWatcher(private val project: Project) {
         application.executeOnPooledThread {
             isRunningBackgroundDiff = true
 
-            val changeSizeByChange = changesToDiff.associateWith { change ->
+            val changeSizeByChange = changesToProcess.associateWith { change ->
                 comparisonManager.calculateChangeSizeInLines(change)
             }
 
@@ -75,7 +76,7 @@ class ChangeSizeWatcher(private val project: Project) {
                 changeSizeByChange.forEach { (change, changeSize) ->
                     val document = change.document()
                     if (document != null && !changeSize.isApproximate) {
-                        changeSizeCache[document] = changeSize
+                        documentChangeSizeCache[document] = changeSize
                     }
                 }
                 isRunningBackgroundDiff = false
@@ -84,16 +85,15 @@ class ChangeSizeWatcher(private val project: Project) {
     }
 
     private fun Change.document(): Document? {
-        val file = virtualFile ?: return null
-        return FileDocumentManager.getInstance().getDocument(file)
+        return FileDocumentManager.getInstance().getDocument(virtualFile ?: return null)
     }
 
-    private class ChangeSizeCache(private val parentDisposable: Disposable) {
+    private class DocumentChangeSizeCache(private val parentDisposable: Disposable) {
         private val changeSizeByDocument = WeakHashMap<Document, ChangeSize>()
 
         operator fun set(document: Document, changeSize: ChangeSize) {
             changeSizeByDocument[document] = changeSize
-            document.addDocumentListener(object : DocumentListener {
+            document.addDocumentListener(object: DocumentListener {
                 override fun beforeDocumentChange(event: DocumentEvent) {}
                 override fun documentChanged(event: DocumentEvent) {
                     changeSizeByDocument.remove(document)
@@ -113,14 +113,16 @@ private val Change.path: String
 
 fun ComparisonManager.calculateChangeSizeInLines(change: Change): ChangeSize =
     try {
-        doCalculateChangeSizeInLines(change, this)
+        doCalculateChangeSizeInLines(change) { textBefore, textAfter ->
+            compareLinesInner(textBefore, textAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
+        }
     } catch (ignored: VcsException) {
         ChangeSize.approximatelyEmpty
     } catch (ignored: FilesTooBigForDiffException) {
         ChangeSize.approximatelyEmpty
     }
 
-private fun doCalculateChangeSizeInLines(change: Change, comparisonManager: ComparisonManager): ChangeSize {
+private fun doCalculateChangeSizeInLines(change: Change, compare: (String, String) -> List<LineFragment>): ChangeSize {
     val beforeRevision = change.beforeRevision
     val afterRevision = change.afterRevision
     if (beforeRevision is FakeRevision || afterRevision is FakeRevision) {
@@ -133,17 +135,17 @@ private fun doCalculateChangeSizeInLines(change: Change, comparisonManager: Comp
     val contentBefore = if (beforeRevision != null) beforeRevision.content ?: "" else ""
     val contentAfter = if (afterRevision != null) afterRevision.content ?: "" else ""
 
-    val result = comparisonManager
-        .compareLinesInner(contentBefore, contentAfter, IGNORE_WHITESPACES, EmptyProgressIndicator())
-        .sumBy { fragment ->
-            val subSequence1 = contentBefore.subSequence(IntRange(fragment.startOffset1, fragment.endOffset1 - 1)).replace(Regex("\n+"), "\n").trim()
-            val subSequence2 = contentAfter.subSequence(IntRange(fragment.startOffset2, fragment.endOffset2 - 1)).replace(Regex("\n+"), "\n").trim()
-
-            val changeSize1 = subSequence1.count { it == '\n' } + (if (subSequence1.isEmpty()) 0 else 1)
-            val changeSize2 = subSequence2.count { it == '\n' } + (if (subSequence2.isEmpty()) 0 else 1)
-
-            // Use changeSize2 unless it's deleted code, then use changeSize1.
-            if (changeSize2 != 0) changeSize2 else changeSize1
-        }
+    val result = compare(contentBefore, contentAfter).sumBy { fragment ->
+        val changeSizeAfter = contentAfter.calculateChangeSize(IntRange(fragment.startOffset2, fragment.endOffset2 - 1))
+        if (changeSizeAfter != 0) changeSizeAfter // Use changeSizeAfter unless all the code has been deleted.
+        else contentBefore.calculateChangeSize(IntRange(fragment.startOffset1, fragment.endOffset1 - 1))
+    }
     return ChangeSize(result)
+}
+
+private val newLineRegex = Regex("\n+")
+
+private fun String.calculateChangeSize(range: IntRange): Int {
+    val subSequence = subSequence(range).replace(newLineRegex, "\n").trim()
+    return subSequence.count { it == '\n' } + (if (subSequence.isEmpty()) 0 else 1)
 }
