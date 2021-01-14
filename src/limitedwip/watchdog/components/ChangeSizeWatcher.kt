@@ -132,8 +132,8 @@ private fun doCalculateChangeSizeInLines(change: Change, compare: (String, Strin
     val revision = afterRevision ?: beforeRevision
     if (revision == null || revision.file.fileType.isBinary) return ChangeSize.empty
 
-    val contentBefore = beforeRevision?.content ?: ""
-    val contentAfter = afterRevision?.content ?: ""
+    val contentBefore = (beforeRevision?.content ?: "").replace("\r\n", "\n")
+    val contentAfter = (afterRevision?.content ?: "").replace("\r\n", "\n")
 
     val result = compare(contentBefore, contentAfter).sumBy { fragment ->
         val changeSizeAfter = contentAfter.calculateChangeSize(IntRange(fragment.startOffset2, fragment.endOffset2 - 1))

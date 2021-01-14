@@ -20,15 +20,24 @@ class CalculateChangeSizeTests : BasePlatformTestCase() {
     }
 
     @Test fun `test change size calculation`() {
+        changeSizeInLines("line1\nline2", "") shouldEqual ChangeSize(2)
         changeSizeInLines("line1\nline2", "line1") shouldEqual ChangeSize(1)
         changeSizeInLines("line1\nline2", "line2") shouldEqual ChangeSize(1)
-        changeSizeInLines("line1\nline2", "") shouldEqual ChangeSize(2)
+
+        changeSizeInLines("line1\nline2\nline3", "line1") shouldEqual ChangeSize(2)
+        changeSizeInLines("line1\nline2\nline3", "line2") shouldEqual ChangeSize(2)
+        changeSizeInLines("line1\nline2\nline3", "line3") shouldEqual ChangeSize(2)
+        changeSizeInLines("line1\nline2\nline3", "line1\nline2") shouldEqual ChangeSize(1)
+        changeSizeInLines("line1\nline2\nline3", "line1\nline3") shouldEqual ChangeSize(1)
+        changeSizeInLines("line1\nline2\nline3", "line2\nline3") shouldEqual ChangeSize(1)
     }
 
-    @Test fun `test change size calculation with windows separator`() {
-        changeSizeInLines("line1\r\nline2", "line1") shouldEqual ChangeSize(1)
-        changeSizeInLines("line1\r\nline2", "line2") shouldEqual ChangeSize(1)
-        changeSizeInLines("line1\r\nline2", "") shouldEqual ChangeSize(2)
+    // This test replicates actual behaviour on Windows when line separators in VCS use \r\n
+    // but the latest revision seems normalised by IJ to use \n.
+    @Test fun `test change size calculation with mixed separators`() {
+        changeSizeInLines("line1\r\nline2\r\nline3", "line1\nline2") shouldEqual ChangeSize(1)
+        changeSizeInLines("line1\r\nline2\r\nline3", "line1\nline3") shouldEqual ChangeSize(1)
+        changeSizeInLines("line1\r\nline2\r\nline3", "line2\nline3") shouldEqual ChangeSize(1)
     }
 
     @Test fun `test ignore spaces and newlines`() {
