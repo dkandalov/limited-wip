@@ -9,7 +9,7 @@ import javax.swing.JComponent
 class LimitedWipConfigurable(val project: Project): SearchableConfigurable {
     private lateinit var settingsForm: SettingsForm
 
-    override fun createComponent(): JComponent? {
+    override fun createComponent(): JComponent {
         settingsForm = SettingsForm(LimitedWipSettings.getInstance(project))
         return settingsForm.root
     }

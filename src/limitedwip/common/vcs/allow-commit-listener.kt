@@ -94,7 +94,7 @@ private inline fun <reified T> accessField(anObject: Any, possibleFieldNames: Li
 
 
 private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener: AllowCommit.Listener): VcsCheckinHandlerFactory(key) {
-    override fun createSystemReadyHandler(project: Project): BeforeCheckinDialogHandler? {
+    override fun createSystemReadyHandler(project: Project): BeforeCheckinDialogHandler {
         return object: BeforeCheckinDialogHandler() {
             override fun beforeCommitDialogShown(project: Project, changes: List<Change>, executors: Iterable<CommitExecutor>, showVcsCommit: Boolean): Boolean {
                 return executors.all { it is ShelveChangesCommitExecutor } || listener.allowCommit(project, changes)
