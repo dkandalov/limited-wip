@@ -25,9 +25,11 @@ class UnitTestsWatcher(private val project: Project) {
         project.messageBus.connect(project).subscribe(Notifications.TOPIC, object : Notifications {
             override fun notify(notification: Notification) {
                 if (notification.groupId == TestsUIUtil.NOTIFICATION_GROUP.displayId) {
-                    // The following can happen when test run configuration has wrong test class name.
-                    // Console output might be something like this: Class not found: "com.MyTest"
-                    if (notification.content.contains(" 0 passed")) return
+                    // We don't consider it success or failure when:
+                    //  - run configuration had wrong test class name (e.g. the test class was manually renamed since the last test run)
+                    //  - the test was terminated by user in IDE (e.g. the test was running for too long)
+                    // A hacky way to determine it is by checking console output which might contains one of the string below.
+                    if (notification.content.contains(" 0 passed") || notification.content.contains("Tests passed: 0")) return
 
                     val testsFailed = notification.type == NotificationType.ERROR
                     // It seems to be possible to get profileName as null probably because
