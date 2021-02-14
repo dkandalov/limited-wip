@@ -7,7 +7,7 @@ plugins {
     idea
     java
     kotlin("jvm").version("1.3.71")
-    id("org.jetbrains.intellij").version("0.4.18")
+    id("org.jetbrains.intellij").version("0.6.5")
 }
 repositories {
     mavenCentral()
