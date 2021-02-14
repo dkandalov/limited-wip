@@ -39,7 +39,7 @@ data class LimitedWipSettings(
 ): PersistentStateComponent<LimitedWipSettings> {
     private val listeners = ArrayList<Listener>()
 
-    override fun getState(): LimitedWipSettings? = this
+    override fun getState(): LimitedWipSettings = this
 
     @Suppress("DEPRECATION")
     override fun loadState(state: LimitedWipSettings) {
