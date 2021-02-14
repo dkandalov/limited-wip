@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dkandalov/limited-wip.svg?branch=master)](https://travis-ci.org/dkandalov/limited-wip)
+[![Build Status](https://github.com/dkandalov/limited-wip/workflows/CI/badge.svg)](https://github.com/dkandalov/limited-wip/actions)
 
 ## Limited WIP
 This is a plugin for IntelliJ IDEs to limit work-in-progress (WIP) by adding constraints to your normal workflow in IDE.
