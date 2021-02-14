@@ -1,16 +1,16 @@
 package limitedwip.common
 
-import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.LimitedWipSettings.Companion.never
+import limitedwip.common.settings.OldLocation_LimitedWipSettings
 import limitedwip.common.settings.TimeUnit.Minutes
 import limitedwip.shouldEqual
 import org.junit.Test
 
 @Suppress("DEPRECATION")
-class SettingsMigrationTests {
+class OldLocation_SettingsMigrationTests {
     @Test fun `when loading old settings data is moved into new fields`() {
-        val oldSettings = LimitedWipSettings(minutesTillRevert = 5)
-        val settings = LimitedWipSettings()
+        val oldSettings = OldLocation_LimitedWipSettings(minutesTillRevert = 5)
+        val settings = OldLocation_LimitedWipSettings()
         settings.loadState(oldSettings)
 
         settings.minutesTillRevert shouldEqual never
