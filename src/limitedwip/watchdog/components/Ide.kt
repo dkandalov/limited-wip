@@ -30,9 +30,9 @@ class Ide(
         }
         AllowCommit.addListener(project, object: AllowCommit.Listener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
-                val result = project != this@Ide.project || listener.allowCommit()
-                changesInLastCancelledCommit = if (!result) changes else null
-                return result
+                val canCommit = project != this@Ide.project || listener.allowCommit()
+                changesInLastCancelledCommit = if (!canCommit) changes else null
+                return canCommit
             }
         })
     }

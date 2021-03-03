@@ -34,7 +34,7 @@ class SuccessfulCheckin: CheckinHandlerFactory() {
         private const val extensionPointName = "$pluginId.checkinListener"
 
         fun registerListener(disposable: Disposable, listener: Listener) {
-            Extensions.getRootArea() // It has to be root are (not project area).
+            Extensions.getRootArea() // It has to be root area (not project area).
                 .getExtensionPoint<Listener>(extensionPointName)
                 .registerExtension(listener, disposable)
         }
