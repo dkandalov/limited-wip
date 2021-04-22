@@ -97,6 +97,7 @@ Originally, the idea comes from [Oddmund Strømme](https://twitter.com/jraregris
 
 
 ## Videos
+ - [Limited Work-in-Progress for Developers at ACCU 2021](https://www.youtube.com/watch?v=AWbgen9x6xs)
  - [Regex matcher with Jordan Stewart](https://www.youtube.com/watch?v=QEd2anW86YQ)
  - [Mobbing FizzBuzzWoof with TCR at SoCraTes UK 2019](https://www.youtube.com/watch?v=tmRRlzPWyYA) 
  - [Tennis kata with Jess Pumphrey at SoCraTes UK 2019](https://www.youtube.com/watch?v=H0z_NhQIOHQ) 
@@ -111,15 +112,15 @@ The original version of the plugin called "Auto-revert" was conceived
 at [LSCC meetup](http://www.meetup.com/london-software-craftsmanship/) in 2012
 after having a chat with [Samir Talwar](https://twitter.com/SamirTalwar)
 (it's easy to implement a basic version of auto-revert in bash but there are problems
-like resetting the timer after each commit and the problem with IntelliJ asking on each revert from command line if you really want to load changes from file system).
+like resetting the timer after each commit and that IntelliJ will be asking on each revert from terminal if you really want to load changes from file system).
 
 Some time later (in 2015) after trying auto-revert on large legacy code bases I felt that it's a bit too harsh sometimes 
 and I end up watching timer to stop it before auto-revert. 
-To solve the problem watchdog component was created which doesn't revert but just notifies that there are too many changes.
+To solve the problem watchdog component was created which doesn't revert but just notifies if there are too many changes.
 
-At [FFS tech conf 2018](https://ffstechconf.org) [Limbo](https://medium.com/@kentbeck_7670/limbo-scaling-software-collaboration-afd4f00db4b) 
-was mentioned and [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864)
-looked like a great fit for the plugin so I had to implement it.
+At [FFS tech conf 2018](https://ffstechconf.org) Kent Beck mentioned [Limbo](https://medium.com/@kentbeck_7670/limbo-scaling-software-collaboration-afd4f00db4b) 
+and [test && commit || revert](https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864)
+which looked like a great fit for the plugin so I had to implement it.
 
 I hope there will be more components in the future.
 If you have an idea, feel free to create github issue or [tweet it to me](https://twitter.com/dmitrykandalov).
