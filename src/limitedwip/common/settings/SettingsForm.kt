@@ -201,7 +201,6 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
             currentState.commitMessageSource = commitMessageSourceByIndex[commitMessageSource.selectedIndex]!!
             currentState.doNotRevertTests = doNotRevertTests.isSelected
             currentState.doNotRevertFiles = doNotRevertFiles.text
-
         } catch (ignored: NumberFormatException) {
         }
     }

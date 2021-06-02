@@ -1,6 +1,5 @@
 package limitedwip.autorevert
 
-
 import limitedwip.autorevert.components.Ide
 
 class AutoRevert(private val ide: Ide, private var settings: Settings) {
@@ -76,7 +75,6 @@ class AutoRevert(private val ide: Ide, private var settings: Settings) {
         skippedRevert = false
         return true
     }
-
 
     data class Settings(
         val enabled: Boolean,

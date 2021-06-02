@@ -29,7 +29,9 @@ class FloatingWidget(private val point: Point, private val projectComponent: JCo
 
     var text: String
         get() = label.text
-        set(value) { label.text = value }
+        set(value) {
+            label.text = value
+        }
 
     fun show() {
         if (Registry.`is`("limited-wip.floating-widgets.enabled", false)) {
@@ -51,8 +53,8 @@ class FloatingWidget(private val point: Point, private val projectComponent: JCo
         balloon?.let { Disposer.dispose(it) }
     }
 
-    private fun createBalloon(): Balloon {
-        return JBPopupFactory.getInstance().createBalloonBuilder(panel)
+    private fun createBalloon(): Balloon =
+        JBPopupFactory.getInstance().createBalloonBuilder(panel)
             .setFadeoutTime(0)
             .setFillColor(Gray.TRANSPARENT)
             .setBorderInsets(JBUI.emptyInsets())
@@ -65,5 +67,4 @@ class FloatingWidget(private val point: Point, private val projectComponent: JCo
             .setHideOnAction(false)
             .setBlockClicksThroughBalloon(true)
             .createBalloon()
-    }
 }
