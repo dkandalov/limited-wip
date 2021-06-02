@@ -7,8 +7,7 @@
 
     <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
     <!-- https://www.jetbrains.com/intellij-repository/releases -->
-    <!-- Since this IJ version because it broke plugin compilation. -->
-    <idea-version since-build="201.6668.113"/>
+    <idea-version since-build="211.7442.40"/>
 
     <description>
         <![CDATA[
@@ -58,7 +57,7 @@
         <projectService serviceImplementation="limitedwip.common.settings.OldLocation_LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.SuccessfulCheckin"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.AllowCommit"/>
-        <search.topHitProvider implementation="limitedwip.common.settings.LimitedWipTopHitProvider"/>
+        <search.projectOptionsTopHitProvider implementation="limitedwip.common.settings.LimitedWipTopHitProvider"/>
 
         <registryKey key="limited-wip.floating-widgets.enabled" defaultValue="false" description="..."/>
         <registryKey key="limited-wip.watchdog.widget.x" defaultValue="230" description="..."/>

@@ -62,6 +62,7 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false): Boo
         // and this is better UX compared to a flashing modal commit progress window (which people have noticed and complained about).
         val commitSynchronously = false
 
+        val noopCommitHandler = CommitResultHandler { }
         val commitHelper = CommitHelper(
             project,
             defaultChangeList,
@@ -85,10 +86,6 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false): Boo
     return false
 }
 
-private val noopCommitHandler = object: CommitResultHandler {
-    override fun onSuccess(commitMessage: String) {}
-    override fun onFailure() {}
-}
 
 /**
  * Couldn't find a better way to "reuse" this code but to copy-paste it from

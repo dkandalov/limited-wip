@@ -1,7 +1,6 @@
 package limitedwip.tcr.components
 
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
@@ -54,12 +53,12 @@ class Ide(private val project: Project) {
             pluginDisplayName,
             pluginDisplayName,
             "Commit was cancelled because no tests were run<br/> (<a href=\"\">Click here</a> to force commit anyway)",
-            NotificationType.WARNING,
-            NotificationListener { notification, _ ->
-                notification.expire()
-                listener.onForceCommit()
-            }
-        )
+            NotificationType.WARNING
+        ).setListener { notification, _ ->
+            notification.expire()
+            listener.onForceCommit()
+        }
+
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 

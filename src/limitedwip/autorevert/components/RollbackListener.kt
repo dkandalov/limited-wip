@@ -19,8 +19,6 @@ class RollbackListener(private val project: Project, private val onRollback: (Bo
 
         val changeListManager = ChangeListManager.getInstance(project)
         val listener = object: AnActionListener {
-            override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {}
-
             override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
                 if (action.javaClass.simpleName != "RollbackAction") return
 

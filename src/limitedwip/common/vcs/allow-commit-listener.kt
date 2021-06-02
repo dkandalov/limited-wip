@@ -31,7 +31,7 @@ object AllowCommit: CheckinHandlerFactory() {
     }
 
     override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
-        return object : CheckinHandler() {
+        return object: CheckinHandler() {
             override fun beforeCheckin(): ReturnResult {
                 val canCommit = listeners.all { it.allowCommit(panel.project, panel.selectedChanges.toList()) }
                 return if (canCommit) COMMIT else CANCEL
@@ -102,7 +102,7 @@ private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener:
         }
     }
 
-    override fun createVcsHandler(panel: CheckinProjectPanel): CheckinHandler {
+    override fun createVcsHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
         return object: CheckinHandler() {}
     }
 }

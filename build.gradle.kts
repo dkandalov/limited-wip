@@ -50,7 +50,7 @@ tasks.withType<KotlinJvmCompile> {
 configure<IntelliJPluginExtension> {
     // See https://www.jetbrains.com/intellij-repository/releases for a list of available IDEA builds
     val ideVersion = System.getenv().getOrDefault("IJ_VERSION",
-        "201.6668.113"
+        "211.7442.40"
 //        "LATEST-EAP-SNAPSHOT"
     )
     println("Using ide version: $ideVersion")
