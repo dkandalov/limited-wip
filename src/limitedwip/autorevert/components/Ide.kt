@@ -19,14 +19,14 @@ class Ide(
     private val widget: AutoRevertStatusBarWidget
 ) {
     init {
-        Disposer.register(project, Disposable {
+        Disposer.register(project) {
             val statusBar = project.statusBar()
             if (statusBar != null) {
                 widget.showStoppedText()
                 statusBar.removeWidget(widget.ID())
                 statusBar.updateWidget(widget.ID())
             }
-        })
+        }
     }
 
     fun revertCurrentChangeList(): Int = revertCurrentChangeList(project)

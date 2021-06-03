@@ -40,9 +40,7 @@ object AllowCommit: CheckinHandlerFactory() {
     }
 
     fun addListener(parentDisposable: Disposable, listener: Listener) {
-        Disposer.register(parentDisposable, Disposable {
-            listeners.remove(listener)
-        })
+        Disposer.register(parentDisposable) { listeners.remove(listener) }
         listeners.add(listener)
     }
 

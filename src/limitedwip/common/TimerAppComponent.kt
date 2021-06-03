@@ -39,7 +39,7 @@ class TimerAppComponent {
 
     fun addListener(disposable: Disposable, listener: Listener) {
         listeners.add(listener)
-        Disposer.register(disposable, Disposable { listeners.remove(listener) })
+        Disposer.register(disposable) { listeners.remove(listener) }
     }
 
     interface Listener {

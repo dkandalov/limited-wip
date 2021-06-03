@@ -49,7 +49,7 @@ data class LimitedWipSettings(
 
     fun addListener(parentDisposable: Disposable, listener: Listener) {
         listeners.add(listener)
-        Disposer.register(parentDisposable, Disposable { listeners.remove(listener) })
+        Disposer.register(parentDisposable) { listeners.remove(listener) }
     }
 
     fun notifyListeners() {
