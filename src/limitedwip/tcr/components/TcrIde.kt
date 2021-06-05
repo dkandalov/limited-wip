@@ -51,7 +51,7 @@ class TcrIde(private val project: Project) {
         val notification = Notification(
             pluginDisplayName,
             "TCR - $pluginDisplayName",
-            "Commit was cancelled because no tests were run<br/> (<a href=\"\">Click here</a> to force commit anyway)",
+            "Commit was cancelled because no tests were run. To force commit anyway <a href=\"\">click here</a>.",
             WARNING
         ).setListener { notification, _ ->
             notification.expire()

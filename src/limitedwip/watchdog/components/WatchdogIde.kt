@@ -59,7 +59,7 @@ class WatchdogIde(
         val notification = Notification(
             pluginDisplayName,
             notificationTitle,
-            "Change size notifications are $stateDescription",
+            "Change size notifications $stateDescription",
             INFORMATION
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
@@ -69,10 +69,9 @@ class WatchdogIde(
         val notification = Notification(
             pluginDisplayName,
             notificationTitle,
-            "Change size exceeded limit. Lines changed: " + linesChanged.toPrintableString() + "; " +
-                "limit: " + changedLinesLimit + "<br/>" +
-                "Please commit, split or revert changes<br/>" +
-                "(<a href=\"\">Click here</a> to skip notifications till next commit)",
+            "There are too many changes. " +
+                "Lines changed: " + linesChanged.toPrintableString() + ", threshold: " + changedLinesLimit + ". " +
+                "Please commit or revert some of the changes. To skip notifications till next commit <a href=\"\">click here</a>.",
             WARNING
         ) { notification, _ ->
             notification.expire()
