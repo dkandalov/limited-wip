@@ -69,9 +69,17 @@ class TcrCommitAllowedTests {
         tcr.onSuccessfulCommit()
         tcr.isCommitAllowed(someModifications) shouldEqual false
     }
+
+    @Test fun `if disabled, allow commit`() = Fixture().run {
+        tcr.onSettingsUpdate(settings.copy(enabled = false))
+        tcr.isCommitAllowed(someModifications) shouldEqual true
+
+        tcr.onSettingsUpdate(settings.copy(enabled = true))
+        tcr.isCommitAllowed(someModifications) shouldEqual false
+    }
 }
 
-class TcrTests {
+class TcrPassedTestTests {
     @Test fun `when test passed, show commit dialog`() = Fixture().run {
         tcr.onSettingsUpdate(settings.copy(actionOnPassedTest = OpenCommitDialog))
         tcr.onUnitTestSucceeded(someModifications, someTest)
@@ -127,9 +135,15 @@ class TcrTests {
         tcr.onUnitTestSucceeded(noModifications, someTest)
         ide.expect(never()).openCommitDialog()
     }
+
+    @Test fun `if disabled, don't show commit dialog on passed test`() = Fixture().run {
+        tcr.onSettingsUpdate(settings.copy(enabled = false))
+        tcr.onUnitTestSucceeded(someModifications, someTest)
+        ide.expect(never()).openCommitDialog()
+    }
 }
 
-class TcrRevertTests {
+class TcrFailedTestTests {
     @Test fun `when test failed, revert changes`() = Fixture().run {
         tcr.onUnitTestFailed("SomeTest")
         ide.expect().revertCurrentChangeList(anyBoolean(), anySet())
@@ -147,27 +161,11 @@ class TcrRevertTests {
         ide.expect().revertCurrentChangeList(anyBoolean(), anySet())
         ide.expect(never()).notifyThatChangesWereReverted()
     }
-}
-
-class TcrDisabledTests {
-    @Test fun `if disabled, always allow commits`() = Fixture().run {
-        tcr.onSettingsUpdate(settings.copy(enabled = false))
-        tcr.isCommitAllowed(someModifications) shouldEqual true
-    }
 
     @Test fun `if disabled, don't revert changes on failed unit test`() = Fixture().run {
         tcr.onSettingsUpdate(settings.copy(enabled = false))
         tcr.onUnitTestFailed(someTest)
         ide.expect(never()).revertCurrentChangeList(anyBoolean(), anySet())
         ide.expect(never()).notifyThatChangesWereReverted()
-    }
-
-    @Test fun `if disabled, don't show commit dialog and don't count successful test runs`() = Fixture().run {
-        tcr.onSettingsUpdate(settings.copy(enabled = false))
-        tcr.onUnitTestSucceeded(someModifications, someTest)
-        ide.expect(never()).openCommitDialog()
-
-        tcr.onSettingsUpdate(settings.copy(enabled = true))
-        tcr.isCommitAllowed(someModifications) shouldEqual false
     }
 }
