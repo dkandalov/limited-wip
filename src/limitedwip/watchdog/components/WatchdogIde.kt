@@ -7,7 +7,6 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.WindowManager
-import limitedwip.common.ifNotNull
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.AllowCommit
 import limitedwip.common.vcs.doCommitWithoutDialog
@@ -79,12 +78,12 @@ class WatchdogIde(
         }
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
 
-        lastNotification.ifNotNull { it.expire() }
+        lastNotification?.expire()
         lastNotification = notification
     }
 
     fun hideNotificationThatChangeSizeIsTooBig() {
-        lastNotification.ifNotNull { it.expire() }
+        lastNotification?.expire()
         lastNotification = null
     }
 
