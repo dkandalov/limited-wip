@@ -5,20 +5,12 @@ import com.intellij.notification.NotificationType.WARNING
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
-import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.PathMatcher
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.*
 
 class TcrIde(private val project: Project) {
     lateinit var listener: Listener
-
-    init {
-        AllowCommit.addListener(project, object: AllowCommit.Listener {
-            override fun allowCommit(project: Project, changes: List<Change>) =
-                project != this@TcrIde.project || listener.allowCommit()
-        })
-    }
 
     fun openCommitDialog() {
         invokeLater {
@@ -83,6 +75,5 @@ class TcrIde(private val project: Project) {
 
     interface Listener {
         fun onForceCommit()
-        fun allowCommit(): Boolean
     }
 }

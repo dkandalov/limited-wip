@@ -3,10 +3,12 @@ package limitedwip.watchdog.components
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.settings.TimeUnit.Minutes
 import limitedwip.common.toPathMatchers
+import limitedwip.common.vcs.AllowCommit
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.common.vcs.invokeLater
 import limitedwip.watchdog.Watchdog
@@ -26,11 +28,15 @@ class WatchdogComponent(private val project: Project) {
         enabled = settings.enabled
 
         ide.listener = object: WatchdogIde.Listener {
-            override fun allowCommit() = watchdog.isCommitAllowed(ide.currentChangeListSizeInLines())
             override fun onForceCommit() = watchdog.onForceCommit()
             override fun onSkipNotificationsUntilCommit() = watchdog.onSkipNotificationsUntilCommit()
             override fun onWidgetClick() = watchdog.toggleSkipNotificationsUntilCommit()
         }
+
+        AllowCommit.addListener(project, object: AllowCommit.Listener {
+            override fun allowCommit(project: Project, changes: List<Change>) =
+                project != this@WatchdogComponent.project || watchdog.isCommitAllowed(ide.currentChangeListSizeInLines())
+        })
 
         TimerAppComponent.getInstance().addListener(project, object: TimerAppComponent.Listener {
             override fun onUpdate() {

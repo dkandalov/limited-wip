@@ -2,8 +2,10 @@ package limitedwip.tcr.components
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.toPathMatchers
+import limitedwip.common.vcs.AllowCommit
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.tcr.Tcr
 import limitedwip.tcr.Tcr.ChangeListModifications
@@ -19,8 +21,12 @@ private class TcrComponent(private val project: Project) {
         val tcr = Tcr(ide, LimitedWipSettings.getInstance(project).toTcrSettings())
         ide.listener = object: TcrIde.Listener {
             override fun onForceCommit() = tcr.forceOneCommit()
-            override fun allowCommit() = tcr.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
         }
+
+        AllowCommit.addListener(project, object: AllowCommit.Listener {
+            override fun allowCommit(project: Project, changes: List<Change>) =
+                project != this@TcrComponent.project || tcr.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
+        })
 
         UnitTestsWatcher(project).start(object: UnitTestsWatcher.Listener {
             override fun onUnitTestSucceeded(testName: String) = tcr.onUnitTestSucceeded(ChangeListModifications(ide.defaultChangeListModificationCount()), testName)

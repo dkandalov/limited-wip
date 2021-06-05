@@ -5,10 +5,8 @@ import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.notification.NotificationType.WARNING
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.WindowManager
 import limitedwip.common.pluginDisplayName
-import limitedwip.common.vcs.AllowCommit
 import limitedwip.common.vcs.doCommitWithoutDialog
 import limitedwip.common.vcs.invokeLater
 import limitedwip.watchdog.ChangeSize
@@ -29,10 +27,6 @@ class WatchdogIde(
         widget.listener = object: WatchdogStatusBarWidget.Listener {
             override fun onClick() = listener.onWidgetClick()
         }
-        AllowCommit.addListener(project, object: AllowCommit.Listener {
-            override fun allowCommit(project: Project, changes: List<Change>) =
-                project != this@WatchdogIde.project || listener.allowCommit()
-        })
     }
 
     fun currentChangeListSizeInLines() = changeSizeWatcher.changeListSizeInLines
@@ -124,6 +118,5 @@ class WatchdogIde(
         fun onForceCommit()
         fun onSkipNotificationsUntilCommit()
         fun onWidgetClick()
-        fun allowCommit(): Boolean
     }
 }
