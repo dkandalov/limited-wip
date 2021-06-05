@@ -23,7 +23,6 @@ class WatchdogIde(
 ) {
     lateinit var listener: Listener
     private var lastNotification: Notification? = null
-    private var changesInLastCancelledCommit: List<Change>? = null
     private val notificationTitle = "Change size watchdog - $pluginDisplayName"
 
     init {
@@ -31,11 +30,8 @@ class WatchdogIde(
             override fun onClick() = listener.onWidgetClick()
         }
         AllowCommit.addListener(project, object: AllowCommit.Listener {
-            override fun allowCommit(project: Project, changes: List<Change>): Boolean {
-                val canCommit = project != this@WatchdogIde.project || listener.allowCommit()
-                changesInLastCancelledCommit = if (!canCommit) changes else null
-                return canCommit
-            }
+            override fun allowCommit(project: Project, changes: List<Change>) =
+                project != this@WatchdogIde.project || listener.allowCommit()
         })
     }
 

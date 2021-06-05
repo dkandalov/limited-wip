@@ -10,17 +10,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ModalityState.NON_MODAL
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
-import com.intellij.openapi.vcs.VcsDataKeys.CHANGES
-import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
-import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.IdeFocusManager
-
-fun openCommitDialog(changes: List<Change>? = null) {
-    invokeLater {
-        val actionEvent = if (changes == null) anActionEvent() else anActionEvent(CHANGES.name to changes.toTypedArray())
-        CommonCheckinProjectAction().actionPerformed(actionEvent)
-    }
-}
 
 fun commitWithoutDialogAndPush(project: Project) {
     invokeLater {
@@ -35,10 +25,11 @@ fun invokeLater(modalityState: ModalityState = NON_MODAL, callback: () -> Unit) 
     ApplicationManager.getApplication().invokeLater(callback, modalityState)
 }
 
-private fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent {
-    class MapDataContext(val map: Map<String, Any>, val delegate: DataContext) : DataContext {
+fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent {
+    class MapDataContext(val map: Map<String, Any>, val delegate: DataContext): DataContext {
         override fun getData(dataId: String) = delegate.getData(dataId) ?: map[dataId]
     }
+
     val component = IdeFocusManager.findInstance().lastFocusedFrame!!.component
     val dataContext = DataManager.getInstance().getDataContext(component)
     val context = MapDataContext(eventContext.toMap(), dataContext)
