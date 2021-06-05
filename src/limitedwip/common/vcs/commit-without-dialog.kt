@@ -12,6 +12,7 @@ import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.vcs.VcsBundle
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.changes.*
+import com.intellij.openapi.vcs.changes.InvokeAfterUpdateMode.SYNCHRONOUS_CANCELLABLE
 import com.intellij.openapi.vcs.changes.actions.RefreshAction
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.openapi.vcs.impl.LineStatusTrackerManager
@@ -23,7 +24,6 @@ import limitedwip.common.settings.CommitMessageSource.LastCommit
 import limitedwip.common.settings.LimitedWipSettings
 import java.util.*
 import java.util.concurrent.CompletableFuture
-
 
 class CommitWithoutDialogAction: AnAction(AllIcons.Actions.Commit) {
     override fun actionPerformed(event: AnActionEvent) {
@@ -79,13 +79,12 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false): Boo
 
     ChangeListManager.getInstance(project).invokeAfterUpdate(
         runnable,
-        InvokeAfterUpdateMode.SYNCHRONOUS_CANCELLABLE,
+        SYNCHRONOUS_CANCELLABLE,
         "Refreshing changelists...",
         ModalityState.current()
     )
     return false
 }
-
 
 /**
  * Couldn't find a better way to "reuse" this code but to copy-paste it from

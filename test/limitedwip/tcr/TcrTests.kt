@@ -4,13 +4,14 @@ import limitedwip.common.settings.TcrAction.*
 import limitedwip.expect
 import limitedwip.shouldEqual
 import limitedwip.tcr.Tcr.ChangeListModifications
+import limitedwip.tcr.Tcr.Settings
 import limitedwip.tcr.components.TcrIde
 import org.junit.Test
 import org.mockito.Mockito.*
 
 private class Fixture(
     val ide: TcrIde = mock(TcrIde::class.java),
-    val settings: Tcr.Settings = Tcr.Settings(
+    val settings: Settings = Settings(
         enabled = true,
         notifyOnRevert = true,
         actionOnPassedTest = OpenCommitDialog,

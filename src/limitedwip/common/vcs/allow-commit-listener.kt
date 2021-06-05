@@ -90,7 +90,6 @@ private inline fun <reified T> accessField(anObject: Any, possibleFieldNames: Li
     return false
 }
 
-
 private class DelegatingCheckinHandlerFactory(key: VcsKey, private val listener: AllowCommit.Listener): VcsCheckinHandlerFactory(key) {
     override fun createSystemReadyHandler(project: Project): BeforeCheckinDialogHandler {
         return object: BeforeCheckinDialogHandler() {
