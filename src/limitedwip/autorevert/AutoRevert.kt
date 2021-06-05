@@ -1,8 +1,8 @@
 package limitedwip.autorevert
 
-import limitedwip.autorevert.components.Ide
+import limitedwip.autorevert.components.AutorevertIde
 
-class AutoRevert(private val ide: Ide, private var settings: Settings) {
+class AutoRevert(private val ide: AutorevertIde, private var settings: Settings) {
     private var started = false
     private var remainingSeconds: Int = 0
     private var skippedRevert: Boolean = false

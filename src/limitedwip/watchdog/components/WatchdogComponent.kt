@@ -21,11 +21,11 @@ class WatchdogComponent(private val project: Project) {
 
     fun start() {
         val settings = LimitedWipSettings.getInstance(project).toWatchdogSettings()
-        val ide = Ide(project, ChangeSizeWatcher(project), WatchdogStatusBarWidget(project), settings)
+        val ide = WatchdogIde(project, ChangeSizeWatcher(project), WatchdogStatusBarWidget(project), settings)
         val watchdog = Watchdog(ide, settings)
         enabled = settings.enabled
 
-        ide.listener = object: Ide.Listener {
+        ide.listener = object: WatchdogIde.Listener {
             override fun allowCommit() = watchdog.isCommitAllowed(ide.currentChangeListSizeInLines())
             override fun onForceCommit() = watchdog.onForceCommit()
             override fun onSkipNotificationsUntilCommit() = watchdog.onSkipNotificationsUntilCommit()

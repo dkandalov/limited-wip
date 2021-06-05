@@ -2,9 +2,9 @@ package limitedwip.watchdog
 
 import limitedwip.common.PathMatcher
 import limitedwip.common.settings.LimitedWipSettings.Companion.never
-import limitedwip.watchdog.components.Ide
+import limitedwip.watchdog.components.WatchdogIde
 
-class Watchdog(private val ide: Ide, private var settings: Settings) {
+class Watchdog(private val ide: WatchdogIde, private var settings: Settings) {
     private var secondsTillNotification = 0
     private var skipNotificationsUntilCommit = false
     private var allowOneCommitWithoutChecks = false

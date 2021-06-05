@@ -13,7 +13,7 @@ import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.revertCurrentChangeList
 import java.awt.Window
 
-class Ide(
+class AutorevertIde(
     private val project: Project,
     private var settings: AutoRevert.Settings,
     private val widget: AutoRevertStatusBarWidget

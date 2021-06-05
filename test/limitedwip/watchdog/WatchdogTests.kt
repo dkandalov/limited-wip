@@ -6,7 +6,7 @@ import limitedwip.expect
 import limitedwip.expectNoMoreInteractions
 import limitedwip.shouldEqual
 import limitedwip.watchdog.Watchdog.Settings
-import limitedwip.watchdog.components.Ide
+import limitedwip.watchdog.components.WatchdogIde
 import org.junit.Test
 import org.mockito.Mockito.*
 import org.mockito.internal.matchers.InstanceOf
@@ -26,7 +26,7 @@ private class Fixture(
             PathMatcher.parse("another/excluded/path")
         )
     ),
-    val ide: Ide = mock(Ide::class.java),
+    val ide: WatchdogIde = mock(WatchdogIde::class.java),
     val watchdog: Watchdog = Watchdog(ide, settings)
 ) {
     init {

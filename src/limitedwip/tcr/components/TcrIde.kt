@@ -10,14 +10,14 @@ import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.*
 
 
-class Ide(private val project: Project) {
+class TcrIde(private val project: Project) {
     lateinit var listener: Listener
     private var changesInLastCancelledCommit: List<Change>? = null
 
     init {
         AllowCommit.addListener(project, object: AllowCommit.Listener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
-                val canCommit = project != this@Ide.project || listener.allowCommit()
+                val canCommit = project != this@TcrIde.project || listener.allowCommit()
                 changesInLastCancelledCommit = if (!canCommit) changes else null
                 return canCommit
             }

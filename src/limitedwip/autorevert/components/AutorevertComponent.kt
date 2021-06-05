@@ -21,7 +21,7 @@ class AutoRevertComponent(private val project: Project) {
     fun start() {
         val settings = LimitedWipSettings.getInstance(project).toAutoRevertSettings()
         val widget = AutoRevertStatusBarWidget(project)
-        val autoRevert = AutoRevert(Ide(project, settings, widget), settings)
+        val autoRevert = AutoRevert(AutorevertIde(project, settings, widget), settings)
         widget.onClick {
             autoRevert.onPause()
         }

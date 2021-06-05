@@ -1,7 +1,7 @@
 package limitedwip.autorevert
 
 import limitedwip.autorevert.AutoRevert.Settings
-import limitedwip.autorevert.components.Ide
+import limitedwip.autorevert.components.AutorevertIde
 import limitedwip.expect
 import limitedwip.expectNoMoreInteractions
 import org.junit.Test
@@ -10,7 +10,7 @@ import org.mockito.Mockito.*
 import org.mockito.Mockito.`when` as whenCalled
 
 private data class Fixture(
-    val ide: Ide = mock(Ide::class.java),
+    val ide: AutorevertIde = mock(AutorevertIde::class.java),
     val inOrder: InOrder = inOrder(ide),
     val settings: Settings = Settings(
         enabled = true,

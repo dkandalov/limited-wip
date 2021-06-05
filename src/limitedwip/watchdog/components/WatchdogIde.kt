@@ -14,7 +14,7 @@ import limitedwip.watchdog.ChangeSize
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class Ide(
+class WatchdogIde(
     private val project: Project,
     private val changeSizeWatcher: ChangeSizeWatcher,
     private val widget: WatchdogStatusBarWidget,
@@ -30,7 +30,7 @@ class Ide(
         }
         AllowCommit.addListener(project, object: AllowCommit.Listener {
             override fun allowCommit(project: Project, changes: List<Change>): Boolean {
-                val canCommit = project != this@Ide.project || listener.allowCommit()
+                val canCommit = project != this@WatchdogIde.project || listener.allowCommit()
                 changesInLastCancelledCommit = if (!canCommit) changes else null
                 return canCommit
             }

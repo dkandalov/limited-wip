@@ -3,9 +3,9 @@ package limitedwip.tcr
 import limitedwip.common.PathMatcher
 import limitedwip.common.settings.TcrAction
 import limitedwip.common.settings.TcrAction.*
-import limitedwip.tcr.components.Ide
+import limitedwip.tcr.components.TcrIde
 
-class Tcr(private val ide: Ide, private var settings: Settings) {
+class Tcr(private val ide: TcrIde, private var settings: Settings) {
     private var allowedToCommit = false
     private var allowOneCommitWithoutChecks = false
     private var testedModifications: ChangeListModifications? = null

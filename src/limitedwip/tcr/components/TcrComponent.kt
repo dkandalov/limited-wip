@@ -15,9 +15,9 @@ class TcrComponentStartup: StartupActivity {
 
 private class TcrComponent(private val project: Project) {
     fun start() {
-        val ide = Ide(project)
+        val ide = TcrIde(project)
         val tcr = Tcr(ide, LimitedWipSettings.getInstance(project).toTcrSettings())
-        ide.listener = object: Ide.Listener {
+        ide.listener = object: TcrIde.Listener {
             override fun onForceCommit() = tcr.forceOneCommit()
             override fun allowCommit() = tcr.isCommitAllowed(ChangeListModifications(ide.defaultChangeListModificationCount()))
         }
