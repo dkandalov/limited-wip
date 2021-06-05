@@ -38,7 +38,7 @@ data class PathMatcher(
             pattern = normalizeWildcards(pattern)
             pattern = optimize(pattern)
 
-            val dirRegex = dirPattern?.compilePattern()?.let { Regex(it) }
+            val dirRegex = dirPattern?.compilePattern().ifNotNull { Regex(it) }
             val fileNameRegex = Regex(pattern.compilePattern())
             return PathMatcher(fileNameRegex, dirRegex)
         }

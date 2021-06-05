@@ -7,6 +7,7 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.wm.WindowManager
+import limitedwip.common.ifNotNull
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.AllowCommit
 import limitedwip.common.vcs.doCommitWithoutDialog
@@ -120,10 +121,6 @@ class WatchdogIde(
     private fun ChangeSize.toPrintableString() =
         if (this == ChangeSize.NA) "-"
         else (if (isApproximate) "≈" else "") + value.toString()
-
-    private fun <T> T?.ifNotNull(f: (T) -> Unit) {
-        if (this != null) f(this)
-    }
 
     interface Listener {
         fun onForceCommit()

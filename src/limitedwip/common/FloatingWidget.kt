@@ -50,7 +50,7 @@ class FloatingWidget(private val point: Point, private val projectComponent: JCo
     }
 
     override fun dispose() {
-        balloon?.let { Disposer.dispose(it) }
+        balloon.ifNotNull { Disposer.dispose(it) }
     }
 
     private fun createBalloon(): Balloon =
