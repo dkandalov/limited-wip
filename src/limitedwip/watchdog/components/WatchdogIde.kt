@@ -88,7 +88,7 @@ class WatchdogIde(
     }
 
     fun notifyThatCommitWasCancelled() {
-        project.messageBus.syncPublisher(Notifications.TOPIC).notify(Notification(
+        val notification = Notification(
             pluginDisplayName,
             notificationTitle,
             "Commit was cancelled because change size is above threshold. To force commit anyway <a href=\"\">click here</a>.",
@@ -96,7 +96,11 @@ class WatchdogIde(
         ) { notification, _ ->
             notification.expire()
             listener.onForceCommit()
-        })
+        }
+        project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
+
+        lastNotification?.expire()
+        lastNotification = notification
     }
 
     fun commitWithoutDialog() {
