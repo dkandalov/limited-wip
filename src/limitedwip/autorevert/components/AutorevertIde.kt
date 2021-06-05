@@ -1,9 +1,8 @@
 package limitedwip.autorevert.components
 
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.notification.Notifications
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.WindowManager
@@ -39,9 +38,9 @@ class AutorevertIde(
     fun notifyThatChangesWereReverted() {
         val notification = Notification(
             pluginDisplayName,
-            pluginDisplayName,
+            "Auto-revert - $pluginDisplayName",
             "Current changelist was reverted",
-            NotificationType.WARNING
+            WARNING
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }

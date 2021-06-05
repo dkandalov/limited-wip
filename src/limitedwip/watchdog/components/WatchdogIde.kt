@@ -1,7 +1,8 @@
 package limitedwip.watchdog.components
 
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
+import com.intellij.notification.NotificationType.INFORMATION
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
@@ -23,6 +24,7 @@ class WatchdogIde(
     lateinit var listener: Listener
     private var lastNotification: Notification? = null
     private var changesInLastCancelledCommit: List<Change>? = null
+    private val notificationTitle = "Change size watchdog - $pluginDisplayName"
 
     init {
         widget.listener = object: WatchdogStatusBarWidget.Listener {
@@ -55,9 +57,9 @@ class WatchdogIde(
         val stateDescription = if (value) "disabled till next commit" else "enabled"
         val notification = Notification(
             pluginDisplayName,
-            pluginDisplayName,
+            notificationTitle,
             "Change size notifications are $stateDescription",
-            NotificationType.INFORMATION
+            INFORMATION
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
@@ -65,12 +67,12 @@ class WatchdogIde(
     fun showNotificationThatChangeSizeIsTooBig(linesChanged: ChangeSize, changedLinesLimit: Int) {
         val notification = Notification(
             pluginDisplayName,
-            "Change size exceeded limit",
-            "Lines changed: " + linesChanged.toPrintableString() + "; " +
+            notificationTitle,
+            "Change size exceeded limit. Lines changed: " + linesChanged.toPrintableString() + "; " +
                 "limit: " + changedLinesLimit + "<br/>" +
                 "Please commit, split or revert changes<br/>" +
                 "(<a href=\"\">Click here</a> to skip notifications till next commit)",
-            NotificationType.WARNING
+            WARNING
         ) { notification, _ ->
             notification.expire()
             listener.onSkipNotificationsUntilCommit()
@@ -89,9 +91,9 @@ class WatchdogIde(
     fun notifyThatCommitWasCancelled() {
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(Notification(
             pluginDisplayName,
-            pluginDisplayName,
+            notificationTitle,
             "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
-            NotificationType.WARNING
+            WARNING
         ) { notification, _ ->
             notification.expire()
             listener.onForceCommit()

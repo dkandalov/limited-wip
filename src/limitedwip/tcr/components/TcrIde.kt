@@ -1,14 +1,13 @@
 package limitedwip.tcr.components
 
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.PathMatcher
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.*
-
 
 class TcrIde(private val project: Project) {
     lateinit var listener: Listener
@@ -51,9 +50,9 @@ class TcrIde(private val project: Project) {
     fun notifyThatCommitWasCancelled() {
         val notification = Notification(
             pluginDisplayName,
-            pluginDisplayName,
+            "TCR - $pluginDisplayName",
             "Commit was cancelled because no tests were run<br/> (<a href=\"\">Click here</a> to force commit anyway)",
-            NotificationType.WARNING
+            WARNING
         ).setListener { notification, _ ->
             notification.expire()
             listener.onForceCommit()
@@ -65,9 +64,9 @@ class TcrIde(private val project: Project) {
     fun notifyThatChangesWereReverted() {
         val notification = Notification(
             pluginDisplayName,
-            pluginDisplayName,
+            "TCR - $pluginDisplayName",
             "Current changelist was reverted",
-            NotificationType.WARNING
+            WARNING
         )
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
