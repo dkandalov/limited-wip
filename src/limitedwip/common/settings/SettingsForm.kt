@@ -81,7 +81,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     init {
         watchdogPanel.border = IdeBorderFactory.createTitledBorder("Change Size Watchdog")
         autoRevertPanel.border = IdeBorderFactory.createTitledBorder("Auto-Revert")
-        tcrPanel.border = IdeBorderFactory.createTitledBorder("TCR Mode (Test \\&\\& Commit || Revert)")
+        tcrPanel.border = IdeBorderFactory.createTitledBorder("TCR (Test \\&\\& Commit || Revert)")
 
         currentState.loadState(initialState)
         updateUIFromState()
