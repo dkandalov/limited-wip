@@ -91,7 +91,7 @@ class WatchdogIde(
         project.messageBus.syncPublisher(Notifications.TOPIC).notify(Notification(
             pluginDisplayName,
             notificationTitle,
-            "Commit was cancelled because change size is above threshold<br/> (<a href=\"\">Click here</a> to force commit anyway)",
+            "Commit was cancelled because change size is above threshold. To force commit anyway <a href=\"\">click here</a>.",
             WARNING
         ) { notification, _ ->
             notification.expire()
