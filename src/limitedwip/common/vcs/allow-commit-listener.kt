@@ -9,14 +9,12 @@ import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.changes.CommitExecutor
 import com.intellij.openapi.vcs.changes.shelf.ShelveChangesCommitExecutor
-import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler
-import com.intellij.openapi.vcs.checkin.CheckinHandler
+import com.intellij.openapi.vcs.checkin.*
 import com.intellij.openapi.vcs.checkin.CheckinHandler.ReturnResult.CANCEL
 import com.intellij.openapi.vcs.checkin.CheckinHandler.ReturnResult.COMMIT
-import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
-import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory
 import com.intellij.openapi.vcs.impl.CheckinHandlersManager
 import com.intellij.util.containers.MultiMap
+import limitedwip.common.ifNotNull
 import java.util.concurrent.CopyOnWriteArraySet
 
 object AllowCommit: CheckinHandlerFactory() {
@@ -30,14 +28,30 @@ object AllowCommit: CheckinHandlerFactory() {
         })
     }
 
-    override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
-        return object: CheckinHandler() {
+    override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler =
+        object: CheckinHandler(), CheckinMetaHandler {
+            private var result: ReturnResult? = null
+
             override fun beforeCheckin(): ReturnResult {
+                result.ifNotNull {
+                    result = null
+                    return it
+                }
+                return canCommit()
+            }
+
+            override fun runCheckinHandlers(runnable: Runnable) {
+                // Check if can commit here because CheckinMetaHandlers are called in reverse order
+                // and this function will be called before optimising imports (see https://github.com/dkandalov/limited-wip/issues/39)
+                result = canCommit()
+                runnable.run()
+            }
+
+            private fun canCommit(): ReturnResult {
                 val canCommit = listeners.all { it.allowCommit(panel.project, panel.selectedChanges.toList()) }
                 return if (canCommit) COMMIT else CANCEL
             }
         }
-    }
 
     fun addListener(parentDisposable: Disposable, listener: Listener) {
         Disposer.register(parentDisposable) { listeners.remove(listener) }
