@@ -18,7 +18,7 @@ import limitedwip.common.ifNotNull
 import java.util.concurrent.CopyOnWriteArraySet
 
 object AllowCommit: CheckinHandlerFactory() {
-    private val listeners = CopyOnWriteArraySet<Listener>()
+    val listeners = CopyOnWriteArraySet<Listener>()
 
     init {
         registerBeforeCommitListener(object: Listener {
