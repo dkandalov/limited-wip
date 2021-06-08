@@ -3,21 +3,33 @@ package limitedwip.common.vcs
 import com.intellij.dvcs.DvcsUtil
 import com.intellij.dvcs.push.PushSpec
 import com.intellij.dvcs.repo.VcsRepositoryManager
+import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ModalityState.NON_MODAL
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.wm.IdeFocusManager
 
+class CommitAndPushWithoutDialogAction: AnAction(AllIcons.Vcs.Push) {
+    override fun actionPerformed(event: AnActionEvent) {
+        commitWithoutDialogAndPush(event.project ?: return)
+    }
+}
+
 fun commitWithoutDialogAndPush(project: Project) {
     invokeLater {
-        doCommitWithoutDialog(project)
-        invokeLater {
-            doPush(project)
-        }
+        doCommitWithoutDialog(project, onSuccess = {
+            invokeLater {
+                object : Backgroundable(project, "Pushing…", true, ALWAYS_BACKGROUND) {
+                    override fun run(indicator: ProgressIndicator) = doPush(project)
+                }.queue()
+            }
+        })
     }
 }
 

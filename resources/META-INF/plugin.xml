@@ -45,6 +45,7 @@
 
     <actions>
         <action id="CommitWithoutDialogAction" class="limitedwip.common.vcs.CommitWithoutDialogAction" text="Commit Without Dialog"/>
+        <action id="CommitAndPushWithoutDialogAction" class="limitedwip.common.vcs.CommitAndPushWithoutDialogAction" text="Commit and Push Without Dialog"/>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

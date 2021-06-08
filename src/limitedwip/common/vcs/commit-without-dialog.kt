@@ -27,7 +27,7 @@ class CommitWithoutDialogAction: AnAction(AllIcons.Actions.Commit) {
     }
 }
 
-fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false) {
+fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false, onSuccess: () -> Unit = {}) {
     // Don't attempt to commit if there are no VCS registered because it will throw an exception.
     val defaultChangeList = project.defaultChangeList() ?: return
     val changes = defaultChangeList.changes.toList()
@@ -50,13 +50,15 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false) {
     // Save documents, otherwise commit doesn't work.
     FileDocumentManager.getInstance().saveAllDocuments()
 
-    SingleChangeListCommitter(
+    val committer = SingleChangeListCommitter(
         project,
         ChangeListCommitState(defaultChangeList as LocalChangeList, changes, commitMessage),
         createCommitContext(isAmendCommit),
         "Commit without dialog",
         isDefaultChangeListFullyIncluded = true
-    ).runCommit("Commit without dialog", sync = false)
+    )
+    committer.addResultHandler { onSuccess() }
+    committer.runCommit("Commit without dialog", sync = false)
 }
 
 private fun createCommitContext(isAmendCommit: Boolean): CommitContext =
