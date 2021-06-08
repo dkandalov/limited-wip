@@ -47,11 +47,13 @@ fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent {
 private fun doPush(project: Project) {
     val allActiveVcss = ProjectLevelVcsManager.getInstance(project).allActiveVcss
     allActiveVcss.forEach { vcs ->
-        val pushSupport = DvcsUtil.getPushSupport(vcs) ?: return
-        VcsRepositoryManager.getInstance(project).repositories.forEach { repository ->
-            val source = pushSupport.getSource(repository)
-            val target = pushSupport.getDefaultTarget(repository) ?: return
-            pushSupport.pusher.push(mapOf(repository to PushSpec(source, target)), null, true)
+        val pushSupport = DvcsUtil.getPushSupport(vcs)
+        if (pushSupport != null) {
+            VcsRepositoryManager.getInstance(project).repositories.forEach { repository ->
+                val source = pushSupport.getSource(repository)
+                val target = pushSupport.getDefaultTarget(repository) ?: return
+                pushSupport.pusher.push(mapOf(repository to PushSpec(source, target)), null, true)
+            }
         }
     }
 }
