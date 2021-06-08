@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
@@ -45,6 +46,9 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false) {
     // Need this starting from around IJ 2019.2 because otherwise changes are not included into commit.
     // This seems be related to change in VCS UI which has commit dialog built-in into the toolwindow.
     LineStatusTrackerManager.getInstanceImpl(project).resetExcludedFromCommitMarkers()
+
+    // Save documents, otherwise commit doesn't work.
+    FileDocumentManager.getInstance().saveAllDocuments()
 
     SingleChangeListCommitter(
         project,
