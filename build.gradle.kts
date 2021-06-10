@@ -7,7 +7,7 @@ plugins {
     idea
     java
     kotlin("jvm").version("1.4.32")
-    id("org.jetbrains.intellij").version("0.6.5")
+    id("org.jetbrains.intellij").version("0.7.3")
 }
 repositories {
     mavenCentral()
@@ -22,12 +22,10 @@ var SourceDirectorySet.sourceDirs: Iterable<File>
 
 sourceRoots {
     getByName("main") {
-        java.srcDirs("./src")
         kotlin.srcDirs("./src")
         resources.srcDirs("./resources")
     }
     getByName("test") {
-        java.srcDirs("./test")
         kotlin.srcDirs("./test")
     }
 }
