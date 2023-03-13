@@ -41,7 +41,6 @@ data class LimitedWipSettings(
 
     override fun getState() = this
 
-    @Suppress("DEPRECATION")
     override fun loadState(state: LimitedWipSettings) {
         XmlSerializerUtil.copyBean(state, this)
         notifyListeners()
