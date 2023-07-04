@@ -1,0 +1,47 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id 'idea'
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
+    id 'org.jetbrains.intellij' version '1.13.3'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        kotlin.srcDir './src'
+        resources.srcDir './resources'
+    }
+    test {
+        kotlin.srcDir './test'
+    }
+}
+
+dependencies {
+    testImplementation 'org.mockito:mockito-inline:3.3.3'
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = '11'
+        apiVersion = '1.6'
+        languageVersion = '1.6'
+        // Compiler flag to allow building against pre-released versions of Kotlin
+        // because IJ EAP can be built using pre-released Kotlin but it's still worth doing to check API compatibility
+        freeCompilerArgs += ['-Xskip-metadata-version-check']
+    }
+}
+
+intellij {
+    // See https://www.jetbrains.com/intellij-repository/releases for a list of available IDEA builds
+    version = '212.4746.92' // with kotlin 1.5.10 support
+//    version = "LATEST-EAP-SNAPSHOT"
+    pluginName = 'LimitedWIP'
+    downloadSources = true
+    sameSinceUntilBuild = false
+    updateSinceUntilBuild = false
+}
