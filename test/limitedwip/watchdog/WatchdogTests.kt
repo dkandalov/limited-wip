@@ -1,14 +1,18 @@
 package limitedwip.watchdog
 
 import limitedwip.common.PathMatcher
-import limitedwip.common.settings.LimitedWipSettings
+import limitedwip.common.settings.LimitedWipSettings.Companion.never
 import limitedwip.expect
 import limitedwip.expectNoMoreInteractions
 import limitedwip.shouldEqual
 import limitedwip.watchdog.Watchdog.Settings
 import limitedwip.watchdog.components.WatchdogIde
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.mockito.Mockito.anyInt
+import org.mockito.Mockito.inOrder
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
+import org.mockito.Mockito.times
 import org.mockito.internal.matchers.InstanceOf
 import org.mockito.internal.progress.ThreadSafeMockingProgress.mockingProgress
 import org.mockito.Mockito.`when` as whenCalled
@@ -38,7 +42,7 @@ private class Fixture(
 
     fun anySettings(): Settings {
         val type = Settings::class.java
-        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any ${type.canonicalName}>"))
+        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf(type, "<any ${type.canonicalName}>"))
         return Settings(
             enabled = false,
             maxLinesInChange = 0,
@@ -51,7 +55,7 @@ private class Fixture(
 
     fun anyChangeSize(): ChangeSize {
         val type = ChangeSize::class.java
-        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf.VarArgAware(type, "<any ${type.canonicalName}>"))
+        mockingProgress().argumentMatcherStorage.reportMatcher(InstanceOf(type, "<any ${type.canonicalName}>"))
         return ChangeSize(0, false)
     }
 }
@@ -90,7 +94,7 @@ class WatchdogTests {
     }
 
     @Test fun `don't send notification when notification interval is 'never'`() = Fixture().run {
-        watchdog.onSettingsUpdate(settings.copy(notificationIntervalInSeconds = LimitedWipSettings.never))
+        watchdog.onSettingsUpdate(settings.copy(notificationIntervalInSeconds = never))
         whenCalled(ide.currentChangeListSizeInLines()).thenReturn(someChangesWithSize(200))
 
         watchdog.onTimer()

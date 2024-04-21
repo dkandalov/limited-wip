@@ -7,7 +7,7 @@
 
     <!-- http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
     <!-- https://www.jetbrains.com/intellij-repository/releases -->
-    <idea-version since-build="211.7442.40"/>
+    <idea-version since-build="241.14494"/>
 
     <description>
         <![CDATA[

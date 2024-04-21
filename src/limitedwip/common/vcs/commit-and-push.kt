@@ -63,8 +63,10 @@ private fun doPush(project: Project) {
         if (pushSupport != null) {
             VcsRepositoryManager.getInstance(project).repositories.forEach { repository ->
                 val source = pushSupport.getSource(repository)
-                val target = pushSupport.getDefaultTarget(repository) ?: return
-                pushSupport.pusher.push(mapOf(repository to PushSpec(source, target)), null, true)
+                val target = pushSupport.getDefaultTarget(repository)
+                if (source != null && target != null) {
+                    pushSupport.pusher.push(mapOf(repository to PushSpec(source, target)), null, true)
+                }
             }
         }
     }

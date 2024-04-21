@@ -1,7 +1,7 @@
 package limitedwip.tcr.components
 
 import com.intellij.execution.ExecutionListener
-import com.intellij.execution.ExecutionManager
+import com.intellij.execution.ExecutionManager.Companion.EXECUTION_TOPIC
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.testframework.TestsUIUtil
@@ -16,7 +16,7 @@ class UnitTestsWatcher(private val project: Project) {
     fun start(listener: Listener) {
         val profileNameRef = AtomicReference<String?>()
 
-        project.messageBus.connect(project).subscribe(ExecutionManager.EXECUTION_TOPIC, object : ExecutionListener {
+        project.messageBus.connect(project).subscribe(EXECUTION_TOPIC, object : ExecutionListener {
             override fun processTerminated(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler, exitCode: Int) {
                 profileNameRef.set(env.runProfile.name)
             }

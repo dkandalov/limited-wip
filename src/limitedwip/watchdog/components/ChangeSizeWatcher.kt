@@ -135,7 +135,7 @@ private fun doCalculateChangeSizeInLines(change: Change, compare: (String, Strin
     val contentBefore = (beforeRevision?.content ?: "").replace("\r\n", "\n")
     val contentAfter = (afterRevision?.content ?: "").replace("\r\n", "\n")
 
-    val result = compare(contentBefore, contentAfter).sumBy { fragment ->
+    val result = compare(contentBefore, contentAfter).sumOf { fragment ->
         val changeSizeAfter = contentAfter.calculateChangeSize(IntRange(fragment.startOffset2, fragment.endOffset2 - 1))
         if (changeSizeAfter != 0) changeSizeAfter // Use changeSizeAfter unless all the code has been deleted.
         else contentBefore.calculateChangeSize(IntRange(fragment.startOffset1, fragment.endOffset1 - 1))
