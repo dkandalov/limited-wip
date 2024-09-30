@@ -12,10 +12,7 @@ import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.changes.LocalChangeList
 import com.intellij.openapi.vcs.impl.LineStatusTrackerManager
-import com.intellij.vcs.commit.ChangeListCommitState
-import com.intellij.vcs.commit.ShowNotificationCommitResultHandler
-import com.intellij.vcs.commit.SingleChangeListCommitter
-import com.intellij.vcs.commit.isAmendCommitMode
+import com.intellij.vcs.commit.*
 import com.intellij.vcs.log.VcsLogProvider
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
@@ -51,18 +48,21 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false, onSu
     // Save documents, otherwise commit doesn't work.
     FileDocumentManager.getInstance().saveAllDocuments()
 
-    val committer = SingleChangeListCommitter(
+    val committer = SingleChangeListCommitter.create(
         project,
         ChangeListCommitState(defaultChangeList as LocalChangeList, changes, commitMessage),
         createCommitContext(isAmendCommit),
-        "Commit without dialog",
-        isDefaultChangeListFullyIncluded = true
+        "Commit without dialog"
     )
     val resultHandler = ShowNotificationCommitResultHandler(committer)
-    committer.addResultHandler {
-        onSuccess()
-        resultHandler.onSuccess()
-    }
+    committer.addResultHandler(
+        object : CommitterResultHandler {
+            override fun onSuccess() {
+                onSuccess()
+                resultHandler.onSuccess()
+            }
+        }
+    )
     committer.runCommit("Commit without dialog", sync = false)
 }
 
