@@ -55,7 +55,6 @@
 
         <projectConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
         <projectService serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
-        <projectService serviceImplementation="limitedwip.common.settings.OldLocation_LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.SuccessfulCheckin"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.AllowCommit"/>
         <search.projectOptionsTopHitProvider implementation="limitedwip.common.settings.LimitedWipTopHitProvider"/>
