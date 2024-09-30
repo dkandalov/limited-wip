@@ -34,9 +34,8 @@ class TcrIde(private val project: Project) {
         commitWithoutDialogAndPush(project)
     }
 
-    fun revertCurrentChangeList(doNotRevertTests: Boolean, doNotRevertFiles: Set<PathMatcher>): Int {
-        return revertCurrentChangeList(project, doNotRevertTests, doNotRevertFiles)
-    }
+    fun revertCurrentChangeList(doNotRevertTests: Boolean, doNotRevertFiles: Set<PathMatcher>): Int =
+        revertCurrentChangeList(project, doNotRevertTests, doNotRevertFiles)
 
     fun notifyThatCommitWasCancelled() {
         val notification = Notification(
@@ -53,13 +52,14 @@ class TcrIde(private val project: Project) {
     }
 
     fun notifyThatChangesWereReverted() {
-        val notification = Notification(
-            pluginDisplayName,
-            "TCR - $pluginDisplayName",
-            "Current changelist was reverted",
-            WARNING
+        project.messageBus.syncPublisher(Notifications.TOPIC).notify(
+            Notification(
+                pluginDisplayName,
+                "TCR - $pluginDisplayName",
+                "Current changelist was reverted",
+                WARNING
+            )
         )
-        project.messageBus.syncPublisher(Notifications.TOPIC).notify(notification)
     }
 
     fun defaultChangeListModificationCount(): Map<String, Long> {
@@ -69,9 +69,8 @@ class TcrIde(private val project: Project) {
             .associate { Pair(it.path, it.modificationCount) }
     }
 
-    fun lastCommitExistOnlyOnCurrentBranch(): Boolean {
-        return lastCommitExistOnlyOnCurrentBranch(project)
-    }
+    fun lastCommitExistOnlyOnCurrentBranch(): Boolean =
+        lastCommitExistOnlyOnCurrentBranch(project)
 
     interface Listener {
         fun onForceCommit()
