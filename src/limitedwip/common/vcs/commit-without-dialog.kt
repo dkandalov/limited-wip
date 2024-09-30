@@ -13,6 +13,7 @@ import com.intellij.openapi.vcs.changes.CommitContext
 import com.intellij.openapi.vcs.changes.LocalChangeList
 import com.intellij.openapi.vcs.impl.LineStatusTrackerManager
 import com.intellij.vcs.commit.ChangeListCommitState
+import com.intellij.vcs.commit.ShowNotificationCommitResultHandler
 import com.intellij.vcs.commit.SingleChangeListCommitter
 import com.intellij.vcs.commit.isAmendCommitMode
 import com.intellij.vcs.log.VcsLogProvider
@@ -44,7 +45,7 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false, onSu
     }
 
     // Need this starting from around IJ 2019.2 because otherwise changes are not included into commit.
-    // This seems be related to change in VCS UI which has commit dialog built-in into the toolwindow.
+    // This seems to be related to change in VCS UI which has commit dialog built-in into the toolwindow.
     LineStatusTrackerManager.getInstanceImpl(project).resetExcludedFromCommitMarkers()
 
     // Save documents, otherwise commit doesn't work.
@@ -57,7 +58,11 @@ fun doCommitWithoutDialog(project: Project, isAmendCommit: Boolean = false, onSu
         "Commit without dialog",
         isDefaultChangeListFullyIncluded = true
     )
-    committer.addResultHandler { onSuccess() }
+    val resultHandler = ShowNotificationCommitResultHandler(committer)
+    committer.addResultHandler {
+        onSuccess()
+        resultHandler.onSuccess()
+    }
     committer.runCommit("Commit without dialog", sync = false)
 }
 
