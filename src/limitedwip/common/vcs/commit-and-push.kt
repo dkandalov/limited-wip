@@ -8,7 +8,7 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.ModalityState.NON_MODAL
+import com.intellij.openapi.application.ModalityState.nonModal
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
@@ -33,7 +33,7 @@ fun commitWithoutDialogAndPush(project: Project) {
     }
 }
 
-fun invokeLater(modalityState: ModalityState = NON_MODAL, callback: () -> Unit) {
+fun invokeLater(modalityState: ModalityState = nonModal(), callback: () -> Unit) {
     ApplicationManager.getApplication().invokeLater(callback, modalityState)
 }
 
