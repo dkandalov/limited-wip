@@ -2,7 +2,7 @@ package limitedwip.watchdog.components
 
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.TimerAppComponent
 import limitedwip.common.settings.LimitedWipSettings
@@ -14,8 +14,8 @@ import limitedwip.common.vcs.invokeLater
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class WatchdogComponentStartup: StartupActivity {
-    override fun runActivity(project: Project) = WatchdogComponent(project).start()
+class WatchdogComponentStartup: ProjectActivity {
+    override suspend fun execute(project: Project) = WatchdogComponent(project).start()
 }
 
 class WatchdogComponent(private val project: Project) {

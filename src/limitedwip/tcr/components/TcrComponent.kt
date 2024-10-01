@@ -1,7 +1,7 @@
 package limitedwip.tcr.components
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vcs.changes.Change
 import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.toPathMatchers
@@ -11,8 +11,8 @@ import limitedwip.tcr.Tcr
 import limitedwip.tcr.Tcr.ChangeListModifications
 import limitedwip.tcr.Tcr.Settings
 
-class TcrComponentStartup: StartupActivity {
-    override fun runActivity(project: Project) = TcrComponent(project).start()
+class TcrComponentStartup: ProjectActivity {
+    override suspend fun execute(project: Project) = TcrComponent(project).start()
 }
 
 private class TcrComponent(private val project: Project) {

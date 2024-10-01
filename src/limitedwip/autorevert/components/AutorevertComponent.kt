@@ -2,7 +2,7 @@ package limitedwip.autorevert.components
 
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import limitedwip.autorevert.AutoRevert
 import limitedwip.autorevert.ui.AutoRevertStatusBarWidget
 import limitedwip.common.TimerAppComponent
@@ -11,8 +11,8 @@ import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.common.vcs.defaultChangeList
 import limitedwip.common.vcs.invokeLater
 
-class AutoRevertComponentStartup: StartupActivity {
-    override fun runActivity(project: Project) = AutoRevertComponent(project).start()
+class AutoRevertComponentStartup: ProjectActivity {
+    override suspend fun execute(project: Project) = AutoRevertComponent(project).start()
 }
 
 class AutoRevertComponent(private val project: Project) {
