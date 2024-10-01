@@ -30,7 +30,7 @@ class ChangeSizeWatcher(private val project: Project) {
     private val application = ApplicationManager.getApplication()
     private val projectBasePath = project.basePath ?: ""
 
-    val changeListSizeInLines get() = changeSizesWithPath
+    val changeListSizeInLines: ChangeSizesWithPath get() = changeSizesWithPath
 
     /**
      * Can't use com.intellij.openapi.vcs.impl.LineStatusTrackerManager here because it only tracks changes for open files.
@@ -93,13 +93,15 @@ class ChangeSizeWatcher(private val project: Project) {
 
         operator fun set(document: Document, changeSize: ChangeSize) {
             changeSizeByDocument[document] = changeSize
-            document.addDocumentListener(object : DocumentListener {
-                override fun beforeDocumentChange(event: DocumentEvent) {}
-                override fun documentChanged(event: DocumentEvent) {
-                    changeSizeByDocument.remove(document)
-                    document.removeDocumentListener(this)
-                }
-            }, parentDisposable)
+            document.addDocumentListener(
+                object : DocumentListener {
+                    override fun documentChanged(event: DocumentEvent) {
+                        changeSizeByDocument.remove(document)
+                        document.removeDocumentListener(this)
+                    }
+                },
+                parentDisposable
+            )
         }
 
         operator fun get(document: Document?): ChangeSize? =
