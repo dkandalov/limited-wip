@@ -58,9 +58,9 @@ class WatchdogIde(
         val notification = Notification(
             pluginDisplayName,
             notificationTitle,
-            "There are too many changes. " +
-                "Lines changed: " + linesChanged.toPrintableString() + ", threshold: " + changedLinesLimit + ". " +
-                "Please commit or revert some of the changes. To skip notifications till next commit <a href=\"\">click here</a>.",
+            "Lines changed: ${linesChanged.toPrintableString()}, threshold: $changedLinesLimit.<br/>" +
+                "Commit or revert some of the changes.<br/>" +
+                "Or <a href=\"\">skip notifications</a> till next commit.",
             WARNING
         ) { notification, _ ->
             notification.expire()
