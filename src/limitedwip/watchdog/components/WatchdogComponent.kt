@@ -14,7 +14,7 @@ import limitedwip.common.vcs.invokeLater
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
-class WatchdogComponentStartup: ProjectActivity {
+class WatchdogComponentStartup : ProjectActivity {
     override suspend fun execute(project: Project) = WatchdogComponent(project).start()
 }
 
@@ -27,18 +27,18 @@ class WatchdogComponent(private val project: Project) {
         val watchdog = Watchdog(ide, settings)
         enabled = settings.enabled
 
-        ide.listener = object: WatchdogIde.Listener {
+        ide.listener = object : WatchdogIde.Listener {
             override fun onForceCommit() = watchdog.onForceCommit()
             override fun onSkipNotificationsUntilCommit() = watchdog.onSkipNotificationsUntilCommit()
             override fun onWidgetClick() = watchdog.toggleSkipNotificationsUntilCommit()
         }
 
-        AllowCommit.addListener(project, object: AllowCommit.Listener {
+        AllowCommit.addListener(project, object : AllowCommit.Listener {
             override fun allowCommit(project: Project, changes: List<Change>) =
                 project != this@WatchdogComponent.project || watchdog.isCommitAllowed(ide.currentChangeListSizeInLines())
         })
 
-        TimerAppComponent.getInstance().addListener(project, object: TimerAppComponent.Listener {
+        TimerAppComponent.getInstance().addListener(project, object : TimerAppComponent.Listener {
             override fun onUpdate() {
                 // Optimisation to avoid scheduling task when component is not enabled.
                 if (!enabled) return
@@ -51,14 +51,14 @@ class WatchdogComponent(private val project: Project) {
             }
         })
 
-        LimitedWipSettings.getInstance(project).addListener(project, object: LimitedWipSettings.Listener {
+        LimitedWipSettings.getInstance(project).addListener(project, object : LimitedWipSettings.Listener {
             override fun onUpdate(settings: LimitedWipSettings) {
                 enabled = settings.watchdogEnabled
                 watchdog.onSettingsUpdate(settings.toWatchdogSettings())
             }
         })
 
-        SuccessfulCheckin.registerListener(project, object: SuccessfulCheckin.Listener {
+        SuccessfulCheckin.registerListener(project, object : SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) = watchdog.onSuccessfulCommit()
         })
     }

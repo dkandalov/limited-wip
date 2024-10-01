@@ -24,7 +24,7 @@ class WatchdogIde(
     private val notificationTitle = "Change size watchdog - $pluginDisplayName"
 
     init {
-        widget.listener = object: WatchdogStatusBarWidget.Listener {
+        widget.listener = object : WatchdogStatusBarWidget.Listener {
             override fun onClick() = listener.onWidgetClick()
         }
     }
@@ -104,7 +104,7 @@ class WatchdogIde(
         val hasWatchdogWidget = statusBar.getWidget(widget.ID()) != null
         val shouldShowWatchdog = settings.enabled && settings.showRemainingChangesInToolbar
         when {
-            hasWatchdogWidget && shouldShowWatchdog  -> widget.updateOn(statusBar)
+            hasWatchdogWidget && shouldShowWatchdog -> widget.updateOn(statusBar)
             hasWatchdogWidget && !shouldShowWatchdog -> widget.removeFrom(statusBar)
             !hasWatchdogWidget && shouldShowWatchdog -> widget.addTo(statusBar)
         }

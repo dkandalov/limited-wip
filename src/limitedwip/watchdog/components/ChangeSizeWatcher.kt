@@ -93,7 +93,7 @@ class ChangeSizeWatcher(private val project: Project) {
 
         operator fun set(document: Document, changeSize: ChangeSize) {
             changeSizeByDocument[document] = changeSize
-            document.addDocumentListener(object: DocumentListener {
+            document.addDocumentListener(object : DocumentListener {
                 override fun beforeDocumentChange(event: DocumentEvent) {}
                 override fun documentChanged(event: DocumentEvent) {
                     changeSizeByDocument.remove(document)
@@ -109,7 +109,6 @@ class ChangeSizeWatcher(private val project: Project) {
 
 private val Change.path: String
     get() = beforeRevision?.file?.path ?: afterRevision?.file?.path ?: ""
-
 
 fun ComparisonManager.calculateChangeSizeInLines(change: Change): ChangeSize =
     try {

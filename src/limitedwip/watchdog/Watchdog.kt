@@ -50,14 +50,15 @@ class Watchdog(private val ide: WatchdogIde, private var settings: Settings) {
         allowOneCommitWithoutChecks = false
     }
 
-    fun isCommitAllowed(changeSizesWithPath: ChangeSizesWithPath): Boolean {
-        if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold || !settings.enabled) return true
-        if (changeSizesWithPath.applyExclusions().value > settings.maxLinesInChange) {
+    fun isCommitAllowed(changeSizesWithPath: ChangeSizesWithPath) =
+        if (allowOneCommitWithoutChecks || !settings.noCommitsAboveThreshold || !settings.enabled) {
+            true
+        } else if (changeSizesWithPath.applyExclusions().value > settings.maxLinesInChange) {
             ide.notifyThatCommitWasCancelled()
-            return false
+            false
+        } else {
+            true
         }
-        return true
-    }
 
     fun toggleSkipNotificationsUntilCommit() {
         skipNotificationsUntilCommit(!skipNotificationsUntilCommit)
@@ -72,11 +73,8 @@ class Watchdog(private val ide: WatchdogIde, private var settings: Settings) {
         ide.commitWithoutDialog()
     }
 
-    private fun ChangeSizesWithPath.applyExclusions(): ChangeSize {
-        return ChangeSizesWithPath(
-            value.filter { (path, _) -> settings.exclusions.none { it.matches(path) } }
-        ).totalChangeSize
-    }
+    private fun ChangeSizesWithPath.applyExclusions(): ChangeSize =
+        ChangeSizesWithPath(value.filter { (path, _) -> settings.exclusions.none { it.matches(path) } }).totalChangeSize
 
     private fun skipNotificationsUntilCommit(value: Boolean) {
         skipNotificationsUntilCommit = value

@@ -13,7 +13,7 @@ import java.awt.Component
 import java.awt.Point
 import java.awt.event.MouseEvent
 
-class WatchdogStatusBarWidget(project: Project): StatusBarWidget {
+class WatchdogStatusBarWidget(project: Project) : StatusBarWidget {
     private val floatingWidget = FloatingWidget(
         projectComponent = WindowManager.getInstance().getIdeFrame(project)?.component,
         point = Point(
@@ -35,21 +35,18 @@ class WatchdogStatusBarWidget(project: Project): StatusBarWidget {
         floatingWidget.text = text
     }
 
-    override fun install(statusBar: StatusBar) {}
-
-    override fun dispose() {
+    override fun dispose() =
         Disposer.dispose(floatingWidget)
-    }
 
     override fun getPresentation() =
-        object: StatusBarWidget.TextPresentation {
+        object : StatusBarWidget.TextPresentation {
             override fun getText() = this@WatchdogStatusBarWidget.text
-            override fun getTooltipText() = "Change size in lines: $linesInChange; threshold: $maxLinesInChange"
+            override fun getTooltipText() = "Change size in lines: $linesInChange, threshold: $maxLinesInChange"
             override fun getClickConsumer() = Consumer<MouseEvent> { listener?.onClick() }
             override fun getAlignment() = Component.CENTER_ALIGNMENT
         }
 
-    override fun ID() = pluginId + "_" + this.javaClass.simpleName
+    override fun ID() = pluginId + "_" + javaClass.simpleName
 
     fun addTo(statusBar: StatusBar) {
         statusBar.addWidget(this, "before Position")
