@@ -53,7 +53,7 @@
         <postStartupActivity implementation="limitedwip.autorevert.components.AutoRevertComponentStartup"/>
         <postStartupActivity implementation="limitedwip.tcr.components.TcrComponentStartup"/>
 
-        <projectConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable"/>
+        <projectConfigurable instance="limitedwip.common.settings.LimitedWipConfigurable" displayName="Limited WIP"/>
         <projectService serviceImplementation="limitedwip.common.settings.LimitedWipSettings"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.SuccessfulCheckin"/>
         <checkinHandlerFactory implementation="limitedwip.common.vcs.AllowCommit"/>

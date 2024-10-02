@@ -8,17 +8,16 @@ import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
 import limitedwip.common.pluginId
 
-class SuccessfulCheckin: CheckinHandlerFactory() {
+class SuccessfulCheckin : CheckinHandlerFactory() {
 
-    override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
-        return object: CheckinHandler() {
+    override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext) =
+        object : CheckinHandler() {
             override fun checkinSuccessful() {
                 val changeList = panel.project.defaultChangeList() ?: return
                 val uncommittedFileCount = changeList.changes.size - panel.selectedChanges.size
                 notifySettingsListeners(allChangesAreCommitted = uncommittedFileCount == 0)
             }
         }
-    }
 
     private fun notifySettingsListeners(allChangesAreCommitted: Boolean) {
         Extensions.getRootArea().getExtensionPoint<Listener>(extensionPointName).extensions.forEach { listener ->

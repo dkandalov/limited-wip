@@ -18,13 +18,11 @@ class LimitedWipConfigurable(val project: Project): SearchableConfigurable {
         settingsForm.applyChanges()
     }
 
-    override fun reset() {
-        settingsForm.resetChanges()
-    }
+    override fun reset() = settingsForm.resetChanges()
 
     override fun isModified() = settingsForm.isModified()
 
     override fun getDisplayName() = pluginDisplayName
 
-    override fun getId(): String = pluginId
+    override fun getId() = pluginId
 }
