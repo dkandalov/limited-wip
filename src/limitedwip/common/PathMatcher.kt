@@ -28,19 +28,16 @@ data class PathMatcher(
             var pattern = FileUtil.toSystemIndependentName(wildcardPattern)
 
             var dirPattern: String? = null
-            val slash = pattern.lastIndexOf('/')
-            if (slash >= 0) {
-                dirPattern = pattern.substring(0, slash)
-                pattern = pattern.substring(slash + 1)
-                dirPattern = optimizeDirPattern(dirPattern)
+            val slashIndex = pattern.lastIndexOf('/')
+            if (slashIndex >= 0) {
+                dirPattern = pattern.substring(0, slashIndex)
+                pattern = pattern.substring(slashIndex + 1)
             }
 
-            pattern = normalizeWildcards(pattern)
-            pattern = optimize(pattern)
-
-            val dirRegex = dirPattern?.compilePattern().ifNotNull { Regex(it) }
-            val fileNameRegex = Regex(pattern.compilePattern())
-            return PathMatcher(fileNameRegex, dirRegex)
+            return PathMatcher(
+                fileNameRegex = Regex(optimize(normalizeWildcards(pattern)).compilePattern()),
+                dirRegex = dirPattern?.let(::optimizeDirPattern)?.compilePattern()?.let(::Regex)
+            )
         }
     }
 }
@@ -84,4 +81,5 @@ private fun optimizeDirPattern(dirPattern: String): String {
     return pattern
 }
 
-private fun optimize(wildcardPattern: String) = wildcardPattern.replace("(?:\\.\\*)+".toRegex(), ".*")
+private fun optimize(wildcardPattern: String) =
+    wildcardPattern.replace("(?:\\.\\*)+".toRegex(), ".*")
