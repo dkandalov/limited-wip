@@ -6,17 +6,18 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.CommitContext
-import com.intellij.openapi.vcs.checkin.*
+import com.intellij.openapi.vcs.checkin.CheckinHandler
 import com.intellij.openapi.vcs.checkin.CheckinHandler.ReturnResult.CANCEL
 import com.intellij.openapi.vcs.checkin.CheckinHandler.ReturnResult.COMMIT
+import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
+import com.intellij.openapi.vcs.checkin.CheckinMetaHandler
 import limitedwip.common.ifNotNull
 import java.util.concurrent.CopyOnWriteArraySet
 
-object AllowCommit: CheckinHandlerFactory() {
-    val listeners = CopyOnWriteArraySet<Listener>()
+class AllowCommit : CheckinHandlerFactory() {
 
     override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler =
-        object: CheckinHandler(), CheckinMetaHandler {
+        object : CheckinHandler(), CheckinMetaHandler {
             private var result: ReturnResult? = null
 
             override fun beforeCheckin(): ReturnResult {
@@ -40,12 +41,16 @@ object AllowCommit: CheckinHandlerFactory() {
             }
         }
 
-    fun addListener(parentDisposable: Disposable, listener: Listener) {
-        Disposer.register(parentDisposable) { listeners.remove(listener) }
-        listeners.add(listener)
-    }
-
     interface Listener {
         fun allowCommit(project: Project, changes: List<Change>): Boolean
+    }
+
+    companion object {
+        val listeners = CopyOnWriteArraySet<Listener>()
+
+        fun addListener(parentDisposable: Disposable, listener: Listener) {
+            Disposer.register(parentDisposable) { listeners.remove(listener) }
+            listeners.add(listener)
+        }
     }
 }
