@@ -43,25 +43,25 @@ class ChangeSizeWatcher(private val project: Project) {
             return
         }
 
-        val (newChangeSizesWithPath, changesToProcess) = application.runReadAction(Computable {
-            var result = ChangeSizesWithPath.empty
-            val changesToDiff = ArrayList<Change>()
-            changeList.changes.forEach { change ->
-                val changeSize = documentChangeSizeCache[change.document()]
-                if (changeSize == null) {
-                    changesToDiff.add(change)
-                } else {
-                    result = result.add(change.path.replace(projectBasePath, ""), changeSize)
-                }
-            }
-            Pair(result, changesToDiff)
-        })
-        if (changesToProcess.isEmpty()) {
-            changeSizesWithPath = newChangeSizesWithPath
-            return
-        }
-
         application.executeOnPooledThread {
+            val (newChangeSizesWithPath, changesToProcess) = application.runReadAction(Computable {
+                var result = ChangeSizesWithPath.empty
+                val changesToDiff = ArrayList<Change>()
+                changeList.changes.forEach { change ->
+                    val changeSize = documentChangeSizeCache[change.document()]
+                    if (changeSize == null) {
+                        changesToDiff.add(change)
+                    } else {
+                        result = result.add(change.path.replace(projectBasePath, ""), changeSize)
+                    }
+                }
+                Pair(result, changesToDiff)
+            })
+            if (changesToProcess.isEmpty()) {
+                changeSizesWithPath = newChangeSizesWithPath
+                return@executeOnPooledThread
+            }
+
             isRunningBackgroundDiff = true
 
             val changeSizeByChange = changesToProcess.associateWith { change ->
