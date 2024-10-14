@@ -11,6 +11,7 @@ import limitedwip.common.toPathMatchers
 import limitedwip.common.vcs.AllowCommit
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.common.vcs.invokeLater
+import limitedwip.common.vcs.registerSuccessfulCheckinListener
 import limitedwip.watchdog.Watchdog
 import limitedwip.watchdog.ui.WatchdogStatusBarWidget
 
@@ -58,7 +59,7 @@ class WatchdogComponent(private val project: Project) {
             }
         })
 
-        SuccessfulCheckin.registerListener(project, object : SuccessfulCheckin.Listener {
+        registerSuccessfulCheckinListener(project, object : SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) = watchdog.onSuccessfulCommit()
         })
     }

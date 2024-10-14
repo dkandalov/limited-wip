@@ -7,6 +7,7 @@ import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.toPathMatchers
 import limitedwip.common.vcs.AllowCommit
 import limitedwip.common.vcs.SuccessfulCheckin
+import limitedwip.common.vcs.registerSuccessfulCheckinListener
 import limitedwip.tcr.Tcr
 import limitedwip.tcr.Tcr.ChangeListModifications
 import limitedwip.tcr.Tcr.Settings
@@ -33,7 +34,7 @@ private class TcrComponent(private val project: Project) {
             override fun onUnitTestFailed(testName: String) = tcr.onUnitTestFailed(testName)
         })
 
-        SuccessfulCheckin.registerListener(project, object: SuccessfulCheckin.Listener {
+        registerSuccessfulCheckinListener(project, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) = tcr.onSuccessfulCommit()
         })
 

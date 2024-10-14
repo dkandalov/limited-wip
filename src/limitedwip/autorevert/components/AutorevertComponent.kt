@@ -10,6 +10,7 @@ import limitedwip.common.settings.LimitedWipSettings
 import limitedwip.common.vcs.SuccessfulCheckin
 import limitedwip.common.vcs.defaultChangeList
 import limitedwip.common.vcs.invokeLater
+import limitedwip.common.vcs.registerSuccessfulCheckinListener
 
 class AutoRevertComponentStartup: ProjectActivity {
     override suspend fun execute(project: Project) = AutoRevertComponent(project).start()
@@ -53,7 +54,7 @@ class AutoRevertComponent(private val project: Project) {
             }
         })
 
-        SuccessfulCheckin.registerListener(project, object: SuccessfulCheckin.Listener {
+        registerSuccessfulCheckinListener(project, object: SuccessfulCheckin.Listener {
             override fun onSuccessfulCheckin(allChangesAreCommitted: Boolean) {
                 if (allChangesAreCommitted) autoRevert.onAllChangesCommitted()
             }
