@@ -61,7 +61,7 @@ private fun doPush(project: Project) {
     allActiveVcss.forEach { vcs ->
         val pushSupport = DvcsUtil.getPushSupport(vcs)
         if (pushSupport != null) {
-            VcsRepositoryManager.getInstance(project).repositories.forEach { repository ->
+            VcsRepositoryManager.getInstance(project).getRepositories().forEach { repository ->
                 val source = pushSupport.getSource(repository)
                 val target = pushSupport.getDefaultTarget(repository)
                 if (source != null && target != null) {
