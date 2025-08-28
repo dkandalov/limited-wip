@@ -4,7 +4,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType.WARNING
 import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vcs.actions.CommonCheckinProjectAction
+import com.intellij.openapi.vcs.actions.commit.CommonCheckinProjectAction
 import limitedwip.common.PathMatcher
 import limitedwip.common.pluginDisplayName
 import limitedwip.common.vcs.*
