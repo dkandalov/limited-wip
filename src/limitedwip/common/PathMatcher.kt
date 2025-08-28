@@ -5,15 +5,13 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.apache.oro.text.regex.Perl5Compiler
 
-data class PathMatcher(
-    val fileNameRegex: Regex,
-    val dirRegex: Regex?
-) {
+data class PathMatcher(val fileNameRegex: Regex, val dirRegex: Regex?) {
+
     fun matches(filePath: String): Boolean {
         val slashIndex = filePath.lastIndexOf('/')
         return if (slashIndex >= 0) {
-            val dir = filePath.substring(0, slashIndex)
-            val fileName = filePath.substring(slashIndex + 1)
+            val dir = filePath.take(slashIndex)
+            val fileName = filePath.drop(slashIndex + 1)
             fileNameRegex.matches(fileName) && (dirRegex == null || dirRegex.matches(dir))
         } else {
             fileNameRegex.matches(filePath)
@@ -30,8 +28,8 @@ data class PathMatcher(
             var dirPattern: String? = null
             val slashIndex = pattern.lastIndexOf('/')
             if (slashIndex >= 0) {
-                dirPattern = pattern.substring(0, slashIndex)
-                pattern = pattern.substring(slashIndex + 1)
+                dirPattern = pattern.take(slashIndex)
+                pattern = pattern.drop(slashIndex + 1)
             }
 
             return PathMatcher(
