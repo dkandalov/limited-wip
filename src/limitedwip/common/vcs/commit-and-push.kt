@@ -6,8 +6,7 @@ import com.intellij.dvcs.repo.VcsRepositoryManager
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.*
 import com.intellij.openapi.application.ModalityState.nonModal
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task.Backgroundable
@@ -15,7 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.ProjectLevelVcsManager
 import com.intellij.openapi.wm.IdeFocusManager
 
-class CommitAndPushWithoutDialogAction: AnAction(AllIcons.Vcs.Push) {
+class CommitAndPushWithoutDialogAction : AnAction(AllIcons.Vcs.Push) {
     override fun actionPerformed(event: AnActionEvent) {
         commitWithoutDialogAndPush(event.project ?: return)
     }
@@ -38,7 +37,7 @@ fun invokeLater(modalityState: ModalityState = nonModal(), callback: () -> Unit)
 }
 
 fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent {
-    class MapDataContext(val map: Map<String, Any>, val delegate: DataContext): DataContext {
+    class MapDataContext(val map: Map<String, Any>, val delegate: DataContext) : DataContext {
         override fun getData(dataId: String) = delegate.getData(dataId) ?: map[dataId]
     }
 
@@ -57,10 +56,9 @@ fun anActionEvent(vararg eventContext: Pair<String, Any>): AnActionEvent {
 }
 
 private fun doPush(project: Project) {
-    val allActiveVcss = ProjectLevelVcsManager.getInstance(project).allActiveVcss
-    allActiveVcss.forEach { vcs ->
-        val pushSupport = DvcsUtil.getPushSupport(vcs)
-        if (pushSupport != null) {
+    ProjectLevelVcsManager.getInstance(project).allActiveVcss
+        .mapNotNull { DvcsUtil.getPushSupport(it) }
+        .forEach { pushSupport ->
             VcsRepositoryManager.getInstance(project).getRepositories().forEach { repository ->
                 val source = pushSupport.getSource(repository)
                 val target = pushSupport.getDefaultTarget(repository)
@@ -69,5 +67,4 @@ private fun doPush(project: Project) {
                 }
             }
         }
-    }
 }
