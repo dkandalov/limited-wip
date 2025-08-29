@@ -404,6 +404,7 @@
               <model>
                 <item value="last commit"/>
                 <item value="changelist name"/>
+                <item value="AI assistant"/>
               </model>
             </properties>
           </component>

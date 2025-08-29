@@ -11,6 +11,7 @@ import com.intellij.util.execution.ParametersListUtil.COLON_LINE_JOINER
 import com.intellij.util.execution.ParametersListUtil.COLON_LINE_PARSER
 import limitedwip.common.settings.CommitMessageSource.ChangeListName
 import limitedwip.common.settings.CommitMessageSource.LastCommit
+import limitedwip.common.settings.CommitMessageSource.AIAssistant
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidChangedSizeRange
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidNotificationInterval
 import limitedwip.common.settings.LimitedWipSettings.Companion.isValidTimeTillRevert
@@ -66,6 +67,7 @@ class SettingsForm(private val initialState: LimitedWipSettings) {
     private val commitMessageSourceByIndex = HashBiMap.create<Int, CommitMessageSource>().also {
         it[0] = LastCommit
         it[1] = ChangeListName
+        it[2] = AIAssistant
     }
 
     private val timeUnitByIndex = HashBiMap.create<Int, TimeUnit>().also {

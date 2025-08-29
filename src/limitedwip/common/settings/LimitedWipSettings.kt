@@ -80,7 +80,8 @@ enum class TcrAction {
 
 enum class CommitMessageSource {
     LastCommit,
-    ChangeListName
+    ChangeListName,
+    AIAssistant
 }
 
 enum class TimeUnit {
