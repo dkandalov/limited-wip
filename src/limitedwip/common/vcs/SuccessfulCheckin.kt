@@ -4,8 +4,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vcs.CheckinProjectPanel
 import com.intellij.openapi.vcs.changes.CommitContext
-import com.intellij.openapi.vcs.checkin.CheckinHandler
-import com.intellij.openapi.vcs.checkin.CheckinHandlerFactory
+import com.intellij.openapi.vcs.checkin.*
 import limitedwip.common.pluginId
 import limitedwip.common.vcs.SuccessfulCheckin.Listener
 
@@ -26,7 +25,6 @@ class SuccessfulCheckin : CheckinHandlerFactory() {
 
 private const val extensionPointName = "$pluginId.checkinListener"
 
-@Suppress("UnstableApiUsage")
 private fun notifySettingsListeners(allChangesAreCommitted: Boolean) {
     ApplicationManager.getApplication().extensionArea
         .getExtensionPoint<Listener>(extensionPointName).extensions
@@ -35,7 +33,6 @@ private fun notifySettingsListeners(allChangesAreCommitted: Boolean) {
         }
 }
 
-@Suppress("UnstableApiUsage")
 fun registerSuccessfulCheckinListener(disposable: Disposable, listener: Listener) {
     ApplicationManager.getApplication().extensionArea // It has to be root area (not project area).
         .getExtensionPoint<Listener>(extensionPointName)

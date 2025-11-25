@@ -3,14 +3,10 @@ package limitedwip.autorevert.ui
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.wm.StatusBar
-import com.intellij.openapi.wm.StatusBarWidget
-import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.*
 import com.intellij.util.Consumer
-import limitedwip.common.FloatingWidget
-import limitedwip.common.pluginId
-import java.awt.Component
-import java.awt.Point
+import limitedwip.common.*
+import java.awt.*
 import java.awt.event.MouseEvent
 
 class AutoRevertStatusBarWidget(project: Project): StatusBarWidget {
@@ -64,7 +60,7 @@ class AutoRevertStatusBarWidget(project: Project): StatusBarWidget {
         object: StatusBarWidget.TextPresentation {
             override fun getText() = this@AutoRevertStatusBarWidget.text
             override fun getTooltipText() = this@AutoRevertStatusBarWidget.tooltipText
-            override fun getClickConsumer(): Consumer<MouseEvent>? = Consumer { callback() }
+            override fun getClickConsumer(): Consumer<MouseEvent> = Consumer { callback() }
             override fun getAlignment() = Component.CENTER_ALIGNMENT
         }
 
