@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
     id "org.jetbrains.intellij.platform" version "2.7.2"
     id "org.jetbrains.kotlin.jvm" version "2.1.20"
@@ -30,12 +32,15 @@ kotlin {
 }
 
 dependencies {
-    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.mockito:mockito-core:5.6.0'
 
     intellijPlatform {
         intellijIdeaCommunity(ideVersion, false)
         bundledPlugin "Git4Idea"
+        testFramework TestFrameworkType.Platform.INSTANCE
     }
+    testImplementation "org.jetbrains.kotlin:kotlin-test:2.1.20"
 }
 
 intellijPlatform {
